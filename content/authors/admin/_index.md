@@ -1,16 +1,16 @@
 ---
 # Display name
-title: 吳健雄
+title: Yu Wang (王禹)
 
 # Name pronunciation (optional)
-name_pronunciation: Chien Shiung Wu
+name_pronunciation: 
 
 # Full name (for SEO)
-first_name: Shiung Wu
-last_name: Chien
+first_name: Yu (Eddie)
+last_name: Wang
 
 # Pronouns (optional)
-pronouns: she/her
+pronouns: he/him
 
 # Status emoji
 status:
@@ -23,65 +23,64 @@ superuser: true
 highlight_name: true
 
 # Role/position/tagline
-role: Chief Scientist
+role: PhD candidate at University of Tasmania
 
 # Organizations/Affiliations to display in Biography blox
 organizations:
-  - name: OpenAI
-    url: https://openai.com/
+  - name: Institute for Marine and Antarctic Studies, University of Tasmania
+    url: https://www.utas.edu.au/imas
 
 # Social network links
 # Need to use another icon? Simply download the SVG icon to your `assets/media/icons/` folder.
 profiles:
   - icon: at-symbol
-    url: 'mailto:your-email@example.com'
+    url: 'yuwang0@utas.edu.au.com'
     label: E-mail Me
-  - icon: brands/x
-    url: https://twitter.com/GetResearchDev
+#  - icon: brands/x
+#    url: https://twitter.com/GetResearchDev
   - icon: brands/instagram
-    url: https://www.instagram.com/
+    url: https://www.instagram.com/eddiewang115/
   - icon: brands/github
-    url: https://github.com/gcushen
+    url: https://github.com/yuwang115
   - icon: brands/linkedin
-    url: https://www.linkedin.com/
+    url: https://www.linkedin.com/in/yu-wang-eddie/
   - icon: academicons/google-scholar
-    url: https://scholar.google.com/
+    url: https://scholar.google.com.au/citations?user=NP-y_qUAAAAJ&hl=en
   - icon: academicons/orcid
-    url: https://orcid.org/
+    url: https://orcid.org/0000-0001-9070-6004
 
 interests:
-  - Artificial Intelligence
-  - Computational Linguistics
-  - Information Retrieval
+  - Antarctic ice dynamics
+  - Ice sheet / ice shelf modelling
+  - Subglacial hydrology
+  - Sea-level rise projections
+  - Ice–ocean interactions
+  - Geoengineering interventions
 
 education:
-  - area: PhD Artificial Intelligence
-    institution: Stanford University
-    date_start: 2016-01-01
-    date_end: 2020-12-31
+  - area: PhD Marine and Antarctic Studies
+    institution: Institute for Marine and Antarctic Studies, University of Tasmania, AU
+    date_start: 2022-08-15
+    date_end: 2026-03-01
     summary: |
-      Thesis on _Why LLMs are awesome_. Supervised by [Prof Joe Smith](https://example.com). Presented papers at 5 IEEE conferences with the contributions being published in 2 Springer journals.
+      Thesis on understanding the Ice-Hydrology Interaction in Wilkes Subglacial Basin, East Antarctica. Supervised by Dr. Chen Zhao, Dr. Rupert Gladstone, Dr. Ben Galton-Fenzi and Prof. Poul Christoffersen.
     button:
       text: 'Read Thesis'
       url: 'https://example.com'
-  - area: MEng Artificial Intelligence
-    institution: Massachusetts Institute of Technology
-    date_start: 2016-01-01
-    date_end: 2020-12-31
+  - area: BCs Marine and Antarctic Science with Honours（Physical Oceanography）
+    institution: Institute for Marine and Antarctic Studies, University of Tasmania, AU
+    date_start: 2019-07-06
+    date_end: 2021-08-01
     summary: |
-      GPA: 3.8/4.0
-
       Courses included:
-      - lorem ipsum dolor sit amet, consectetur adipiscing elit
-      - lorem ipsum dolor sit amet, consectetur adipiscing elit
-      - lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - area: BSc Artificial Intelligence
-    institution: Massachusetts Institute of Technology
-    date_start: 2016-01-01
-    date_end: 2020-12-31
-    summary: |
-      GPA: 3.4/4.0
-      
+      - Fluid mechanics
+      Honours project: Thermal structure of the Amery Ice Shelf from borehole observations and simulations
+      supervised by Dr. Chen Zhao, Dr. Rupert Gladstone, Dr. Ben Galton-Fenzi
+  - area: BSc Marine Science 
+    institution: College of Oceanic and Atmospheric Sciences, Ocean University of China, Qingdao, CN
+    date_start: 2017-08-24
+    date_end: 2021-07-10
+    summary: |      
       Courses included:
       - lorem ipsum dolor sit amet, consectetur adipiscing elit
       - lorem ipsum dolor sit amet, consectetur adipiscing elit
@@ -146,11 +145,9 @@ skills:
 
 languages:
   - name: English
-    percent: 100
-  - name: Chinese
     percent: 75
-  - name: Portuguese
-    percent: 25
+  - name: Chinese
+    percent: 100
 
 # Awards.
 #   Add/remove as many awards below as you like.
@@ -186,4 +183,4 @@ awards:
 
 ## About Me
 
-Chien Shiung Wu is a professor of artificial intelligence at the Stanford AI Lab. Her research interests include distributed robotics, mobile computing and programmable matter. She leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+Yu Wang is a PhD candidate at University of Tasmania. His research interests include ice sheet/ice shelf modelling, subglacial hydrology, sea-level rise projections, ice-ocean interactions and geoengineering interventions. He has published two papers as the first author in The Cryosphere.
