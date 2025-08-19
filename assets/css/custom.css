@@ -1,0 +1,7 @@
+/* Custom background image for hero section */
+.hero-section {
+  background-image: url("/media/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

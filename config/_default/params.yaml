@@ -6,7 +6,7 @@
 # Appearance
 appearance:
   mode: system
-  color: emerald
+  color: indigo
 
 # SEO
 marketing:
@@ -14,7 +14,7 @@ marketing:
     site_type: Person
     local_business_type: ''
     org_name: ''
-    description: 'The highly-customizable Hugo Academic theme powered by Hugo Blox Builder. Easily create your personal academic website.'
+    description: 'Yu Wang (王禹) — PhD candidate in Glaciology at the Institute for Marine and Antarctic Studies, University of Tasmania. Research interests: Antarctic ice dynamics, ice sheet/ice shelf modelling, subglacial hydrology, sea-level rise projections, ice–ocean interactions, and geoengineering interventions.'
     twitter: 'GetResearchDev'
   analytics:
     google_analytics: ''
@@ -35,12 +35,12 @@ header:
     show_search: true
     show_theme_chooser: true
     logo:
-      text: "Your Name"
+      text: "Yu Wang (王禹)"
 
 # Site footer
 footer:
   copyright:
-    notice: '© {year} Me. This work is licensed under {license}'
+    notice: '© {year} Yu Wang. This work is licensed under {license}'
     license:
       enable: true
       allow_derivatives: false
@@ -55,6 +55,6 @@ locale:
 # Site features
 features:
   math:
-    enable: false
+    enable: true
   privacy_pack:
     enable: false
