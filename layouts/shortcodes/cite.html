@@ -1,0 +1,22 @@
+{{/* layouts/shortcodes/cite.html */}}
+{{- $p := .Get "page" -}}
+{{- $view := .Get "view" | default "" -}}
+
+{{- if not $p -}}
+  <span class="cite-missing">[cite: missing page param]</span>
+{{- else -}}
+  {{- $target := site.GetPage $p -}}
+  {{- if not $target -}}
+    <span class="cite-missing">[citation not found: {{$p}}]</span>
+  {{- else -}}
+    {{- if eq $view "citation" -}}
+      {{- with $target.Params.citation -}}
+        {{ . | safeHTML }}
+      {{- else -}}
+        {{ $target.Title }}
+      {{- end -}}
+    {{- else -}}
+      <a href="{{ $target.RelPermalink }}">{{ $target.Title }}</a>
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
