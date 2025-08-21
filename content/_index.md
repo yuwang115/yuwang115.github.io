@@ -28,7 +28,7 @@ sections:
         color: "black"
         image:
           # Add your image background to `assets/media/`.
-          filename: bg.jpg
+          filename: "background.jpg"
           filters:
             brightness: 0.45  # 暗化背景以提升文字可读性
             blur: 2px  # 轻微模糊背景，降低细节干扰
