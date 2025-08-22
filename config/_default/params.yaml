@@ -13,9 +13,9 @@ marketing:
   seo:
     site_type: Person
     local_business_type: ''
-    org_name: ''
-    description: 'Yu Wang (王禹) — PhD candidate in Glaciology at the Institute for Marine and Antarctic Studies, University of Tasmania. Research interests: Antarctic ice dynamics, ice sheet/ice shelf modelling, subglacial hydrology, sea-level rise projections, ice–ocean interactions, and geoengineering interventions.'
-    twitter: 'GetResearchDev'
+    org_name: 'Institute for Marine and Antarctic Studies, University of Tasmania'
+    description: 'Yu Wang (王禹) — PhD candidate in glaciology at IMAS, University of Tasmania. Research: Antarctic ice dynamics, subglacial hydrology, ice–ocean interactions, sea-level rise.'
+    twitter: ''
   analytics:
     google_analytics: ''
     baidu_tongji: ''

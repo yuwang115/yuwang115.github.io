@@ -23,9 +23,9 @@
 &lt;p&gt;On this page, you&amp;rsquo;ll find some examples of the types of technical content that can be rendered with Hugo Blox.&lt;/p&gt;
 &lt;h2 id=&#34;citation&#34;&gt;Citation&lt;/h2&gt;
 &lt;p&gt;Here&amp;rsquo;s an example of citing a publication using the cite shortcode:&lt;/p&gt;
-An example preprint / working paper
+&lt;span class=&#34;cite-missing&#34;&gt;[citation not found: /publication/preprint]&lt;/span&gt;
 &lt;p&gt;You can also use the default view by omitting the view parameter:&lt;/p&gt;
-&lt;a href=&#34;http://localhost:1313/publication/conference-paper/&#34;&gt;An example conference paper&lt;/a&gt;
+&lt;span class=&#34;cite-missing&#34;&gt;[citation not found: /publication/conference-paper]&lt;/span&gt;
 &lt;h2 id=&#34;video&#34;&gt;Video&lt;/h2&gt;
 &lt;p&gt;Teach your course by sharing videos with your students. Choose from one of the following approaches:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Youtube&lt;/strong&gt;:&lt;/p&gt;
