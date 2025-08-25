@@ -35,6 +35,28 @@ sections:
           size: cover
           position: center
           parallax: false
+
+  - block: markdown
+    id: loop-video
+    content:
+      title: ""   # 可留空；如果要标题就写在这里
+      text: |
+        <div style="position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; height:100svh; min-height:100vh; overflow:hidden;">
+          <video style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; object-position:center;"
+                 autoplay
+                 muted
+                 loop
+                 playsinline
+                 preload="metadata">
+            <source src="/media/3DWSB.mp4" type="video/mp4">
+            您的浏览器不支持 HTML5 视频。
+          </video>
+        </div>
+    design:
+      columns: "1"
+      spacing:
+        padding: [0, 0, 0, 0]
+        
   # - block: markdown
   #   content:
   #     title: "Research Focus 🧐"
@@ -45,6 +67,7 @@ sections:
   #       I build and use: **Elmer/Ice** (SSA & full-Stokes ice flow), **GlaDS** (distributed/channelised drainage), and **ROMSIceShelf** for targeted experiments in the **Wilkes Subglacial Basin**. The goal is to improve long-term sea‑level projections and test the sensitivity and potential reversibility of grounding‑line retreat.
   #   design:
   #     columns: '1'
+
   - block: collection
     id: papers
     content:
@@ -66,6 +89,8 @@ sections:
         exclude_featured: true
     design:
       view: citation
+  
+
   - block: collection
     id: gallery
     content:

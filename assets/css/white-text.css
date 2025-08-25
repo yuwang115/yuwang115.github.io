@@ -1,0 +1,39 @@
+/* assets/css/white-text.css */
+
+/* 1) 覆盖 Tailwind Typography（prose）在 About 区的颜色变量 */
+html .home-section[data-wg="about"],
+html.dark .home-section[data-wg="about"]{
+  --tw-prose-body: 255,255,255;
+  --tw-prose-headings: 255,255,255;
+  --tw-prose-lead: 255,255,255;
+  --tw-prose-links: 255,255,255;
+  --tw-prose-bold: 255,255,255;
+  --tw-prose-counters: 255,255,255;
+  --tw-prose-bullets: 255,255,255;
+  --tw-prose-hr: 255,255,255;
+  --tw-prose-quotes: 255,255,255;
+  --tw-prose-quote-borders: 255,255,255;
+  --tw-prose-captions: 255,255,255;
+  --tw-prose-code: 255,255,255;
+  --tw-prose-th-borders: 255,255,255;
+  --tw-prose-td-borders: 255,255,255;
+}
+
+/* 2) 文本 & 标题 彻底变白（无论是 prose 还是普通元素） */
+html .home-section[data-wg="about"] :where(p,li,span,small,strong,em,h1,h2,h3,h4,h5,h6),
+html.dark .home-section[data-wg="about"] :where(p,li,span,small,strong,em,h1,h2,h3,h4,h5,h6){
+  color: #fff !important;
+}
+
+/* 3) 链接也设为纯白 */
+html .home-section[data-wg="about"] :where(a),
+html.dark .home-section[data-wg="about"] :where(a){
+  color: #fff !important;
+  text-decoration: underline;
+}
+
+/* 4) “Yu (Eddie) Wang / PhD Candidate”等英雄区文字兜底 */
+html .home-section[data-wg="about"] .hero-title,
+html .home-section[data-wg="about"] .hero-lead{
+  color: #fff !important;
+}

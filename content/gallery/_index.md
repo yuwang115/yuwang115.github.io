@@ -5,5 +5,6 @@ summary: "A selection of my photography beyond academia."
 # 可改为 weight 手动排
 cascade:
   show_breadcrumb: true
+  share: false
 ---
 
