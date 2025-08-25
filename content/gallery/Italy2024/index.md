@@ -1,13 +1,15 @@
 ---
-title: "Italy 2024"
+title: "Summer in Italy"
 date: 2024-05-14
-summary: "Rome ➡️ Florence ➡️ Bologna ➡️ Venice ➡️ Milan"
+summary: "Rome — Florence — Bologna — Venice — Milan"
+reading_time: false
 image:
   filename: "featured.jpeg"
   focal_point: Center
+  
 ---
 
-这里放一段相册说明、拍摄器材、行程等。
+<!-- 这里放一段相册说明、拍摄器材、行程等。 -->
 
 <style>
 /* ========== Full-bleed container (breaks out of article max-width) ========== */

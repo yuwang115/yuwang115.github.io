@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Grounding Line Melt | Yu Wang</title>
+    <link>http://localhost:1313/tags/grounding-line-melt/</link>
+      <atom:link href="http://localhost:1313/tags/grounding-line-melt/index.xml" rel="self" type="application/rss+xml" />
+    <description>Grounding Line Melt</description>
+    <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Mon, 01 Jan 2024 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
+      <title>Grounding Line Melt</title>
+      <link>http://localhost:1313/tags/grounding-line-melt/</link>
+    </image>
+    
+    <item>
+      <title>Sensitivity of the future evolution of the Wilkes Subglacial Basin ice sheet to grounding-line melt parameterizations</title>
+      <link>http://localhost:1313/publication/cryosphere-2024-wsb-melt-param/</link>
+      <pubDate>Mon, 01 Jan 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/publication/cryosphere-2024-wsb-melt-param/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

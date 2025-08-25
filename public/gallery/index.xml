@@ -13,11 +13,11 @@
     </image>
     
     <item>
-      <title>Italy 2024</title>
+      <title>Summer in Italy</title>
       <link>http://localhost:1313/gallery/italy2024/</link>
       <pubDate>Tue, 14 May 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/gallery/italy2024/</guid>
-      <description>&lt;p&gt;这里放一段相册说明、拍摄器材、行程等。&lt;/p&gt;
+      <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* ========== Full-bleed container (breaks out of article max-width) ========== */
 .gallery-bleed { width: 100vw; max-width: 1800px; margin-left: 50%; transform: translateX(-50%); }

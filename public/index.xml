@@ -61,11 +61,11 @@
     </item>
     
     <item>
-      <title>Italy 2024</title>
+      <title>Summer in Italy</title>
       <link>http://localhost:1313/gallery/italy2024/</link>
       <pubDate>Tue, 14 May 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/gallery/italy2024/</guid>
-      <description>&lt;p&gt;这里放一段相册说明、拍摄器材、行程等。&lt;/p&gt;
+      <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* ========== Full-bleed container (breaks out of article max-width) ========== */
 .gallery-bleed { width: 100vw; max-width: 1800px; margin-left: 50%; transform: translateX(-50%); }
@@ -433,7 +433,7 @@
 
 
 
-&lt;div id=&#34;chart-563491782&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;chart-934871265&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
 &lt;script&gt;
   async function fetchChartJSON() {
     console.debug(&#39;Hugo Blox fetching chart JSON...&#39;)
@@ -451,7 +451,7 @@
 
       fetchChartJSON().then(chart =&gt; {
         console.debug(&#39;Plotting chart...&#39;)
-        window.Plotly.newPlot(&#39;chart-563491782&#39;, chart.data, chart.layout, {responsive: true});
+        window.Plotly.newPlot(&#39;chart-934871265&#39;, chart.data, chart.layout, {responsive: true});
       });
     }, 500 );
   })();
@@ -1082,7 +1082,12 @@ Parallel 4   :         des6, after des4, 1d
       <link>http://localhost:1313/publication/cryosphere-2022-amery/</link>
       <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/publication/cryosphere-2022-amery/</guid>
-      <description></description>
+      <description>&lt;!-- &lt;figure&gt;&lt;img src=&#34;http://localhost:1313/publication/cryosphere-2022-amery/temperature.png&#34;
+    alt=&#34;Temperature field map&#34;&gt;&lt;figcaption&gt;
+      &lt;p&gt;Additional figure: Temperature field snapshot from the study.&lt;/p&gt;
+    &lt;/figcaption&gt;
+&lt;/figure&gt;
+ --&gt;</description>
     </item>
     
   </channel>

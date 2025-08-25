@@ -125,56 +125,68 @@ work:
 skills:
   - name: Programming & Tools
     items:
+      - name: Elmer/Ice
+        description: ''
+        percent: 80
+        icon: custom/snowflake-solid-full
       - name: MATLAB
         description: ''
-        percent: 100
+        percent: 95
         icon: devicon/matlab
       - name: Python
         description: ''
-        percent: 80
+        percent: 70
         icon: devicon/python
       - name: Fortran
         description: ''
-        percent: 60
+        percent: 55
         icon: devicon/fortran
       - name: ParaView
         description: ''
-        percent: 60
-        icon: brands/paraview
+        percent: 85
+        icon: custom/expand-solid-full
       - name: QGIS
         description: ''
-        percent: 60
+        percent: 65
         icon: map
-  - name: Modelling
+  # - name: Modelling
+  #   items:
+  #     - name: Elmer/Ice
+  #       description: ''
+  #       percent: 60
+  #      # icon: file
+  #     - name: ROMS
+  #       description: ''
+  #       percent: 60
+  #      # icon: file
+
+  - name: Interests
     items:
-      - name: Elmer/Ice
-        description: ''
-        percent: 60
-        icon: file
-      - name: ROMS
-        description: ''
-        percent: 60
-        icon: file
-  - name: Data & Visualization
-    items:
-      - name: Processing
-        description: ''
+      - name: Rock climbing
+        #description: 'Bouldering and sport climbing; chasing clean sends on Tasmanian granite.'
+        percent: 65
+        icon: custom/climbing
+
+      - name: Photography
+        #description: 'Landscapes and science storytelling; love blue hour and long exposures.'
         percent: 70
-        icon: file
-      - name: Uncertainty Quantification
-        description: ''
-        percent: 70
-        icon: file
-      - name: Figure Reproduction
-        description: ''
-        percent: 70
-        icon: file
-  - name: Experiment Design
-    items:
-      - name: Ensemble Modelling Workflows (HPC)
-        description: ''
+        icon: camera
+      - name: Fitness
+       # description: 'Strength & conditioning to stay injury‑free and climb stronger.'
+        percent: 85
+        icon: custom/dumbbell-solid-full
+      - name: Hiking
+        #description: 'Alpine trails and coastal walks across Tasmania.'
         percent: 60
-        icon: file
+        icon: custom/person-hiking-solid-full
+      - name: Badminton
+       # description: 'Club‑level doubles—great footwork and fast rallies.'
+        percent: 70
+        icon: custom/badminton
+      - name: Guitar
+       # description: 'Fingerstyle practice and the occasional campfire classic.'
+        percent: 50
+        icon: custom/guitar-solid-full
 
 # languages:
 #   - name: English
@@ -190,49 +202,49 @@ awards:
   - title: ACCESS Community Annual Workshop Best Poster Award
     date: '2023-09-01'
     awarder: ACCESS Community
-    icon: award
+    # icon: award
     summary: |
       Awarded for best poster presentation at the 2023 ACCESS Community Annual Workshop.
   - title: Australian Antarctic Program Partnership Top-Up Scholarship
     date: '2022-08-01'
     awarder: Australian Antarctic Program Partnership
-    icon: scholarship
+    # icon: scholarship
     summary: |
       Awarded to support PhD research in Antarctic studies.
   - title: Tasmanian Graduate Research Scholarship
     date: '2022-08-01'
     awarder: University of Tasmania
-    icon: scholarship
+    # icon: scholarship
     summary: |
       Scholarship for graduate research at the University of Tasmania.
   - title: Executive Dean’s Honour Roll, UTAS
     date: '2021-10-01'
     awarder: University of Tasmania
-    icon: honor
+    # icon: honor
     summary: |
       Recognized for academic excellence.
   - title: Tasmanian International Scholarship
     date: '2019-07-01'
     awarder: University of Tasmania
-    icon: scholarship
+    # icon: scholarship
     summary: |
       Scholarship for international students.
   - title: Academic Excellence Scholarship, OUC
     date: '2018-07-01'
     awarder: Ocean University of China
-    icon: scholarship
+    # icon: scholarship
     summary: |
       Awarded for academic excellence.
   - title: Honorary Title of Outstanding Student, OUC
     date: '2018-07-01'
     awarder: Ocean University of China
-    icon: honor
+    # icon: honor
     summary: |
       Recognized as an outstanding student.
   - title: First-Class Annual Scholarship, OUC
     date: '2017-07-01'
     awarder: Ocean University of China
-    icon: scholarship
+    # icon: scholarship
     summary: |
       Awarded first-class scholarship for academic performance.
 
