@@ -24,7 +24,7 @@ superuser: true
 highlight_name: true
 
 # Role/position/tagline
-role: PhD Candidate in Marine and Antarctic Studies
+role: PhD Candidate
 
 # Organizations/Affiliations to display in Biography blox
 organizations:
@@ -266,4 +266,6 @@ publications:
 
 ## About Me
 
-Yu Wang (王禹) is a PhD candidate at the Institute for Marine and Antarctic Studies, University of Tasmania, and a member of the Australian Antarctic Program Partnership. His research focuses on Antarctic ice dynamics, subglacial hydrology, and coupled ice–ocean processes, with the aim of improving projections of sea-level rise. He has authored first‑author papers in *The Cryosphere* and co‑authored in *Earth’s Future* and *Nature Communications*.
+Yu Wang (王禹) is a third-year PhD candidate in glaciology at the Institute for Marine and Antarctic Studies, University of Tasmania, and a member of the Australian Antarctic Program Partnership. He uses numerical models to investigate Antarctic ice dynamics, subglacial hydrology, and ice–ocean interactions, with the goal of improving projections of sea-level rise. 
+
+Originally from China, Yu now calls Tasmania—the heart-shaped island at Australia’s southern tip—home while he studies the frozen south. Yu spends weekdays modelling ice and weekends collecting elevation—on hiking trails, climbing routes, badminton courts, and the odd rocky shoreline with a camera (or a fishing rod).

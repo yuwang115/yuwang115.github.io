@@ -28,10 +28,6 @@
   <url>
     <loc>http://localhost:1313/tags/</loc><lastmod>2025-01-01T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
   <url>
-    <loc>http://localhost:1313/gallery/europe2024/</loc><lastmod>2024-09-10T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
-  <url>
-    <loc>http://localhost:1313/gallery/</loc><lastmod>2024-09-10T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
-  <url>
     <loc>http://localhost:1313/tags/antarctic-ice-sheet/</loc><lastmod>2024-09-01T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
   <url>
     <loc>http://localhost:1313/tags/ensemble-modelling/</loc><lastmod>2024-09-01T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
@@ -43,6 +39,10 @@
     <loc>http://localhost:1313/tags/projections/</loc><lastmod>2024-09-01T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
   <url>
     <loc>http://localhost:1313/projects/</loc><lastmod>2024-05-19T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
+  <url>
+    <loc>http://localhost:1313/gallery/</loc><lastmod>2024-05-14T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
+  <url>
+    <loc>http://localhost:1313/gallery/italy2024/</loc><lastmod>2024-05-14T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
   <url>
     <loc>http://localhost:1313/tags/grounding-line/</loc><lastmod>2024-01-01T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
   <url>

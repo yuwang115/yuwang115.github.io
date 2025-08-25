@@ -35,20 +35,20 @@ sections:
           size: cover
           position: center
           parallax: false
-  - block: markdown
-    content:
-      title: "📚 Research Focus"
-      subtitle: ""
-      text: |-
-        My work combines numerical modelling and data analysis to quantify how subglacial hydrology and ocean forcing control East Antarctic ice mass loss.
+  # - block: markdown
+  #   content:
+  #     title: "Research Focus 🧐"
+  #     subtitle: ""
+  #     text: |-
+  #       My work combines numerical modelling and data analysis to quantify how subglacial hydrology and ocean forcing control East Antarctic ice mass loss.
 
-        I build and use: **Elmer/Ice** (SSA & full-Stokes ice flow), **GlaDS** (distributed/channelised drainage), and **ROMSIceShelf** for targeted experiments in the **Wilkes Subglacial Basin**. The goal is to improve long-term sea‑level projections and test the sensitivity and potential reversibility of grounding‑line retreat.
-    design:
-      columns: '1'
+  #       I build and use: **Elmer/Ice** (SSA & full-Stokes ice flow), **GlaDS** (distributed/channelised drainage), and **ROMSIceShelf** for targeted experiments in the **Wilkes Subglacial Basin**. The goal is to improve long-term sea‑level projections and test the sensitivity and potential reversibility of grounding‑line retreat.
+  #   design:
+  #     columns: '1'
   - block: collection
     id: papers
     content:
-      title: Featured Publications
+      title:  Featured Publications 📑
       filters:
         folders:
           - publication
@@ -58,7 +58,7 @@ sections:
       columns: 2
   - block: collection
     content:
-      title: Recent Publications
+      title:  Recent Publications 📝
       text: ""
       filters:
         folders:
@@ -69,17 +69,17 @@ sections:
   - block: collection
     id: gallery
     content:
-      title: Photography Gallery
+      title: Photography Gallery 📷
       subtitle: "A selection of my photography beyond academia"
       text: ""
       filters:
         folders:
           - gallery
       # show up to 12 gallery items if you create sub-albums as page bundles
-      count: 12
+      count: 6
     design:
       view: article-grid
-      columns: 3
+      columns: 1
   # - block: collection
   #   id: talks
   #   content:

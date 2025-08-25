@@ -7,7 +7,7 @@
     <description>Yu Wang</description>
     <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Thu, 21 Aug 2025 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://localhost:1313/media/icon_hu_982c5d63a71b2961.png</url>
+      <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
       <title>Yu Wang</title>
       <link>http://localhost:1313/</link>
     </image>
@@ -45,79 +45,6 @@
     </item>
     
     <item>
-      <title>Europe 2024</title>
-      <link>http://localhost:1313/gallery/europe2024/</link>
-      <pubDate>Tue, 10 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gallery/europe2024/</guid>
-      <description>&lt;p&gt;这里放一段相册说明、拍摄器材、行程等。&lt;/p&gt;
-&lt;!-- 直接用 Markdown 图片，相对路径即可 --&gt;
-&lt;p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;flex justify-center	&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;paris.jpg&#34; alt=&#34;Morning light in Paris&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;flex justify-center	&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;rome.jpg&#34; alt=&#34;Roman alleys&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;flex justify-center	&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;venice.jpg&#34; alt=&#34;Canals at dusk&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Evolution of the Antarctic Ice Sheet over the next three centuries from an ISMIP6 model ensemble</title>
       <link>http://localhost:1313/publication/earths-future-2024-ismip6/</link>
       <pubDate>Sun, 01 Sep 2024 00:00:00 +0000</pubDate>
@@ -131,6 +58,108 @@
       <pubDate>Sun, 19 May 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/projects/</guid>
       <description></description>
+    </item>
+    
+    <item>
+      <title>Italy 2024</title>
+      <link>http://localhost:1313/gallery/italy2024/</link>
+      <pubDate>Tue, 14 May 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/gallery/italy2024/</guid>
+      <description>&lt;p&gt;这里放一段相册说明、拍摄器材、行程等。&lt;/p&gt;
+&lt;style&gt;
+/* ========== Full-bleed container (breaks out of article max-width) ========== */
+.gallery-bleed { width: 100vw; max-width: 1800px; margin-left: 50%; transform: translateX(-50%); }
+
+/* ========== Masonry columns ========== */
+.masonry { column-gap: 18px; }
+@media (min-width: 420px){ .masonry { column-count: 2; } }
+@media (min-width: 768px){ .masonry { column-count: 3; } }
+@media (min-width: 1024px){ .masonry { column-count: 4; } }
+@media (min-width: 1280px){ .masonry { column-count: 5; } }
+@media (min-width: 1536px){ .masonry { column-count: 6; } }
+
+/* Items reset &amp; spacing */
+.masonry figure{ margin:0; }
+.masonry-item { break-inside: avoid; margin: 0 0 18px; position: relative; overflow: hidden; border-radius: 10px; background: transparent; }
+
+/* Shimmer placeholder */
+.masonry-item::before { content:&#34;&#34;; position:absolute; inset:0; background: linear-gradient(90deg, #eee 0%, #f6f6f6 50%, #eee 100%); background-size:200% 100%; animation: shimmer 1.2s infinite; opacity: 1; transition: opacity .3s ease; }
+.masonry-item.loaded::before { opacity: 0; animation: none; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* Blur-up effect while loading; keep original aspect ratio */
+.masonry-item img { width:100%; height:auto; display:block; filter: blur(12px); opacity: .85; transform: scale(1.02); transition: filter .45s ease, transform .45s ease, opacity .35s ease; }
+.masonry-item.loaded img { filter: blur(0); transform: none; opacity: 1; }
+
+/* Lightbox */
+#lightbox { padding:0; border:none; background: transparent; }
+#lightbox::backdrop { background: rgba(0,0,0,.85); }
+#lightbox img { max-width: 92vw; max-height: 92vh; display:block; }
+&lt;/style&gt;
+&lt;div class=&#34;gallery-bleed&#34;&gt;
+  &lt;div class=&#34;masonry&#34;&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC04792.jpeg&#34;&gt;&lt;img data-src=&#34;DSC04792.jpeg&#34; alt=&#34;DSC04792&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC04816.jpeg&#34;&gt;&lt;img data-src=&#34;DSC04816.jpeg&#34; alt=&#34;DSC04816&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC04971.jpeg&#34;&gt;&lt;img data-src=&#34;DSC04971.jpeg&#34; alt=&#34;DSC04971&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC04989.jpeg&#34;&gt;&lt;img data-src=&#34;DSC04989.jpeg&#34; alt=&#34;DSC04989&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05009.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05009.jpeg&#34; alt=&#34;DSC05009&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05077.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05077.jpeg&#34; alt=&#34;DSC05077&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05185.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05185.jpeg&#34; alt=&#34;DSC05185&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05224.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05224.jpeg&#34; alt=&#34;DSC05224&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05280.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05280.jpeg&#34; alt=&#34;DSC05280&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05344.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05344.jpeg&#34; alt=&#34;DSC05344&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05447.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05447.jpeg&#34; alt=&#34;DSC05447&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05472.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05472.jpeg&#34; alt=&#34;DSC05472&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05605.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05605.jpeg&#34; alt=&#34;DSC05605&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05810.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05810.jpeg&#34; alt=&#34;DSC05810&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05826.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05826.jpeg&#34; alt=&#34;DSC05826&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05859.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05859.jpeg&#34; alt=&#34;DSC05859&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05910.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05910.jpeg&#34; alt=&#34;DSC05910&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05928.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05928.jpeg&#34; alt=&#34;DSC05928&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC05946.jpeg&#34;&gt;&lt;img data-src=&#34;DSC05946.jpeg&#34; alt=&#34;DSC05946&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC06007.jpeg&#34;&gt;&lt;img data-src=&#34;DSC06007.jpeg&#34; alt=&#34;DSC06007&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC06111.jpeg&#34;&gt;&lt;img data-src=&#34;DSC06111.jpeg&#34; alt=&#34;DSC06111&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC06426.jpeg&#34;&gt;&lt;img data-src=&#34;DSC06426.jpeg&#34; alt=&#34;DSC06426&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC06636.jpeg&#34;&gt;&lt;img data-src=&#34;DSC06636.jpeg&#34; alt=&#34;DSC06636&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC06691.jpeg&#34;&gt;&lt;img data-src=&#34;DSC06691.jpeg&#34; alt=&#34;DSC06691&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC06719.jpeg&#34;&gt;&lt;img data-src=&#34;DSC06719.jpeg&#34; alt=&#34;DSC06719&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC06800.jpeg&#34;&gt;&lt;img data-src=&#34;DSC06800.jpeg&#34; alt=&#34;DSC06800&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC06931.jpeg&#34;&gt;&lt;img data-src=&#34;DSC06931.jpeg&#34; alt=&#34;DSC06931&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC08071.jpeg&#34;&gt;&lt;img data-src=&#34;DSC08071.jpeg&#34; alt=&#34;DSC08071&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC08139.jpeg&#34;&gt;&lt;img data-src=&#34;DSC08139.jpeg&#34; alt=&#34;DSC08139&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;dialog id=&#34;lightbox&#34;&gt;&lt;img id=&#34;lightbox-img&#34; alt=&#34;&#34;&gt;&lt;/dialog&gt;
+&lt;script&gt;
+(function(){
+  // Lazy-load with IntersectionObserver
+  const io = &#39;IntersectionObserver&#39; in window ? new IntersectionObserver((entries, obs) =&gt; {
+    entries.forEach(e =&gt; {
+      if (!e.isIntersecting) return;
+      const img = e.target; const fig = img.closest(&#39;.masonry-item&#39;);
+      img.src = img.dataset.src;
+      img.addEventListener(&#39;load&#39;, () =&gt; { fig.classList.add(&#39;loaded&#39;); }, { once:true });
+      obs.unobserve(img);
+    });
+  }, { rootMargin: &#39;200px&#39; }) : null;
+
+  document.querySelectorAll(&#39;.masonry-item img[data-src]&#39;).forEach(img =&gt; {
+    if (io) io.observe(img); else { img.src = img.dataset.src; img.addEventListener(&#39;load&#39;, () =&gt; img.closest(&#39;.masonry-item&#39;).classList.add(&#39;loaded&#39;), { once:true }); }
+  });
+
+  // Simple lightbox using &lt;dialog&gt;
+  const dlg = document.getElementById(&#39;lightbox&#39;);
+  const dlgImg = document.getElementById(&#39;lightbox-img&#39;);
+  document.querySelectorAll(&#39;.masonry-item a&#39;).forEach(a =&gt; {
+    a.addEventListener(&#39;click&#39;, (ev) =&gt; {
+      ev.preventDefault();
+      dlgImg.src = a.getAttribute(&#39;href&#39;);
+      if (typeof dlg.showModal === &#39;function&#39;) dlg.showModal();
+    });
+  });
+  dlg &amp;&amp; dlg.addEventListener(&#39;click&#39;, () =&gt; dlg.close());
+})();
+&lt;/script&gt;</description>
     </item>
     
     <item>
@@ -404,7 +433,7 @@
 
 
 
-&lt;div id=&#34;chart-871563249&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;chart-563491782&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
 &lt;script&gt;
   async function fetchChartJSON() {
     console.debug(&#39;Hugo Blox fetching chart JSON...&#39;)
@@ -422,7 +451,7 @@
 
       fetchChartJSON().then(chart =&gt; {
         console.debug(&#39;Plotting chart...&#39;)
-        window.Plotly.newPlot(&#39;chart-871563249&#39;, chart.data, chart.layout, {responsive: true});
+        window.Plotly.newPlot(&#39;chart-563491782&#39;, chart.data, chart.layout, {responsive: true});
       });
     }, 500 );
   })();
