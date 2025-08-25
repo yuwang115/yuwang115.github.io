@@ -35,28 +35,6 @@ sections:
           size: cover
           position: center
           parallax: false
-
-  - block: markdown
-    id: loop-video
-    content:
-      title: ""   # 可留空；如果要标题就写在这里
-      text: |
-        <div style="position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; height:100svh; min-height:100vh; overflow:hidden;">
-          <video style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; object-position:center;"
-                 autoplay
-                 muted
-                 loop
-                 playsinline
-                 preload="metadata">
-            <source src="/media/3DWSB.mp4" type="video/mp4">
-            您的浏览器不支持 HTML5 视频。
-          </video>
-        </div>
-    design:
-      columns: "1"
-      spacing:
-        padding: [0, 0, 0, 0]
-        
   # - block: markdown
   #   content:
   #     title: "Research Focus 🧐"
@@ -79,6 +57,32 @@ sections:
     design:
       view: article-grid
       columns: 2
+      spacing:
+        padding: ["10rem", 0, 0, 0]  # 移除底部padding
+
+  - block: markdown
+    id: loop-video
+    content:
+      title: ""   # 可留空；如果要标题就写在这里
+      text: |
+        <div style="position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; height:100svh; min-height:100vh; overflow:hidden;">
+          <video style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; object-position:center;"
+                 autoplay
+                 muted
+                 loop
+                 playsinline
+                 preload="metadata">
+            <source src="/media/3DWSB.mp4" type="video/mp4">
+            您的浏览器不支持 HTML5 视频。
+          </video>
+        </div>
+    design:
+      columns: "1"
+      spacing:
+        padding: [0, 0, 0, 0]
+
+
+
   - block: collection
     content:
       title:  Co-authored Publications 📝
