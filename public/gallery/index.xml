@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Gallery | Yu Wang</title>
-    <link>https://yuwang115.github.io/gallery/</link>
-      <atom:link href="https://yuwang115.github.io/gallery/index.xml" rel="self" type="application/rss+xml" />
+    <title>Gallery | Yu Wang | Antarctic Researcher</title>
+    <link>http://localhost:1313/gallery/</link>
+      <atom:link href="http://localhost:1313/gallery/index.xml" rel="self" type="application/rss+xml" />
     <description>Gallery</description>
     <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Tue, 14 May 2024 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://yuwang115.github.io/media/icon_hu_c21013a9daaf20fe.png</url>
+      <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
       <title>Gallery</title>
-      <link>https://yuwang115.github.io/gallery/</link>
+      <link>http://localhost:1313/gallery/</link>
     </image>
     
     <item>
       <title>Summer in Italy</title>
-      <link>https://yuwang115.github.io/gallery/italy2024/</link>
+      <link>http://localhost:1313/gallery/italy2024/</link>
       <pubDate>Tue, 14 May 2024 00:00:00 +0000</pubDate>
-      <guid>https://yuwang115.github.io/gallery/italy2024/</guid>
+      <guid>http://localhost:1313/gallery/italy2024/</guid>
       <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* ========== Full-bleed container (breaks out of article max-width) ========== */
