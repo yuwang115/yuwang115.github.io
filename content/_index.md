@@ -1,6 +1,6 @@
 ---
 # Leave the homepage title empty to use the site title
-title: ""
+title: "Yu Wang | Antarctic Researcher"
 date: 2025-08-21
 type: landing
 
