@@ -13,9 +13,25 @@
     </image>
     
     <item>
+      <title>Subglacial water amplifies Antarctic contributions to sea-level rise</title>
+      <link>https://yuwang115.github.io/publication/natcomm-2025-subglacial-water/</link>
+      <pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>https://yuwang115.github.io/publication/natcomm-2025-subglacial-water/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Evolution of the Antarctic Ice Sheet over the next three centuries from an ISMIP6 model ensemble</title>
+      <link>https://yuwang115.github.io/publication/earths-future-2024-ismip6/</link>
+      <pubDate>Sun, 01 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>https://yuwang115.github.io/publication/earths-future-2024-ismip6/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Example Talk</title>
       <link>https://yuwang115.github.io/event/example/</link>
-      <pubDate>Sat, 01 Jun 2030 13:00:00 +0000</pubDate>
+      <pubDate>Sat, 01 Jun 2024 13:00:00 +0000</pubDate>
       <guid>https://yuwang115.github.io/event/example/</guid>
       <description>&lt;div class=&#34;flex px-4 py-3 mb-6 rounded-md bg-primary-100 dark:bg-primary-900&#34;&gt;
 &lt;span class=&#34;pr-3 pt-1 text-primary-600 dark:text-primary-300&#34;&gt;
@@ -34,22 +50,6 @@
 &lt;p&gt;Further event details, including 
  such as image galleries, can be added to the body of this page.&lt;/p&gt;
 </description>
-    </item>
-    
-    <item>
-      <title>Subglacial water amplifies Antarctic contributions to sea-level rise</title>
-      <link>https://yuwang115.github.io/publication/natcomm-2025-subglacial-water/</link>
-      <pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://yuwang115.github.io/publication/natcomm-2025-subglacial-water/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Evolution of the Antarctic Ice Sheet over the next three centuries from an ISMIP6 model ensemble</title>
-      <link>https://yuwang115.github.io/publication/earths-future-2024-ismip6/</link>
-      <pubDate>Sun, 01 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>https://yuwang115.github.io/publication/earths-future-2024-ismip6/</guid>
-      <description></description>
     </item>
     
     <item>
@@ -433,7 +433,7 @@
 
 
 
-&lt;div id=&#34;chart-354279168&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;chart-128753946&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
 &lt;script&gt;
   async function fetchChartJSON() {
     console.debug(&#39;Hugo Blox fetching chart JSON...&#39;)
@@ -451,7 +451,7 @@
 
       fetchChartJSON().then(chart =&gt; {
         console.debug(&#39;Plotting chart...&#39;)
-        window.Plotly.newPlot(&#39;chart-354279168&#39;, chart.data, chart.layout, {responsive: true});
+        window.Plotly.newPlot(&#39;chart-128753946&#39;, chart.data, chart.layout, {responsive: true});
       });
     }, 500 );
   })();
