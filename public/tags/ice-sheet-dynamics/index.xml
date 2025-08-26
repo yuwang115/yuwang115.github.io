@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Ice Sheet Dynamics | Yu Wang</title>
-    <link>http://localhost:1313/tags/ice-sheet-dynamics/</link>
-      <atom:link href="http://localhost:1313/tags/ice-sheet-dynamics/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://yuwang115.github.io/tags/ice-sheet-dynamics/</link>
+      <atom:link href="https://yuwang115.github.io/tags/ice-sheet-dynamics/index.xml" rel="self" type="application/rss+xml" />
     <description>Ice Sheet Dynamics</description>
     <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Wed, 01 Jan 2025 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
+      <url>https://yuwang115.github.io/media/icon_hu_c21013a9daaf20fe.png</url>
       <title>Ice Sheet Dynamics</title>
-      <link>http://localhost:1313/tags/ice-sheet-dynamics/</link>
+      <link>https://yuwang115.github.io/tags/ice-sheet-dynamics/</link>
     </image>
     
     <item>
       <title>Subglacial water amplifies Antarctic contributions to sea-level rise</title>
-      <link>http://localhost:1313/publication/natcomm-2025-subglacial-water/</link>
+      <link>https://yuwang115.github.io/publication/natcomm-2025-subglacial-water/</link>
       <pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/publication/natcomm-2025-subglacial-water/</guid>
+      <guid>https://yuwang115.github.io/publication/natcomm-2025-subglacial-water/</guid>
       <description></description>
     </item>
     

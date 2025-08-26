@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ISMIP6 | Yu Wang</title>
-    <link>http://localhost:1313/tags/ismip6/</link>
-      <atom:link href="http://localhost:1313/tags/ismip6/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://yuwang115.github.io/tags/ismip6/</link>
+      <atom:link href="https://yuwang115.github.io/tags/ismip6/index.xml" rel="self" type="application/rss+xml" />
     <description>ISMIP6</description>
     <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Sun, 01 Sep 2024 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
+      <url>https://yuwang115.github.io/media/icon_hu_c21013a9daaf20fe.png</url>
       <title>ISMIP6</title>
-      <link>http://localhost:1313/tags/ismip6/</link>
+      <link>https://yuwang115.github.io/tags/ismip6/</link>
     </image>
     
     <item>
       <title>Evolution of the Antarctic Ice Sheet over the next three centuries from an ISMIP6 model ensemble</title>
-      <link>http://localhost:1313/publication/earths-future-2024-ismip6/</link>
+      <link>https://yuwang115.github.io/publication/earths-future-2024-ismip6/</link>
       <pubDate>Sun, 01 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/publication/earths-future-2024-ismip6/</guid>
+      <guid>https://yuwang115.github.io/publication/earths-future-2024-ismip6/</guid>
       <description></description>
     </item>
     
