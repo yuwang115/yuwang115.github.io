@@ -69,9 +69,9 @@ education:
     date_end: ''
     summary: |
       Thesis on understanding the Ice-Hydrology Interaction in Wilkes Subglacial Basin, East Antarctica. Supervised by Dr. Chen Zhao, Dr. Rupert Gladstone, Dr. Ben Galton-Fenzi and Prof. Poul Christoffersen.
-    button:
-      text: 'Read Thesis'
-      url: 'https://example.com'
+    # button:
+    #   text: 'Read Thesis'
+    #   url: 'https://example.com'
   - area: BSc (Hons) (Marine and Antarctic Science)
     institution: Institute for Marine and Antarctic Studies, University of Tasmania, AU
     date_start: 2019-07-01
@@ -101,13 +101,19 @@ work:
     company_logo: ''
     date_start: 2025-01-01
     date_end: ''
+  - position: Participant in Karthaus Summer School on Glaciology
+    company_name: The Institute for Marine and Atmospheric Research, Utrecht University
+    company_url: https://www.projects.science.uu.nl/iceclimate/karthaus/
+    company_logo: ''
+    date_start: 2024-05-21
+    date_end: 2024-06-01
   - position: Organiser and Host, UTAS Ice Sheets Group Meeting
     company_name: Institute for Marine and Antarctic Studies, University of Tasmania
     company_url: https://www.utas.edu.au/imas
     company_logo: ''
     date_start: 2023-06-01
     date_end: 2024-08-31
-  - position: Visiting Student in John Moore’s Lab
+  - position: Visiting Student in John Moore’s Group
     company_name: College of Global Change and Earth System Science, Beijing Normal University
     company_url: ''
     company_logo: ''
