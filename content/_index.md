@@ -22,7 +22,7 @@ sections:
       css_class: dark
       # Avatar customization
       avatar:
-        size: large  # Options: small (150px), medium (200px, default), large (320px), xl (400px), xxl (500px)
+        size: xxl  # Options: small (150px), medium (200px, default), large (320px), xl (400px), xxl (500px)
         shape: circle # Options: circle (default), square, rounded
       background:
         color: "black"
@@ -30,7 +30,7 @@ sections:
           # Add your image background to `assets/media/`.
           filename: "background.jpg"
           filters:
-            brightness: 0.5  # 暗化背景以提升文字可读性
+            brightness: 0.5  # 暗化背景以提升文字可读性、
             blur: 2px  # 轻微模糊背景，降低细节干扰
           size: cover
           position: center
@@ -108,7 +108,7 @@ sections:
       count: 6
     design:
       view: article-grid
-      columns: 1
+      columns: 3
   # - block: collection
   #   id: talks
   #   content:
