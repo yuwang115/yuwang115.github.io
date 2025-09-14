@@ -373,5 +373,108 @@
 &lt;/script&gt;</description>
     </item>
     
+    <item>
+      <title>Tasmania: My Second Homeland</title>
+      <link>http://localhost:1313/gallery/tas/</link>
+      <pubDate>Sun, 05 Nov 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/gallery/tas/</guid>
+      <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
+&lt;style&gt;
+/* Hide published date just for this page */
+.article-metadata time, .page-header .article-date { display: none !important; }
+/* ========== Full-bleed container (breaks out of article max-width) ========== */
+.gallery-bleed { width: 100vw; max-width: 1800px; margin-left: 50%; transform: translateX(-50%); }
+
+/* ========== Masonry columns ========== */
+.masonry { column-gap: 18px; }
+@media (min-width: 420px){ .masonry { column-count: 2; } }
+@media (min-width: 768px){ .masonry { column-count: 3; } }
+@media (min-width: 1024px){ .masonry { column-count: 4; } }
+@media (min-width: 1280px){ .masonry { column-count: 5; } }
+@media (min-width: 1536px){ .masonry { column-count: 6; } }
+
+/* Items reset &amp; spacing */
+.masonry figure{ margin:0; }
+.masonry-item { break-inside: avoid; margin: 0 0 18px; position: relative; overflow: hidden; border-radius: 10px; background: transparent; }
+
+/* Shimmer placeholder */
+.masonry-item::before { content:&#34;&#34;; position:absolute; inset:0; background: linear-gradient(90deg, #eee 0%, #f6f6f6 50%, #eee 100%); background-size:200% 100%; animation: shimmer 1.2s infinite; opacity: 1; transition: opacity .3s ease; }
+.masonry-item.loaded::before { opacity: 0; animation: none; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* Blur-up effect while loading; keep original aspect ratio */
+.masonry-item img { width:100%; height:auto; display:block; filter: blur(12px); opacity: .85; transform: scale(1.02); transition: filter .45s ease, transform .45s ease, opacity .35s ease; }
+.masonry-item.loaded img { filter: blur(0); transform: none; opacity: 1; }
+
+/* Lightbox */
+#lightbox { padding:0; border:none; background: transparent; }
+#lightbox::backdrop { background: rgba(0,0,0,.85); }
+#lightbox img { max-width: 92vw; max-height: 92vh; display:block; }
+&lt;/style&gt;
+&lt;div class=&#34;gallery-bleed&#34;&gt;
+  &lt;div class=&#34;masonry&#34;&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC00070.JPG&#34;&gt;&lt;img data-src=&#34;DSC00070.JPG&#34; alt=&#34;DSC00070&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC00078.JPG&#34;&gt;&lt;img data-src=&#34;DSC00078.JPG&#34; alt=&#34;DSC00078&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC00105.JPG&#34;&gt;&lt;img data-src=&#34;DSC00105.JPG&#34; alt=&#34;DSC00105&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC00214.JPG&#34;&gt;&lt;img data-src=&#34;DSC00214.JPG&#34; alt=&#34;DSC00214&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC00251.JPG&#34;&gt;&lt;img data-src=&#34;DSC00251.JPG&#34; alt=&#34;DSC00251&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC00311.JPG&#34;&gt;&lt;img data-src=&#34;DSC00311.JPG&#34; alt=&#34;DSC00311&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC00562.JPG&#34;&gt;&lt;img data-src=&#34;DSC00562.JPG&#34; alt=&#34;DSC00562&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC00730.jpeg&#34;&gt;&lt;img data-src=&#34;DSC00730.jpeg&#34; alt=&#34;DSC00730&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC02512.jpeg&#34;&gt;&lt;img data-src=&#34;DSC02512.jpeg&#34; alt=&#34;DSC02512&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC02552.jpeg&#34;&gt;&lt;img data-src=&#34;DSC02552.jpeg&#34; alt=&#34;DSC02552&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC02562.jpeg&#34;&gt;&lt;img data-src=&#34;DSC02562.jpeg&#34; alt=&#34;DSC02562&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC02569.jpeg&#34;&gt;&lt;img data-src=&#34;DSC02569.jpeg&#34; alt=&#34;DSC02569&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC02796.jpeg&#34;&gt;&lt;img data-src=&#34;DSC02796.jpeg&#34; alt=&#34;DSC02796&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC04918.jpeg&#34;&gt;&lt;img data-src=&#34;DSC04918.jpeg&#34; alt=&#34;DSC04918&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC04996.jpeg&#34;&gt;&lt;img data-src=&#34;DSC04996.jpeg&#34; alt=&#34;DSC04996&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC08480.jpeg&#34;&gt;&lt;img data-src=&#34;DSC08480.jpeg&#34; alt=&#34;DSC08480&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC08600.jpeg&#34;&gt;&lt;img data-src=&#34;DSC08600.jpeg&#34; alt=&#34;DSC08600&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC08769.jpeg&#34;&gt;&lt;img data-src=&#34;DSC08769.jpeg&#34; alt=&#34;DSC08769&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC09209.jpeg&#34;&gt;&lt;img data-src=&#34;DSC09209.jpeg&#34; alt=&#34;DSC09209&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC09545.JPG&#34;&gt;&lt;img data-src=&#34;DSC09545.JPG&#34; alt=&#34;DSC09545&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC09590.JPG&#34;&gt;&lt;img data-src=&#34;DSC09590.JPG&#34; alt=&#34;DSC09590&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC09828.JPG&#34;&gt;&lt;img data-src=&#34;DSC09828.JPG&#34; alt=&#34;DSC09828&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;DSC09909.JPG&#34;&gt;&lt;img data-src=&#34;DSC09909.JPG&#34; alt=&#34;DSC09909&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;GOPR0431.JPG&#34;&gt;&lt;img data-src=&#34;GOPR0431.JPG&#34; alt=&#34;GOPR0431&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;IMG_0650.JPG&#34;&gt;&lt;img data-src=&#34;IMG_0650.JPG&#34; alt=&#34;IMG_0650&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;IMG_1256.jpeg&#34;&gt;&lt;img data-src=&#34;IMG_1256.jpeg&#34; alt=&#34;IMG_1256&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;IMG_1970.jpeg&#34;&gt;&lt;img data-src=&#34;IMG_1970.jpeg&#34; alt=&#34;IMG_1970&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+    &lt;figure class=&#34;masonry-item&#34;&gt;&lt;a href=&#34;IMG_3430.jpeg&#34;&gt;&lt;img data-src=&#34;IMG_3430.jpeg&#34; alt=&#34;IMG_3430&#34; decoding=&#34;async&#34; fetchpriority=&#34;low&#34;&gt;&lt;/a&gt;&lt;/figure&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;dialog id=&#34;lightbox&#34;&gt;&lt;img id=&#34;lightbox-img&#34; alt=&#34;&#34;&gt;&lt;/dialog&gt;
+&lt;script&gt;
+(function(){
+  // Lazy-load with IntersectionObserver
+  const io = &#39;IntersectionObserver&#39; in window ? new IntersectionObserver((entries, obs) =&gt; {
+    entries.forEach(e =&gt; {
+      if (!e.isIntersecting) return;
+      const img = e.target; const fig = img.closest(&#39;.masonry-item&#39;);
+      img.src = img.dataset.src;
+      img.addEventListener(&#39;load&#39;, () =&gt; { fig.classList.add(&#39;loaded&#39;); }, { once:true });
+      obs.unobserve(img);
+    });
+  }, { rootMargin: &#39;200px&#39; }) : null;
+
+  document.querySelectorAll(&#39;.masonry-item img[data-src]&#39;).forEach(img =&gt; {
+    if (io) io.observe(img); else { img.src = img.dataset.src; img.addEventListener(&#39;load&#39;, () =&gt; img.closest(&#39;.masonry-item&#39;).classList.add(&#39;loaded&#39;), { once:true }); }
+  });
+
+  // Simple lightbox using &lt;dialog&gt;
+  const dlg = document.getElementById(&#39;lightbox&#39;);
+  const dlgImg = document.getElementById(&#39;lightbox-img&#39;);
+  document.querySelectorAll(&#39;.masonry-item a&#39;).forEach(a =&gt; {
+    a.addEventListener(&#39;click&#39;, (ev) =&gt; {
+      ev.preventDefault();
+      dlgImg.src = a.getAttribute(&#39;href&#39;);
+      if (typeof dlg.showModal === &#39;function&#39;) dlg.showModal();
+    });
+  });
+  dlg &amp;&amp; dlg.addEventListener(&#39;click&#39;, () =&gt; dlg.close());
+})();
+&lt;/script&gt;</description>
+    </item>
+    
   </channel>
 </rss>

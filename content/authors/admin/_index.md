@@ -89,14 +89,20 @@ education:
     date_end: 2021-07-10
 
 work:
-  - position: Lecturer, Kioloa Winter School:Antarctic Tipping Points
-    company_name: Australian National University
+  - position: Teaching Assistant for the course Ice Sheets, Climate & Sea Level Rise
+    company_name: Institute for Marine and Antarctic Studies, University of Tasmania
+    company_url: 
+    company_logo: ''
+    date_start: 2025-09-01
+    date_end: 2025-10-30
+  - position: Lecturer, Kioloa Winter School — Antarctic Tipping Points
+    company_name:
     company_url: https://ksw.anu.edu.au/
     company_logo: ''
     date_start: 2025-06-01
     date_end: 2025-06-30
   - position: Convenor of the WilkesMIP Project
-    company_name: 'WilkesMIP'
+    company_name: ''
     company_url: https://modellinghub.ucraft.site/wilkesmip
     company_logo: ''
     date_start: 2025-01-01
@@ -107,7 +113,7 @@ work:
     company_logo: ''
     date_start: 2024-05-21
     date_end: 2024-06-01
-  - position: Organiser and Host, UTAS Ice Sheets Group Meeting
+  - position: Organiser and Host of UTAS Ice Sheets Group Meeting
     company_name: Institute for Marine and Antarctic Studies, University of Tasmania
     company_url: https://www.utas.edu.au/imas
     company_logo: ''
@@ -284,6 +290,6 @@ publications:
 
 ## About Me
 
-Yu Wang (王禹) is a third-year PhD candidate in glaciology at the Institute for Marine and Antarctic Studies, University of Tasmania, and a member of the Australian Antarctic Program Partnership. He uses numerical models to investigate Antarctic ice dynamics, subglacial hydrology, and ice–ocean interactions, with the goal of improving projections of sea-level rise. 
+Yu Wang (王禹) is a third-year PhD candidate in glaciology at the Institute for Marine and Antarctic Studies, University of Tasmania, and a member of the Australian Antarctic Program Partnership. My research uses numerical models to investigate Antarctic ice dynamics, subglacial hydrology, and ice–ocean interactions, with the goal of improving projections of future sea-level rise.
 
-Originally from China, Yu now calls Tasmania—the heart-shaped island at Australia’s southern tip—home while he studies the frozen south. Yu spends weekdays modelling ice and weekends collecting elevation—on hiking trails, climbing routes, badminton courts, and the odd rocky shoreline with a camera (or a fishing rod).
+Originally from China, I now call Tasmania—Australia’s heart-shaped southern island—home while I study the frozen south. During weekdays, I model ice sheets on supercomputers; on weekends, you’ll often find me outdoors on hiking trails, climbing routes, badminton courts, or by the shoreline with a camera (or a fishing rod).
