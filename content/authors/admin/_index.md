@@ -107,6 +107,18 @@ work:
     company_logo: ''
     date_start: 2025-01-01
     date_end: ''
+  - position: Peer Reviewer
+    company_name: Nature Communications
+    company_url: https://www.nature.com/ncomms/
+    company_logo: ''
+    date_start: 2025-04-01
+    date_end: ''
+  - position: Invited Seminar Presentation
+    company_name: Shanghai Jiao Tong University, School of Oceanography
+    company_url: 
+    company_logo: ''
+    date_start: 2024-12-01
+    date_end: 2024-12-01
   - position: Participant in Karthaus Summer School on Glaciology
     company_name: The Institute for Marine and Atmospheric Research, Utrecht University
     company_url: https://www.projects.science.uu.nl/iceclimate/karthaus/
@@ -125,7 +137,7 @@ work:
     company_logo: ''
     date_start: 2021-09-01
     date_end: 2022-02-01
-  - position: Honours Project Student
+  - position: Honours Project Student — First Class Honours (H1)
     company_name: Institute for Marine and Antarctic Studies, University of Tasmania
     company_url: https://www.utas.edu.au/imas
     company_logo: ''
