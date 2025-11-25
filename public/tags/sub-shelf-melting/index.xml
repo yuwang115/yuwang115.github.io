@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Antarctic Ice Sheet | Yu Wang | Antarctic Researcher</title>
-    <link>http://localhost:1313/tags/antarctic-ice-sheet/</link>
-      <atom:link href="http://localhost:1313/tags/antarctic-ice-sheet/index.xml" rel="self" type="application/rss+xml" />
-    <description>Antarctic Ice Sheet</description>
+    <title>Sub-Shelf Melting | Yu Wang | Antarctic Researcher</title>
+    <link>http://localhost:1313/tags/sub-shelf-melting/</link>
+      <atom:link href="http://localhost:1313/tags/sub-shelf-melting/index.xml" rel="self" type="application/rss+xml" />
+    <description>Sub-Shelf Melting</description>
     <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Tue, 14 Oct 2025 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
-      <title>Antarctic Ice Sheet</title>
-      <link>http://localhost:1313/tags/antarctic-ice-sheet/</link>
+      <title>Sub-Shelf Melting</title>
+      <link>http://localhost:1313/tags/sub-shelf-melting/</link>
     </image>
     
     <item>
@@ -17,14 +17,6 @@
       <link>http://localhost:1313/publication/egusphere-2025-ismip6-uncertainty/</link>
       <pubDate>Tue, 14 Oct 2025 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/publication/egusphere-2025-ismip6-uncertainty/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Evolution of the Antarctic Ice Sheet over the next three centuries from an ISMIP6 model ensemble</title>
-      <link>http://localhost:1313/publication/earths-future-2024-ismip6/</link>
-      <pubDate>Sun, 01 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/publication/earths-future-2024-ismip6/</guid>
       <description></description>
     </item>
     

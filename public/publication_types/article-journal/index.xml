@@ -5,12 +5,20 @@
     <link>http://localhost:1313/publication_types/article-journal/</link>
       <atom:link href="http://localhost:1313/publication_types/article-journal/index.xml" rel="self" type="application/rss+xml" />
     <description>Article-Journal</description>
-    <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Wed, 01 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Tue, 14 Oct 2025 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
       <title>Article-Journal</title>
       <link>http://localhost:1313/publication_types/article-journal/</link>
     </image>
+    
+    <item>
+      <title>Disentangling uncertainty in ISMIP6 Antarctic sub-shelf melting and 2300 sea level rise projections</title>
+      <link>http://localhost:1313/publication/egusphere-2025-ismip6-uncertainty/</link>
+      <pubDate>Tue, 14 Oct 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/publication/egusphere-2025-ismip6-uncertainty/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Subglacial water amplifies Antarctic contributions to sea-level rise</title>
