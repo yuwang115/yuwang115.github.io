@@ -1,37 +1,6 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Antarctica | Yu Wang | Antarctic Researcher</title>
-    <link>http://localhost:1313/tags/antarctica/</link>
-      <atom:link href="http://localhost:1313/tags/antarctica/index.xml" rel="self" type="application/rss+xml" />
-    <description>Antarctica</description>
-    <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Wed, 01 Jan 2025 00:00:00 +0000</lastBuildDate>
-    <image>
-      <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
-      <title>Antarctica</title>
-      <link>http://localhost:1313/tags/antarctica/</link>
-    </image>
-    
-    <item>
-      <title>Subglacial water amplifies Antarctic contributions to sea-level rise</title>
-      <link>http://localhost:1313/publication/natcomm-2025-subglacial-water/</link>
-      <pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/publication/natcomm-2025-subglacial-water/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Thermal structure of the Amery Ice Shelf from borehole observations and simulations</title>
-      <link>http://localhost:1313/publication/cryosphere-2022-amery/</link>
-      <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/publication/cryosphere-2022-amery/</guid>
-      <description>&lt;!-- &lt;figure&gt;&lt;img src=&#34;http://localhost:1313/publication/cryosphere-2022-amery/temperature.png&#34;
-    alt=&#34;Temperature field map&#34;&gt;&lt;figcaption&gt;
-      &lt;p&gt;Additional figure: Temperature field snapshot from the study.&lt;/p&gt;
-    &lt;/figcaption&gt;
-&lt;/figure&gt;
- --&gt;</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Antarctica | Yu Wang | Antarctic Researcher</title><link>https://yuwang115.github.io/tags/antarctica/</link><atom:link href="https://yuwang115.github.io/tags/antarctica/index.xml" rel="self" type="application/rss+xml"/><description>Antarctica</description><generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Wed, 01 Jan 2025 00:00:00 +0000</lastBuildDate><image><url>https://yuwang115.github.io/media/icon_hu_c21013a9daaf20fe.png</url><title>Antarctica</title><link>https://yuwang115.github.io/tags/antarctica/</link></image><item><title>Subglacial water amplifies Antarctic contributions to sea-level rise</title><link>https://yuwang115.github.io/publication/natcomm-2025-subglacial-water/</link><pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate><guid>https://yuwang115.github.io/publication/natcomm-2025-subglacial-water/</guid><description/></item><item><title>Thermal structure of the Amery Ice Shelf from borehole observations and simulations</title><link>https://yuwang115.github.io/publication/cryosphere-2022-amery/</link><pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate><guid>https://yuwang115.github.io/publication/cryosphere-2022-amery/</guid><description>&lt;!-- &lt;figure>&lt;img src="https://yuwang115.github.io/publication/cryosphere-2022-amery/temperature.png"
+alt="Temperature field map">&lt;figcaption>
+&lt;p>Additional figure: Temperature field snapshot from the study.&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+--></description></item></channel></rss>

@@ -2,29 +2,29 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Yu Wang | Antarctic Researcher</title>
-    <link>http://localhost:1313/</link>
-      <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <link>//:1313/</link>
+      <atom:link href="//:1313/index.xml" rel="self" type="application/rss+xml" />
     <description>Yu Wang | Antarctic Researcher</description>
     <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Thu, 21 Aug 2025 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
+      <url>//:1313/media/icon_hu_c21013a9daaf20fe.png</url>
       <title>Yu Wang | Antarctic Researcher</title>
-      <link>http://localhost:1313/</link>
+      <link>//:1313/</link>
     </image>
     
     <item>
       <title>Disentangling uncertainty in ISMIP6 Antarctic sub-shelf melting and 2300 sea level rise projections</title>
-      <link>http://localhost:1313/publication/egusphere-2025-ismip6-uncertainty/</link>
+      <link>//:1313/publication/egusphere-2025-ismip6-uncertainty/</link>
       <pubDate>Tue, 14 Oct 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/publication/egusphere-2025-ismip6-uncertainty/</guid>
+      <guid>//:1313/publication/egusphere-2025-ismip6-uncertainty/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Cinematic Sydney</title>
-      <link>http://localhost:1313/gallery/sydney2025/</link>
+      <link>//:1313/gallery/sydney2025/</link>
       <pubDate>Sat, 30 Aug 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gallery/sydney2025/</guid>
+      <guid>//:1313/gallery/sydney2025/</guid>
       <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* ========== Full-bleed container (breaks out of article max-width) ========== */
@@ -106,9 +106,9 @@
     
     <item>
       <title>Brisbane, Wrapped in Warmth</title>
-      <link>http://localhost:1313/gallery/brisbane2025/</link>
+      <link>//:1313/gallery/brisbane2025/</link>
       <pubDate>Tue, 08 Jul 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gallery/brisbane2025/</guid>
+      <guid>//:1313/gallery/brisbane2025/</guid>
       <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* ========== Full-bleed container (breaks out of article max-width) ========== */
@@ -190,9 +190,9 @@
     
     <item>
       <title>Xue Long 2 🇨🇳</title>
-      <link>http://localhost:1313/gallery/xuelong-2/</link>
+      <link>//:1313/gallery/xuelong-2/</link>
       <pubDate>Sun, 27 Apr 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gallery/xuelong-2/</guid>
+      <guid>//:1313/gallery/xuelong-2/</guid>
       <description>&lt;div class=&#34;text-bleed&#34;&gt;
   &lt;p&gt;I was fortunate to visit Xuelong 2, China’s most advanced polar research vessel. With its pioneering two-way icebreaking technology, it has recently returned from a nearly six-month Antarctic mission — the 41st of its kind. Deep gratitude to Professor Zhang Zhaoru for his thoughtful and inspiring guidance.&lt;/p&gt;
   &lt;p&gt;Stepping onto the deck, I couldn’t help but feel a surge of warmth and pride 🇨🇳.&lt;/p&gt;
@@ -281,25 +281,25 @@
     
     <item>
       <title>Subglacial water amplifies Antarctic contributions to sea-level rise</title>
-      <link>http://localhost:1313/publication/natcomm-2025-subglacial-water/</link>
+      <link>//:1313/publication/natcomm-2025-subglacial-water/</link>
       <pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/publication/natcomm-2025-subglacial-water/</guid>
+      <guid>//:1313/publication/natcomm-2025-subglacial-water/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Evolution of the Antarctic Ice Sheet over the next three centuries from an ISMIP6 model ensemble</title>
-      <link>http://localhost:1313/publication/earths-future-2024-ismip6/</link>
+      <link>//:1313/publication/earths-future-2024-ismip6/</link>
       <pubDate>Sun, 01 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/publication/earths-future-2024-ismip6/</guid>
+      <guid>//:1313/publication/earths-future-2024-ismip6/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Example Talk</title>
-      <link>http://localhost:1313/event/example/</link>
+      <link>//:1313/event/example/</link>
       <pubDate>Sat, 01 Jun 2024 13:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/event/example/</guid>
+      <guid>//:1313/event/example/</guid>
       <description>&lt;div class=&#34;flex px-4 py-3 mb-6 rounded-md bg-primary-100 dark:bg-primary-900&#34;&gt;
 &lt;span class=&#34;pr-3 pt-1 text-primary-600 dark:text-primary-300&#34;&gt;
   &lt;svg height=&#34;24&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 24 24&#34;&gt;&lt;path fill=&#34;none&#34; stroke=&#34;currentColor&#34; stroke-linecap=&#34;round&#34; stroke-linejoin=&#34;round&#34; stroke-width=&#34;1.5&#34; d=&#34;m11.25 11.25l.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0a9 9 0 0 1 18 0m-9-3.75h.008v.008H12z&#34;/&gt;&lt;/svg&gt;
@@ -321,9 +321,9 @@
     
     <item>
       <title>Summer in Italy</title>
-      <link>http://localhost:1313/gallery/italy2024/</link>
+      <link>//:1313/gallery/italy2024/</link>
       <pubDate>Tue, 14 May 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gallery/italy2024/</guid>
+      <guid>//:1313/gallery/italy2024/</guid>
       <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* ========== Full-bleed container (breaks out of article max-width) ========== */
@@ -423,17 +423,17 @@
     
     <item>
       <title>Sensitivity of the future evolution of the Wilkes Subglacial Basin ice sheet to grounding-line melt parameterizations</title>
-      <link>http://localhost:1313/publication/cryosphere-2024-wsb-melt-param/</link>
+      <link>//:1313/publication/cryosphere-2024-wsb-melt-param/</link>
       <pubDate>Mon, 01 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/publication/cryosphere-2024-wsb-melt-param/</guid>
+      <guid>//:1313/publication/cryosphere-2024-wsb-melt-param/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Tasmania: My Second Homeland</title>
-      <link>http://localhost:1313/gallery/tas/</link>
+      <link>//:1313/gallery/tas/</link>
       <pubDate>Sun, 05 Nov 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/gallery/tas/</guid>
+      <guid>//:1313/gallery/tas/</guid>
       <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* Hide published date just for this page */
@@ -534,9 +534,9 @@
     
     <item>
       <title>🎉 Easily create your own simple yet highly customizable blog</title>
-      <link>http://localhost:1313/post/get-started/</link>
+      <link>//:1313/post/get-started/</link>
       <pubDate>Fri, 27 Oct 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/post/get-started/</guid>
+      <guid>//:1313/post/get-started/</guid>
       <description>&lt;p&gt;Welcome 👋&lt;/p&gt;
 
 
@@ -644,9 +644,9 @@
     
     <item>
       <title>🧠 Sharpen your thinking with a second brain</title>
-      <link>http://localhost:1313/post/second-brain/</link>
+      <link>//:1313/post/second-brain/</link>
       <pubDate>Thu, 26 Oct 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/post/second-brain/</guid>
+      <guid>//:1313/post/second-brain/</guid>
       <description>&lt;p&gt;Create a personal knowledge base and share your knowledge with your peers.&lt;/p&gt;
 &lt;p&gt;Hugo Blox web framework empowers you with one of the most flexible note-taking capabilities out there.&lt;/p&gt;
 &lt;p&gt;Create a powerful knowledge base that works on top of a local folder of plain text Markdown files.&lt;/p&gt;
@@ -757,9 +757,9 @@
     
     <item>
       <title>📈 Communicate your results effectively with the best data visualizations</title>
-      <link>http://localhost:1313/post/data-visualization/</link>
+      <link>//:1313/post/data-visualization/</link>
       <pubDate>Wed, 25 Oct 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/post/data-visualization/</guid>
+      <guid>//:1313/post/data-visualization/</guid>
       <description>&lt;p&gt;Hugo Blox is designed to give technical content creators a seamless experience. You can focus on the content and Hugo Blox handles the rest.&lt;/p&gt;
 &lt;p&gt;Use popular tools such as Plotly, Mermaid, and data frames.&lt;/p&gt;
 &lt;h2 id=&#34;charts&#34;&gt;Charts&lt;/h2&gt;
@@ -771,7 +771,7 @@
 
 
 
-&lt;div id=&#34;chart-837421956&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;chart-251739468&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
 &lt;script&gt;
   async function fetchChartJSON() {
     console.debug(&#39;Hugo Blox fetching chart JSON...&#39;)
@@ -789,7 +789,7 @@
 
       fetchChartJSON().then(chart =&gt; {
         console.debug(&#39;Plotting chart...&#39;)
-        window.Plotly.newPlot(&#39;chart-837421956&#39;, chart.data, chart.layout, {responsive: true});
+        window.Plotly.newPlot(&#39;chart-251739468&#39;, chart.data, chart.layout, {responsive: true});
       });
     }, 500 );
   })();
@@ -969,9 +969,9 @@ Crash --&gt; [*]
     
     <item>
       <title>👩🏼‍🏫 Teach academic courses</title>
-      <link>http://localhost:1313/post/teach-courses/</link>
+      <link>//:1313/post/teach-courses/</link>
       <pubDate>Tue, 24 Oct 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/post/teach-courses/</guid>
+      <guid>//:1313/post/teach-courses/</guid>
       <description>&lt;p&gt;
  is designed to give technical content creators a seamless experience. You can focus on the content and the Hugo Blox Builder which this template is built upon handles the rest.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Embed videos, podcasts, code, LaTeX math, and even test students!&lt;/strong&gt;&lt;/p&gt;
@@ -1027,7 +1027,7 @@ Crash --&gt; [*]
 
 
 &lt;audio controls &gt;
-  &lt;source src=&#34;http://localhost:1313/post/teach-courses/ambient-piano.mp3&#34; type=&#34;audio/mpeg&#34;&gt;
+  &lt;source src=&#34;//:1313/post/teach-courses/ambient-piano.mp3&#34; type=&#34;audio/mpeg&#34;&gt;
 &lt;/audio&gt;
 
 &lt;h2 id=&#34;test-students&#34;&gt;Test students&lt;/h2&gt;
@@ -1086,17 +1086,17 @@ data.head()
     
     <item>
       <title>Experience</title>
-      <link>http://localhost:1313/experience/</link>
+      <link>//:1313/experience/</link>
       <pubDate>Tue, 24 Oct 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/experience/</guid>
+      <guid>//:1313/experience/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Learn JavaScript</title>
-      <link>http://localhost:1313/teaching/js/</link>
+      <link>//:1313/teaching/js/</link>
       <pubDate>Tue, 24 Oct 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/teaching/js/</guid>
+      <guid>//:1313/teaching/js/</guid>
       <description>&lt;p&gt;
  is designed to give technical content creators a seamless experience. You can focus on the content and the Hugo Blox Builder which this template is built upon handles the rest.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Embed videos, podcasts, code, LaTeX math, and even test students!&lt;/strong&gt;&lt;/p&gt;
@@ -1141,7 +1141,7 @@ data.head()
 
 
 &lt;audio controls &gt;
-  &lt;source src=&#34;http://localhost:1313/teaching/js/ambient-piano.mp3&#34; type=&#34;audio/mpeg&#34;&gt;
+  &lt;source src=&#34;//:1313/teaching/js/ambient-piano.mp3&#34; type=&#34;audio/mpeg&#34;&gt;
 &lt;/audio&gt;
 
 &lt;h2 id=&#34;test-students&#34;&gt;Test students&lt;/h2&gt;
@@ -1218,9 +1218,9 @@ data.head()
     
     <item>
       <title>Learn Python</title>
-      <link>http://localhost:1313/teaching/python/</link>
+      <link>//:1313/teaching/python/</link>
       <pubDate>Tue, 24 Oct 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/teaching/python/</guid>
+      <guid>//:1313/teaching/python/</guid>
       <description>&lt;p&gt;
  is designed to give technical content creators a seamless experience. You can focus on the content and the Hugo Blox Builder which this template is built upon handles the rest.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Embed videos, podcasts, code, LaTeX math, and even test students!&lt;/strong&gt;&lt;/p&gt;
@@ -1265,7 +1265,7 @@ data.head()
 
 
 &lt;audio controls &gt;
-  &lt;source src=&#34;http://localhost:1313/teaching/python/ambient-piano.mp3&#34; type=&#34;audio/mpeg&#34;&gt;
+  &lt;source src=&#34;//:1313/teaching/python/ambient-piano.mp3&#34; type=&#34;audio/mpeg&#34;&gt;
 &lt;/audio&gt;
 
 &lt;h2 id=&#34;test-students&#34;&gt;Test students&lt;/h2&gt;
@@ -1342,9 +1342,9 @@ data.head()
     
     <item>
       <title>✅ Manage your projects</title>
-      <link>http://localhost:1313/post/project-management/</link>
+      <link>//:1313/post/project-management/</link>
       <pubDate>Mon, 23 Oct 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/post/project-management/</guid>
+      <guid>//:1313/post/project-management/</guid>
       <description>&lt;p&gt;Easily manage your projects - create ideation mind maps, Gantt charts, todo lists, and more!&lt;/p&gt;
 &lt;h2 id=&#34;ideation&#34;&gt;Ideation&lt;/h2&gt;
 &lt;p&gt;Hugo Blox supports a Markdown extension for mindmaps.&lt;/p&gt;
@@ -1417,10 +1417,10 @@ Parallel 4   :         des6, after des4, 1d
     
     <item>
       <title>Thermal structure of the Amery Ice Shelf from borehole observations and simulations</title>
-      <link>http://localhost:1313/publication/cryosphere-2022-amery/</link>
+      <link>//:1313/publication/cryosphere-2022-amery/</link>
       <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/publication/cryosphere-2022-amery/</guid>
-      <description>&lt;!-- &lt;figure&gt;&lt;img src=&#34;http://localhost:1313/publication/cryosphere-2022-amery/temperature.png&#34;
+      <guid>//:1313/publication/cryosphere-2022-amery/</guid>
+      <description>&lt;!-- &lt;figure&gt;&lt;img src=&#34;//:1313/publication/cryosphere-2022-amery/temperature.png&#34;
     alt=&#34;Temperature field map&#34;&gt;&lt;figcaption&gt;
       &lt;p&gt;Additional figure: Temperature field snapshot from the study.&lt;/p&gt;
     &lt;/figcaption&gt;
