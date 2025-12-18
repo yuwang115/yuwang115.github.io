@@ -1,1 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Global Sea-Level Rise | Yu Wang | Antarctic Researcher</title><link>https://yuwang115.github.io/tags/global-sea-level-rise/</link><atom:link href="https://yuwang115.github.io/tags/global-sea-level-rise/index.xml" rel="self" type="application/rss+xml"/><description>Global Sea-Level Rise</description><generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Sun, 01 Sep 2024 00:00:00 +0000</lastBuildDate><image><url>https://yuwang115.github.io/media/icon_hu_c21013a9daaf20fe.png</url><title>Global Sea-Level Rise</title><link>https://yuwang115.github.io/tags/global-sea-level-rise/</link></image><item><title>Evolution of the Antarctic Ice Sheet over the next three centuries from an ISMIP6 model ensemble</title><link>https://yuwang115.github.io/publication/earths-future-2024-ismip6/</link><pubDate>Sun, 01 Sep 2024 00:00:00 +0000</pubDate><guid>https://yuwang115.github.io/publication/earths-future-2024-ismip6/</guid><description/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Global Sea-Level Rise | Yu Wang | Antarctic Researcher</title>
+    <link>//:1313/tags/global-sea-level-rise/</link>
+      <atom:link href="//:1313/tags/global-sea-level-rise/index.xml" rel="self" type="application/rss+xml" />
+    <description>Global Sea-Level Rise</description>
+    <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Sun, 01 Sep 2024 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>//:1313/media/icon_hu_c21013a9daaf20fe.png</url>
+      <title>Global Sea-Level Rise</title>
+      <link>//:1313/tags/global-sea-level-rise/</link>
+    </image>
+    
+    <item>
+      <title>Evolution of the Antarctic Ice Sheet over the next three centuries from an ISMIP6 model ensemble</title>
+      <link>//:1313/publication/earths-future-2024-ismip6/</link>
+      <pubDate>Sun, 01 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>//:1313/publication/earths-future-2024-ismip6/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

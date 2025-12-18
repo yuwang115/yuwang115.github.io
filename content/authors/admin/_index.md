@@ -58,9 +58,10 @@ interests:
   - Antarctic ice dynamics
   - Ice sheet / ice shelf modelling
   - Subglacial hydrology
-  - Sea-level rise projections
-  - Ice–ocean interactions
   - Geoengineering interventions
+  - Climate and sea-level change
+  - Ice–ocean interactions
+
 
 education:
   - area: PhD (Marine and Antarctic Studies)
@@ -68,7 +69,7 @@ education:
     date_start: 2022-08-15
     date_end: ''
     summary: |
-      Thesis on understanding the Ice-Hydrology Interaction in Wilkes Subglacial Basin, East Antarctica. Supervised by Dr. Chen Zhao, Dr. Rupert Gladstone, Dr. Ben Galton-Fenzi and Prof. Poul Christoffersen.
+      Thesis: Understanding the Future of the Wilkes Subglacial Basin, East Antarctica. Supervised by Dr. Chen Zhao, Dr. Rupert Gladstone, Dr. Ben Galton-Fenzi and Prof. Poul Christoffersen.
     # button:
     #   text: 'Read Thesis'
     #   url: 'https://example.com'
@@ -88,62 +89,6 @@ education:
     date_start: 2017-08-24
     date_end: 2021-07-10
 
-work:
-  - position: Teaching Assistant for the course Ice Sheets, Climate & Sea Level Rise
-    company_name: Institute for Marine and Antarctic Studies, University of Tasmania
-    company_url: 
-    company_logo: ''
-    date_start: 2025-09-01
-    date_end: 2025-10-30
-  - position: Lecturer, Kioloa Winter School — Antarctic Tipping Points
-    company_name:
-    company_url: https://ksw.anu.edu.au/
-    company_logo: ''
-    date_start: 2025-06-01
-    date_end: 2025-06-30
-  - position: Convenor of the WilkesMIP Project
-    company_name: ''
-    company_url: https://modellinghub.ucraft.site/wilkesmip
-    company_logo: ''
-    date_start: 2025-01-01
-    date_end: ''
-  - position: Peer Reviewer
-    company_name: Nature Communications
-    company_url: https://www.nature.com/ncomms/
-    company_logo: ''
-    date_start: 2025-04-01
-    date_end: ''
-  - position: Invited Seminar Presentation
-    company_name: Shanghai Jiao Tong University, School of Oceanography
-    company_url: 
-    company_logo: ''
-    date_start: 2024-12-01
-    date_end: 2024-12-01
-  - position: Participant in Karthaus Summer School on Glaciology
-    company_name: The Institute for Marine and Atmospheric Research, Utrecht University
-    company_url: https://www.projects.science.uu.nl/iceclimate/karthaus/
-    company_logo: ''
-    date_start: 2024-05-21
-    date_end: 2024-06-01
-  - position: Organiser and Host of UTAS Ice Sheets Group Meeting
-    company_name: Institute for Marine and Antarctic Studies, University of Tasmania
-    company_url: https://www.utas.edu.au/imas
-    company_logo: ''
-    date_start: 2023-06-01
-    date_end: 2024-08-31
-  - position: Visiting Student in John Moore’s Group
-    company_name: College of Global Change and Earth System Science, Beijing Normal University
-    company_url: ''
-    company_logo: ''
-    date_start: 2021-09-01
-    date_end: 2022-02-01
-  - position: Honours Project Student — First Class Honours (H1)
-    company_name: Institute for Marine and Antarctic Studies, University of Tasmania
-    company_url: https://www.utas.edu.au/imas
-    company_logo: ''
-    date_start: 2020-07-01
-    date_end: 2021-07-31
-
 # Skills
 # Add your own SVG icons to `assets/media/icons/`
 skills:
@@ -151,11 +96,11 @@ skills:
     items:
       - name: Elmer/Ice
         description: ''
-        percent: 80
+        percent: 85
         icon: custom/snowflake-solid-full
       - name: MATLAB
         description: ''
-        percent: 95
+        percent: 90
         icon: devicon/matlab
       - name: Python
         description: ''
@@ -163,7 +108,7 @@ skills:
         icon: devicon/python
       - name: Fortran
         description: ''
-        percent: 55
+        percent: 65
         icon: devicon/fortran
       - name: ParaView
         description: ''
@@ -171,7 +116,7 @@ skills:
         icon: custom/expand-solid-full
       - name: QGIS
         description: ''
-        percent: 65
+        percent: 60
         icon: map
   # - name: Modelling
   #   items:
@@ -197,7 +142,7 @@ skills:
         icon: camera
       - name: Fitness
        # description: 'Strength & conditioning to stay injury‑free and climb stronger.'
-        percent: 85
+        percent: 80
         icon: custom/dumbbell-solid-full
       - name: Hiking
         #description: 'Alpine trails and coastal walks across Tasmania.'
@@ -223,54 +168,50 @@ skills:
 #   Only `title`, `awarder`, and `date` are required.
 #   Begin multi-line `summary` with YAML's `|` or `|2-` multi-line prefix and indent 2 spaces below.
 awards:
-  - title: ACCESS Community Annual Workshop Best Poster Award
-    date: '2023-09-01'
-    awarder: ACCESS Community
-    # icon: award
-    summary: |
-      Awarded for best poster presentation at the 2023 ACCESS Community Annual Workshop.
+  - title: Travel Grant, ICEMAP Project
+    date: '2024-01-01'
+    date_start: '2024-01-01'
+    awarder: University of Lapland
+  - title: Travel Grant, SCAR
+    date: '2024-01-01'
+    date_start: '2024-01-01'
+    awarder: Scientific Committee on Antarctic Research (SCAR)
+  - title: Travel Grant, ANU
+    date: '2023-01-01'
+    date_start: '2023-01-01'
+    awarder: Australian National University (ANU)
+  - title: Best Poster Award
+    date: '2023-01-01'
+    date_start: '2023-01-01'
+    awarder: ACCESS Community Workshop
   - title: Australian Antarctic Program Partnership Top-Up Scholarship
-    date: '2022-08-01'
+    date: '2022-01-01'
+    date_start: '2022-01-01'
     awarder: Australian Antarctic Program Partnership
-    # icon: scholarship
     summary: |
-      Awarded to support PhD research in Antarctic studies.
+      2022 - present.
   - title: Tasmanian Graduate Research Scholarship
-    date: '2022-08-01'
+    date: '2022-01-01'
+    date_start: '2022-01-01'
     awarder: University of Tasmania
-    # icon: scholarship
     summary: |
-      Scholarship for graduate research at the University of Tasmania.
-  - title: Executive Dean’s Honour Roll, UTAS
-    date: '2021-10-01'
+      2022 - present.
+  - title: Executive Dean's Honour Roll
+    date: '2021-01-01'
+    date_start: '2021-01-01'
     awarder: University of Tasmania
-    # icon: honor
-    summary: |
-      Recognized for academic excellence.
   - title: Tasmanian International Scholarship
-    date: '2019-07-01'
+    date: '2019-01-01'
+    date_start: '2019-01-01'
     awarder: University of Tasmania
-    # icon: scholarship
     summary: |
-      Scholarship for international students.
-  - title: Academic Excellence Scholarship, OUC
-    date: '2018-07-01'
+      2019 - 2021.
+  - title: Academic Excellence Scholarship
+    date: '2018-01-01'
+    date_start: '2018-01-01'
     awarder: Ocean University of China
-    # icon: scholarship
     summary: |
-      Awarded for academic excellence.
-  - title: Honorary Title of Outstanding Student, OUC
-    date: '2018-07-01'
-    awarder: Ocean University of China
-    # icon: honor
-    summary: |
-      Recognized as an outstanding student.
-  - title: First-Class Annual Scholarship, OUC
-    date: '2017-07-01'
-    awarder: Ocean University of China
-    # icon: scholarship
-    summary: |
-      Awarded first-class scholarship for academic performance.
+      2018 - 2019.
 
 publications:
   - title: "Thermal structure of the Amery Ice Shelf from borehole observations and simulations"

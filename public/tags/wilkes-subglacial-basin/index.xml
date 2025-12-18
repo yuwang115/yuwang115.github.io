@@ -1,1 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Wilkes Subglacial Basin | Yu Wang | Antarctic Researcher</title><link>https://yuwang115.github.io/tags/wilkes-subglacial-basin/</link><atom:link href="https://yuwang115.github.io/tags/wilkes-subglacial-basin/index.xml" rel="self" type="application/rss+xml"/><description>Wilkes Subglacial Basin</description><generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Mon, 01 Jan 2024 00:00:00 +0000</lastBuildDate><image><url>https://yuwang115.github.io/media/icon_hu_c21013a9daaf20fe.png</url><title>Wilkes Subglacial Basin</title><link>https://yuwang115.github.io/tags/wilkes-subglacial-basin/</link></image><item><title>Sensitivity of the future evolution of the Wilkes Subglacial Basin ice sheet to grounding-line melt parameterizations</title><link>https://yuwang115.github.io/publication/cryosphere-2024-wsb-melt-param/</link><pubDate>Mon, 01 Jan 2024 00:00:00 +0000</pubDate><guid>https://yuwang115.github.io/publication/cryosphere-2024-wsb-melt-param/</guid><description/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Wilkes Subglacial Basin | Yu Wang | Antarctic Researcher</title>
+    <link>//:1313/tags/wilkes-subglacial-basin/</link>
+      <atom:link href="//:1313/tags/wilkes-subglacial-basin/index.xml" rel="self" type="application/rss+xml" />
+    <description>Wilkes Subglacial Basin</description>
+    <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Mon, 01 Jan 2024 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>//:1313/media/icon_hu_c21013a9daaf20fe.png</url>
+      <title>Wilkes Subglacial Basin</title>
+      <link>//:1313/tags/wilkes-subglacial-basin/</link>
+    </image>
+    
+    <item>
+      <title>Sensitivity of the future evolution of the Wilkes Subglacial Basin ice sheet to grounding-line melt parameterizations</title>
+      <link>//:1313/publication/cryosphere-2024-wsb-melt-param/</link>
+      <pubDate>Mon, 01 Jan 2024 00:00:00 +0000</pubDate>
+      <guid>//:1313/publication/cryosphere-2024-wsb-melt-param/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

@@ -58,6 +58,15 @@ sections:
             font-style: italic;
             font-size: 0.95rem;
           }
+          /* Match info column width to the journey map */
+          #section-resume-experience .max-w-prose,
+          #section-resume-skills .max-w-prose,
+          #section-resume-awards .max-w-prose,
+          #teaching-experience .max-w-prose,
+          #professional-service .max-w-prose,
+          #presentations .max-w-prose {
+            max-width: min(1000px, 80vw);
+          }
         </style>
         <div class="journey-outer">
           <div class="journey-wrap">
@@ -90,6 +99,51 @@ sections:
       date_format: 'January 2006'
       # Education or Experience section first?
       is_education_first: false
+  - block: markdown
+    id: teaching-experience
+    content:
+      title: "Teaching Experience"
+      text: |
+        - **Teaching Assistant - Ice Sheets, Climate & Sea Level Rise**, 
+          Sep 2025 - Oct 2025  
+          Designed and led practicals; assisted students in analysing model results.
+        - **Lecturer - Kioloa Winter School: Antarctic Tipping Points**, 
+          Jun 2025  
+          Delivered lectures on tipping points and irreversibility within ice sheets.
+  - block: markdown
+    id: professional-service
+    content:
+      title: "Professional Service & Development"
+      text: |
+        - **Peer Reviewer**, Apr 2025  
+          *Nature Communications*.
+        - **Co-convenor - WilkesMIP Project**, Jan 2025 - present  
+          Coordinating an international model intercomparison project.
+        - **Organiser and Host - UTAS Ice Sheets Group Meeting**, Jun 2023 - Aug 2024  
+          Organised weekly group seminars and facilitated discussions.
+        - **Karthaus Summer School on Ice Sheets and Glaciers**, May 2024  
+          Karthaus, Italy.
+        - **Monash Hackathon - Disentangling Uncertainties in ISMIP6-2300**, Mar 2024  
+          Monash University, Australia.
+        - **Subglacial Hydrology and Geology Workshop**, Oct 2023  
+          Tarraleah, Tasmania.
+        - **Visiting Research Student**, Sep 2021 - Feb 2022  
+          Prof. John Moore's Group, Beijing Normal University, China.
+  - block: markdown
+    id: presentations
+    content:
+      title: "Presentations"
+      text: |
+        - **Oral Presentation**, Antarctica Day Symposium, Hobart (Dec 2025)
+        - **Oral Presentation**, FRISP - Southern Hemisphere Workshop, Queensland (Jul 2025)
+        - **Invited Seminar**, School of Oceanography, Shanghai Jiao Tong University (Dec 2024)
+        - **Poster**, Australian Antarctic Research Conference, Hobart (Nov 2024)
+        - **Invited Seminar**, ICEMAP Antarctic Modelling Workshop, Rovaniemi (May 2024)
+        - **Poster**, European Geosciences Union (EGU) General Assembly, Vienna (Apr 2024)
+        - **Poster**, AAPP Symposium, Hobart (Oct 2023)
+        - **Poster**, ACCESS Community Workshop, Canberra (Sep 2023)
+        - **Oral Presentation**, Coupled Ice-Sheet Modelling and Simulations Workshop (Feb 2023)
+        - **Lightning talk**, European Geosciences Union (EGU) General Assembly (Online) (Apr 2021)
   - block: resume-skills
     content:
       title: Skills
@@ -98,10 +152,6 @@ sections:
       show_skill_percentage: true
   - block: resume-awards
     content:
-      title: Awards
+      title: Awards & Funding
       username: admin
-  # - block: resume-languages
-  #   content:
-  #     title: Languages
-  #     username: admin
 ---
