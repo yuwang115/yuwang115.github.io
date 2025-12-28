@@ -5,7 +5,7 @@ authors:
   - Chen Zhao
   - Rupert Gladstone
   - Ben Galton-Fenzi
-  - Richard Warner
+  - Roland Warner
 date: "2022-01-01T00:00:00Z"
 doi: "10.5194/tc-16-1221-2022"
 
