@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Amery Ice Shelf | Yu Wang | Antarctic Researcher</title>
-    <link>//:1313/tags/amery-ice-shelf/</link>
-      <atom:link href="//:1313/tags/amery-ice-shelf/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://localhost:1313/tags/amery-ice-shelf/</link>
+      <atom:link href="http://localhost:1313/tags/amery-ice-shelf/index.xml" rel="self" type="application/rss+xml" />
     <description>Amery Ice Shelf</description>
     <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Sat, 01 Jan 2022 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>//:1313/media/icon_hu_c21013a9daaf20fe.png</url>
+      <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
       <title>Amery Ice Shelf</title>
-      <link>//:1313/tags/amery-ice-shelf/</link>
+      <link>http://localhost:1313/tags/amery-ice-shelf/</link>
     </image>
     
     <item>
       <title>Thermal structure of the Amery Ice Shelf from borehole observations and simulations</title>
-      <link>//:1313/publication/cryosphere-2022-amery/</link>
+      <link>http://localhost:1313/publication/cryosphere-2022-amery/</link>
       <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
-      <guid>//:1313/publication/cryosphere-2022-amery/</guid>
-      <description>&lt;!-- &lt;figure&gt;&lt;img src=&#34;//:1313/publication/cryosphere-2022-amery/temperature.png&#34;
+      <guid>http://localhost:1313/publication/cryosphere-2022-amery/</guid>
+      <description>&lt;!-- &lt;figure&gt;&lt;img src=&#34;http://localhost:1313/publication/cryosphere-2022-amery/temperature.png&#34;
     alt=&#34;Temperature field map&#34;&gt;&lt;figcaption&gt;
       &lt;p&gt;Additional figure: Temperature field snapshot from the study.&lt;/p&gt;
     &lt;/figcaption&gt;

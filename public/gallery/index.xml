@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Gallery | Yu Wang | Antarctic Researcher</title>
-    <link>//:1313/gallery/</link>
-      <atom:link href="//:1313/gallery/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://localhost:1313/gallery/</link>
+      <atom:link href="http://localhost:1313/gallery/index.xml" rel="self" type="application/rss+xml" />
     <description>Gallery</description>
     <generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en-us</language><lastBuildDate>Sat, 30 Aug 2025 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>//:1313/media/icon_hu_c21013a9daaf20fe.png</url>
+      <url>http://localhost:1313/media/icon_hu_c21013a9daaf20fe.png</url>
       <title>Gallery</title>
-      <link>//:1313/gallery/</link>
+      <link>http://localhost:1313/gallery/</link>
     </image>
     
     <item>
       <title>Cinematic Sydney</title>
-      <link>//:1313/gallery/sydney2025/</link>
+      <link>http://localhost:1313/gallery/sydney2025/</link>
       <pubDate>Sat, 30 Aug 2025 00:00:00 +0000</pubDate>
-      <guid>//:1313/gallery/sydney2025/</guid>
+      <guid>http://localhost:1313/gallery/sydney2025/</guid>
       <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* ========== Full-bleed container (breaks out of article max-width) ========== */
@@ -98,9 +98,9 @@
     
     <item>
       <title>Brisbane, Wrapped in Warmth</title>
-      <link>//:1313/gallery/brisbane2025/</link>
+      <link>http://localhost:1313/gallery/brisbane2025/</link>
       <pubDate>Tue, 08 Jul 2025 00:00:00 +0000</pubDate>
-      <guid>//:1313/gallery/brisbane2025/</guid>
+      <guid>http://localhost:1313/gallery/brisbane2025/</guid>
       <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* ========== Full-bleed container (breaks out of article max-width) ========== */
@@ -182,9 +182,9 @@
     
     <item>
       <title>Xue Long 2 🇨🇳</title>
-      <link>//:1313/gallery/xuelong-2/</link>
+      <link>http://localhost:1313/gallery/xuelong-2/</link>
       <pubDate>Sun, 27 Apr 2025 00:00:00 +0000</pubDate>
-      <guid>//:1313/gallery/xuelong-2/</guid>
+      <guid>http://localhost:1313/gallery/xuelong-2/</guid>
       <description>&lt;div class=&#34;text-bleed&#34;&gt;
   &lt;p&gt;I was fortunate to visit Xuelong 2, China’s most advanced polar research vessel. With its pioneering two-way icebreaking technology, it has recently returned from a nearly six-month Antarctic mission — the 41st of its kind. Deep gratitude to Professor Zhang Zhaoru for his thoughtful and inspiring guidance.&lt;/p&gt;
   &lt;p&gt;Stepping onto the deck, I couldn’t help but feel a surge of warmth and pride 🇨🇳.&lt;/p&gt;
@@ -273,9 +273,9 @@
     
     <item>
       <title>Summer in Italy</title>
-      <link>//:1313/gallery/italy2024/</link>
+      <link>http://localhost:1313/gallery/italy2024/</link>
       <pubDate>Tue, 14 May 2024 00:00:00 +0000</pubDate>
-      <guid>//:1313/gallery/italy2024/</guid>
+      <guid>http://localhost:1313/gallery/italy2024/</guid>
       <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* ========== Full-bleed container (breaks out of article max-width) ========== */
@@ -375,9 +375,9 @@
     
     <item>
       <title>Tasmania: My Second Homeland</title>
-      <link>//:1313/gallery/tas/</link>
+      <link>http://localhost:1313/gallery/tas/</link>
       <pubDate>Sun, 05 Nov 2023 00:00:00 +0000</pubDate>
-      <guid>//:1313/gallery/tas/</guid>
+      <guid>http://localhost:1313/gallery/tas/</guid>
       <description>&lt;!-- 这里放一段相册说明、拍摄器材、行程等。 --&gt;
 &lt;style&gt;
 /* Hide published date just for this page */

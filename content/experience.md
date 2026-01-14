@@ -150,8 +150,4 @@ sections:
       username: admin
     design:
       show_skill_percentage: true
-  - block: resume-awards
-    content:
-      title: Awards & Funding
-      username: admin
 ---
