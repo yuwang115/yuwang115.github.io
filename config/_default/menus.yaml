@@ -25,3 +25,6 @@ main:
   - name: Gallery
     url: gallery/
     weight: 40
+  - name: Tools
+    url: tools/
+    weight: 50

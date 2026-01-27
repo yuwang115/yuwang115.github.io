@@ -12,4 +12,6 @@
   <url>
     <loc>http://localhost:1313/experience/</loc><lastmod>2023-10-24T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
   <url>
-    <loc>http://localhost:1313/teaching/</loc><lastmod>2023-10-24T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url></urlset>
+    <loc>http://localhost:1313/teaching/</loc><lastmod>2023-10-24T00:00:00+00:00</lastmod><changefreq>weekly</changefreq></url>
+  <url>
+    <loc>http://localhost:1313/tools/</loc><changefreq>weekly</changefreq></url></urlset>
