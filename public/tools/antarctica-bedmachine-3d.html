@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antarctica BedMachine 3D Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #eef6f9;
+      --panel: #ffffffee;
+      --panel-border: #bfd7df;
+      --ink: #0d2433;
+      --muted: #486072;
+      --accent: #0f7ea8;
+      --accent-2: #1f9f88;
+      --shadow: 0 14px 40px rgba(7, 34, 50, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 14% 18%, #d7eff9 0%, #f3fbff 36%, transparent 60%),
+        radial-gradient(circle at 88% 84%, #eaf6f0 0%, #f9fdff 40%, transparent 62%),
+        linear-gradient(145deg, #f8fcfe 0%, #ebf6fb 100%);
+    }
+
+    .app {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) 1fr;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(5px);
+      padding: 18px;
+      overflow-y: auto;
+    }
+
+    .viewer-shell {
+      position: relative;
+      min-height: 420px;
+      border-radius: 16px;
+      border: 1px solid var(--panel-border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      background: linear-gradient(180deg, #05253d 0%, #0d3851 56%, #14465f 100%);
+    }
+
+    #viewer {
+      position: absolute;
+      inset: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      line-height: 1.25;
+      letter-spacing: 0.01em;
+    }
+
+    .subtitle {
+      margin: 8px 0 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .section {
+      padding-top: 12px;
+      margin-top: 12px;
+      border-top: 1px solid #d8e5ec;
+    }
+
+    .section:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      color: #3c5868;
+      font-weight: 700;
+    }
+
+    .control {
+      margin-bottom: 12px;
+    }
+
+    .control label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: #1c3748;
+    }
+
+    .mono {
+      font-family: "IBM Plex Mono", monospace;
+      color: #225168;
+      font-size: 0.78rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    select {
+      width: 100%;
+      height: 36px;
+      border-radius: 9px;
+      border: 1px solid #bfd6e2;
+      background: #f7fcff;
+      color: #1a3d52;
+      font-size: 0.88rem;
+      font-family: "Space Grotesk", sans-serif;
+      padding: 0 10px;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: #3e9fc3;
+      box-shadow: 0 0 0 3px rgba(70, 156, 191, 0.18);
+    }
+
+    .toggle {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+      color: #244559;
+      font-size: 0.9rem;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 6px;
+      border: 1px solid #2f7998;
+      background: linear-gradient(135deg, #0f7ea8 0%, #1f9f88 100%);
+      color: #f7fdff;
+      border-radius: 10px;
+      height: 38px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      letter-spacing: 0.01em;
+    }
+
+    button:hover {
+      filter: brightness(1.03);
+    }
+
+    .meta-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 5px;
+      font-size: 0.84rem;
+      color: #345266;
+      line-height: 1.35;
+    }
+
+    .meta-list strong {
+      color: #13344a;
+    }
+
+    .hud {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .chip {
+      background: rgba(5, 21, 31, 0.66);
+      border: 1px solid rgba(171, 214, 237, 0.36);
+      color: #eaf8ff;
+      border-radius: 9px;
+      padding: 7px 10px;
+      font-size: 0.74rem;
+      line-height: 1.25;
+      max-width: 420px;
+      backdrop-filter: blur(4px);
+    }
+
+    .chip strong {
+      color: #b6ecff;
+    }
+
+    .status {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(4, 17, 24, 0.72);
+      color: #dbf7ff;
+      border: 1px solid rgba(169, 214, 232, 0.4);
+      font-size: 0.74rem;
+      font-family: "IBM Plex Mono", monospace;
+      pointer-events: none;
+    }
+
+    .legend {
+      margin-top: 12px;
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid #bdd2de;
+      background: #000;
+    }
+
+    .legend-labels {
+      margin-top: 5px;
+      display: flex;
+      justify-content: space-between;
+      color: #3e5d6f;
+      font-size: 0.71rem;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .panel {
+        max-height: 44vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel">
+      <h1>Antarctica BedMachine 3D Explorer</h1>
+      <p class="subtitle">
+        Rotate, zoom, and explore Antarctic bed topography, ice surface elevation,
+        and ice-base geometry from a web-optimized BedMachine Antarctica V4 subset.
+      </p>
+
+      <section class="section">
+        <h2 class="section-title">View Controls</h2>
+        <div class="control">
+          <label for="resolutionPreset">Resolution preset <span id="resolutionValue" class="mono">Balanced</span></label>
+          <select id="resolutionPreset">
+            <option value="balanced" selected>Balanced (14 km, ~1.5 MB)</option>
+            <option value="hd">HD (9 km, ~3.7 MB, desktop recommended)</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="exaggeration">Vertical exaggeration <span id="exaggerationValue" class="mono">4.0x</span></label>
+          <input id="exaggeration" type="range" min="0.5" max="8" step="0.1" value="4" />
+        </div>
+        <div class="control">
+          <label for="iceOpacity">Ice opacity <span id="iceOpacityValue" class="mono">0.65</span></label>
+          <input id="iceOpacity" type="range" min="0" max="1" step="0.01" value="0.65" />
+        </div>
+        <label class="toggle"><input id="showBed" type="checkbox" checked /> Show bed topography</label>
+        <label class="toggle"><input id="showIce" type="checkbox" checked /> Show ice surface</label>
+        <label class="toggle"><input id="showIceBottom" type="checkbox" checked /> Show ice bottom surface</label>
+        <label class="toggle"><input id="showSea" type="checkbox" /> Show sea level (0 m)</label>
+        <label class="toggle"><input id="wireframe" type="checkbox" /> Wireframe mode</label>
+        <button id="resetView" type="button">Reset Camera</button>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Bed Elevation Color</h2>
+        <div id="legendBar" class="legend" aria-hidden="true"></div>
+        <div class="legend-labels">
+          <span>-7000 m</span>
+          <span>0</span>
+          <span>+3500 m</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Data Snapshot</h2>
+        <ul id="metaList" class="meta-list">
+          <li>Loading metadata...</li>
+        </ul>
+      </section>
+    </aside>
+
+    <section class="viewer-shell">
+      <div id="viewer"></div>
+      <div id="status" class="status">Loading data...</div>
+      <div class="hud">
+        <div class="chip">
+          <strong>Mouse:</strong> drag to orbit, wheel to zoom, right-drag to pan.
+          <br />
+          <strong>Touch:</strong> one finger orbit, pinch zoom.
+        </div>
+        <div class="chip" id="fieldStats">Bed: -- m to -- m | Ice thickness max: -- m</div>
+      </div>
+    </section>
+  </div>
+
+  <script type="module">
+    import * as THREE from "/tools/vendor/three/three.module.min.js";
+    import { OrbitControls } from "/tools/vendor/three/OrbitControls.js";
+
+    const DATASETS = {
+      balanced: {
+        id: "balanced",
+        label: "Balanced",
+        summary: "14 km grid (~1.5 MB)",
+        metaUrl: "/tools/data/bedmachine_antarctica_v4_480.meta.json",
+        binUrl: "/tools/data/bedmachine_antarctica_v4_480.bin",
+      },
+      hd: {
+        id: "hd",
+        label: "HD",
+        summary: "9 km grid (~3.7 MB, desktop preferred)",
+        metaUrl: "/tools/data/bedmachine_antarctica_v4_741.meta.json",
+        binUrl: "/tools/data/bedmachine_antarctica_v4_741.bin",
+      },
+    };
+
+    const viewerEl = document.getElementById("viewer");
+    const statusEl = document.getElementById("status");
+    const metaListEl = document.getElementById("metaList");
+    const fieldStatsEl = document.getElementById("fieldStats");
+
+    const controlsUI = {
+      resolutionPreset: document.getElementById("resolutionPreset"),
+      resolutionValue: document.getElementById("resolutionValue"),
+      exaggeration: document.getElementById("exaggeration"),
+      exaggerationValue: document.getElementById("exaggerationValue"),
+      iceOpacity: document.getElementById("iceOpacity"),
+      iceOpacityValue: document.getElementById("iceOpacityValue"),
+      showBed: document.getElementById("showBed"),
+      showIce: document.getElementById("showIce"),
+      showIceBottom: document.getElementById("showIceBottom"),
+      showSea: document.getElementById("showSea"),
+      wireframe: document.getElementById("wireframe"),
+      resetView: document.getElementById("resetView"),
+      legendBar: document.getElementById("legendBar"),
+    };
+
+    let renderer;
+    let scene;
+    let camera;
+    let orbit;
+    let bedMesh;
+    let iceMesh;
+    let iceBottomMesh;
+    let iceSideMesh;
+    let seaLevelMesh;
+    let animationHandle;
+    let currentDatasetKey = "balanced";
+    let loadGeneration = 0;
+
+    const resetPose = {
+      position: new THREE.Vector3(0, 52, 150),
+      target: new THREE.Vector3(0, -0.4, 0),
+    };
+
+    function clamp01(value) {
+      return Math.min(1, Math.max(0, value));
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function lerpColor(from, to, t) {
+      return [lerp(from[0], to[0], t), lerp(from[1], to[1], t), lerp(from[2], to[2], t)];
+    }
+
+    const BED_ELEVATION_MIN = -7000;
+    const BED_ELEVATION_MAX = 3500;
+    const GMT_RELIEF_RGB_URL = "/tools/data/GMT_relief.rgb";
+    const GMT_RELIEF_OCEAN_ZERO = [0.975613, 0.999387, 0.994608];
+    const GMT_RELIEF_LAND_ZERO = [0.284908, 0.466429, 0.196078];
+
+    let gmtReliefOceanLut = [];
+    let gmtReliefLandLut = [];
+
+    function sampleColorLUT(lut, t) {
+      if (!lut.length) return [0, 0, 0];
+      const scaled = clamp01(t) * (lut.length - 1);
+      const i0 = Math.floor(scaled);
+      const i1 = Math.min(lut.length - 1, i0 + 1);
+      return lerpColor(lut[i0], lut[i1], scaled - i0);
+    }
+
+    async function loadBedColorTable() {
+      const response = await fetch(GMT_RELIEF_RGB_URL);
+      if (!response.ok) {
+        throw new Error(`Failed to load GMT_relief color table (${response.status})`);
+      }
+
+      const lines = (await response.text()).split(/\r?\n/);
+      const colors = [];
+      for (const raw of lines) {
+        const line = raw.trim();
+        if (!line || line.startsWith("#") || line.startsWith("ncolors")) continue;
+        const parts = line.split(/\s+/);
+        if (parts.length < 3) continue;
+        const r = Number(parts[0]);
+        const g = Number(parts[1]);
+        const b = Number(parts[2]);
+        if (!Number.isFinite(r) || !Number.isFinite(g) || !Number.isFinite(b)) continue;
+        colors.push([clamp01(r), clamp01(g), clamp01(b)]);
+      }
+
+      if (colors.length !== 256) {
+        throw new Error(`Unexpected GMT_relief color count: ${colors.length} (expected 256)`);
+      }
+
+      gmtReliefOceanLut = colors.slice(0, 128);
+      gmtReliefLandLut = colors.slice(128);
+    }
+
+    function bedColor(heightMeters) {
+      const clamped = Math.max(BED_ELEVATION_MIN, Math.min(BED_ELEVATION_MAX, heightMeters));
+      const oceanLut = gmtReliefOceanLut.length ? gmtReliefOceanLut : [GMT_RELIEF_OCEAN_ZERO];
+      const landLut = gmtReliefLandLut.length ? gmtReliefLandLut : [GMT_RELIEF_LAND_ZERO];
+
+      if (clamped < 0) {
+        const t = clamp01((clamped - BED_ELEVATION_MIN) / (0 - BED_ELEVATION_MIN));
+        return sampleColorLUT(oceanLut, t);
+      }
+
+      if (clamped > 0) {
+        const t = clamp01(clamped / BED_ELEVATION_MAX);
+        return sampleColorLUT(landLut, t);
+      }
+
+      // Keep 0 m exactly between the two endpoint colors, with high contrast above/below.
+      const oceanZero = oceanLut[oceanLut.length - 1] || GMT_RELIEF_OCEAN_ZERO;
+      const landZero = landLut[0] || GMT_RELIEF_LAND_ZERO;
+      return lerpColor(oceanZero, landZero, 0.5);
+    }
+
+    function rgbToHex(rgb) {
+      const toHex = (value) => Math.round(clamp01(value) * 255).toString(16).padStart(2, "0");
+      return `#${toHex(rgb[0])}${toHex(rgb[1])}${toHex(rgb[2])}`;
+    }
+
+    function updateBedLegend() {
+      if (!controlsUI.legendBar) return;
+      if (!gmtReliefOceanLut.length || !gmtReliefLandLut.length) return;
+
+      const stops = [];
+
+      for (let i = 0; i < gmtReliefOceanLut.length; i += 1) {
+        const p = (i / (gmtReliefOceanLut.length - 1)) * 50;
+        stops.push(`${rgbToHex(gmtReliefOceanLut[i])} ${p.toFixed(3)}%`);
+      }
+
+      // Duplicate the 50% position to enforce a hard contrast jump at sea level.
+      stops.push(`${rgbToHex(gmtReliefOceanLut[gmtReliefOceanLut.length - 1])} 50.000%`);
+      stops.push(`${rgbToHex(gmtReliefLandLut[0])} 50.000%`);
+
+      for (let i = 0; i < gmtReliefLandLut.length; i += 1) {
+        const p = 50 + (i / (gmtReliefLandLut.length - 1)) * 50;
+        stops.push(`${rgbToHex(gmtReliefLandLut[i])} ${p.toFixed(3)}%`);
+      }
+
+      controlsUI.legendBar.style.background = `linear-gradient(90deg, ${stops.join(", ")})`;
+    }
+
+    function iceColor(thicknessMeters, maskValue) {
+      const t = clamp01(thicknessMeters / 4200);
+      const grounded = lerpColor([0.72, 0.84, 0.95], [0.97, 0.99, 1.0], t);
+      const floating = lerpColor([0.58, 0.78, 0.93], [0.87, 0.95, 1.0], t);
+      return maskValue === 3 ? floating : grounded;
+    }
+
+    function iceBottomColor(thicknessMeters, maskValue) {
+      const t = clamp01(thicknessMeters / 4200);
+      const grounded = lerpColor([0.22, 0.42, 0.58], [0.48, 0.66, 0.78], t);
+      const floating = lerpColor([0.14, 0.34, 0.56], [0.4, 0.61, 0.79], t);
+      return maskValue === 3 ? floating : grounded;
+    }
+
+    function buildSurfaceGeometry({
+      nx,
+      ny,
+      dxMeters,
+      dyMeters,
+      horizontalMetersPerUnit,
+      verticalMetersPerUnit,
+      heights,
+      valid,
+      colorFn,
+      extraField,
+      mask,
+    }) {
+      const vertexCount = nx * ny;
+      const positions = new Float32Array(vertexCount * 3);
+      const colors = new Uint8Array(vertexCount * 3);
+      const indices = [];
+      const halfX = (nx - 1) / 2;
+      const halfY = (ny - 1) / 2;
+      const absDy = Math.abs(dyMeters);
+
+      for (let row = 0; row < ny; row += 1) {
+        for (let col = 0; col < nx; col += 1) {
+          const i = row * nx + col;
+          const px = ((col - halfX) * dxMeters) / horizontalMetersPerUnit;
+          const pz = ((row - halfY) * absDy) / horizontalMetersPerUnit;
+          const h = heights[i];
+          const isValid = valid[i];
+          positions[3 * i] = px;
+          positions[3 * i + 1] = isValid ? h / verticalMetersPerUnit : 0;
+          positions[3 * i + 2] = pz;
+
+          const rgb = colorFn(h, extraField ? extraField[i] : 0, mask ? mask[i] : 0);
+          colors[3 * i] = Math.round(rgb[0] * 255);
+          colors[3 * i + 1] = Math.round(rgb[1] * 255);
+          colors[3 * i + 2] = Math.round(rgb[2] * 255);
+        }
+      }
+
+      for (let row = 0; row < ny - 1; row += 1) {
+        for (let col = 0; col < nx - 1; col += 1) {
+          const i0 = row * nx + col;
+          const i1 = i0 + 1;
+          const i2 = i0 + nx;
+          const i3 = i2 + 1;
+
+          if (valid[i0] && valid[i2] && valid[i1]) {
+            indices.push(i0, i2, i1);
+          }
+          if (valid[i1] && valid[i2] && valid[i3]) {
+            indices.push(i1, i2, i3);
+          }
+        }
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3, true));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+      return geometry;
+    }
+
+    function buildIceSideGeometry({
+      nx,
+      ny,
+      dxMeters,
+      dyMeters,
+      horizontalMetersPerUnit,
+      verticalMetersPerUnit,
+      topHeights,
+      bottomHeights,
+      valid,
+      colorFn,
+      extraField,
+      mask,
+    }) {
+      const positions = [];
+      const colors = [];
+      const halfX = (nx - 1) / 2;
+      const halfY = (ny - 1) / 2;
+      const absDy = Math.abs(dyMeters);
+
+      const vertexCache = new Array(nx * ny);
+      const colorCache = new Array(nx * ny);
+
+      const getVertex = (index) => {
+        if (vertexCache[index]) return vertexCache[index];
+        const row = Math.floor(index / nx);
+        const col = index % nx;
+        const x = ((col - halfX) * dxMeters) / horizontalMetersPerUnit;
+        const z = ((row - halfY) * absDy) / horizontalMetersPerUnit;
+        const topY = topHeights[index] / verticalMetersPerUnit;
+        const botY = bottomHeights[index] / verticalMetersPerUnit;
+        const value = {
+          top: [x, topY, z],
+          bottom: [x, botY, z],
+        };
+        vertexCache[index] = value;
+        return value;
+      };
+
+      const getColor = (index) => {
+        if (colorCache[index]) return colorCache[index];
+        const rgb = colorFn(topHeights[index], extraField ? extraField[index] : 0, mask ? mask[index] : 0);
+        const value = [Math.round(rgb[0] * 255), Math.round(rgb[1] * 255), Math.round(rgb[2] * 255)];
+        colorCache[index] = value;
+        return value;
+      };
+
+      const pushVertex = (point, color) => {
+        positions.push(point[0], point[1], point[2]);
+        colors.push(color[0], color[1], color[2]);
+      };
+
+      const pushBoundaryQuad = (a, b) => {
+        if (
+          !Number.isFinite(topHeights[a]) ||
+          !Number.isFinite(topHeights[b]) ||
+          !Number.isFinite(bottomHeights[a]) ||
+          !Number.isFinite(bottomHeights[b])
+        ) {
+          return;
+        }
+
+        const vA = getVertex(a);
+        const vB = getVertex(b);
+        const cA = getColor(a);
+        const cB = getColor(b);
+
+        pushVertex(vA.top, cA);
+        pushVertex(vB.top, cB);
+        pushVertex(vA.bottom, cA);
+
+        pushVertex(vB.top, cB);
+        pushVertex(vB.bottom, cB);
+        pushVertex(vA.bottom, cA);
+      };
+
+      const edgeMap = new Map();
+      const addTriangleEdge = (a, b) => {
+        const key = a < b ? `${a}:${b}` : `${b}:${a}`;
+        const existing = edgeMap.get(key);
+        if (existing) {
+          existing.count += 1;
+          return;
+        }
+        edgeMap.set(key, { a, b, count: 1 });
+      };
+
+      for (let row = 0; row < ny - 1; row += 1) {
+        for (let col = 0; col < nx - 1; col += 1) {
+          const i0 = row * nx + col;
+          const i1 = i0 + 1;
+          const i2 = i0 + nx;
+          const i3 = i2 + 1;
+
+          if (valid[i0] && valid[i2] && valid[i1]) {
+            addTriangleEdge(i0, i2);
+            addTriangleEdge(i2, i1);
+            addTriangleEdge(i1, i0);
+          }
+          if (valid[i1] && valid[i2] && valid[i3]) {
+            addTriangleEdge(i1, i2);
+            addTriangleEdge(i2, i3);
+            addTriangleEdge(i3, i1);
+          }
+        }
+      }
+
+      edgeMap.forEach((edge) => {
+        if (edge.count === 1) {
+          pushBoundaryQuad(edge.a, edge.b);
+        }
+      });
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(positions), 3));
+      geometry.setAttribute("color", new THREE.BufferAttribute(new Uint8Array(colors), 3, true));
+      if (positions.length > 0) {
+        geometry.computeVertexNormals();
+      }
+      return geometry;
+    }
+
+    function parseField(meta, arrayBuffer, name) {
+      const field = meta.fields.find((item) => item.name === name);
+      if (!field) {
+        throw new Error(`Missing field: ${name}`);
+      }
+
+      if (field.dtype === "int16") {
+        return new Int16Array(arrayBuffer, field.byte_offset, field.byte_length / 2);
+      }
+      if (field.dtype === "uint8") {
+        return new Uint8Array(arrayBuffer, field.byte_offset, field.byte_length);
+      }
+      throw new Error(`Unsupported dtype for ${name}: ${field.dtype}`);
+    }
+
+    function toFloatHeight(intArray, fillValue) {
+      const out = new Float32Array(intArray.length);
+      for (let i = 0; i < intArray.length; i += 1) {
+        out[i] = intArray[i] === fillValue ? Number.NaN : intArray[i];
+      }
+      return out;
+    }
+
+    function initScene() {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0a2b43);
+      scene.fog = new THREE.Fog(0x0a2b43, 80, 240);
+
+      camera = new THREE.PerspectiveCamera(45, viewerEl.clientWidth / viewerEl.clientHeight, 0.1, 200);
+      camera.position.copy(resetPose.position);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(viewerEl.clientWidth, viewerEl.clientHeight);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      viewerEl.appendChild(renderer.domElement);
+
+      orbit = new OrbitControls(camera, renderer.domElement);
+      orbit.enableDamping = true;
+      orbit.dampingFactor = 0.08;
+      orbit.minDistance = 20;
+      orbit.maxDistance = 360;
+      orbit.target.copy(resetPose.target);
+
+      const ambient = new THREE.AmbientLight(0xddefff, 0.75);
+      const key = new THREE.DirectionalLight(0xffffff, 0.9);
+      key.position.set(12, 18, 8);
+      const fill = new THREE.DirectionalLight(0x95c9e7, 0.35);
+      fill.position.set(-14, 6, -9);
+      scene.add(ambient, key, fill);
+
+      window.addEventListener("resize", () => {
+        if (!renderer || !camera) return;
+        const w = viewerEl.clientWidth;
+        const h = viewerEl.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      });
+    }
+
+    function renderLoop() {
+      orbit.update();
+      renderer.render(scene, camera);
+      animationHandle = requestAnimationFrame(renderLoop);
+    }
+
+    function disposeMesh(mesh) {
+      if (!mesh) return null;
+      scene.remove(mesh);
+      if (mesh.geometry) mesh.geometry.dispose();
+      if (mesh.material) mesh.material.dispose();
+      return null;
+    }
+
+    function clearModelMeshes() {
+      bedMesh = disposeMesh(bedMesh);
+      iceMesh = disposeMesh(iceMesh);
+      iceBottomMesh = disposeMesh(iceBottomMesh);
+      iceSideMesh = disposeMesh(iceSideMesh);
+      seaLevelMesh = disposeMesh(seaLevelMesh);
+    }
+
+    function updateIceSideVisibility() {
+      if (!iceSideMesh) return;
+      iceSideMesh.visible = controlsUI.showIce.checked && controlsUI.showIceBottom.checked;
+    }
+
+    function reportLoadError(error) {
+      console.error(error);
+      statusEl.textContent = "Load failed";
+      metaListEl.innerHTML = `<li><strong>Error:</strong> ${error.message}</li>`;
+    }
+
+    function bindUI() {
+      controlsUI.resolutionPreset.addEventListener("change", () => {
+        loadAndBuildMeshes(controlsUI.resolutionPreset.value).catch(reportLoadError);
+      });
+
+      controlsUI.exaggeration.addEventListener("input", () => {
+        const value = Number(controlsUI.exaggeration.value);
+        controlsUI.exaggerationValue.textContent = `${value.toFixed(1)}x`;
+        if (bedMesh) bedMesh.scale.y = value;
+        if (iceMesh) iceMesh.scale.y = value;
+        if (iceBottomMesh) iceBottomMesh.scale.y = value;
+        if (iceSideMesh) iceSideMesh.scale.y = value;
+      });
+
+      controlsUI.iceOpacity.addEventListener("input", () => {
+        const value = Number(controlsUI.iceOpacity.value);
+        controlsUI.iceOpacityValue.textContent = value.toFixed(2);
+        if (iceMesh) iceMesh.material.opacity = value;
+        if (iceBottomMesh) iceBottomMesh.material.opacity = Math.max(0.12, value * 0.82);
+        if (iceSideMesh) iceSideMesh.material.opacity = value;
+      });
+
+      controlsUI.showBed.addEventListener("change", () => {
+        if (bedMesh) bedMesh.visible = controlsUI.showBed.checked;
+      });
+      controlsUI.showIce.addEventListener("change", () => {
+        if (iceMesh) iceMesh.visible = controlsUI.showIce.checked;
+        updateIceSideVisibility();
+      });
+      controlsUI.showIceBottom.addEventListener("change", () => {
+        if (iceBottomMesh) iceBottomMesh.visible = controlsUI.showIceBottom.checked;
+        updateIceSideVisibility();
+      });
+      controlsUI.showSea.addEventListener("change", () => {
+        if (seaLevelMesh) seaLevelMesh.visible = controlsUI.showSea.checked;
+      });
+
+      controlsUI.wireframe.addEventListener("change", () => {
+        const enable = controlsUI.wireframe.checked;
+        if (bedMesh) bedMesh.material.wireframe = enable;
+        if (iceMesh) iceMesh.material.wireframe = enable;
+        if (iceBottomMesh) iceBottomMesh.material.wireframe = enable;
+        if (iceSideMesh) iceSideMesh.material.wireframe = enable;
+      });
+
+      controlsUI.resetView.addEventListener("click", () => {
+        camera.position.copy(resetPose.position);
+        orbit.target.copy(resetPose.target);
+        orbit.update();
+      });
+    }
+
+    function updateMeta(meta, dataset) {
+      const grid = meta.grid;
+      const bedStats = meta.fields.find((f) => f.name === "bed").stats_m;
+      const thickStats = meta.fields.find((f) => f.name === "thickness").stats_m;
+      metaListEl.innerHTML = `
+        <li><strong>Dataset:</strong> ${meta.title} (${meta.product_version})</li>
+        <li><strong>Preset:</strong> ${dataset.label} - ${dataset.summary}</li>
+        <li><strong>Grid:</strong> ${grid.nx} x ${grid.ny} (step ${meta.downsample_step} = ${Math.abs(grid.dx_m)} m)</li>
+        <li><strong>Bed Range:</strong> ${Math.round(bedStats.min)} to ${Math.round(bedStats.max)} m</li>
+        <li><strong>Max Ice Thickness:</strong> ${Math.round(thickStats.max)} m</li>
+        <li><strong>Updated:</strong> ${meta.date_modified || "n/a"}</li>
+      `;
+      fieldStatsEl.textContent = `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m`;
+    }
+
+    async function loadAndBuildMeshes(datasetKey = currentDatasetKey) {
+      const dataset = DATASETS[datasetKey] || DATASETS.balanced;
+      const generation = ++loadGeneration;
+      currentDatasetKey = dataset.id;
+      controlsUI.resolutionPreset.value = dataset.id;
+      controlsUI.resolutionValue.textContent = dataset.label;
+      controlsUI.resolutionPreset.disabled = true;
+      statusEl.textContent = `Loading ${dataset.label}...`;
+
+      try {
+        clearModelMeshes();
+
+        const [metaResp, binResp] = await Promise.all([fetch(dataset.metaUrl), fetch(dataset.binUrl)]);
+        if (!metaResp.ok) throw new Error(`Failed to load metadata (${metaResp.status})`);
+        if (!binResp.ok) throw new Error(`Failed to load binary data (${binResp.status})`);
+        if (generation !== loadGeneration) return;
+
+        const meta = await metaResp.json();
+        const buffer = await binResp.arrayBuffer();
+
+        const nx = meta.grid.nx;
+        const ny = meta.grid.ny;
+        const cellCount = nx * ny;
+        const fillInt16 = meta.quantization.int16_fill_value;
+
+        const bedInt = parseField(meta, buffer, "bed");
+        const surfaceInt = parseField(meta, buffer, "surface");
+        const thicknessInt = parseField(meta, buffer, "thickness");
+        const mask = parseField(meta, buffer, "mask");
+
+        if (bedInt.length !== cellCount || surfaceInt.length !== cellCount || thicknessInt.length !== cellCount || mask.length !== cellCount) {
+          throw new Error("Unexpected field length in data package.");
+        }
+
+        const bedHeights = toFloatHeight(bedInt, fillInt16);
+        const surfaceHeights = toFloatHeight(surfaceInt, fillInt16);
+        const thickness = toFloatHeight(thicknessInt, fillInt16);
+        const iceBottomHeights = new Float32Array(cellCount);
+
+        const bedValid = new Uint8Array(cellCount);
+        const iceValid = new Uint8Array(cellCount);
+        const iceBottomValid = new Uint8Array(cellCount);
+        for (let i = 0; i < cellCount; i += 1) {
+          bedValid[i] = Number(Number.isFinite(bedHeights[i]));
+          iceValid[i] = Number((mask[i] === 2 || mask[i] === 3) && Number.isFinite(surfaceHeights[i]) && thickness[i] > 0);
+          if (iceValid[i]) {
+            const baseHeight = surfaceHeights[i] - thickness[i];
+            if (Number.isFinite(baseHeight)) {
+              iceBottomHeights[i] = baseHeight;
+              iceBottomValid[i] = 1;
+            } else {
+              iceBottomHeights[i] = Number.NaN;
+              iceBottomValid[i] = 0;
+            }
+          } else {
+            iceBottomHeights[i] = Number.NaN;
+            iceBottomValid[i] = 0;
+          }
+        }
+
+        const horizontalMetersPerUnit = 52000;
+        const verticalMetersPerUnit = 3800;
+        const baseConfig = {
+          nx,
+          ny,
+          dxMeters: meta.grid.dx_m,
+          dyMeters: meta.grid.dy_m,
+          horizontalMetersPerUnit,
+          verticalMetersPerUnit,
+        };
+
+        const bedGeometry = buildSurfaceGeometry({
+          ...baseConfig,
+          heights: bedHeights,
+          valid: bedValid,
+          colorFn: (height) => bedColor(height),
+        });
+        const bedMaterial = new THREE.MeshStandardMaterial({
+          vertexColors: true,
+          roughness: 0.92,
+          metalness: 0.02,
+          flatShading: false,
+        });
+        bedMesh = new THREE.Mesh(bedGeometry, bedMaterial);
+        bedMesh.scale.y = Number(controlsUI.exaggeration.value);
+        bedMesh.visible = controlsUI.showBed.checked;
+        bedMesh.material.wireframe = controlsUI.wireframe.checked;
+        scene.add(bedMesh);
+
+        const iceGeometry = buildSurfaceGeometry({
+          ...baseConfig,
+          heights: surfaceHeights,
+          valid: iceValid,
+          extraField: thickness,
+          mask,
+          colorFn: (_height, thick, maskValue) => iceColor(thick, maskValue),
+        });
+        const iceMaterial = new THREE.MeshStandardMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: Number(controlsUI.iceOpacity.value),
+          roughness: 0.38,
+          metalness: 0.02,
+          side: THREE.DoubleSide,
+        });
+        iceMesh = new THREE.Mesh(iceGeometry, iceMaterial);
+        iceMesh.scale.y = Number(controlsUI.exaggeration.value);
+        iceMesh.visible = controlsUI.showIce.checked;
+        iceMesh.material.wireframe = controlsUI.wireframe.checked;
+        scene.add(iceMesh);
+
+        const iceBottomGeometry = buildSurfaceGeometry({
+          ...baseConfig,
+          heights: iceBottomHeights,
+          valid: iceBottomValid,
+          extraField: thickness,
+          mask,
+          colorFn: (_height, thick, maskValue) => iceBottomColor(thick, maskValue),
+        });
+        const iceBottomMaterial = new THREE.MeshStandardMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: Math.max(0.12, Number(controlsUI.iceOpacity.value) * 0.82),
+          roughness: 0.44,
+          metalness: 0.02,
+          side: THREE.DoubleSide,
+          polygonOffset: true,
+          polygonOffsetFactor: 1,
+          polygonOffsetUnits: 1,
+        });
+        iceBottomMesh = new THREE.Mesh(iceBottomGeometry, iceBottomMaterial);
+        iceBottomMesh.scale.y = Number(controlsUI.exaggeration.value);
+        iceBottomMesh.visible = controlsUI.showIceBottom.checked;
+        iceBottomMesh.material.wireframe = controlsUI.wireframe.checked;
+        scene.add(iceBottomMesh);
+
+        const iceSideGeometry = buildIceSideGeometry({
+          ...baseConfig,
+          topHeights: surfaceHeights,
+          bottomHeights: iceBottomHeights,
+          valid: iceValid,
+          extraField: thickness,
+          mask,
+          colorFn: (_height, thick, maskValue) => iceColor(thick, maskValue),
+        });
+        const iceSideMaterial = iceMaterial.clone();
+        iceSideMaterial.opacity = Number(controlsUI.iceOpacity.value);
+        iceSideMesh = new THREE.Mesh(iceSideGeometry, iceSideMaterial);
+        iceSideMesh.scale.y = Number(controlsUI.exaggeration.value);
+        iceSideMesh.material.wireframe = controlsUI.wireframe.checked;
+        updateIceSideVisibility();
+        scene.add(iceSideMesh);
+
+        const widthUnits = ((nx - 1) * Math.abs(meta.grid.dx_m)) / horizontalMetersPerUnit;
+        const depthUnits = ((ny - 1) * Math.abs(meta.grid.dy_m)) / horizontalMetersPerUnit;
+        const seaGeometry = new THREE.PlaneGeometry(widthUnits, depthUnits, 1, 1);
+        seaGeometry.rotateX(-Math.PI / 2);
+        const seaMaterial = new THREE.MeshBasicMaterial({
+          color: 0x4ca8d8,
+          transparent: true,
+          opacity: 0.13,
+          side: THREE.DoubleSide,
+        });
+        seaLevelMesh = new THREE.Mesh(seaGeometry, seaMaterial);
+        seaLevelMesh.position.y = 0;
+        seaLevelMesh.visible = controlsUI.showSea.checked;
+        scene.add(seaLevelMesh);
+
+        updateMeta(meta, dataset);
+        statusEl.textContent = `Ready (${dataset.label})`;
+      } finally {
+        controlsUI.resolutionPreset.disabled = false;
+      }
+    }
+
+    async function main() {
+      initScene();
+      bindUI();
+      renderLoop();
+
+      try {
+        await loadBedColorTable();
+        updateBedLegend();
+        await loadAndBuildMeshes(currentDatasetKey);
+      } catch (error) {
+        reportLoadError(error);
+      }
+    }
+
+    window.addEventListener("beforeunload", () => {
+      if (animationHandle) cancelAnimationFrame(animationHandle);
+      clearModelMeshes();
+      if (renderer) renderer.dispose();
+    });
+
+    main();
+  </script>
+</body>
+</html>

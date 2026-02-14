@@ -25,7 +25,8 @@ sections:
         size: xxl  # Options: small (150px), medium (200px, default), large (320px), xl (400px), xxl (500px)
         shape: circle # Options: circle (default), square, rounded
       background:
-        color: "black"
+        # Use a close fallback tone to avoid a black flash before hero image decodes.
+        color: "#101a24"
         image:
           # Add your image background to `assets/media/`.
           filename: "background.jpg"
