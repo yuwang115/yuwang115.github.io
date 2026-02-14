@@ -1,0 +1,17 @@
+{{ if and .IsHome (eq .Type "landing") }}
+  {{ $bgFilename := "" }}
+  {{ range .Params.sections }}
+    {{ if and (eq $bgFilename "") .design.background.image.filename }}
+      {{ $bgFilename = .design.background.image.filename }}
+    {{ end }}
+  {{ end }}
+  {{ with $bgFilename }}
+    {{ $bgImg := resources.Get (printf "media/%s" .) }}
+    {{ if $bgImg }}
+      {{ if ne $bgImg.MediaType.SubType "svg" }}
+        {{ $bgImg = $bgImg.Fit "1920x1920 webp" }}
+      {{ end }}
+      <link rel="preload" as="image" href="{{ $bgImg.Permalink }}" fetchpriority="high">
+    {{ end }}
+  {{ end }}
+{{ end }}
