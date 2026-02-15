@@ -248,6 +248,71 @@
       font-family: "IBM Plex Mono", monospace;
     }
 
+    body.showcase {
+      background:
+        radial-gradient(circle at 18% 22%, #0f3b57 0%, #0a2d45 36%, transparent 62%),
+        radial-gradient(circle at 86% 80%, #124866 0%, #09293e 40%, transparent 66%),
+        linear-gradient(158deg, #051521 0%, #0a2a3f 62%, #123852 100%);
+    }
+
+    body.showcase .app {
+      display: block;
+      height: 100%;
+      padding: 0;
+    }
+
+    body.showcase .panel {
+      display: none;
+    }
+
+    body.showcase .viewer-shell {
+      min-height: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: 0;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    body.showcase .viewer-shell.showcase-idle {
+      cursor: pointer;
+    }
+
+    body.showcase .viewer-shell.showcase-idle::after {
+      content: "Click to interact";
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 2;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(178, 222, 244, 0.5);
+      background: rgba(4, 18, 28, 0.72);
+      color: #e6f8ff;
+      font-size: 0.75rem;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+    }
+
+    body.showcase .hud {
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+    }
+
+    body.showcase .chip {
+      font-size: 0.78rem;
+      max-width: 560px;
+      background: rgba(4, 18, 28, 0.72);
+      border-color: rgba(178, 222, 244, 0.42);
+    }
+
+    body.showcase .status {
+      top: 16px;
+      right: 16px;
+      background: rgba(4, 17, 24, 0.8);
+    }
+
     @media (max-width: 980px) {
       .app {
         grid-template-columns: 1fr;
@@ -256,6 +321,11 @@
 
       .panel {
         max-height: 44vh;
+      }
+
+      body.showcase .hud {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -292,6 +362,7 @@
         <label class="toggle"><input id="showSea" type="checkbox" /> Show sea level (0 m)</label>
         <label class="toggle"><input id="wireframe" type="checkbox" /> Wireframe mode</label>
         <button id="resetView" type="button">Reset Camera</button>
+        <button id="copyView" type="button">Copy Current View</button>
       </section>
 
       <section class="section">
@@ -312,11 +383,11 @@
       </section>
     </aside>
 
-    <section class="viewer-shell">
+    <section id="viewerShell" class="viewer-shell">
       <div id="viewer"></div>
       <div id="status" class="status">Loading data...</div>
       <div class="hud">
-        <div class="chip">
+        <div id="interactionHint" class="chip">
           <strong>Mouse:</strong> drag to orbit, wheel to zoom, right-drag to pan.
           <br />
           <strong>Touch:</strong> one finger orbit, pinch zoom.
@@ -329,6 +400,14 @@
   <script type="module">
     import * as THREE from "/tools/vendor/three/three.module.min.js";
     import { OrbitControls } from "/tools/vendor/three/OrbitControls.js";
+
+    const queryParams = new URLSearchParams(window.location.search);
+    const mode = (queryParams.get("mode") || "").toLowerCase();
+    const isShowcaseMode = mode === "showcase";
+    const lockedDatasetKey = isShowcaseMode ? "balanced" : null;
+    if (isShowcaseMode) {
+      document.body.classList.add("showcase");
+    }
 
     const DATASETS = {
       balanced: {
@@ -348,9 +427,11 @@
     };
 
     const viewerEl = document.getElementById("viewer");
+    const viewerShellEl = document.getElementById("viewerShell");
     const statusEl = document.getElementById("status");
     const metaListEl = document.getElementById("metaList");
     const fieldStatsEl = document.getElementById("fieldStats");
+    const interactionHintEl = document.getElementById("interactionHint");
 
     const controlsUI = {
       resolutionPreset: document.getElementById("resolutionPreset"),
@@ -365,6 +446,7 @@
       showSea: document.getElementById("showSea"),
       wireframe: document.getElementById("wireframe"),
       resetView: document.getElementById("resetView"),
+      copyView: document.getElementById("copyView"),
       legendBar: document.getElementById("legendBar"),
     };
 
@@ -378,13 +460,36 @@
     let iceSideMesh;
     let seaLevelMesh;
     let animationHandle;
-    let currentDatasetKey = "balanced";
+    let currentDatasetKey = lockedDatasetKey || "balanced";
     let loadGeneration = 0;
+    let showcaseInteractionActive = !isShowcaseMode;
 
-    const resetPose = {
-      position: new THREE.Vector3(0, 52, 150),
-      target: new THREE.Vector3(0, -0.4, 0),
-    };
+    const SHOWCASE_HINT_IDLE =
+      "<strong>Scroll page:</strong> keep using wheel to continue reading.<br /><strong>Click this scene</strong> to enter 3D interaction.<br /><strong>Tip:</strong> press <strong>Shift+V</strong> to export view.";
+    const SHOWCASE_HINT_ACTIVE =
+      "<strong>Interactive:</strong> drag to orbit, wheel to zoom, right-drag to pan. Press <strong>Esc</strong> to return to page scrolling.<br /><strong>Tip:</strong> press <strong>Shift+V</strong> to export view.";
+
+    if (isShowcaseMode) {
+      controlsUI.resolutionPreset.value = "balanced";
+      controlsUI.resolutionValue.textContent = "Balanced";
+      controlsUI.exaggeration.value = "4.8";
+      controlsUI.exaggerationValue.textContent = "4.8x";
+      controlsUI.iceOpacity.value = "1";
+      controlsUI.iceOpacityValue.textContent = "1.00";
+      controlsUI.showSea.checked = false;
+      interactionHintEl.innerHTML = SHOWCASE_HINT_IDLE;
+    }
+
+    const resetPose = isShowcaseMode
+      ? {
+          // Closer, slightly angled hero framing for homepage impact.
+          position: new THREE.Vector3(11.01, 62.36, 79.95),
+          target: new THREE.Vector3(4.52, -6.48, 1.43),
+        }
+      : {
+          position: new THREE.Vector3(0, 52, 150),
+          target: new THREE.Vector3(0, -0.4, 0),
+        };
 
     function clamp01(value) {
       return Math.min(1, Math.max(0, value));
@@ -719,7 +824,8 @@
       scene.background = new THREE.Color(0x0a2b43);
       scene.fog = new THREE.Fog(0x0a2b43, 80, 240);
 
-      camera = new THREE.PerspectiveCamera(45, viewerEl.clientWidth / viewerEl.clientHeight, 0.1, 200);
+      const initialFov = isShowcaseMode ? 40 : 45;
+      camera = new THREE.PerspectiveCamera(initialFov, viewerEl.clientWidth / viewerEl.clientHeight, 0.1, 200);
       camera.position.copy(resetPose.position);
 
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
@@ -734,6 +840,11 @@
       orbit.minDistance = 20;
       orbit.maxDistance = 360;
       orbit.target.copy(resetPose.target);
+      if (isShowcaseMode) {
+        orbit.enabled = false;
+        // Allow native page scrolling until the user explicitly activates 3D interaction.
+        renderer.domElement.style.touchAction = "auto";
+      }
 
       const ambient = new THREE.AmbientLight(0xddefff, 0.75);
       const key = new THREE.DirectionalLight(0xffffff, 0.9);
@@ -785,10 +896,115 @@
       metaListEl.innerHTML = `<li><strong>Error:</strong> ${error.message}</li>`;
     }
 
-    function bindUI() {
-      controlsUI.resolutionPreset.addEventListener("change", () => {
-        loadAndBuildMeshes(controlsUI.resolutionPreset.value).catch(reportLoadError);
+    function formatCoord(value, digits = 2) {
+      const text = Number(value).toFixed(digits);
+      return text.replace(/\.?0+$/, "");
+    }
+
+    async function exportCurrentViewPose() {
+      if (!camera || !orbit) return;
+
+      const poseText = [
+        `position: new THREE.Vector3(${formatCoord(camera.position.x)}, ${formatCoord(camera.position.y)}, ${formatCoord(camera.position.z)}),`,
+        `target: new THREE.Vector3(${formatCoord(orbit.target.x)}, ${formatCoord(orbit.target.y)}, ${formatCoord(orbit.target.z)}),`,
+        `fov: ${formatCoord(camera.fov, 1)},`,
+      ].join("\n");
+
+      console.log("[View Pose]\n" + poseText);
+
+      let copied = false;
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(poseText);
+          copied = true;
+        } catch (error) {
+          console.warn("Clipboard write failed, pose still logged in console.", error);
+        }
+      }
+
+      const previous = statusEl.textContent;
+      const message = copied ? "View copied to clipboard" : "View logged to console";
+      statusEl.textContent = message;
+      window.setTimeout(() => {
+        if (statusEl.textContent === message) {
+          statusEl.textContent = previous;
+        }
+      }, 1800);
+    }
+
+    function setShowcaseInteractionActive(active) {
+      if (!isShowcaseMode || !orbit || !renderer || !viewerShellEl) return;
+      showcaseInteractionActive = active;
+      orbit.enabled = active;
+      renderer.domElement.style.touchAction = active ? "none" : "auto";
+      viewerShellEl.classList.toggle("showcase-idle", !active);
+      interactionHintEl.innerHTML = active ? SHOWCASE_HINT_ACTIVE : SHOWCASE_HINT_IDLE;
+    }
+
+    function bindShowcaseInteractionGate() {
+      if (!isShowcaseMode || !renderer || !viewerShellEl) return;
+
+      const canvas = renderer.domElement;
+
+      const activate = () => {
+        if (!showcaseInteractionActive) {
+          setShowcaseInteractionActive(true);
+        }
+      };
+
+      const deactivate = () => {
+        if (showcaseInteractionActive) {
+          setShowcaseInteractionActive(false);
+        }
+      };
+
+      // Capture phase: enable controls before OrbitControls handles the same pointerdown.
+      canvas.addEventListener("pointerdown", activate, { capture: true });
+      viewerShellEl.addEventListener("mouseleave", deactivate);
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          deactivate();
+        }
       });
+      window.addEventListener("blur", deactivate);
+      window.addEventListener("keydown", (event) => {
+        const activeTag = document.activeElement?.tagName || "";
+        if (activeTag === "INPUT" || activeTag === "SELECT" || activeTag === "TEXTAREA") return;
+        if (event.shiftKey && event.code === "KeyV") {
+          event.preventDefault();
+          exportCurrentViewPose();
+        }
+      });
+
+      // In an iframe, wheel events do not reach the parent page by default.
+      // Forward wheel scrolling to the parent page while 3D interaction is idle.
+      canvas.addEventListener(
+        "wheel",
+        (event) => {
+          if (showcaseInteractionActive) return;
+          if (event.ctrlKey || event.metaKey) return;
+
+          event.preventDefault();
+
+          const targetWindow = window.parent && window.parent !== window ? window.parent : window;
+          try {
+            targetWindow.scrollBy({ left: event.deltaX, top: event.deltaY, behavior: "auto" });
+          } catch (_err) {
+            window.scrollBy({ left: event.deltaX, top: event.deltaY, behavior: "auto" });
+          }
+        },
+        { passive: false }
+      );
+
+      setShowcaseInteractionActive(false);
+    }
+
+    function bindUI() {
+      if (!lockedDatasetKey) {
+        controlsUI.resolutionPreset.addEventListener("change", () => {
+          loadAndBuildMeshes(controlsUI.resolutionPreset.value).catch(reportLoadError);
+        });
+      }
 
       controlsUI.exaggeration.addEventListener("input", () => {
         const value = Number(controlsUI.exaggeration.value);
@@ -835,6 +1051,9 @@
         orbit.target.copy(resetPose.target);
         orbit.update();
       });
+      controlsUI.copyView.addEventListener("click", () => {
+        exportCurrentViewPose();
+      });
     }
 
     function updateMeta(meta, dataset) {
@@ -853,13 +1072,14 @@
     }
 
     async function loadAndBuildMeshes(datasetKey = currentDatasetKey) {
-      const dataset = DATASETS[datasetKey] || DATASETS.balanced;
+      const effectiveDatasetKey = lockedDatasetKey || datasetKey;
+      const dataset = DATASETS[effectiveDatasetKey] || DATASETS.balanced;
       const generation = ++loadGeneration;
       currentDatasetKey = dataset.id;
       controlsUI.resolutionPreset.value = dataset.id;
       controlsUI.resolutionValue.textContent = dataset.label;
       controlsUI.resolutionPreset.disabled = true;
-      statusEl.textContent = `Loading ${dataset.label}...`;
+      statusEl.textContent = isShowcaseMode ? "Loading Balanced demo..." : `Loading ${dataset.label}...`;
 
       try {
         clearModelMeshes();
@@ -1021,21 +1241,24 @@
         scene.add(seaLevelMesh);
 
         updateMeta(meta, dataset);
-        statusEl.textContent = `Ready (${dataset.label})`;
+        statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${dataset.label})`;
       } finally {
-        controlsUI.resolutionPreset.disabled = false;
+        if (!lockedDatasetKey) {
+          controlsUI.resolutionPreset.disabled = false;
+        }
       }
     }
 
     async function main() {
       initScene();
       bindUI();
+      bindShowcaseInteractionGate();
       renderLoop();
 
       try {
         await loadBedColorTable();
         updateBedLegend();
-        await loadAndBuildMeshes(currentDatasetKey);
+        await loadAndBuildMeshes(lockedDatasetKey || currentDatasetKey);
       } catch (error) {
         reportLoadError(error);
       }

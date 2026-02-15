@@ -47,6 +47,80 @@ sections:
   #   design:
   #     columns: '1'
 
+  - block: markdown
+    id: antarctica-showcase-home
+    content:
+      title: "3D Antarctica Explorer 🇦🇶"
+      text: |
+        <style>
+          #antarctica-showcase-home .max-w-prose {
+            max-width: none;
+            width: 100%;
+          }
+          #antarctica-showcase-home .showcase-wrap {
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            width: 100vw;
+          }
+          #antarctica-showcase-home .showcase-embed {
+            width: 100%;
+            height: 86vh;
+            min-height: 620px;
+            border: 0;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: 0 26px 48px rgba(5, 19, 30, 0.26);
+          }
+          #antarctica-showcase-home .showcase-embed iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+          }
+          #antarctica-showcase-home .showcase-note {
+            max-width: 960px;
+            margin: 1rem auto 0;
+            padding: 0 1rem;
+            text-align: center;
+            color: #123447;
+            line-height: 1.6;
+            font-size: 1rem;
+          }
+          #antarctica-showcase-home .showcase-note a {
+            font-weight: 700;
+            text-decoration: underline;
+          }
+          @media (max-width: 900px) {
+            #antarctica-showcase-home .showcase-embed {
+              height: 74vh;
+              min-height: 500px;
+            }
+            #antarctica-showcase-home .showcase-note {
+              font-size: 0.95rem;
+            }
+          }
+        </style>
+        <div class="showcase-wrap">
+          <div class="showcase-embed">
+            <iframe
+              title="Antarctica 3D Terrain and Ice Explorer demo (Balanced preset)"
+              src="/tools/antarctica-bedmachine-3d.html?mode=showcase"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            ></iframe>
+          </div>
+          <p class="showcase-note">
+            Open the <a href="/tools/">Tools page</a> to unlock all interactions.
+          </p>
+        </div>
+    design:
+      columns: "1"
+      spacing:
+        padding: ["5rem", 0, "2.5rem", 0]
+
   - block: collection
     id: papers
     content:
@@ -85,9 +159,15 @@ sections:
 
 
   - block: collection
+    id: coauthored-publications
     content:
       title:  Co-authored Publications 📝
-      text: ""
+      text: |
+        <style>
+          #coauthored-publications .max-w-3xl {
+            max-width: 64rem;
+          }
+        </style>
       filters:
         folders:
           - publication
