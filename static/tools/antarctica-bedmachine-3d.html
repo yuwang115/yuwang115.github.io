@@ -362,7 +362,6 @@
         <label class="toggle"><input id="showSea" type="checkbox" /> Show sea level (0 m)</label>
         <label class="toggle"><input id="wireframe" type="checkbox" /> Wireframe mode</label>
         <button id="resetView" type="button">Reset Camera</button>
-        <button id="copyView" type="button">Copy Current View</button>
       </section>
 
       <section class="section">
@@ -446,7 +445,6 @@
       showSea: document.getElementById("showSea"),
       wireframe: document.getElementById("wireframe"),
       resetView: document.getElementById("resetView"),
-      copyView: document.getElementById("copyView"),
       legendBar: document.getElementById("legendBar"),
     };
 
@@ -1050,9 +1048,6 @@
         camera.position.copy(resetPose.position);
         orbit.target.copy(resetPose.target);
         orbit.update();
-      });
-      controlsUI.copyView.addEventListener("click", () => {
-        exportCurrentViewPose();
       });
     }
 

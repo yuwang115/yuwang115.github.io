@@ -1,0 +1,8 @@
+# macOS metadata
+.DS_Store
+
+# Hugo build outputs
+public/
+resources/_gen/
+.hugo_build.lock
+hugo_stats.json

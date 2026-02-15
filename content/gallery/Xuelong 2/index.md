@@ -51,7 +51,6 @@ image:
 
 <div class="gallery-bleed">
   <div class="masonry">
-    <figure class="masonry-item"><a href="DSC03117.jpeg"><img data-src="DSC03117.jpeg" alt="DSC03117" decoding="async" fetchpriority="low"></a></figure>
     <figure class="masonry-item"><a href="DSC03151.jpeg"><img data-src="DSC03151.jpeg" alt="DSC03151" decoding="async" fetchpriority="low"></a></figure>
     <figure class="masonry-item"><a href="DSC03170.jpeg"><img data-src="DSC03170.jpeg" alt="DSC03170" decoding="async" fetchpriority="low"></a></figure>
     <figure class="masonry-item"><a href="DSC03213.jpeg"><img data-src="DSC03213.jpeg" alt="DSC03213" decoding="async" fetchpriority="low"></a></figure>

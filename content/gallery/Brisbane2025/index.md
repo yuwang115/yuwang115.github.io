@@ -51,7 +51,6 @@ image:
     <figure class="masonry-item"><a href="DSC04425.jpeg"><img data-src="DSC04425.jpeg" alt="DSC04425" decoding="async" fetchpriority="low"></a></figure>
     <figure class="masonry-item"><a href="DSC04598.jpeg"><img data-src="DSC04598.jpeg" alt="DSC04598" decoding="async" fetchpriority="low"></a></figure>
     <figure class="masonry-item"><a href="DSC04605.jpeg"><img data-src="DSC04605.jpeg" alt="DSC04605" decoding="async" fetchpriority="low"></a></figure>
-    <figure class="masonry-item"><a href="DSC04642.jpeg"><img data-src="DSC04642.jpeg" alt="DSC04642" decoding="async" fetchpriority="low"></a></figure>
     <figure class="masonry-item"><a href="DSC04745.jpeg"><img data-src="DSC04745.jpeg" alt="DSC04745" decoding="async" fetchpriority="low"></a></figure>
     <figure class="masonry-item"><a href="IMG_2838.jpeg"><img data-src="IMG_2838.jpeg" alt="IMG_2838" decoding="async" fetchpriority="low"></a></figure>
     <figure class="masonry-item"><a href="IMG_2845.jpeg"><img data-src="IMG_2845.jpeg" alt="IMG_2845" decoding="async" fetchpriority="low"></a></figure>
