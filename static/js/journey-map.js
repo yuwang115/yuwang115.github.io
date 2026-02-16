@@ -45,6 +45,12 @@ const stops = [
     summary: 'Lecturer for the Kioloa Winter School, sharing ice-sheet research workflows.',
   },
   {
+    title: 'Wellington, New Zealand — CliC Open Science Conference 2026',
+    coords: [-41.2914, 174.7812], // 定位到 Tākina Wellington Convention Centre
+    years: 'Feb 2026',
+    summary: 'Attended CliC2026 and delivered an oral presentation.',
+  },
+  {
     title: 'Shanghai, China — Invited Seminar',
     coords: [31.2005, 121.4305], // 更新：定位到上海交大徐汇校区
     years: 'Dec 2024',
