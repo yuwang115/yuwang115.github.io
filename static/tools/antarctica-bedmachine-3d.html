@@ -368,8 +368,8 @@
         <div class="control">
           <label for="resolutionPreset">Resolution preset <span id="resolutionValue" class="mono">Balanced</span></label>
           <select id="resolutionPreset">
-            <option value="balanced" selected>Balanced (10 km, ~5.8 MB incl. velocity + hydrology)</option>
-            <option value="hd">HD (4 km, ~35.4 MB incl. velocity + hydrology, desktop recommended)</option>
+            <option value="balanced" selected>Balanced (10 km, ~5.8 MB)</option>
+            <option value="hd">HD (4 km, ~35.4 MB, desktop recommended)</option>
           </select>
         </div>
         <div class="control">
@@ -473,7 +473,7 @@
       balanced: {
         id: "balanced",
         label: "Balanced",
-        summary: "10 km grid (~5.8 MB incl. velocity + hydrology)",
+        summary: "10 km grid (~5.8 MB)",
         metaUrl: "/tools/data/bedmachine_antarctica_v4_480.meta.json",
         binUrl: "/tools/data/bedmachine_antarctica_v4_480.bin",
         velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.meta.json",
@@ -484,7 +484,7 @@
       hd: {
         id: "hd",
         label: "HD",
-        summary: "4 km grid (~35.4 MB incl. velocity + hydrology, desktop preferred)",
+        summary: "4 km grid (~35.4 MB, desktop preferred)",
         metaUrl: "/tools/data/bedmachine_antarctica_v4_741.meta.json",
         binUrl: "/tools/data/bedmachine_antarctica_v4_741.bin",
         velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.meta.json",
@@ -1062,6 +1062,61 @@
         out[i] = intArray[i] === fillValue ? Number.NaN : intArray[i] * scale + offset;
       }
       return out;
+    }
+
+    function quickselectInPlace(values, k) {
+      let left = 0;
+      let right = values.length - 1;
+
+      while (left < right) {
+        const pivotIndex = left + Math.floor(Math.random() * (right - left + 1));
+        const pivotValue = values[pivotIndex];
+        [values[pivotIndex], values[right]] = [values[right], values[pivotIndex]];
+
+        let store = left;
+        for (let i = left; i < right; i += 1) {
+          if (values[i] < pivotValue) {
+            [values[store], values[i]] = [values[i], values[store]];
+            store += 1;
+          }
+        }
+        [values[right], values[store]] = [values[store], values[right]];
+
+        if (k === store) {
+          return values[store];
+        }
+        if (k < store) {
+          right = store - 1;
+        } else {
+          left = store + 1;
+        }
+      }
+
+      return values[left];
+    }
+
+    function finiteMedian(values) {
+      let finiteCount = 0;
+      for (let i = 0; i < values.length; i += 1) {
+        if (Number.isFinite(values[i])) finiteCount += 1;
+      }
+      if (finiteCount === 0) return Number.NaN;
+
+      const sample = new Float64Array(finiteCount);
+      let cursor = 0;
+      for (let i = 0; i < values.length; i += 1) {
+        const value = values[i];
+        if (Number.isFinite(value)) {
+          sample[cursor] = value;
+          cursor += 1;
+        }
+      }
+
+      const mid = Math.floor(finiteCount / 2);
+      const upper = quickselectInPlace(sample, mid);
+      if (finiteCount % 2 === 1) return upper;
+      const lower = quickselectInPlace(sample, mid - 1);
+      return (lower + upper) / 2;
     }
 
     function sampleVelocityBilinear(field, col, row) {
@@ -1659,7 +1714,7 @@
       });
     }
 
-    function updateMeta(meta, dataset, velocityMeta, hydrologyMeta) {
+    function updateMeta(meta, dataset, velocityMeta, hydrologyMeta, velocityMedianSpeed) {
       const grid = meta.grid;
       const bedStats = meta.fields.find((f) => f.name === "bed").stats_m;
       const thickStats = meta.fields.find((f) => f.name === "thickness").stats_m;
@@ -1676,15 +1731,20 @@
 
       metaListEl.innerHTML = `
         <li class="meta-group">Grid & Topography</li>
-        <li><strong>Product:</strong> ${meta.title} (${meta.product_version})</li>
         <li><strong>Preset:</strong> ${dataset.label} (${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km)</li>
         <li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)}</li>
         <li><strong>Bed Elevation:</strong> ${fmtInt(bedStats.min)} to ${fmtInt(bedStats.max)} m</li>
         <li><strong>Max Ice Thickness:</strong> ${fmtInt(thickStats.max)} m</li>
+        <li><strong>Mean Ice Thickness:</strong> ${Number.isFinite(thickStats.mean) ? `${fmtInt(thickStats.mean)} m` : "n/a"}</li>
 
         <li class="meta-group">Velocity</li>
         <li><strong>Surface Speed:</strong> ${speedStats ? `${fmtInt(speedStats.min)} to ${fmtInt(speedStats.max)} m/yr` : "n/a"}</li>
         <li><strong>Mean Speed:</strong> ${speedStats ? `${fmtInt(speedStats.mean)} m/yr` : "n/a"}</li>
+        ${
+          Number.isFinite(velocityMedianSpeed) && velocityMedianSpeed > 0
+            ? `<li><strong>Median Speed:</strong> ${fmtInt(velocityMedianSpeed)} m/yr</li>`
+            : ""
+        }
 
         <li class="meta-group">Subglacial Hydrology</li>
         <li><strong>Effective Pressure:</strong> ${pressureStats ? `${fmtMpa(pressureStats.min)} to ${fmtMpa(pressureStats.max)} MPa` : "n/a"}</li>
@@ -1888,6 +1948,7 @@
           effectivePressureValid[i] = Number(hasPressure);
           effectivePressureHeights[i] = hasPressure ? bedHeights[i] + EFFECTIVE_PRESSURE_SURFACE_OFFSET_M : Number.NaN;
         }
+        const velocityMedianSpeed = finiteMedian(velocitySpeed);
 
         const horizontalMetersPerUnit = 52000;
         const verticalMetersPerUnit = 3800;
@@ -2097,7 +2158,7 @@
           subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
         }
 
-        updateMeta(meta, dataset, velocityMeta, hydrologyMeta);
+        updateMeta(meta, dataset, velocityMeta, hydrologyMeta, velocityMedianSpeed);
         updateFlowlineVisibility();
         statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${dataset.label})`;
       } finally {
