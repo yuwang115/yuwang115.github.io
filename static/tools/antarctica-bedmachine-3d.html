@@ -179,14 +179,39 @@
       padding: 0;
       list-style: none;
       display: grid;
-      gap: 5px;
+      gap: 0;
       font-size: 0.84rem;
       color: #345266;
       line-height: 1.35;
     }
 
+    .meta-list li {
+      padding: 5px 0;
+      border-bottom: 1px dashed #d7e6ef;
+    }
+
+    .meta-list li:last-child {
+      border-bottom: none;
+    }
+
     .meta-list strong {
       color: #13344a;
+    }
+
+    .meta-list .meta-group {
+      padding-top: 10px;
+      margin-top: 4px;
+      border-bottom: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #4a6a7f;
+      font-weight: 700;
+    }
+
+    .meta-list .meta-compact {
+      font-size: 0.8rem;
+      line-height: 1.4;
     }
 
     .hud {
@@ -377,6 +402,17 @@
       </section>
 
       <section class="section">
+        <h2 class="section-title">Ice Surface Velocity Color</h2>
+        <div id="velocityLegendBar" class="legend" aria-hidden="true"></div>
+        <div class="legend-labels">
+          <span>0 m/yr</span>
+          <span>100</span>
+          <span>500</span>
+          <span>1500+</span>
+        </div>
+      </section>
+
+      <section class="section">
         <h2 class="section-title">Data Snapshot</h2>
         <ul id="metaList" class="meta-list">
           <li>Loading metadata...</li>
@@ -454,6 +490,7 @@
       wireframe: document.getElementById("wireframe"),
       resetView: document.getElementById("resetView"),
       legendBar: document.getElementById("legendBar"),
+      velocityLegendBar: document.getElementById("velocityLegendBar"),
     };
 
     let renderer;
@@ -515,12 +552,13 @@
     const BED_ELEVATION_MIN = -7000;
     const BED_ELEVATION_MAX = 3500;
     const FLOWLINE_SURFACE_OFFSET_M = 18;
-    const FLOWLINE_SEED_TARGET = 620;
-    const FLOWLINE_MIN_SEED_SPEED = 40;
-    const FLOWLINE_MIN_TRACE_SPEED = 8;
-    const FLOWLINE_MAX_STEPS = 130;
-    const FLOWLINE_STEP_CELLS = 1.05;
-    const VELOCITY_REFERENCE_SPEED = 1500;
+    const FLOWLINE_SEED_TARGET = 2400;
+    const FLOWLINE_SEED_PASSES = 2;
+    const FLOWLINE_MIN_SEED_SPEED = 15;
+    const FLOWLINE_MIN_TRACE_SPEED = 4;
+    const FLOWLINE_MAX_STEPS = 110;
+    const FLOWLINE_STEP_CELLS = 1.0;
+    const VELOCITY_REFERENCE_SPEED = 1800;
     const GMT_RELIEF_RGB_URL = "/tools/data/GMT_relief.rgb";
     const GMT_RELIEF_OCEAN_ZERO = [0.975613, 0.999387, 0.994608];
     const GMT_RELIEF_LAND_ZERO = [0.284908, 0.466429, 0.196078];
@@ -611,6 +649,19 @@
       }
 
       controlsUI.legendBar.style.background = `linear-gradient(90deg, ${stops.join(", ")})`;
+    }
+
+    function updateVelocityLegend() {
+      if (!controlsUI.velocityLegendBar) return;
+      const stopCount = 64;
+      const stops = [];
+      for (let i = 0; i <= stopCount; i += 1) {
+        const t = i / stopCount;
+        const speed = Math.expm1(t * Math.log1p(VELOCITY_REFERENCE_SPEED));
+        const rgb = velocityColor(speed);
+        stops.push(`${rgbToHex(rgb)} ${(t * 100).toFixed(3)}%`);
+      }
+      controlsUI.velocityLegendBar.style.background = `linear-gradient(90deg, ${stops.join(", ")})`;
     }
 
     function iceColor(thicknessMeters, maskValue) {
@@ -933,11 +984,55 @@
       return out;
     }
 
+    function collectFlowlineSeeds(field, seedSpacing) {
+      const seeds = [];
+      const seen = new Set();
+      const halfOffset = Math.max(1, Math.floor(seedSpacing / 2));
+
+      for (let pass = 0; pass < FLOWLINE_SEED_PASSES; pass += 1) {
+        const offset = pass === 0 ? 0 : halfOffset;
+        const rowStart = 2 + offset;
+        const colStart = 2 + offset;
+
+        for (let rowBlock = rowStart; rowBlock < field.ny - 2; rowBlock += seedSpacing) {
+          const rowEnd = Math.min(field.ny - 2, rowBlock + seedSpacing);
+          for (let colBlock = colStart; colBlock < field.nx - 2; colBlock += seedSpacing) {
+            const colEnd = Math.min(field.nx - 2, colBlock + seedSpacing);
+
+            let bestIdx = -1;
+            let bestSpeed = FLOWLINE_MIN_SEED_SPEED;
+
+            for (let row = rowBlock; row < rowEnd; row += 1) {
+              for (let col = colBlock; col < colEnd; col += 1) {
+                const idx = row * field.nx + col;
+                if (!field.iceValid[idx] || !field.velocityValid[idx]) continue;
+                const speed = field.velocitySpeed[idx];
+                if (!Number.isFinite(speed) || speed < bestSpeed) continue;
+                bestSpeed = speed;
+                bestIdx = idx;
+              }
+            }
+
+            if (bestIdx < 0) continue;
+            const seedRow = Math.floor(bestIdx / field.nx);
+            const seedCol = bestIdx % field.nx;
+            const key = `${seedCol}:${seedRow}`;
+            if (seen.has(key)) continue;
+            seen.add(key);
+            seeds.push({ col: seedCol, row: seedRow });
+          }
+        }
+      }
+
+      return seeds;
+    }
+
     function buildFlowlineMesh(field) {
       if (!field) return null;
 
       const totalCells = field.nx * field.ny;
       const seedSpacing = Math.max(8, Math.round(Math.sqrt(totalCells / FLOWLINE_SEED_TARGET)));
+      const seeds = collectFlowlineSeeds(field, seedSpacing);
       const halfX = (field.nx - 1) / 2;
       const halfY = (field.ny - 1) / 2;
       const absDy = Math.abs(field.dyMeters);
@@ -946,38 +1041,32 @@
       const colors = [];
       let flowlineCount = 0;
 
-      for (let row = 2; row < field.ny - 2; row += seedSpacing) {
-        for (let col = 2; col < field.nx - 2; col += seedSpacing) {
-          const seedIndex = row * field.nx + col;
-          if (!field.iceValid[seedIndex] || !field.velocityValid[seedIndex]) continue;
-          if (!Number.isFinite(field.velocitySpeed[seedIndex]) || field.velocitySpeed[seedIndex] < FLOWLINE_MIN_SEED_SPEED) continue;
+      for (const seed of seeds) {
+        const forward = traceFlowlineDirection(field, seed.col, seed.row, 1);
+        const backward = traceFlowlineDirection(field, seed.col, seed.row, -1);
+        if (!forward.length && !backward.length) continue;
 
-          const forward = traceFlowlineDirection(field, col, row, 1);
-          const backward = traceFlowlineDirection(field, col, row, -1);
-          if (!forward.length && !backward.length) continue;
+        const merged = backward.reverse().concat(forward.slice(1));
+        if (merged.length < 3) continue;
+        flowlineCount += 1;
 
-          const merged = backward.reverse().concat(forward.slice(1));
-          if (merged.length < 4) continue;
-          flowlineCount += 1;
+        for (let i = 1; i < merged.length; i += 1) {
+          const p0 = merged[i - 1];
+          const p1 = merged[i];
 
-          for (let i = 1; i < merged.length; i += 1) {
-            const p0 = merged[i - 1];
-            const p1 = merged[i];
+          const x0 = ((p0.col - halfX) * field.dxMeters) / field.horizontalMetersPerUnit;
+          const z0 = ((p0.row - halfY) * absDy) / field.horizontalMetersPerUnit;
+          const y0 = (p0.surface + FLOWLINE_SURFACE_OFFSET_M) / field.verticalMetersPerUnit;
 
-            const x0 = ((p0.col - halfX) * field.dxMeters) / field.horizontalMetersPerUnit;
-            const z0 = ((p0.row - halfY) * absDy) / field.horizontalMetersPerUnit;
-            const y0 = (p0.surface + FLOWLINE_SURFACE_OFFSET_M) / field.verticalMetersPerUnit;
+          const x1 = ((p1.col - halfX) * field.dxMeters) / field.horizontalMetersPerUnit;
+          const z1 = ((p1.row - halfY) * absDy) / field.horizontalMetersPerUnit;
+          const y1 = (p1.surface + FLOWLINE_SURFACE_OFFSET_M) / field.verticalMetersPerUnit;
 
-            const x1 = ((p1.col - halfX) * field.dxMeters) / field.horizontalMetersPerUnit;
-            const z1 = ((p1.row - halfY) * absDy) / field.horizontalMetersPerUnit;
-            const y1 = (p1.surface + FLOWLINE_SURFACE_OFFSET_M) / field.verticalMetersPerUnit;
+          const c0 = velocityColor(p0.speed);
+          const c1 = velocityColor(p1.speed);
 
-            const c0 = velocityColor(p0.speed);
-            const c1 = velocityColor(p1.speed);
-
-            positions.push(x0, y0, z0, x1, y1, z1);
-            colors.push(c0[0], c0[1], c0[2], c1[0], c1[1], c1[2]);
-          }
+          positions.push(x0, y0, z0, x1, y1, z1);
+          colors.push(c0[0], c0[1], c0[2], c1[0], c1[1], c1[2]);
         }
       }
 
@@ -1295,18 +1384,24 @@
       const bedStats = meta.fields.find((f) => f.name === "bed").stats_m;
       const thickStats = meta.fields.find((f) => f.name === "thickness").stats_m;
       const speedStats = velocityMeta?.fields?.find((f) => f.name === "speed")?.stats_m_per_year;
-      const velocitySummary = speedStats
-        ? `${Math.round(speedStats.min)} to ${Math.round(speedStats.max)} m/yr`
-        : "n/a";
+      const stepKm = Math.abs(grid.dx_m) / 1000;
+      const fmtInt = (value) => Math.round(Number(value)).toLocaleString("en-US");
+
       metaListEl.innerHTML = `
-        <li><strong>Dataset:</strong> ${meta.title} (${meta.product_version})</li>
-        <li><strong>Preset:</strong> ${dataset.label} - ${dataset.summary}</li>
-        <li><strong>Grid:</strong> ${grid.nx} x ${grid.ny} (step ${meta.downsample_step} = ${Math.abs(grid.dx_m)} m)</li>
-        <li><strong>Bed Range:</strong> ${Math.round(bedStats.min)} to ${Math.round(bedStats.max)} m</li>
-        <li><strong>Max Ice Thickness:</strong> ${Math.round(thickStats.max)} m</li>
-        <li><strong>Ice Surface Velocity:</strong> ${velocitySummary}</li>
-        <li><strong>Velocity Source:</strong> MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1</li>
-        <li><strong>Updated:</strong> ${meta.date_modified || "n/a"}</li>
+        <li class="meta-group">Grid & Topography</li>
+        <li><strong>Product:</strong> ${meta.title} (${meta.product_version})</li>
+        <li><strong>Preset:</strong> ${dataset.label} (${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km)</li>
+        <li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)}</li>
+        <li><strong>Bed Elevation:</strong> ${fmtInt(bedStats.min)} to ${fmtInt(bedStats.max)} m</li>
+        <li><strong>Max Ice Thickness:</strong> ${fmtInt(thickStats.max)} m</li>
+
+        <li class="meta-group">Velocity</li>
+        <li><strong>Surface Speed:</strong> ${speedStats ? `${fmtInt(speedStats.min)} to ${fmtInt(speedStats.max)} m/yr` : "n/a"}</li>
+        <li><strong>Mean Speed:</strong> ${speedStats ? `${fmtInt(speedStats.mean)} m/yr` : "n/a"}</li>
+
+        <li class="meta-group">Sources</li>
+        <li class="meta-compact"><strong>Bed/Ice Geometry:</strong> BedMachine Antarctica V4</li>
+        <li class="meta-compact"><strong>Surface Velocity:</strong> MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1</li>
       `;
       fieldStatsEl.textContent = `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m | Velocity max: ${speedStats ? Math.round(speedStats.max) : "--"} m/yr`;
     }
@@ -1579,6 +1674,7 @@
       try {
         await loadBedColorTable();
         updateBedLegend();
+        updateVelocityLegend();
         await loadAndBuildMeshes(lockedDatasetKey || currentDatasetKey);
       } catch (error) {
         reportLoadError(error);
