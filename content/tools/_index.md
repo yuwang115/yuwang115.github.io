@@ -22,6 +22,8 @@ sections:
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
+            background: linear-gradient(160deg, #07283d 0%, #114562 56%, #1f5f6f 100%);
+            position: relative;
           }
           #antarctica-3d-demo .tools-embed iframe {
             width: 100%;
@@ -35,6 +37,7 @@ sections:
             title="Antarctic Ice Dynamics and Subglacial Hydrology 3D explorer"
             src="/tools/antarctica-bedmachine-3d.html"
             loading="lazy"
+            fetchpriority="low"
             referrerpolicy="no-referrer"
           ></iframe>
         </div>
@@ -58,6 +61,8 @@ sections:
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
+            position: relative;
+            background: linear-gradient(160deg, #f6fbfe 0%, #edf6fb 100%);
           }
           #tools-demo .tools-embed iframe {
             width: 100%;
@@ -71,6 +76,7 @@ sections:
             title="Regularised Coulomb Sliding Law interactive demo"
             src="/tools/rCoulomb_demo_YW.html"
             loading="lazy"
+            fetchpriority="low"
             referrerpolicy="no-referrer"
           ></iframe>
         </div>

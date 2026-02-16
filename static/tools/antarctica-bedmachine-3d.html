@@ -70,6 +70,104 @@
       inset: 0;
     }
 
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(82, 171, 214, 0.2), transparent 48%),
+        linear-gradient(160deg, rgba(5, 26, 40, 0.94) 0%, rgba(7, 37, 54, 0.9) 52%, rgba(10, 48, 66, 0.9) 100%);
+      transition: opacity 280ms ease, visibility 280ms ease;
+    }
+
+    .loading-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loading-card {
+      width: min(360px, calc(100% - 32px));
+      border-radius: 14px;
+      border: 1px solid rgba(173, 217, 239, 0.42);
+      background: rgba(6, 26, 38, 0.78);
+      box-shadow: 0 14px 34px rgba(3, 11, 18, 0.4);
+      padding: 14px 14px 12px;
+      color: #e7f7ff;
+      backdrop-filter: blur(4px);
+    }
+
+    .loading-stage {
+      font-size: 0.83rem;
+      font-family: "IBM Plex Mono", monospace;
+      color: #d4f0ff;
+      margin-bottom: 10px;
+      letter-spacing: 0.01em;
+    }
+
+    .loading-track {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(160, 210, 236, 0.46);
+      background: rgba(2, 11, 18, 0.72);
+      overflow: hidden;
+    }
+
+    .loading-fill {
+      width: 100%;
+      height: 100%;
+      transform-origin: left center;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, #3ea8d6 0%, #4ad0bf 52%, #a5efdf 100%);
+      transition: transform 120ms linear;
+    }
+
+    .loading-meta {
+      margin-top: 9px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      color: #b8dcec;
+      font-size: 0.72rem;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .loading-skeleton {
+      margin-top: 10px;
+      border-radius: 9px;
+      background: rgba(9, 37, 53, 0.78);
+      border: 1px solid rgba(140, 188, 211, 0.32);
+      padding: 8px;
+    }
+
+    .skeleton-line {
+      height: 8px;
+      border-radius: 999px;
+      margin-bottom: 7px;
+      background: linear-gradient(90deg, rgba(66, 126, 154, 0.36) 0%, rgba(121, 193, 226, 0.62) 45%, rgba(66, 126, 154, 0.36) 100%);
+      background-size: 220% 100%;
+      animation: loadingShimmer 1.3s linear infinite;
+    }
+
+    .skeleton-line:last-child {
+      margin-bottom: 0;
+      width: 72%;
+    }
+
+    @keyframes loadingShimmer {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -20% 0;
+      }
+    }
+
     h1 {
       margin: 0;
       font-size: 1.25rem;
@@ -445,6 +543,23 @@
 
     <section id="viewerShell" class="viewer-shell">
       <div id="viewer"></div>
+      <div id="loadingOverlay" class="loading-overlay" aria-live="polite" aria-busy="true">
+        <div class="loading-card">
+          <div id="loadingStage" class="loading-stage">Initializing 3D runtime...</div>
+          <div class="loading-track" aria-hidden="true">
+            <div id="loadingFill" class="loading-fill"></div>
+          </div>
+          <div class="loading-meta">
+            <span id="loadingPercent">0%</span>
+            <span id="loadingHint">Progressive loading enabled</span>
+          </div>
+          <div class="loading-skeleton" aria-hidden="true">
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+          </div>
+        </div>
+      </div>
       <div id="status" class="status">Loading data...</div>
       <div class="hud">
         <div id="interactionHint" class="chip">
@@ -458,9 +573,6 @@
   </div>
 
   <script type="module">
-    import * as THREE from "/tools/vendor/three/three.module.min.js";
-    import { OrbitControls } from "/tools/vendor/three/OrbitControls.js";
-
     const queryParams = new URLSearchParams(window.location.search);
     const mode = (queryParams.get("mode") || "").toLowerCase();
     const isShowcaseMode = mode === "showcase";
@@ -500,6 +612,11 @@
     const metaListEl = document.getElementById("metaList");
     const fieldStatsEl = document.getElementById("fieldStats");
     const interactionHintEl = document.getElementById("interactionHint");
+    const loadingOverlayEl = document.getElementById("loadingOverlay");
+    const loadingStageEl = document.getElementById("loadingStage");
+    const loadingFillEl = document.getElementById("loadingFill");
+    const loadingPercentEl = document.getElementById("loadingPercent");
+    const loadingHintEl = document.getElementById("loadingHint");
 
     const controlsUI = {
       resolutionPreset: document.getElementById("resolutionPreset"),
@@ -524,6 +641,8 @@
       channelLegendBar: document.getElementById("channelLegendBar"),
     };
 
+    let THREE;
+    let OrbitControlsCtor;
     let renderer;
     let scene;
     let camera;
@@ -542,6 +661,19 @@
     let currentDatasetKey = lockedDatasetKey || "balanced";
     let loadGeneration = 0;
     let showcaseInteractionActive = !isShowcaseMode;
+    let currentCoreContext = null;
+    let currentVelocityMeta = null;
+    let currentHydrologyMeta = null;
+    let currentVelocityMedianSpeed = Number.NaN;
+    let velocityLoadPromise = null;
+    let hydrologyLoadPromise = null;
+    let viewerInteracted = false;
+    let backgroundWarmupScheduled = false;
+    let backgroundWarmupStarted = false;
+    let backgroundWarmupTimer = null;
+    let geometryWorker = null;
+    let geometryWorkerRequestSeq = 0;
+    const geometryWorkerPending = new Map();
 
     const SHOWCASE_HINT_IDLE =
       "<strong>Scroll page:</strong> keep using wheel to continue reading.<br /><strong>Click this scene</strong> to enter 3D interaction.";
@@ -555,19 +687,31 @@
       controlsUI.exaggerationValue.textContent = "4.8x";
       controlsUI.iceOpacity.value = "1";
       controlsUI.iceOpacityValue.textContent = "1.00";
+      // Showcase mode: render only core geometry layers for smooth homepage interaction.
+      controlsUI.showBed.checked = true;
+      controlsUI.showIce.checked = true;
+      controlsUI.showIceBottom.checked = true;
+      controlsUI.showVelocity.checked = false;
+      controlsUI.showFlowline.checked = false;
+      controlsUI.showEffectivePressure.checked = false;
+      controlsUI.showSubglacialChannels.checked = false;
       controlsUI.showSea.checked = false;
+      controlsUI.showVelocity.disabled = true;
+      controlsUI.showFlowline.disabled = true;
+      controlsUI.showEffectivePressure.disabled = true;
+      controlsUI.showSubglacialChannels.disabled = true;
       interactionHintEl.innerHTML = SHOWCASE_HINT_IDLE;
     }
 
     const resetPose = isShowcaseMode
       ? {
           // Closer, slightly angled hero framing for homepage impact.
-          position: new THREE.Vector3(11.01, 62.36, 79.95),
-          target: new THREE.Vector3(4.52, -6.48, 1.43),
+          position: [11.01, 62.36, 79.95],
+          target: [4.52, -6.48, 1.43],
         }
       : {
-          position: new THREE.Vector3(0, 52, 150),
-          target: new THREE.Vector3(0, -0.4, 0),
+          position: [0, 52, 150],
+          target: [0, -0.4, 0],
         };
 
     function clamp01(value) {
@@ -641,6 +785,152 @@
       const has255Range = rawColors.some(([r, g, b]) => r > 1 || g > 1 || b > 1);
       const scale = has255Range ? 1 / 255 : 1;
       return rawColors.map(([r, g, b]) => [clamp01(r * scale), clamp01(g * scale), clamp01(b * scale)]);
+    }
+
+    function setLoadingOverlayVisible(visible) {
+      if (!loadingOverlayEl) return;
+      loadingOverlayEl.classList.toggle("hidden", !visible);
+      loadingOverlayEl.setAttribute("aria-busy", visible ? "true" : "false");
+    }
+
+    function updateLoadingProgress(progress, stageText, hintText = null) {
+      const pct = clamp01(progress);
+      if (loadingFillEl) {
+        loadingFillEl.style.transform = `scaleX(${pct})`;
+      }
+      if (loadingPercentEl) {
+        loadingPercentEl.textContent = `${Math.round(pct * 100)}%`;
+      }
+      if (stageText && loadingStageEl) {
+        loadingStageEl.textContent = stageText;
+      }
+      if (hintText && loadingHintEl) {
+        loadingHintEl.textContent = hintText;
+      }
+    }
+
+    function detectLowEndDevice() {
+      const memory = Number(navigator.deviceMemory || 0);
+      const cores = Number(navigator.hardwareConcurrency || 0);
+      const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+      return memory > 0 && memory <= 4 ? true : coarsePointer && cores > 0 && cores <= 6;
+    }
+
+    async function loadThreeRuntime() {
+      if (THREE && OrbitControlsCtor) return;
+      updateLoadingProgress(0.06, "Loading Three.js runtime...");
+      const [threeModule, orbitModule] = await Promise.all([
+        import("/tools/vendor/three/three.module.min.js"),
+        import("/tools/vendor/three/OrbitControls.js"),
+      ]);
+      THREE = threeModule;
+      OrbitControlsCtor = orbitModule.OrbitControls;
+    }
+
+    async function fetchJsonStrict(url, errorLabel) {
+      const response = await fetch(url, { cache: "force-cache" });
+      if (!response.ok) {
+        throw new Error(`${errorLabel} (${response.status})`);
+      }
+      return response.json();
+    }
+
+    async function fetchArrayBufferStrict(url, errorLabel) {
+      const response = await fetch(url, { cache: "force-cache" });
+      if (!response.ok) {
+        throw new Error(`${errorLabel} (${response.status})`);
+      }
+      return response.arrayBuffer();
+    }
+
+    async function fetchArrayBufferWithProgress(url, progressStart, progressEnd, stageText) {
+      const response = await fetch(url, { cache: "force-cache" });
+      if (!response.ok) {
+        throw new Error(`Failed to load ${url} (${response.status})`);
+      }
+
+      const totalBytes = Number(response.headers.get("content-length")) || 0;
+      if (!response.body || totalBytes <= 0) {
+        const buffer = await response.arrayBuffer();
+        updateLoadingProgress(progressEnd, stageText);
+        return buffer;
+      }
+
+      const reader = response.body.getReader();
+      const chunks = [];
+      let received = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (!value) continue;
+        chunks.push(value);
+        received += value.byteLength;
+        const byteRatio = totalBytes ? received / totalBytes : 1;
+        const progress = progressStart + (progressEnd - progressStart) * clamp01(byteRatio);
+        updateLoadingProgress(progress, `${stageText} ${Math.round(clamp01(byteRatio) * 100)}%`);
+      }
+
+      const joined = new Uint8Array(received);
+      let offset = 0;
+      for (const chunk of chunks) {
+        joined.set(chunk, offset);
+        offset += chunk.byteLength;
+      }
+      updateLoadingProgress(progressEnd, stageText);
+      return joined.buffer;
+    }
+
+    function nextAnimationFrame() {
+      return new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+    }
+
+    function ensureGeometryWorker() {
+      if (geometryWorker) return geometryWorker;
+      geometryWorker = new Worker("/tools/antarctica-geometry-worker.js");
+      geometryWorker.addEventListener("message", (event) => {
+        const data = event.data || {};
+        const pending = geometryWorkerPending.get(data.id);
+        if (!pending) return;
+
+        if (data.kind === "progress") {
+          if (typeof pending.onProgress === "function") {
+            pending.onProgress(data.progress, data.stage || "");
+          }
+          return;
+        }
+
+        geometryWorkerPending.delete(data.id);
+        if (data.kind === "result" && data.ok) {
+          pending.resolve(data.result);
+          return;
+        }
+
+        const message = data?.error?.message || "Worker task failed";
+        pending.reject(new Error(message));
+      });
+      geometryWorker.addEventListener("error", (event) => {
+        const message = event?.message || "Geometry worker crashed";
+        geometryWorkerPending.forEach((pending) => pending.reject(new Error(message)));
+        geometryWorkerPending.clear();
+      });
+      return geometryWorker;
+    }
+
+    function runGeometryWorkerTask(task, payload, { transfer = [], onProgress = null } = {}) {
+      const worker = ensureGeometryWorker();
+      const id = ++geometryWorkerRequestSeq;
+      return new Promise((resolve, reject) => {
+        geometryWorkerPending.set(id, { resolve, reject, onProgress });
+        worker.postMessage({ id, task, payload }, transfer);
+      });
+    }
+
+    function terminateGeometryWorker() {
+      if (!geometryWorker) return;
+      geometryWorker.terminate();
+      geometryWorker = null;
+      geometryWorkerPending.forEach((pending) => pending.reject(new Error("Geometry worker terminated")));
+      geometryWorkerPending.clear();
     }
 
     async function loadBedColorTable() {
@@ -847,6 +1137,7 @@
       colorFn,
       extraField,
       mask,
+      computeNormals = true,
     }) {
       const vertexCount = nx * ny;
       const positions = new Float32Array(vertexCount * 3);
@@ -894,7 +1185,9 @@
       geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
       geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3, true));
       geometry.setIndex(indices);
-      geometry.computeVertexNormals();
+      if (computeNormals) {
+        geometry.computeVertexNormals();
+      }
       return geometry;
     }
 
@@ -1292,125 +1585,6 @@
       return lines;
     }
 
-    function buildSubglacialChannelMesh({
-      nx,
-      ny,
-      dxMeters,
-      dyMeters,
-      horizontalMetersPerUnit,
-      verticalMetersPerUnit,
-      bedHeights,
-      bedValid,
-      channelCol1,
-      channelRow1,
-      channelCol2,
-      channelRow2,
-      channelDischarge,
-    }) {
-      const halfX = (nx - 1) / 2;
-      const halfY = (ny - 1) / 2;
-      const absDy = Math.abs(dyMeters);
-
-      const positions = [];
-      const colors = [];
-      let kept = 0;
-
-      for (let i = 0; i < channelDischarge.length; i += 1) {
-        const c0 = channelCol1[i];
-        const r0 = channelRow1[i];
-        const c1 = channelCol2[i];
-        const r1 = channelRow2[i];
-        if (c0 < 0 || c0 >= nx || c1 < 0 || c1 >= nx || r0 < 0 || r0 >= ny || r1 < 0 || r1 >= ny) continue;
-
-        const idx0 = r0 * nx + c0;
-        const idx1 = r1 * nx + c1;
-        if (!bedValid[idx0] || !bedValid[idx1]) continue;
-
-        const h0 = bedHeights[idx0];
-        const h1 = bedHeights[idx1];
-        if (!Number.isFinite(h0) || !Number.isFinite(h1)) continue;
-
-        const discharge = channelDischarge[i];
-        if (!Number.isFinite(discharge) || discharge <= 0) continue;
-
-        const x0 = ((c0 - halfX) * dxMeters) / horizontalMetersPerUnit;
-        const z0 = ((r0 - halfY) * absDy) / horizontalMetersPerUnit;
-        const y0 = (h0 + SUBGLACIAL_CHANNEL_SURFACE_OFFSET_M) / verticalMetersPerUnit;
-        const x1 = ((c1 - halfX) * dxMeters) / horizontalMetersPerUnit;
-        const z1 = ((r1 - halfY) * absDy) / horizontalMetersPerUnit;
-        const y1 = (h1 + SUBGLACIAL_CHANNEL_SURFACE_OFFSET_M) / verticalMetersPerUnit;
-
-        const color = subglacialChannelColor(discharge);
-        const directionX = x1 - x0;
-        const directionZ = z1 - z0;
-        const length = Math.hypot(directionX, directionZ);
-        if (!Number.isFinite(length) || length <= 1e-9) continue;
-
-        const normalX = -directionZ / length;
-        const normalZ = directionX / length;
-        const dischargeT = channelDischargeNormalized(discharge);
-        const widthMeters = lerp(CHANNEL_STRIP_WIDTH_M_MIN, CHANNEL_STRIP_WIDTH_M_MAX, dischargeT);
-        const halfWidthUnits = (widthMeters / horizontalMetersPerUnit) * 0.5;
-
-        const p0lx = x0 + normalX * halfWidthUnits;
-        const p0lz = z0 + normalZ * halfWidthUnits;
-        const p0rx = x0 - normalX * halfWidthUnits;
-        const p0rz = z0 - normalZ * halfWidthUnits;
-        const p1lx = x1 + normalX * halfWidthUnits;
-        const p1lz = z1 + normalZ * halfWidthUnits;
-        const p1rx = x1 - normalX * halfWidthUnits;
-        const p1rz = z1 - normalZ * halfWidthUnits;
-
-        // Two triangles per segment to create thick channel ribbons.
-        positions.push(
-          p0lx,
-          y0,
-          p0lz,
-          p1lx,
-          y1,
-          p1lz,
-          p0rx,
-          y0,
-          p0rz,
-          p0rx,
-          y0,
-          p0rz,
-          p1lx,
-          y1,
-          p1lz,
-          p1rx,
-          y1,
-          p1rz
-        );
-        for (let v = 0; v < 6; v += 1) {
-          colors.push(color[0], color[1], color[2]);
-        }
-        kept += 1;
-      }
-
-      if (!positions.length) return null;
-
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(positions), 3));
-      geometry.setAttribute("color", new THREE.BufferAttribute(new Float32Array(colors), 3));
-      geometry.computeVertexNormals();
-      const material = new THREE.MeshBasicMaterial({
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.98,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-        polygonOffset: true,
-        polygonOffsetFactor: -2,
-        polygonOffsetUnits: -2,
-      });
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.scale.y = Number(controlsUI.exaggeration.value);
-      mesh.visible = controlsUI.showSubglacialChannels.checked;
-      mesh.userData.channelCount = kept;
-      return mesh;
-    }
-
     function initScene() {
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x0a2b43);
@@ -1418,20 +1592,26 @@
 
       const initialFov = isShowcaseMode ? 40 : 45;
       camera = new THREE.PerspectiveCamera(initialFov, viewerEl.clientWidth / viewerEl.clientHeight, 0.1, 200);
-      camera.position.copy(resetPose.position);
+      camera.position.set(...resetPose.position);
 
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      const lowEndDevice = detectLowEndDevice();
+      const maxPixelRatio = isShowcaseMode ? 1.5 : lowEndDevice ? 1.25 : 1.8;
+      renderer = new THREE.WebGLRenderer({
+        antialias: !lowEndDevice,
+        alpha: false,
+        powerPreference: "high-performance",
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxPixelRatio));
       renderer.setSize(viewerEl.clientWidth, viewerEl.clientHeight);
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       viewerEl.appendChild(renderer.domElement);
 
-      orbit = new OrbitControls(camera, renderer.domElement);
+      orbit = new OrbitControlsCtor(camera, renderer.domElement);
       orbit.enableDamping = true;
       orbit.dampingFactor = 0.08;
       orbit.minDistance = isShowcaseMode ? 12 : 0.2;
       orbit.maxDistance = 360;
-      orbit.target.copy(resetPose.target);
+      orbit.target.set(...resetPose.target);
       if (isShowcaseMode) {
         orbit.enabled = false;
         // Allow native page scrolling until the user explicitly activates 3D interaction.
@@ -1499,7 +1679,6 @@
       }
 
       if (!velocityField) {
-        controlsUI.showFlowline.checked = false;
         return;
       }
 
@@ -1535,6 +1714,7 @@
 
     function reportLoadError(error) {
       console.error(error);
+      setLoadingOverlayVisible(false);
       statusEl.textContent = "Load failed";
       metaListEl.innerHTML = `<li><strong>Error:</strong> ${error.message}</li>`;
     }
@@ -1642,6 +1822,18 @@
       setShowcaseInteractionActive(false);
     }
 
+    function bindBackgroundWarmupTrigger() {
+      if (isShowcaseMode || !renderer) return;
+      const canvas = renderer.domElement;
+      const markInteraction = () => {
+        viewerInteracted = true;
+        scheduleBackgroundWarmup();
+      };
+      canvas.addEventListener("pointerdown", markInteraction, { passive: true });
+      canvas.addEventListener("wheel", markInteraction, { passive: true });
+      canvas.addEventListener("touchstart", markInteraction, { passive: true });
+    }
+
     function bindUI() {
       if (!lockedDatasetKey) {
         controlsUI.resolutionPreset.addEventListener("change", () => {
@@ -1682,15 +1874,31 @@
         updateIceSideVisibility();
       });
       controlsUI.showVelocity.addEventListener("change", () => {
+        if (controlsUI.showVelocity.checked && !velocitySurfaceMesh) {
+          ensureVelocityLoaded({ trigger: "toggle" });
+          return;
+        }
         if (velocitySurfaceMesh) velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
       });
       controlsUI.showFlowline.addEventListener("change", () => {
+        if (controlsUI.showFlowline.checked && !velocityField) {
+          ensureVelocityLoaded({ trigger: "toggle" });
+          return;
+        }
         updateFlowlineVisibility();
       });
       controlsUI.showEffectivePressure.addEventListener("change", () => {
+        if (controlsUI.showEffectivePressure.checked && !effectivePressureMesh) {
+          ensureHydrologyLoaded({ trigger: "toggle" });
+          return;
+        }
         if (effectivePressureMesh) effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
       });
       controlsUI.showSubglacialChannels.addEventListener("change", () => {
+        if (controlsUI.showSubglacialChannels.checked && !subglacialChannelMesh) {
+          ensureHydrologyLoaded({ trigger: "toggle" });
+          return;
+        }
         if (subglacialChannelMesh) subglacialChannelMesh.visible = controlsUI.showSubglacialChannels.checked;
       });
       controlsUI.showSea.addEventListener("change", () => {
@@ -1708,8 +1916,8 @@
       });
 
       controlsUI.resetView.addEventListener("click", () => {
-        camera.position.copy(resetPose.position);
-        orbit.target.copy(resetPose.target);
+        camera.position.set(...resetPose.position);
+        orbit.target.set(...resetPose.target);
         orbit.update();
       });
     }
@@ -1761,162 +1969,635 @@
       fieldStatsEl.textContent = `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m | Velocity max: ${speedStats ? Math.round(speedStats.max) : "--"} m/yr | Eff. pressure max: ${pressureMaxText} | Channel max: ${channelMaxText}`;
     }
 
+    function updateMetaFromCurrentState() {
+      if (!currentCoreContext) return;
+      updateMeta(
+        currentCoreContext.meta,
+        currentCoreContext.dataset,
+        currentVelocityMeta,
+        currentHydrologyMeta,
+        currentVelocityMedianSpeed
+      );
+    }
+
+    function buildCoreSceneFromContext(context) {
+      const { baseConfig, bedHeights, bedValid, surfaceHeights, iceValid, thickness, mask, iceBottomHeights, iceBottomValid } =
+        context;
+      const exaggeration = Number(controlsUI.exaggeration.value);
+      const wireframe = controlsUI.wireframe.checked;
+
+      clearModelMeshes();
+
+      const bedGeometry = buildSurfaceGeometry({
+        ...baseConfig,
+        heights: bedHeights,
+        valid: bedValid,
+        colorFn: (height) => bedColor(height),
+      });
+      const bedMaterial = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        roughness: 0.92,
+        metalness: 0.02,
+        flatShading: false,
+      });
+      bedMesh = new THREE.Mesh(bedGeometry, bedMaterial);
+      bedMesh.scale.y = exaggeration;
+      bedMesh.visible = controlsUI.showBed.checked;
+      bedMesh.material.wireframe = wireframe;
+      scene.add(bedMesh);
+
+      const iceGeometry = buildSurfaceGeometry({
+        ...baseConfig,
+        heights: surfaceHeights,
+        valid: iceValid,
+        extraField: thickness,
+        mask,
+        colorFn: (_height, thick, maskValue) => iceColor(thick, maskValue),
+      });
+      const iceMaterial = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: Number(controlsUI.iceOpacity.value),
+        roughness: 0.38,
+        metalness: 0.02,
+        side: THREE.DoubleSide,
+      });
+      iceMesh = new THREE.Mesh(iceGeometry, iceMaterial);
+      iceMesh.scale.y = exaggeration;
+      iceMesh.visible = controlsUI.showIce.checked;
+      iceMesh.material.wireframe = wireframe;
+      scene.add(iceMesh);
+
+      const iceBottomGeometry = buildSurfaceGeometry({
+        ...baseConfig,
+        heights: iceBottomHeights,
+        valid: iceBottomValid,
+        extraField: thickness,
+        mask,
+        colorFn: (_height, thick, maskValue) => iceBottomColor(thick, maskValue),
+      });
+      const iceBottomMaterial = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: Math.max(0.12, Number(controlsUI.iceOpacity.value) * 0.82),
+        roughness: 0.44,
+        metalness: 0.02,
+        side: THREE.DoubleSide,
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1,
+      });
+      iceBottomMesh = new THREE.Mesh(iceBottomGeometry, iceBottomMaterial);
+      iceBottomMesh.scale.y = exaggeration;
+      iceBottomMesh.visible = controlsUI.showIceBottom.checked;
+      iceBottomMesh.material.wireframe = wireframe;
+      scene.add(iceBottomMesh);
+
+      const iceSideGeometry = buildIceSideGeometry({
+        ...baseConfig,
+        topHeights: surfaceHeights,
+        bottomHeights: iceBottomHeights,
+        valid: iceValid,
+        extraField: thickness,
+        mask,
+        colorFn: (_height, thick, maskValue) => iceColor(thick, maskValue),
+      });
+      const iceSideMaterial = iceMaterial.clone();
+      iceSideMaterial.opacity = Number(controlsUI.iceOpacity.value);
+      iceSideMesh = new THREE.Mesh(iceSideGeometry, iceSideMaterial);
+      iceSideMesh.scale.y = exaggeration;
+      iceSideMesh.material.wireframe = wireframe;
+      updateIceSideVisibility();
+      scene.add(iceSideMesh);
+
+      const widthUnits = ((context.nx - 1) * Math.abs(context.meta.grid.dx_m)) / baseConfig.horizontalMetersPerUnit;
+      const depthUnits = ((context.ny - 1) * Math.abs(context.meta.grid.dy_m)) / baseConfig.horizontalMetersPerUnit;
+      const seaGeometry = new THREE.PlaneGeometry(widthUnits, depthUnits, 1, 1);
+      seaGeometry.rotateX(-Math.PI / 2);
+      const seaMaterial = new THREE.MeshBasicMaterial({
+        color: 0x4ca8d8,
+        transparent: true,
+        opacity: 0.13,
+        side: THREE.DoubleSide,
+      });
+      seaLevelMesh = new THREE.Mesh(seaGeometry, seaMaterial);
+      seaLevelMesh.position.y = 0;
+      seaLevelMesh.visible = controlsUI.showSea.checked;
+      scene.add(seaLevelMesh);
+    }
+
+    async function ensureHydrologyColorTables() {
+      if (effectivePressureLut.length && channelDischargeLut.length) return;
+      try {
+        if (!effectivePressureLut.length) {
+          await loadEffectivePressureColorTable();
+        }
+      } catch (colorTableError) {
+        console.warn("Failed to load cmocean_dense.rgb, using fallback effective-pressure colors.", colorTableError);
+        effectivePressureLut = [];
+      }
+      try {
+        if (!channelDischargeLut.length) {
+          await loadChannelDischargeColorTable();
+        }
+      } catch (colorTableError) {
+        console.warn("Failed to load cmocean_matter.rgb, using fallback channel colors.", colorTableError);
+        channelDischargeLut = [];
+      }
+      updateEffectivePressureLegend();
+      updateChannelLegend();
+    }
+
+    async function buildVelocityLayerFromPayload(
+      context,
+      velocityMeta,
+      velocityBuffer,
+      { showOverlay = false, updateStatus = true } = {}
+    ) {
+      if (velocityMeta.grid.nx !== context.nx || velocityMeta.grid.ny !== context.ny) {
+        throw new Error("Velocity grid is not aligned to BedMachine grid.");
+      }
+      if (!(velocityBuffer instanceof ArrayBuffer)) {
+        throw new Error("Velocity payload is invalid.");
+      }
+
+      if (showOverlay) {
+        updateLoadingProgress(0.58, "Decoding velocity field...");
+      }
+
+      const workerResult = await runGeometryWorkerTask(
+        "buildVelocity",
+        {
+          velocityMeta,
+          velocityBuffer,
+          surfaceHeights: context.surfaceHeights,
+          iceValid: context.iceValid,
+          nx: context.nx,
+          ny: context.ny,
+          cellCount: context.cellCount,
+          baseConfig: context.baseConfig,
+          reportProgress: showOverlay,
+        },
+        {
+          transfer: [velocityBuffer],
+          onProgress: showOverlay
+            ? (progress, stage) => {
+                const p = 0.58 + clamp01(progress) * 0.38;
+                updateLoadingProgress(p, stage || "Building velocity mesh...");
+              }
+            : null,
+        }
+      );
+      if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+
+      velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
+      flowlineMesh = disposeMesh(flowlineMesh);
+      const velocitySurfaceGeometry = new THREE.BufferGeometry();
+      velocitySurfaceGeometry.setAttribute("position", new THREE.BufferAttribute(workerResult.positions, 3));
+      velocitySurfaceGeometry.setAttribute("color", new THREE.BufferAttribute(workerResult.colors, 3, true));
+      velocitySurfaceGeometry.setIndex(new THREE.BufferAttribute(workerResult.indices, 1));
+      const velocitySurfaceMaterial = new THREE.MeshBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.82,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+      });
+      velocitySurfaceMesh = new THREE.Mesh(velocitySurfaceGeometry, velocitySurfaceMaterial);
+      velocitySurfaceMesh.scale.y = Number(controlsUI.exaggeration.value);
+      velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
+      velocitySurfaceMesh.material.wireframe = controlsUI.wireframe.checked;
+      scene.add(velocitySurfaceMesh);
+
+      velocityField = {
+        nx: context.nx,
+        ny: context.ny,
+        dxMeters: context.meta.grid.dx_m,
+        dyMeters: context.meta.grid.dy_m,
+        horizontalMetersPerUnit: context.baseConfig.horizontalMetersPerUnit,
+        verticalMetersPerUnit: context.baseConfig.verticalMetersPerUnit,
+        surfaceHeights: context.surfaceHeights,
+        iceValid: context.iceValid,
+        velocityX: workerResult.velocityX,
+        velocityY: workerResult.velocityY,
+        velocitySpeed: workerResult.velocitySpeed,
+        velocityValid: workerResult.velocityValid,
+      };
+
+      context.velocityLoaded = true;
+      context.velocityPrefetchMeta = null;
+      context.velocityPrefetchBuffer = null;
+      currentVelocityMeta = velocityMeta;
+      currentVelocityMedianSpeed = Number(workerResult.velocityMedianSpeed);
+      updateMetaFromCurrentState();
+      updateFlowlineVisibility();
+      if (updateStatus) {
+        statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+      }
+      if (showOverlay) {
+        updateLoadingProgress(1, "Velocity layer ready");
+        setLoadingOverlayVisible(false);
+      }
+      return true;
+    }
+
+    async function ensureVelocityLoaded({ trigger = "prefetch" } = {}) {
+      const context = currentCoreContext;
+      if (!context || context.generation !== loadGeneration) return false;
+      if (context.velocityLoaded) {
+        if (velocitySurfaceMesh) velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
+        if (controlsUI.showFlowline.checked) updateFlowlineVisibility();
+        return true;
+      }
+      if (context.velocityUnavailable) return false;
+
+      const showOverlay = trigger === "toggle";
+      const buildLayer = trigger === "toggle" || trigger === "warmup";
+
+      if (velocityLoadPromise) {
+        const settled = await velocityLoadPromise;
+        if (
+          trigger === "toggle" &&
+          context === currentCoreContext &&
+          context.generation === loadGeneration &&
+          !context.velocityLoaded &&
+          !context.velocityUnavailable
+        ) {
+          return ensureVelocityLoaded({ trigger: "toggle" });
+        }
+        return settled;
+      }
+
+      velocityLoadPromise = (async () => {
+        const hasPrefetchedPayload = Boolean(context.velocityPrefetchMeta && context.velocityPrefetchBuffer);
+
+        if (showOverlay) {
+          setLoadingOverlayVisible(true);
+          updateLoadingProgress(
+            hasPrefetchedPayload ? 0.34 : 0.1,
+            hasPrefetchedPayload ? "Applying prefetched velocity data..." : "Loading velocity metadata..."
+          );
+          statusEl.textContent = "Loading velocity layer...";
+        }
+
+        let velocityMeta = context.velocityPrefetchMeta;
+        let velocityBuffer = context.velocityPrefetchBuffer;
+
+        if (!velocityMeta) {
+          velocityMeta = await fetchJsonStrict(context.dataset.velocityMetaUrl, "Failed to load velocity metadata");
+          if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        }
+
+        if (!velocityBuffer) {
+          velocityBuffer = showOverlay
+            ? await fetchArrayBufferWithProgress(context.dataset.velocityBinUrl, 0.18, 0.52, "Downloading velocity field")
+            : await fetchArrayBufferStrict(context.dataset.velocityBinUrl, "Failed to load velocity field");
+          if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        }
+
+        if (!buildLayer) {
+          context.velocityPrefetchMeta = velocityMeta;
+          context.velocityPrefetchBuffer = velocityBuffer;
+          return true;
+        }
+
+        context.velocityPrefetchMeta = null;
+        context.velocityPrefetchBuffer = null;
+        return buildVelocityLayerFromPayload(context, velocityMeta, velocityBuffer, {
+          showOverlay,
+          updateStatus: showOverlay,
+        });
+      })()
+        .catch((error) => {
+          console.error("Velocity layer load failed:", error);
+          if (context === currentCoreContext && context.generation === loadGeneration && trigger === "toggle") {
+            context.velocityUnavailable = true;
+            controlsUI.showVelocity.checked = false;
+            controlsUI.showFlowline.checked = false;
+            velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
+            flowlineMesh = disposeMesh(flowlineMesh);
+            velocityField = null;
+            const readyText = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+            const transientText = "Velocity layer unavailable";
+            statusEl.textContent = transientText;
+            window.setTimeout(() => {
+              if (statusEl.textContent === transientText) {
+                statusEl.textContent = readyText;
+              }
+            }, 1800);
+            setLoadingOverlayVisible(false);
+          }
+          return false;
+        })
+        .finally(() => {
+          if (context === currentCoreContext) {
+            velocityLoadPromise = null;
+          }
+        });
+
+      return velocityLoadPromise;
+    }
+
+    async function ensureHydrologyLoaded({ trigger = "prefetch" } = {}) {
+      const context = currentCoreContext;
+      if (!context || context.generation !== loadGeneration) return false;
+      if (context.hydrologyLoaded) {
+        if (effectivePressureMesh) effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
+        if (subglacialChannelMesh) subglacialChannelMesh.visible = controlsUI.showSubglacialChannels.checked;
+        return true;
+      }
+      if (context.hydrologyUnavailable) return false;
+
+      const showOverlay = trigger === "toggle";
+      const buildLayer = trigger === "toggle" || trigger === "warmup";
+
+      if (hydrologyLoadPromise) {
+        const settled = await hydrologyLoadPromise;
+        if (
+          trigger === "toggle" &&
+          context === currentCoreContext &&
+          context.generation === loadGeneration &&
+          !context.hydrologyLoaded &&
+          !context.hydrologyUnavailable
+        ) {
+          return ensureHydrologyLoaded({ trigger: "toggle" });
+        }
+        return settled;
+      }
+
+      hydrologyLoadPromise = (async () => {
+        if (showOverlay) {
+          setLoadingOverlayVisible(true);
+          updateLoadingProgress(0.08, "Loading hydrology metadata...");
+          statusEl.textContent = "Loading subglacial hydrology...";
+        }
+
+        let hydrologyMeta = context.hydrologyPrefetchMeta;
+        let hydrologyBuffer = context.hydrologyPrefetchBuffer;
+        if (!hydrologyMeta) {
+          hydrologyMeta = await fetchJsonStrict(context.dataset.hydrologyMetaUrl, "Failed to load hydrology metadata");
+          if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        }
+
+        if (!hydrologyBuffer) {
+          hydrologyBuffer = showOverlay
+            ? await fetchArrayBufferWithProgress(context.dataset.hydrologyBinUrl, 0.18, 0.75, "Downloading hydrology field")
+            : await fetchArrayBufferStrict(context.dataset.hydrologyBinUrl, "Failed to load hydrology field");
+          if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        }
+
+        if (!buildLayer) {
+          context.hydrologyPrefetchMeta = hydrologyMeta;
+          context.hydrologyPrefetchBuffer = hydrologyBuffer;
+          return true;
+        }
+
+        context.hydrologyPrefetchMeta = null;
+        context.hydrologyPrefetchBuffer = null;
+        if (hydrologyMeta.grid.nx !== context.nx || hydrologyMeta.grid.ny !== context.ny) {
+          throw new Error("Hydrology grid is not aligned to BedMachine grid.");
+        }
+
+        await ensureHydrologyColorTables();
+        if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+
+        if (showOverlay) {
+          updateLoadingProgress(0.76, "Processing hydrology field...");
+        }
+
+        const workerResult = await runGeometryWorkerTask(
+          "buildHydrology",
+          {
+            hydrologyMeta,
+            hydrologyBuffer,
+            nx: context.nx,
+            ny: context.ny,
+            cellCount: context.cellCount,
+            baseConfig: context.baseConfig,
+            bedHeights: context.bedHeights,
+            bedValid: context.bedValid,
+            effectivePressureLut,
+            channelDischargeLut,
+            reportProgress: showOverlay,
+          },
+          {
+            transfer: [hydrologyBuffer],
+            onProgress: showOverlay
+              ? (progress, stage) => {
+                  const p = 0.76 + clamp01(progress) * 0.22;
+                  updateLoadingProgress(p, stage || "Processing hydrology field...");
+                }
+              : null,
+          }
+        );
+        if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+
+        effectivePressureMesh = disposeMesh(effectivePressureMesh);
+        subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
+
+        const effectivePressureGeometry = new THREE.BufferGeometry();
+        effectivePressureGeometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(workerResult.effectivePressurePositions, 3)
+        );
+        effectivePressureGeometry.setAttribute(
+          "color",
+          new THREE.BufferAttribute(workerResult.effectivePressureColors, 3, true)
+        );
+        effectivePressureGeometry.setIndex(new THREE.BufferAttribute(workerResult.effectivePressureIndices, 1));
+        const effectivePressureMaterial = new THREE.MeshBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.88,
+          side: THREE.DoubleSide,
+          depthWrite: false,
+          polygonOffset: true,
+          polygonOffsetFactor: -1,
+          polygonOffsetUnits: -1,
+        });
+        effectivePressureMesh = new THREE.Mesh(effectivePressureGeometry, effectivePressureMaterial);
+        effectivePressureMesh.scale.y = Number(controlsUI.exaggeration.value);
+        effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
+        effectivePressureMesh.material.wireframe = controlsUI.wireframe.checked;
+        effectivePressureMesh.renderOrder = 20;
+        scene.add(effectivePressureMesh);
+
+        if (workerResult.channelPositions && workerResult.channelColors && workerResult.channelPositions.length) {
+          const channelGeometry = new THREE.BufferGeometry();
+          channelGeometry.setAttribute("position", new THREE.BufferAttribute(workerResult.channelPositions, 3));
+          channelGeometry.setAttribute("color", new THREE.BufferAttribute(workerResult.channelColors, 3));
+          const channelMaterial = new THREE.MeshBasicMaterial({
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.98,
+            side: THREE.DoubleSide,
+            depthWrite: false,
+            polygonOffset: true,
+            polygonOffsetFactor: -2,
+            polygonOffsetUnits: -2,
+          });
+          subglacialChannelMesh = new THREE.Mesh(channelGeometry, channelMaterial);
+          subglacialChannelMesh.visible = controlsUI.showSubglacialChannels.checked;
+          subglacialChannelMesh.scale.y = Number(controlsUI.exaggeration.value);
+          subglacialChannelMesh.userData.channelCount = workerResult.channelCount || 0;
+          subglacialChannelMesh.renderOrder = 30;
+          scene.add(subglacialChannelMesh);
+        } else {
+          controlsUI.showSubglacialChannels.checked = false;
+          controlsUI.showSubglacialChannels.disabled = true;
+        }
+
+        context.hydrologyLoaded = true;
+        context.hydrologyPrefetchMeta = null;
+        context.hydrologyPrefetchBuffer = null;
+        currentHydrologyMeta = hydrologyMeta;
+        updateMetaFromCurrentState();
+        if (showOverlay) {
+          statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+          updateLoadingProgress(1, "Hydrology layer ready");
+          setLoadingOverlayVisible(false);
+        }
+        return true;
+      })()
+        .catch((error) => {
+          console.error("Hydrology layer load failed:", error);
+          if (context === currentCoreContext && context.generation === loadGeneration && trigger === "toggle") {
+            context.hydrologyUnavailable = true;
+            controlsUI.showEffectivePressure.checked = false;
+            controlsUI.showSubglacialChannels.checked = false;
+            controlsUI.showEffectivePressure.disabled = true;
+            controlsUI.showSubglacialChannels.disabled = true;
+            effectivePressureMesh = disposeMesh(effectivePressureMesh);
+            subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
+            const readyText = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+            const transientText = "Hydrology layer unavailable";
+            statusEl.textContent = transientText;
+            window.setTimeout(() => {
+              if (statusEl.textContent === transientText) {
+                statusEl.textContent = readyText;
+              }
+            }, 1800);
+            setLoadingOverlayVisible(false);
+          }
+          return false;
+        })
+        .finally(() => {
+          if (context === currentCoreContext) {
+            hydrologyLoadPromise = null;
+          }
+        });
+
+      return hydrologyLoadPromise;
+    }
+
+    function canWarmupInBackground() {
+      if (isShowcaseMode) return false;
+      if (!currentCoreContext) return false;
+      if (backgroundWarmupStarted) return false;
+      const connection = navigator.connection;
+      if (connection?.saveData) return false;
+      const networkType = String(connection?.effectiveType || "");
+      if (networkType.includes("2g")) return false;
+      return true;
+    }
+
+    function startBackgroundWarmup() {
+      if (!canWarmupInBackground()) return;
+      const context = currentCoreContext;
+      backgroundWarmupStarted = true;
+      backgroundWarmupScheduled = false;
+      if (backgroundWarmupTimer !== null) {
+        window.clearTimeout(backgroundWarmupTimer);
+        backgroundWarmupTimer = null;
+      }
+
+      (async () => {
+        if (!context || context !== currentCoreContext || context.generation !== loadGeneration) return;
+        await ensureVelocityLoaded({ trigger: "warmup" });
+        if (!context || context !== currentCoreContext || context.generation !== loadGeneration) return;
+        await nextAnimationFrame();
+        await ensureHydrologyLoaded({ trigger: "warmup" });
+      })().catch((error) => {
+        console.warn("Background warmup failed:", error);
+      });
+    }
+
+    function scheduleBackgroundWarmup() {
+      if (!canWarmupInBackground()) return;
+      if (backgroundWarmupScheduled) return;
+      backgroundWarmupScheduled = true;
+
+      const run = () => {
+        backgroundWarmupScheduled = false;
+        startBackgroundWarmup();
+      };
+
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(run, { timeout: 2600 });
+      } else {
+        window.setTimeout(run, 1200);
+      }
+    }
+
     async function loadAndBuildMeshes(datasetKey = currentDatasetKey) {
       const effectiveDatasetKey = lockedDatasetKey || datasetKey;
       const dataset = DATASETS[effectiveDatasetKey] || DATASETS.balanced;
       const generation = ++loadGeneration;
       currentDatasetKey = dataset.id;
+      currentCoreContext = null;
+      currentVelocityMeta = null;
+      currentHydrologyMeta = null;
+      currentVelocityMedianSpeed = Number.NaN;
+      velocityLoadPromise = null;
+      hydrologyLoadPromise = null;
+      backgroundWarmupStarted = false;
+      backgroundWarmupScheduled = false;
+      viewerInteracted = false;
+      if (backgroundWarmupTimer !== null) {
+        window.clearTimeout(backgroundWarmupTimer);
+        backgroundWarmupTimer = null;
+      }
       controlsUI.resolutionPreset.value = dataset.id;
       controlsUI.resolutionValue.textContent = dataset.label;
       controlsUI.resolutionPreset.disabled = true;
-      statusEl.textContent = isShowcaseMode ? "Loading Balanced demo..." : `Loading ${dataset.label}...`;
+      controlsUI.showEffectivePressure.disabled = false;
+      controlsUI.showSubglacialChannels.disabled = false;
+      statusEl.textContent = isShowcaseMode ? "Loading Balanced demo..." : `Loading ${dataset.label} core terrain...`;
+      setLoadingOverlayVisible(true);
+      updateLoadingProgress(0.02, "Preparing data streams...");
 
       try {
-        clearModelMeshes();
-        controlsUI.showEffectivePressure.disabled = false;
-        controlsUI.showSubglacialChannels.disabled = false;
-
-        const [metaResp, binResp, velocityMetaResp, velocityBinResp] = await Promise.all([
-          fetch(dataset.metaUrl),
-          fetch(dataset.binUrl),
-          fetch(dataset.velocityMetaUrl),
-          fetch(dataset.velocityBinUrl),
-        ]);
-        if (!metaResp.ok) throw new Error(`Failed to load metadata (${metaResp.status})`);
-        if (!binResp.ok) throw new Error(`Failed to load binary data (${binResp.status})`);
-        if (!velocityMetaResp.ok) throw new Error(`Failed to load velocity metadata (${velocityMetaResp.status})`);
-        if (!velocityBinResp.ok) throw new Error(`Failed to load velocity data (${velocityBinResp.status})`);
+        const metaPromise = fetchJsonStrict(dataset.metaUrl, "Failed to load metadata");
+        const bufferPromise = fetchArrayBufferWithProgress(dataset.binUrl, 0.08, 0.66, "Downloading terrain package");
+        const [meta, buffer] = await Promise.all([metaPromise, bufferPromise]);
         if (generation !== loadGeneration) return;
 
-        const [meta, velocityMeta] = await Promise.all([metaResp.json(), velocityMetaResp.json()]);
-        const [buffer, velocityBuffer] = await Promise.all([binResp.arrayBuffer(), velocityBinResp.arrayBuffer()]);
-
+        updateLoadingProgress(0.74, "Decoding terrain fields...");
         const nx = meta.grid.nx;
         const ny = meta.grid.ny;
         const cellCount = nx * ny;
         const fillInt16 = meta.quantization.int16_fill_value;
-        const velocityFillInt16 = velocityMeta.quantization.int16_fill_value;
-        const velocityScale = Number(velocityMeta.quantization.scale ?? 1);
-        const velocityOffset = Number(velocityMeta.quantization.offset ?? 0);
 
         const bedInt = parseField(meta, buffer, "bed");
         const surfaceInt = parseField(meta, buffer, "surface");
         const thicknessInt = parseField(meta, buffer, "thickness");
         const mask = parseField(meta, buffer, "mask");
-        const velocityXInt = parseField(velocityMeta, velocityBuffer, "vx");
-        const velocityYInt = parseField(velocityMeta, velocityBuffer, "vy");
-        let hydrologyMeta = null;
-        let hydrologyFillInt16 = -32768;
-        let pressureScale = 1;
-        let pressureOffset = 0;
-        let pressureInt = null;
-        let channelCol1 = null;
-        let channelRow1 = null;
-        let channelCol2 = null;
-        let channelRow2 = null;
-        let channelDischarge = null;
-
         if (
           bedInt.length !== cellCount ||
           surfaceInt.length !== cellCount ||
           thicknessInt.length !== cellCount ||
-          mask.length !== cellCount ||
-          velocityXInt.length !== cellCount ||
-          velocityYInt.length !== cellCount
+          mask.length !== cellCount
         ) {
           throw new Error("Unexpected field length in data package.");
-        }
-        if (velocityMeta.grid.nx !== nx || velocityMeta.grid.ny !== ny) {
-          throw new Error("Velocity grid is not aligned to BedMachine grid.");
-        }
-
-        try {
-          const [hydrologyMetaResp, hydrologyBinResp] = await Promise.all([
-            fetch(dataset.hydrologyMetaUrl),
-            fetch(dataset.hydrologyBinUrl),
-          ]);
-          if (!hydrologyMetaResp.ok) throw new Error(`Failed to load hydrology metadata (${hydrologyMetaResp.status})`);
-          if (!hydrologyBinResp.ok) throw new Error(`Failed to load hydrology data (${hydrologyBinResp.status})`);
-
-          const [hydrologyMetaMaybe, hydrologyBuffer] = await Promise.all([
-            hydrologyMetaResp.json(),
-            hydrologyBinResp.arrayBuffer(),
-          ]);
-          if (hydrologyMetaMaybe.grid.nx !== nx || hydrologyMetaMaybe.grid.ny !== ny) {
-            throw new Error("Hydrology grid is not aligned to BedMachine grid.");
-          }
-
-          const pressureIntMaybe = parseField(hydrologyMetaMaybe, hydrologyBuffer, "effective_pressure");
-          const channelCol1Maybe = parseField(hydrologyMetaMaybe, hydrologyBuffer, "channel_col1");
-          const channelRow1Maybe = parseField(hydrologyMetaMaybe, hydrologyBuffer, "channel_row1");
-          const channelCol2Maybe = parseField(hydrologyMetaMaybe, hydrologyBuffer, "channel_col2");
-          const channelRow2Maybe = parseField(hydrologyMetaMaybe, hydrologyBuffer, "channel_row2");
-          const channelDischargeMaybe = parseField(hydrologyMetaMaybe, hydrologyBuffer, "channel_discharge");
-          if (pressureIntMaybe.length !== cellCount) {
-            throw new Error("Hydrology effective-pressure field length mismatch.");
-          }
-          if (
-            channelCol1Maybe.length !== channelRow1Maybe.length ||
-            channelCol1Maybe.length !== channelCol2Maybe.length ||
-            channelCol1Maybe.length !== channelRow2Maybe.length ||
-            channelCol1Maybe.length !== channelDischargeMaybe.length
-          ) {
-            throw new Error("Hydrology channel fields are misaligned.");
-          }
-
-          hydrologyMeta = hydrologyMetaMaybe;
-          hydrologyFillInt16 = hydrologyMeta.quantization.int16_fill_value;
-          pressureScale = Number(hydrologyMeta.quantization.effective_pressure_scale_pa_per_int16 ?? 1);
-          pressureOffset = Number(hydrologyMeta.quantization.effective_pressure_offset_pa ?? 0);
-          pressureInt = pressureIntMaybe;
-          channelCol1 = channelCol1Maybe;
-          channelRow1 = channelRow1Maybe;
-          channelCol2 = channelCol2Maybe;
-          channelRow2 = channelRow2Maybe;
-          channelDischarge = channelDischargeMaybe;
-        } catch (hydrologyError) {
-          console.warn("Hydrology data unavailable, continuing without hydrology overlays.", hydrologyError);
-          controlsUI.showEffectivePressure.checked = false;
-          controlsUI.showSubglacialChannels.checked = false;
-          controlsUI.showEffectivePressure.disabled = true;
-          controlsUI.showSubglacialChannels.disabled = true;
         }
 
         const bedHeights = decodeQuantizedInt16(bedInt, { fillValue: fillInt16 });
         const surfaceHeights = decodeQuantizedInt16(surfaceInt, { fillValue: fillInt16 });
         const thickness = decodeQuantizedInt16(thicknessInt, { fillValue: fillInt16 });
-        const velocityX = decodeQuantizedInt16(velocityXInt, {
-          fillValue: velocityFillInt16,
-          scale: velocityScale,
-          offset: velocityOffset,
-        });
-        const velocityY = decodeQuantizedInt16(velocityYInt, {
-          fillValue: velocityFillInt16,
-          scale: velocityScale,
-          offset: velocityOffset,
-        });
-        const effectivePressure = new Float32Array(cellCount);
-        effectivePressure.fill(Number.NaN);
-        if (pressureInt) {
-          effectivePressure.set(
-            decodeQuantizedInt16(pressureInt, {
-              fillValue: hydrologyFillInt16,
-              scale: pressureScale,
-              offset: pressureOffset,
-            })
-          );
-        }
         const iceBottomHeights = new Float32Array(cellCount);
-
         const bedValid = new Uint8Array(cellCount);
         const iceValid = new Uint8Array(cellCount);
         const iceBottomValid = new Uint8Array(cellCount);
-        const velocityValid = new Uint8Array(cellCount);
-        const velocitySpeed = new Float32Array(cellCount);
-        const velocitySurfaceValid = new Uint8Array(cellCount);
-        const velocitySurfaceHeights = new Float32Array(cellCount);
-        const effectivePressureValid = new Uint8Array(cellCount);
-        const effectivePressureHeights = new Float32Array(cellCount);
         for (let i = 0; i < cellCount; i += 1) {
           bedValid[i] = Number(Number.isFinite(bedHeights[i]));
           iceValid[i] = Number((mask[i] === 2 || mask[i] === 3) && Number.isFinite(surfaceHeights[i]) && thickness[i] > 0);
@@ -1933,22 +2614,7 @@
             iceBottomHeights[i] = Number.NaN;
             iceBottomValid[i] = 0;
           }
-
-          const vx = velocityX[i];
-          const vy = velocityY[i];
-          const hasVelocity = Number.isFinite(vx) && Number.isFinite(vy);
-          velocityValid[i] = Number(hasVelocity);
-          velocitySpeed[i] = hasVelocity ? Math.hypot(vx, vy) : Number.NaN;
-
-          velocitySurfaceValid[i] = Number(iceValid[i] && hasVelocity);
-          velocitySurfaceHeights[i] = velocitySurfaceValid[i] ? surfaceHeights[i] + FLOWLINE_SURFACE_OFFSET_M : Number.NaN;
-
-          const pressure = effectivePressure[i];
-          const hasPressure = bedValid[i] && Number.isFinite(pressure) && pressure > 0;
-          effectivePressureValid[i] = Number(hasPressure);
-          effectivePressureHeights[i] = hasPressure ? bedHeights[i] + EFFECTIVE_PRESSURE_SURFACE_OFFSET_M : Number.NaN;
         }
-        const velocityMedianSpeed = finiteMedian(velocitySpeed);
 
         const horizontalMetersPerUnit = 52000;
         const verticalMetersPerUnit = 3800;
@@ -1961,206 +2627,59 @@
           verticalMetersPerUnit,
         };
 
-        const bedGeometry = buildSurfaceGeometry({
-          ...baseConfig,
-          heights: bedHeights,
-          valid: bedValid,
-          colorFn: (height) => bedColor(height),
-        });
-        const bedMaterial = new THREE.MeshStandardMaterial({
-          vertexColors: true,
-          roughness: 0.92,
-          metalness: 0.02,
-          flatShading: false,
-        });
-        bedMesh = new THREE.Mesh(bedGeometry, bedMaterial);
-        bedMesh.scale.y = Number(controlsUI.exaggeration.value);
-        bedMesh.visible = controlsUI.showBed.checked;
-        bedMesh.material.wireframe = controlsUI.wireframe.checked;
-        scene.add(bedMesh);
-
-        const iceGeometry = buildSurfaceGeometry({
-          ...baseConfig,
-          heights: surfaceHeights,
-          valid: iceValid,
-          extraField: thickness,
-          mask,
-          colorFn: (_height, thick, maskValue) => iceColor(thick, maskValue),
-        });
-        const iceMaterial = new THREE.MeshStandardMaterial({
-          vertexColors: true,
-          transparent: true,
-          opacity: Number(controlsUI.iceOpacity.value),
-          roughness: 0.38,
-          metalness: 0.02,
-          side: THREE.DoubleSide,
-        });
-        iceMesh = new THREE.Mesh(iceGeometry, iceMaterial);
-        iceMesh.scale.y = Number(controlsUI.exaggeration.value);
-        iceMesh.visible = controlsUI.showIce.checked;
-        iceMesh.material.wireframe = controlsUI.wireframe.checked;
-        scene.add(iceMesh);
-
-        const iceBottomGeometry = buildSurfaceGeometry({
-          ...baseConfig,
-          heights: iceBottomHeights,
-          valid: iceBottomValid,
-          extraField: thickness,
-          mask,
-          colorFn: (_height, thick, maskValue) => iceBottomColor(thick, maskValue),
-        });
-        const iceBottomMaterial = new THREE.MeshStandardMaterial({
-          vertexColors: true,
-          transparent: true,
-          opacity: Math.max(0.12, Number(controlsUI.iceOpacity.value) * 0.82),
-          roughness: 0.44,
-          metalness: 0.02,
-          side: THREE.DoubleSide,
-          polygonOffset: true,
-          polygonOffsetFactor: 1,
-          polygonOffsetUnits: 1,
-        });
-        iceBottomMesh = new THREE.Mesh(iceBottomGeometry, iceBottomMaterial);
-        iceBottomMesh.scale.y = Number(controlsUI.exaggeration.value);
-        iceBottomMesh.visible = controlsUI.showIceBottom.checked;
-        iceBottomMesh.material.wireframe = controlsUI.wireframe.checked;
-        scene.add(iceBottomMesh);
-
-        const iceSideGeometry = buildIceSideGeometry({
-          ...baseConfig,
-          topHeights: surfaceHeights,
-          bottomHeights: iceBottomHeights,
-          valid: iceValid,
-          extraField: thickness,
-          mask,
-          colorFn: (_height, thick, maskValue) => iceColor(thick, maskValue),
-        });
-        const iceSideMaterial = iceMaterial.clone();
-        iceSideMaterial.opacity = Number(controlsUI.iceOpacity.value);
-        iceSideMesh = new THREE.Mesh(iceSideGeometry, iceSideMaterial);
-        iceSideMesh.scale.y = Number(controlsUI.exaggeration.value);
-        iceSideMesh.material.wireframe = controlsUI.wireframe.checked;
-        updateIceSideVisibility();
-        scene.add(iceSideMesh);
-
-        const velocitySurfaceGeometry = buildSurfaceGeometry({
-          ...baseConfig,
-          heights: velocitySurfaceHeights,
-          valid: velocitySurfaceValid,
-          extraField: velocitySpeed,
-          colorFn: (_height, speed) => velocityColor(speed),
-        });
-        const velocitySurfaceMaterial = new THREE.MeshBasicMaterial({
-          vertexColors: true,
-          transparent: true,
-          opacity: 0.82,
-          side: THREE.DoubleSide,
-          depthWrite: false,
-        });
-        velocitySurfaceMesh = new THREE.Mesh(velocitySurfaceGeometry, velocitySurfaceMaterial);
-        velocitySurfaceMesh.scale.y = Number(controlsUI.exaggeration.value);
-        velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
-        velocitySurfaceMesh.material.wireframe = controlsUI.wireframe.checked;
-        scene.add(velocitySurfaceMesh);
-
-        velocityField = {
+        if (generation !== loadGeneration) return;
+        currentCoreContext = {
+          generation,
+          dataset,
+          meta,
           nx,
           ny,
-          dxMeters: meta.grid.dx_m,
-          dyMeters: meta.grid.dy_m,
-          horizontalMetersPerUnit,
-          verticalMetersPerUnit,
+          cellCount,
+          baseConfig,
+          bedHeights,
           surfaceHeights,
+          thickness,
+          mask,
+          bedValid,
           iceValid,
-          velocityX,
-          velocityY,
-          velocitySpeed,
-          velocityValid,
+          iceBottomHeights,
+          iceBottomValid,
+          velocityLoaded: false,
+          velocityUnavailable: false,
+          velocityPrefetchMeta: null,
+          velocityPrefetchBuffer: null,
+          hydrologyLoaded: false,
+          hydrologyUnavailable: false,
+          hydrologyPrefetchMeta: null,
+          hydrologyPrefetchBuffer: null,
         };
 
-        const widthUnits = ((nx - 1) * Math.abs(meta.grid.dx_m)) / horizontalMetersPerUnit;
-        const depthUnits = ((ny - 1) * Math.abs(meta.grid.dy_m)) / horizontalMetersPerUnit;
-        const seaGeometry = new THREE.PlaneGeometry(widthUnits, depthUnits, 1, 1);
-        seaGeometry.rotateX(-Math.PI / 2);
-        const seaMaterial = new THREE.MeshBasicMaterial({
-          color: 0x4ca8d8,
-          transparent: true,
-          opacity: 0.13,
-          side: THREE.DoubleSide,
-        });
-        seaLevelMesh = new THREE.Mesh(seaGeometry, seaMaterial);
-        seaLevelMesh.position.y = 0;
-        seaLevelMesh.visible = controlsUI.showSea.checked;
-        scene.add(seaLevelMesh);
-
-        try {
-          if (pressureInt) {
-            const effectivePressureGeometry = buildSurfaceGeometry({
-              ...baseConfig,
-              heights: effectivePressureHeights,
-              valid: effectivePressureValid,
-              extraField: effectivePressure,
-              colorFn: (_height, pressure) => effectivePressureColor(pressure),
-            });
-            const effectivePressureMaterial = new THREE.MeshBasicMaterial({
-              vertexColors: true,
-              transparent: true,
-              opacity: 0.88,
-              side: THREE.DoubleSide,
-              depthWrite: false,
-              polygonOffset: true,
-              polygonOffsetFactor: -1,
-              polygonOffsetUnits: -1,
-            });
-            effectivePressureMesh = new THREE.Mesh(effectivePressureGeometry, effectivePressureMaterial);
-            effectivePressureMesh.scale.y = Number(controlsUI.exaggeration.value);
-            effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
-            effectivePressureMesh.material.wireframe = controlsUI.wireframe.checked;
-            // Keep effective-pressure layer below channel lines when both are enabled.
-            effectivePressureMesh.renderOrder = 20;
-            scene.add(effectivePressureMesh);
-          } else {
-            controlsUI.showEffectivePressure.checked = false;
-            controlsUI.showEffectivePressure.disabled = true;
-          }
-
-          if (channelCol1 && channelRow1 && channelCol2 && channelRow2 && channelDischarge) {
-            subglacialChannelMesh = buildSubglacialChannelMesh({
-              ...baseConfig,
-              bedHeights,
-              bedValid,
-              channelCol1,
-              channelRow1,
-              channelCol2,
-              channelRow2,
-              channelDischarge,
-            });
-            if (subglacialChannelMesh) {
-              subglacialChannelMesh.visible = controlsUI.showSubglacialChannels.checked;
-              // Always draw channels after effective-pressure surface to avoid occlusion.
-              subglacialChannelMesh.renderOrder = 30;
-              scene.add(subglacialChannelMesh);
-            } else {
-              controlsUI.showSubglacialChannels.checked = false;
-              controlsUI.showSubglacialChannels.disabled = true;
-            }
-          } else {
-            controlsUI.showSubglacialChannels.checked = false;
-            controlsUI.showSubglacialChannels.disabled = true;
-          }
-        } catch (hydrologyRenderError) {
-          console.error("Hydrology overlay build failed:", hydrologyRenderError);
-          controlsUI.showEffectivePressure.checked = false;
-          controlsUI.showSubglacialChannels.checked = false;
-          controlsUI.showEffectivePressure.disabled = true;
-          controlsUI.showSubglacialChannels.disabled = true;
-          effectivePressureMesh = disposeMesh(effectivePressureMesh);
-          subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
-        }
-
-        updateMeta(meta, dataset, velocityMeta, hydrologyMeta, velocityMedianSpeed);
+        updateLoadingProgress(0.88, "Building base meshes...");
+        buildCoreSceneFromContext(currentCoreContext);
+        updateMetaFromCurrentState();
         updateFlowlineVisibility();
         statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${dataset.label})`;
+        updateLoadingProgress(1, "Core terrain ready");
+
+        window.setTimeout(() => {
+          if (generation === loadGeneration) {
+            setLoadingOverlayVisible(false);
+          }
+        }, 120);
+
+        if (controlsUI.showVelocity.checked || controlsUI.showFlowline.checked) {
+          ensureVelocityLoaded({ trigger: "toggle" });
+        }
+        if (controlsUI.showEffectivePressure.checked || controlsUI.showSubglacialChannels.checked) {
+          ensureHydrologyLoaded({ trigger: "toggle" });
+        }
+        if (!isShowcaseMode) {
+          const warmupDelay = viewerInteracted ? 180 : 900;
+          backgroundWarmupTimer = window.setTimeout(() => {
+            backgroundWarmupTimer = null;
+            scheduleBackgroundWarmup();
+          }, warmupDelay);
+        }
       } finally {
         if (!lockedDatasetKey) {
           controlsUI.resolutionPreset.disabled = false;
@@ -2169,29 +2688,23 @@
     }
 
     async function main() {
-      initScene();
-      bindUI();
-      bindShowcaseInteractionGate();
-      renderLoop();
-
       try {
+        updateLoadingProgress(0.01, "Initializing 3D runtime...");
+        await loadThreeRuntime();
+        updateLoadingProgress(0.04, "Initializing renderer...");
+
+        initScene();
+        bindUI();
+        bindShowcaseInteractionGate();
+        bindBackgroundWarmupTrigger();
+        renderLoop();
+
         await loadBedColorTable();
-        try {
-          await loadEffectivePressureColorTable();
-        } catch (colorTableError) {
-          console.warn("Failed to load cmocean_dense.rgb, using fallback effective-pressure colors.", colorTableError);
-          effectivePressureLut = [];
-        }
-        try {
-          await loadChannelDischargeColorTable();
-        } catch (colorTableError) {
-          console.warn("Failed to load cmocean_matter.rgb, using fallback channel colors.", colorTableError);
-          channelDischargeLut = [];
-        }
         updateBedLegend();
         updateVelocityLegend();
         updateEffectivePressureLegend();
         updateChannelLegend();
+
         await loadAndBuildMeshes(lockedDatasetKey || currentDatasetKey);
       } catch (error) {
         reportLoadError(error);
@@ -2201,6 +2714,7 @@
     window.addEventListener("beforeunload", () => {
       if (animationHandle) cancelAnimationFrame(animationHandle);
       clearModelMeshes();
+      terminateGeometryWorker();
       if (renderer) renderer.dispose();
     });
 

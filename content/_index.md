@@ -73,6 +73,8 @@ sections:
             border-radius: 0;
             overflow: hidden;
             box-shadow: 0 26px 48px rgba(5, 19, 30, 0.26);
+            position: relative;
+            background: linear-gradient(160deg, #061f31 0%, #0c3a53 58%, #15536b 100%);
           }
           #antarctica-showcase-home .showcase-embed iframe {
             width: 100%;
@@ -108,7 +110,8 @@ sections:
             <iframe
               title="Antarctic Ice Dynamics and Subglacial Hydrology 3D demo (Balanced preset)"
               src="/tools/antarctica-bedmachine-3d.html?mode=showcase"
-              loading="lazy"
+              loading="eager"
+              fetchpriority="high"
               referrerpolicy="no-referrer"
             ></iframe>
           </div>
