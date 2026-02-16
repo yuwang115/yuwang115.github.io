@@ -744,6 +744,10 @@
     const CHANNEL_STRIP_WIDTH_M_MAX = 5000;
     const EFFECTIVE_PRESSURE_SURFACE_OFFSET_M = 10;
     const SUBGLACIAL_CHANNEL_SURFACE_OFFSET_M = 14;
+    // Keep HD velocity responsive with a decimated mesh.
+    const HD_VELOCITY_MESH_STRIDE = 2;
+    // Effective-pressure overlay should stay conformal to bed to avoid local intersections.
+    const HD_HYDROLOGY_MESH_STRIDE = 1;
     const GMT_RELIEF_RGB_URL = "/tools/data/GMT_relief.rgb";
     const CMOCEAN_DENSE_RGB_URL = "/tools/data/cmocean_dense.rgb";
     const CMOCEAN_MATTER_RGB_URL = "/tools/data/cmocean_matter.rgb";
@@ -2108,6 +2112,53 @@
       updateChannelLegend();
     }
 
+    function primeLayerMetadata(context) {
+      if (!context) return;
+
+      const velocityMetaPromise = context.velocityPrefetchMeta
+        ? Promise.resolve(context.velocityPrefetchMeta)
+        : fetchJsonStrict(context.dataset.velocityMetaUrl, "Failed to load velocity metadata").catch((error) => {
+            console.warn("Velocity metadata prefetch failed:", error);
+            return null;
+          });
+
+      const hydrologyMetaPromise = context.hydrologyPrefetchMeta
+        ? Promise.resolve(context.hydrologyPrefetchMeta)
+        : fetchJsonStrict(context.dataset.hydrologyMetaUrl, "Failed to load hydrology metadata").catch((error) => {
+            console.warn("Hydrology metadata prefetch failed:", error);
+            return null;
+          });
+
+      Promise.all([velocityMetaPromise, hydrologyMetaPromise]).then(([velocityMeta, hydrologyMeta]) => {
+        if (context !== currentCoreContext || context.generation !== loadGeneration) return;
+
+        let hasUpdate = false;
+        if (velocityMeta) {
+          context.velocityPrefetchMeta = velocityMeta;
+          currentVelocityMeta = velocityMeta;
+          hasUpdate = true;
+        }
+        if (hydrologyMeta) {
+          context.hydrologyPrefetchMeta = hydrologyMeta;
+          currentHydrologyMeta = hydrologyMeta;
+          hasUpdate = true;
+        }
+        if (hasUpdate) {
+          updateMetaFromCurrentState();
+        }
+      });
+    }
+
+    function getVelocityLayerMeshStride(context) {
+      if (!context?.dataset) return 1;
+      return context.dataset.id === "hd" ? HD_VELOCITY_MESH_STRIDE : 1;
+    }
+
+    function getHydrologyLayerMeshStride(context) {
+      if (!context?.dataset) return 1;
+      return context.dataset.id === "hd" ? HD_HYDROLOGY_MESH_STRIDE : 1;
+    }
+
     async function buildVelocityLayerFromPayload(
       context,
       velocityMeta,
@@ -2136,6 +2187,7 @@
           ny: context.ny,
           cellCount: context.cellCount,
           baseConfig: context.baseConfig,
+          meshStride: getVelocityLayerMeshStride(context),
           reportProgress: showOverlay,
         },
         {
@@ -2162,11 +2214,15 @@
         opacity: 0.82,
         side: THREE.DoubleSide,
         depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+        polygonOffsetUnits: -1,
       });
       velocitySurfaceMesh = new THREE.Mesh(velocitySurfaceGeometry, velocitySurfaceMaterial);
       velocitySurfaceMesh.scale.y = Number(controlsUI.exaggeration.value);
       velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
       velocitySurfaceMesh.material.wireframe = controlsUI.wireframe.checked;
+      velocitySurfaceMesh.renderOrder = 12;
       scene.add(velocitySurfaceMesh);
 
       velocityField = {
@@ -2246,6 +2302,10 @@
         if (!velocityMeta) {
           velocityMeta = await fetchJsonStrict(context.dataset.velocityMetaUrl, "Failed to load velocity metadata");
           if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        }
+        if (context === currentCoreContext && context.generation === loadGeneration && velocityMeta) {
+          currentVelocityMeta = velocityMeta;
+          updateMetaFromCurrentState();
         }
 
         if (!velocityBuffer) {
@@ -2338,6 +2398,10 @@
           hydrologyMeta = await fetchJsonStrict(context.dataset.hydrologyMetaUrl, "Failed to load hydrology metadata");
           if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
         }
+        if (context === currentCoreContext && context.generation === loadGeneration && hydrologyMeta) {
+          currentHydrologyMeta = hydrologyMeta;
+          updateMetaFromCurrentState();
+        }
 
         if (!hydrologyBuffer) {
           hydrologyBuffer = showOverlay
@@ -2378,6 +2442,7 @@
             bedValid: context.bedValid,
             effectivePressureLut,
             channelDischargeLut,
+            meshStride: getHydrologyLayerMeshStride(context),
             reportProgress: showOverlay,
           },
           {
@@ -2394,6 +2459,9 @@
 
         effectivePressureMesh = disposeMesh(effectivePressureMesh);
         subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
+        const meshStride = getHydrologyLayerMeshStride(context);
+        const pressurePolygonOffset = meshStride > 1 ? -3 : -1;
+        const channelPolygonOffset = meshStride > 1 ? -5 : -2;
 
         const effectivePressureGeometry = new THREE.BufferGeometry();
         effectivePressureGeometry.setAttribute(
@@ -2412,8 +2480,8 @@
           side: THREE.DoubleSide,
           depthWrite: false,
           polygonOffset: true,
-          polygonOffsetFactor: -1,
-          polygonOffsetUnits: -1,
+          polygonOffsetFactor: pressurePolygonOffset,
+          polygonOffsetUnits: pressurePolygonOffset,
         });
         effectivePressureMesh = new THREE.Mesh(effectivePressureGeometry, effectivePressureMaterial);
         effectivePressureMesh.scale.y = Number(controlsUI.exaggeration.value);
@@ -2433,8 +2501,8 @@
             side: THREE.DoubleSide,
             depthWrite: false,
             polygonOffset: true,
-            polygonOffsetFactor: -2,
-            polygonOffsetUnits: -2,
+            polygonOffsetFactor: channelPolygonOffset,
+            polygonOffsetUnits: channelPolygonOffset,
           });
           subglacialChannelMesh = new THREE.Mesh(channelGeometry, channelMaterial);
           subglacialChannelMesh.visible = controlsUI.showSubglacialChannels.checked;
@@ -2494,6 +2562,8 @@
       if (isShowcaseMode) return false;
       if (!currentCoreContext) return false;
       if (backgroundWarmupStarted) return false;
+      // HD warmup can starve on-demand layer toggles because it competes for the same worker.
+      if (currentCoreContext.dataset?.id === "hd") return false;
       const connection = navigator.connection;
       if (connection?.saveData) return false;
       const networkType = String(connection?.effectiveType || "");
@@ -2557,6 +2627,7 @@
         window.clearTimeout(backgroundWarmupTimer);
         backgroundWarmupTimer = null;
       }
+      terminateGeometryWorker();
       controlsUI.resolutionPreset.value = dataset.id;
       controlsUI.resolutionValue.textContent = dataset.label;
       controlsUI.resolutionPreset.disabled = true;
@@ -2653,6 +2724,7 @@
           hydrologyPrefetchMeta: null,
           hydrologyPrefetchBuffer: null,
         };
+        primeLayerMetadata(currentCoreContext);
 
         updateLoadingProgress(0.88, "Building base meshes...");
         buildCoreSceneFromContext(currentCoreContext);
