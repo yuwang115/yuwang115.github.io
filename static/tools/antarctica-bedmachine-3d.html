@@ -344,8 +344,8 @@
         <div class="control">
           <label for="resolutionPreset">Resolution preset <span id="resolutionValue" class="mono">Balanced</span></label>
           <select id="resolutionPreset">
-            <option value="balanced" selected>Balanced (10 km, ~3.0 MB)</option>
-            <option value="hd">HD (4 km, ~18.6 MB, desktop recommended)</option>
+            <option value="balanced" selected>Balanced (10 km, ~4.7 MB incl. velocity)</option>
+            <option value="hd">HD (4 km, ~29.2 MB incl. velocity, desktop recommended)</option>
           </select>
         </div>
         <div class="control">
@@ -359,6 +359,8 @@
         <label class="toggle"><input id="showBed" type="checkbox" checked /> Show bed topography</label>
         <label class="toggle"><input id="showIce" type="checkbox" checked /> Show ice surface</label>
         <label class="toggle"><input id="showIceBottom" type="checkbox" checked /> Show ice bottom surface</label>
+        <label class="toggle"><input id="showVelocity" type="checkbox" /> Show ice surface velocity</label>
+        <label class="toggle"><input id="showFlowline" type="checkbox" /> Show ice flowline</label>
         <label class="toggle"><input id="showSea" type="checkbox" /> Show sea level (0 m)</label>
         <label class="toggle"><input id="wireframe" type="checkbox" /> Wireframe mode</label>
         <button id="resetView" type="button">Reset Camera</button>
@@ -412,16 +414,20 @@
       balanced: {
         id: "balanced",
         label: "Balanced",
-        summary: "10 km grid (~3.0 MB)",
+        summary: "10 km grid (~4.7 MB incl. velocity)",
         metaUrl: "/tools/data/bedmachine_antarctica_v4_480.meta.json",
         binUrl: "/tools/data/bedmachine_antarctica_v4_480.bin",
+        velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.meta.json",
+        velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.bin",
       },
       hd: {
         id: "hd",
         label: "HD",
-        summary: "4 km grid (~18.6 MB, desktop preferred)",
+        summary: "4 km grid (~29.2 MB incl. velocity, desktop preferred)",
         metaUrl: "/tools/data/bedmachine_antarctica_v4_741.meta.json",
         binUrl: "/tools/data/bedmachine_antarctica_v4_741.bin",
+        velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.meta.json",
+        velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.bin",
       },
     };
 
@@ -442,6 +448,8 @@
       showBed: document.getElementById("showBed"),
       showIce: document.getElementById("showIce"),
       showIceBottom: document.getElementById("showIceBottom"),
+      showVelocity: document.getElementById("showVelocity"),
+      showFlowline: document.getElementById("showFlowline"),
       showSea: document.getElementById("showSea"),
       wireframe: document.getElementById("wireframe"),
       resetView: document.getElementById("resetView"),
@@ -456,7 +464,10 @@
     let iceMesh;
     let iceBottomMesh;
     let iceSideMesh;
+    let velocitySurfaceMesh;
+    let flowlineMesh;
     let seaLevelMesh;
+    let velocityField;
     let animationHandle;
     let currentDatasetKey = lockedDatasetKey || "balanced";
     let loadGeneration = 0;
@@ -503,6 +514,13 @@
 
     const BED_ELEVATION_MIN = -7000;
     const BED_ELEVATION_MAX = 3500;
+    const FLOWLINE_SURFACE_OFFSET_M = 18;
+    const FLOWLINE_SEED_TARGET = 620;
+    const FLOWLINE_MIN_SEED_SPEED = 40;
+    const FLOWLINE_MIN_TRACE_SPEED = 8;
+    const FLOWLINE_MAX_STEPS = 130;
+    const FLOWLINE_STEP_CELLS = 1.05;
+    const VELOCITY_REFERENCE_SPEED = 1500;
     const GMT_RELIEF_RGB_URL = "/tools/data/GMT_relief.rgb";
     const GMT_RELIEF_OCEAN_ZERO = [0.975613, 0.999387, 0.994608];
     const GMT_RELIEF_LAND_ZERO = [0.284908, 0.466429, 0.196078];
@@ -607,6 +625,34 @@
       const grounded = lerpColor([0.22, 0.42, 0.58], [0.48, 0.66, 0.78], t);
       const floating = lerpColor([0.14, 0.34, 0.56], [0.4, 0.61, 0.79], t);
       return maskValue === 3 ? floating : grounded;
+    }
+
+    function sampleColorStops(stops, t) {
+      if (!stops.length) return [1, 1, 1];
+      const clamped = clamp01(t);
+      if (clamped <= stops[0][0]) return stops[0][1];
+      for (let i = 1; i < stops.length; i += 1) {
+        if (clamped <= stops[i][0]) {
+          const [t0, c0] = stops[i - 1];
+          const [t1, c1] = stops[i];
+          const localT = (clamped - t0) / Math.max(1e-6, t1 - t0);
+          return lerpColor(c0, c1, localT);
+        }
+      }
+      return stops[stops.length - 1][1];
+    }
+
+    function velocityColor(speedMetersPerYear) {
+      const scaled = Math.log1p(Math.max(0, speedMetersPerYear)) / Math.log1p(VELOCITY_REFERENCE_SPEED);
+      return sampleColorStops(
+        [
+          [0.0, [0.06, 0.2, 0.5]],
+          [0.35, [0.08, 0.62, 0.86]],
+          [0.65, [0.95, 0.9, 0.27]],
+          [1.0, [0.9, 0.2, 0.12]],
+        ],
+        scaled
+      );
     }
 
     function buildSurfaceGeometry({
@@ -809,12 +855,147 @@
       throw new Error(`Unsupported dtype for ${name}: ${field.dtype}`);
     }
 
-    function toFloatHeight(intArray, fillValue) {
+    function decodeQuantizedInt16(intArray, { fillValue, scale = 1, offset = 0 }) {
       const out = new Float32Array(intArray.length);
       for (let i = 0; i < intArray.length; i += 1) {
-        out[i] = intArray[i] === fillValue ? Number.NaN : intArray[i];
+        out[i] = intArray[i] === fillValue ? Number.NaN : intArray[i] * scale + offset;
       }
       return out;
+    }
+
+    function sampleVelocityBilinear(field, col, row) {
+      if (col < 1 || row < 1 || col > field.nx - 2 || row > field.ny - 2) return null;
+
+      const c0 = Math.floor(col);
+      const c1 = c0 + 1;
+      const r0 = Math.floor(row);
+      const r1 = r0 + 1;
+      const i00 = r0 * field.nx + c0;
+      const i10 = r0 * field.nx + c1;
+      const i01 = r1 * field.nx + c0;
+      const i11 = r1 * field.nx + c1;
+
+      if (!field.velocityValid[i00] || !field.velocityValid[i10] || !field.velocityValid[i01] || !field.velocityValid[i11]) {
+        return null;
+      }
+
+      const tx = col - c0;
+      const ty = row - r0;
+      const w00 = (1 - tx) * (1 - ty);
+      const w10 = tx * (1 - ty);
+      const w01 = (1 - tx) * ty;
+      const w11 = tx * ty;
+
+      const vx =
+        field.velocityX[i00] * w00 + field.velocityX[i10] * w10 + field.velocityX[i01] * w01 + field.velocityX[i11] * w11;
+      const vy =
+        field.velocityY[i00] * w00 + field.velocityY[i10] * w10 + field.velocityY[i01] * w01 + field.velocityY[i11] * w11;
+      const speed = Math.hypot(vx, vy);
+      if (!Number.isFinite(speed)) return null;
+      return { vx, vy, speed };
+    }
+
+    function sampleSurfaceNearest(field, col, row) {
+      const c = Math.round(col);
+      const r = Math.round(row);
+      if (c < 0 || r < 0 || c >= field.nx || r >= field.ny) return Number.NaN;
+      const idx = r * field.nx + c;
+      if (!field.iceValid[idx]) return Number.NaN;
+      const value = field.surfaceHeights[idx];
+      return Number.isFinite(value) ? value : Number.NaN;
+    }
+
+    function traceFlowlineDirection(field, seedCol, seedRow, direction) {
+      const out = [];
+      let col = seedCol;
+      let row = seedRow;
+      const absDx = Math.abs(field.dxMeters);
+      const absDy = Math.abs(field.dyMeters);
+
+      for (let step = 0; step < FLOWLINE_MAX_STEPS; step += 1) {
+        const velocity = sampleVelocityBilinear(field, col, row);
+        if (!velocity || velocity.speed < FLOWLINE_MIN_TRACE_SPEED) break;
+
+        const surface = sampleSurfaceNearest(field, col, row);
+        if (!Number.isFinite(surface)) break;
+
+        out.push({ col, row, speed: velocity.speed, surface });
+
+        const dCol = velocity.vx / absDx;
+        const dRow = -velocity.vy / absDy;
+        const norm = Math.hypot(dCol, dRow);
+        if (norm < 1e-8) break;
+
+        col += direction * (dCol / norm) * FLOWLINE_STEP_CELLS;
+        row += direction * (dRow / norm) * FLOWLINE_STEP_CELLS;
+      }
+
+      return out;
+    }
+
+    function buildFlowlineMesh(field) {
+      if (!field) return null;
+
+      const totalCells = field.nx * field.ny;
+      const seedSpacing = Math.max(8, Math.round(Math.sqrt(totalCells / FLOWLINE_SEED_TARGET)));
+      const halfX = (field.nx - 1) / 2;
+      const halfY = (field.ny - 1) / 2;
+      const absDy = Math.abs(field.dyMeters);
+
+      const positions = [];
+      const colors = [];
+      let flowlineCount = 0;
+
+      for (let row = 2; row < field.ny - 2; row += seedSpacing) {
+        for (let col = 2; col < field.nx - 2; col += seedSpacing) {
+          const seedIndex = row * field.nx + col;
+          if (!field.iceValid[seedIndex] || !field.velocityValid[seedIndex]) continue;
+          if (!Number.isFinite(field.velocitySpeed[seedIndex]) || field.velocitySpeed[seedIndex] < FLOWLINE_MIN_SEED_SPEED) continue;
+
+          const forward = traceFlowlineDirection(field, col, row, 1);
+          const backward = traceFlowlineDirection(field, col, row, -1);
+          if (!forward.length && !backward.length) continue;
+
+          const merged = backward.reverse().concat(forward.slice(1));
+          if (merged.length < 4) continue;
+          flowlineCount += 1;
+
+          for (let i = 1; i < merged.length; i += 1) {
+            const p0 = merged[i - 1];
+            const p1 = merged[i];
+
+            const x0 = ((p0.col - halfX) * field.dxMeters) / field.horizontalMetersPerUnit;
+            const z0 = ((p0.row - halfY) * absDy) / field.horizontalMetersPerUnit;
+            const y0 = (p0.surface + FLOWLINE_SURFACE_OFFSET_M) / field.verticalMetersPerUnit;
+
+            const x1 = ((p1.col - halfX) * field.dxMeters) / field.horizontalMetersPerUnit;
+            const z1 = ((p1.row - halfY) * absDy) / field.horizontalMetersPerUnit;
+            const y1 = (p1.surface + FLOWLINE_SURFACE_OFFSET_M) / field.verticalMetersPerUnit;
+
+            const c0 = velocityColor(p0.speed);
+            const c1 = velocityColor(p1.speed);
+
+            positions.push(x0, y0, z0, x1, y1, z1);
+            colors.push(c0[0], c0[1], c0[2], c1[0], c1[1], c1[2]);
+          }
+        }
+      }
+
+      if (!positions.length) return null;
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(positions), 3));
+      geometry.setAttribute("color", new THREE.BufferAttribute(new Float32Array(colors), 3));
+      const material = new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.9,
+      });
+      const lines = new THREE.LineSegments(geometry, material);
+      lines.scale.y = Number(controlsUI.exaggeration.value);
+      lines.visible = controlsUI.showFlowline.checked;
+      lines.userData.flowlineCount = flowlineCount;
+      return lines;
     }
 
     function initScene() {
@@ -880,12 +1061,61 @@
       iceMesh = disposeMesh(iceMesh);
       iceBottomMesh = disposeMesh(iceBottomMesh);
       iceSideMesh = disposeMesh(iceSideMesh);
+      velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
+      flowlineMesh = disposeMesh(flowlineMesh);
       seaLevelMesh = disposeMesh(seaLevelMesh);
+      velocityField = null;
     }
 
     function updateIceSideVisibility() {
       if (!iceSideMesh) return;
       iceSideMesh.visible = controlsUI.showIce.checked && controlsUI.showIceBottom.checked;
+    }
+
+    function updateFlowlineVisibility() {
+      if (!controlsUI.showFlowline.checked) {
+        if (flowlineMesh) flowlineMesh.visible = false;
+        return;
+      }
+
+      if (flowlineMesh) {
+        flowlineMesh.visible = true;
+        return;
+      }
+
+      if (!velocityField) {
+        controlsUI.showFlowline.checked = false;
+        return;
+      }
+
+      const pendingGeneration = loadGeneration;
+      const previousStatus = statusEl.textContent;
+      statusEl.textContent = "Computing flowlines...";
+
+      window.setTimeout(() => {
+        if (pendingGeneration !== loadGeneration || !velocityField || !controlsUI.showFlowline.checked) {
+          if (statusEl.textContent === "Computing flowlines...") {
+            statusEl.textContent = previousStatus;
+          }
+          return;
+        }
+
+        const built = buildFlowlineMesh(velocityField);
+        if (!built) {
+          controlsUI.showFlowline.checked = false;
+          if (statusEl.textContent === "Computing flowlines...") {
+            statusEl.textContent = previousStatus;
+          }
+          return;
+        }
+
+        flowlineMesh = built;
+        scene.add(flowlineMesh);
+        flowlineMesh.visible = true;
+        if (statusEl.textContent === "Computing flowlines...") {
+          statusEl.textContent = previousStatus;
+        }
+      }, 0);
     }
 
     function reportLoadError(error) {
@@ -1011,6 +1241,8 @@
         if (iceMesh) iceMesh.scale.y = value;
         if (iceBottomMesh) iceBottomMesh.scale.y = value;
         if (iceSideMesh) iceSideMesh.scale.y = value;
+        if (velocitySurfaceMesh) velocitySurfaceMesh.scale.y = value;
+        if (flowlineMesh) flowlineMesh.scale.y = value;
       });
 
       controlsUI.iceOpacity.addEventListener("input", () => {
@@ -1032,6 +1264,12 @@
         if (iceBottomMesh) iceBottomMesh.visible = controlsUI.showIceBottom.checked;
         updateIceSideVisibility();
       });
+      controlsUI.showVelocity.addEventListener("change", () => {
+        if (velocitySurfaceMesh) velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
+      });
+      controlsUI.showFlowline.addEventListener("change", () => {
+        updateFlowlineVisibility();
+      });
       controlsUI.showSea.addEventListener("change", () => {
         if (seaLevelMesh) seaLevelMesh.visible = controlsUI.showSea.checked;
       });
@@ -1042,6 +1280,7 @@
         if (iceMesh) iceMesh.material.wireframe = enable;
         if (iceBottomMesh) iceBottomMesh.material.wireframe = enable;
         if (iceSideMesh) iceSideMesh.material.wireframe = enable;
+        if (velocitySurfaceMesh) velocitySurfaceMesh.material.wireframe = enable;
       });
 
       controlsUI.resetView.addEventListener("click", () => {
@@ -1051,19 +1290,25 @@
       });
     }
 
-    function updateMeta(meta, dataset) {
+    function updateMeta(meta, dataset, velocityMeta) {
       const grid = meta.grid;
       const bedStats = meta.fields.find((f) => f.name === "bed").stats_m;
       const thickStats = meta.fields.find((f) => f.name === "thickness").stats_m;
+      const speedStats = velocityMeta?.fields?.find((f) => f.name === "speed")?.stats_m_per_year;
+      const velocitySummary = speedStats
+        ? `${Math.round(speedStats.min)} to ${Math.round(speedStats.max)} m/yr`
+        : "n/a";
       metaListEl.innerHTML = `
         <li><strong>Dataset:</strong> ${meta.title} (${meta.product_version})</li>
         <li><strong>Preset:</strong> ${dataset.label} - ${dataset.summary}</li>
         <li><strong>Grid:</strong> ${grid.nx} x ${grid.ny} (step ${meta.downsample_step} = ${Math.abs(grid.dx_m)} m)</li>
         <li><strong>Bed Range:</strong> ${Math.round(bedStats.min)} to ${Math.round(bedStats.max)} m</li>
         <li><strong>Max Ice Thickness:</strong> ${Math.round(thickStats.max)} m</li>
+        <li><strong>Ice Surface Velocity:</strong> ${velocitySummary}</li>
+        <li><strong>Velocity Source:</strong> MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1</li>
         <li><strong>Updated:</strong> ${meta.date_modified || "n/a"}</li>
       `;
-      fieldStatsEl.textContent = `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m`;
+      fieldStatsEl.textContent = `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m | Velocity max: ${speedStats ? Math.round(speedStats.max) : "--"} m/yr`;
     }
 
     async function loadAndBuildMeshes(datasetKey = currentDatasetKey) {
@@ -1079,36 +1324,72 @@
       try {
         clearModelMeshes();
 
-        const [metaResp, binResp] = await Promise.all([fetch(dataset.metaUrl), fetch(dataset.binUrl)]);
+        const [metaResp, binResp, velocityMetaResp, velocityBinResp] = await Promise.all([
+          fetch(dataset.metaUrl),
+          fetch(dataset.binUrl),
+          fetch(dataset.velocityMetaUrl),
+          fetch(dataset.velocityBinUrl),
+        ]);
         if (!metaResp.ok) throw new Error(`Failed to load metadata (${metaResp.status})`);
         if (!binResp.ok) throw new Error(`Failed to load binary data (${binResp.status})`);
+        if (!velocityMetaResp.ok) throw new Error(`Failed to load velocity metadata (${velocityMetaResp.status})`);
+        if (!velocityBinResp.ok) throw new Error(`Failed to load velocity data (${velocityBinResp.status})`);
         if (generation !== loadGeneration) return;
 
-        const meta = await metaResp.json();
-        const buffer = await binResp.arrayBuffer();
+        const [meta, velocityMeta] = await Promise.all([metaResp.json(), velocityMetaResp.json()]);
+        const [buffer, velocityBuffer] = await Promise.all([binResp.arrayBuffer(), velocityBinResp.arrayBuffer()]);
 
         const nx = meta.grid.nx;
         const ny = meta.grid.ny;
         const cellCount = nx * ny;
         const fillInt16 = meta.quantization.int16_fill_value;
+        const velocityFillInt16 = velocityMeta.quantization.int16_fill_value;
+        const velocityScale = Number(velocityMeta.quantization.scale ?? 1);
+        const velocityOffset = Number(velocityMeta.quantization.offset ?? 0);
 
         const bedInt = parseField(meta, buffer, "bed");
         const surfaceInt = parseField(meta, buffer, "surface");
         const thicknessInt = parseField(meta, buffer, "thickness");
         const mask = parseField(meta, buffer, "mask");
+        const velocityXInt = parseField(velocityMeta, velocityBuffer, "vx");
+        const velocityYInt = parseField(velocityMeta, velocityBuffer, "vy");
 
-        if (bedInt.length !== cellCount || surfaceInt.length !== cellCount || thicknessInt.length !== cellCount || mask.length !== cellCount) {
+        if (
+          bedInt.length !== cellCount ||
+          surfaceInt.length !== cellCount ||
+          thicknessInt.length !== cellCount ||
+          mask.length !== cellCount ||
+          velocityXInt.length !== cellCount ||
+          velocityYInt.length !== cellCount
+        ) {
           throw new Error("Unexpected field length in data package.");
         }
+        if (velocityMeta.grid.nx !== nx || velocityMeta.grid.ny !== ny) {
+          throw new Error("Velocity grid is not aligned to BedMachine grid.");
+        }
 
-        const bedHeights = toFloatHeight(bedInt, fillInt16);
-        const surfaceHeights = toFloatHeight(surfaceInt, fillInt16);
-        const thickness = toFloatHeight(thicknessInt, fillInt16);
+        const bedHeights = decodeQuantizedInt16(bedInt, { fillValue: fillInt16 });
+        const surfaceHeights = decodeQuantizedInt16(surfaceInt, { fillValue: fillInt16 });
+        const thickness = decodeQuantizedInt16(thicknessInt, { fillValue: fillInt16 });
+        const velocityX = decodeQuantizedInt16(velocityXInt, {
+          fillValue: velocityFillInt16,
+          scale: velocityScale,
+          offset: velocityOffset,
+        });
+        const velocityY = decodeQuantizedInt16(velocityYInt, {
+          fillValue: velocityFillInt16,
+          scale: velocityScale,
+          offset: velocityOffset,
+        });
         const iceBottomHeights = new Float32Array(cellCount);
 
         const bedValid = new Uint8Array(cellCount);
         const iceValid = new Uint8Array(cellCount);
         const iceBottomValid = new Uint8Array(cellCount);
+        const velocityValid = new Uint8Array(cellCount);
+        const velocitySpeed = new Float32Array(cellCount);
+        const velocitySurfaceValid = new Uint8Array(cellCount);
+        const velocitySurfaceHeights = new Float32Array(cellCount);
         for (let i = 0; i < cellCount; i += 1) {
           bedValid[i] = Number(Number.isFinite(bedHeights[i]));
           iceValid[i] = Number((mask[i] === 2 || mask[i] === 3) && Number.isFinite(surfaceHeights[i]) && thickness[i] > 0);
@@ -1125,6 +1406,15 @@
             iceBottomHeights[i] = Number.NaN;
             iceBottomValid[i] = 0;
           }
+
+          const vx = velocityX[i];
+          const vy = velocityY[i];
+          const hasVelocity = Number.isFinite(vx) && Number.isFinite(vy);
+          velocityValid[i] = Number(hasVelocity);
+          velocitySpeed[i] = hasVelocity ? Math.hypot(vx, vy) : Number.NaN;
+
+          velocitySurfaceValid[i] = Number(iceValid[i] && hasVelocity);
+          velocitySurfaceHeights[i] = velocitySurfaceValid[i] ? surfaceHeights[i] + FLOWLINE_SURFACE_OFFSET_M : Number.NaN;
         }
 
         const horizontalMetersPerUnit = 52000;
@@ -1220,6 +1510,41 @@
         updateIceSideVisibility();
         scene.add(iceSideMesh);
 
+        const velocitySurfaceGeometry = buildSurfaceGeometry({
+          ...baseConfig,
+          heights: velocitySurfaceHeights,
+          valid: velocitySurfaceValid,
+          extraField: velocitySpeed,
+          colorFn: (_height, speed) => velocityColor(speed),
+        });
+        const velocitySurfaceMaterial = new THREE.MeshBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.82,
+          side: THREE.DoubleSide,
+          depthWrite: false,
+        });
+        velocitySurfaceMesh = new THREE.Mesh(velocitySurfaceGeometry, velocitySurfaceMaterial);
+        velocitySurfaceMesh.scale.y = Number(controlsUI.exaggeration.value);
+        velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
+        velocitySurfaceMesh.material.wireframe = controlsUI.wireframe.checked;
+        scene.add(velocitySurfaceMesh);
+
+        velocityField = {
+          nx,
+          ny,
+          dxMeters: meta.grid.dx_m,
+          dyMeters: meta.grid.dy_m,
+          horizontalMetersPerUnit,
+          verticalMetersPerUnit,
+          surfaceHeights,
+          iceValid,
+          velocityX,
+          velocityY,
+          velocitySpeed,
+          velocityValid,
+        };
+
         const widthUnits = ((nx - 1) * Math.abs(meta.grid.dx_m)) / horizontalMetersPerUnit;
         const depthUnits = ((ny - 1) * Math.abs(meta.grid.dy_m)) / horizontalMetersPerUnit;
         const seaGeometry = new THREE.PlaneGeometry(widthUnits, depthUnits, 1, 1);
@@ -1235,7 +1560,8 @@
         seaLevelMesh.visible = controlsUI.showSea.checked;
         scene.add(seaLevelMesh);
 
-        updateMeta(meta, dataset);
+        updateMeta(meta, dataset, velocityMeta);
+        updateFlowlineVisibility();
         statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${dataset.label})`;
       } finally {
         if (!lockedDatasetKey) {
