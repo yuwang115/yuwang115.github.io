@@ -106,7 +106,7 @@ sections:
         <div class="showcase-wrap">
           <div class="showcase-embed">
             <iframe
-              title="Antarctica 3D Terrain and Ice Explorer demo (Balanced preset)"
+              title="Antarctic Ice Dynamics and Subglacial Hydrology 3D demo (Balanced preset)"
               src="/tools/antarctica-bedmachine-3d.html?mode=showcase"
               loading="lazy"
               referrerpolicy="no-referrer"
