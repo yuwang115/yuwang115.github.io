@@ -369,8 +369,8 @@
         <div class="control">
           <label for="resolutionPreset">Resolution preset <span id="resolutionValue" class="mono">Balanced</span></label>
           <select id="resolutionPreset">
-            <option value="balanced" selected>Balanced (10 km, ~4.7 MB incl. velocity)</option>
-            <option value="hd">HD (4 km, ~29.2 MB incl. velocity, desktop recommended)</option>
+            <option value="balanced" selected>Balanced (10 km, ~5.8 MB incl. velocity + hydrology)</option>
+            <option value="hd">HD (4 km, ~35.4 MB incl. velocity + hydrology, desktop recommended)</option>
           </select>
         </div>
         <div class="control">
@@ -386,6 +386,8 @@
         <label class="toggle"><input id="showIceBottom" type="checkbox" checked /> Show ice bottom surface</label>
         <label class="toggle"><input id="showVelocity" type="checkbox" /> Show ice surface velocity</label>
         <label class="toggle"><input id="showFlowline" type="checkbox" /> Show ice flowline</label>
+        <label class="toggle"><input id="showEffectivePressure" type="checkbox" /> Show effective pressure</label>
+        <label class="toggle"><input id="showSubglacialChannels" type="checkbox" /> Show subglacial channels</label>
         <label class="toggle"><input id="showSea" type="checkbox" /> Show sea level (0 m)</label>
         <label class="toggle"><input id="wireframe" type="checkbox" /> Wireframe mode</label>
         <button id="resetView" type="button">Reset Camera</button>
@@ -409,6 +411,28 @@
           <span>100</span>
           <span>500</span>
           <span>1500+</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Effective Pressure Color</h2>
+        <div id="effectivePressureLegendBar" class="legend" aria-hidden="true"></div>
+        <div class="legend-labels">
+          <span>0 MPa</span>
+          <span>1</span>
+          <span>3</span>
+          <span>5</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Channel Discharge Color</h2>
+        <div id="channelLegendBar" class="legend" aria-hidden="true"></div>
+        <div class="legend-labels">
+          <span>1e-5 m3/s</span>
+          <span>1e-3</span>
+          <span>1</span>
+          <span>100+</span>
         </div>
       </section>
 
@@ -450,20 +474,24 @@
       balanced: {
         id: "balanced",
         label: "Balanced",
-        summary: "10 km grid (~4.7 MB incl. velocity)",
+        summary: "10 km grid (~5.8 MB incl. velocity + hydrology)",
         metaUrl: "/tools/data/bedmachine_antarctica_v4_480.meta.json",
         binUrl: "/tools/data/bedmachine_antarctica_v4_480.bin",
         velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.meta.json",
         velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.bin",
+        hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_480.meta.json",
+        hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_480.bin",
       },
       hd: {
         id: "hd",
         label: "HD",
-        summary: "4 km grid (~29.2 MB incl. velocity, desktop preferred)",
+        summary: "4 km grid (~35.4 MB incl. velocity + hydrology, desktop preferred)",
         metaUrl: "/tools/data/bedmachine_antarctica_v4_741.meta.json",
         binUrl: "/tools/data/bedmachine_antarctica_v4_741.bin",
         velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.meta.json",
         velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.bin",
+        hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_741.meta.json",
+        hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_741.bin",
       },
     };
 
@@ -486,11 +514,15 @@
       showIceBottom: document.getElementById("showIceBottom"),
       showVelocity: document.getElementById("showVelocity"),
       showFlowline: document.getElementById("showFlowline"),
+      showEffectivePressure: document.getElementById("showEffectivePressure"),
+      showSubglacialChannels: document.getElementById("showSubglacialChannels"),
       showSea: document.getElementById("showSea"),
       wireframe: document.getElementById("wireframe"),
       resetView: document.getElementById("resetView"),
       legendBar: document.getElementById("legendBar"),
       velocityLegendBar: document.getElementById("velocityLegendBar"),
+      effectivePressureLegendBar: document.getElementById("effectivePressureLegendBar"),
+      channelLegendBar: document.getElementById("channelLegendBar"),
     };
 
     let renderer;
@@ -502,6 +534,8 @@
     let iceBottomMesh;
     let iceSideMesh;
     let velocitySurfaceMesh;
+    let effectivePressureMesh;
+    let subglacialChannelMesh;
     let flowlineMesh;
     let seaLevelMesh;
     let velocityField;
@@ -559,12 +593,18 @@
     const FLOWLINE_MAX_STEPS = 110;
     const FLOWLINE_STEP_CELLS = 1.0;
     const VELOCITY_REFERENCE_SPEED = 1800;
+    const EFFECTIVE_PRESSURE_REFERENCE_PA = 5_000_000;
+    const CHANNEL_DISCHARGE_REFERENCE = 100;
+    const EFFECTIVE_PRESSURE_SURFACE_OFFSET_M = 10;
+    const SUBGLACIAL_CHANNEL_SURFACE_OFFSET_M = 14;
     const GMT_RELIEF_RGB_URL = "/tools/data/GMT_relief.rgb";
+    const CMOCEAN_DENSE_RGB_URL = "/tools/data/cmocean_dense.rgb";
     const GMT_RELIEF_OCEAN_ZERO = [0.975613, 0.999387, 0.994608];
     const GMT_RELIEF_LAND_ZERO = [0.284908, 0.466429, 0.196078];
 
     let gmtReliefOceanLut = [];
     let gmtReliefLandLut = [];
+    let effectivePressureLut = [];
 
     function sampleColorLUT(lut, t) {
       if (!lut.length) return [0, 0, 0];
@@ -574,14 +614,9 @@
       return lerpColor(lut[i0], lut[i1], scaled - i0);
     }
 
-    async function loadBedColorTable() {
-      const response = await fetch(GMT_RELIEF_RGB_URL);
-      if (!response.ok) {
-        throw new Error(`Failed to load GMT_relief color table (${response.status})`);
-      }
-
-      const lines = (await response.text()).split(/\r?\n/);
-      const colors = [];
+    function parseRgbTableText(text, expectedCount = null) {
+      const lines = text.split(/\r?\n/);
+      const rawColors = [];
       for (const raw of lines) {
         const line = raw.trim();
         if (!line || line.startsWith("#") || line.startsWith("ncolors")) continue;
@@ -591,8 +626,24 @@
         const g = Number(parts[1]);
         const b = Number(parts[2]);
         if (!Number.isFinite(r) || !Number.isFinite(g) || !Number.isFinite(b)) continue;
-        colors.push([clamp01(r), clamp01(g), clamp01(b)]);
+        rawColors.push([r, g, b]);
       }
+
+      if (expectedCount !== null && rawColors.length !== expectedCount) {
+        throw new Error(`Unexpected RGB color count: ${rawColors.length} (expected ${expectedCount})`);
+      }
+
+      const has255Range = rawColors.some(([r, g, b]) => r > 1 || g > 1 || b > 1);
+      const scale = has255Range ? 1 / 255 : 1;
+      return rawColors.map(([r, g, b]) => [clamp01(r * scale), clamp01(g * scale), clamp01(b * scale)]);
+    }
+
+    async function loadBedColorTable() {
+      const response = await fetch(GMT_RELIEF_RGB_URL);
+      if (!response.ok) {
+        throw new Error(`Failed to load GMT_relief color table (${response.status})`);
+      }
+      const colors = parseRgbTableText(await response.text(), 256);
 
       if (colors.length !== 256) {
         throw new Error(`Unexpected GMT_relief color count: ${colors.length} (expected 256)`);
@@ -600,6 +651,14 @@
 
       gmtReliefOceanLut = colors.slice(0, 128);
       gmtReliefLandLut = colors.slice(128);
+    }
+
+    async function loadEffectivePressureColorTable() {
+      const response = await fetch(CMOCEAN_DENSE_RGB_URL);
+      if (!response.ok) {
+        throw new Error(`Failed to load cmocean_dense color table (${response.status})`);
+      }
+      effectivePressureLut = parseRgbTableText(await response.text(), 256);
     }
 
     function bedColor(heightMeters) {
@@ -628,6 +687,16 @@
       return `#${toHex(rgb[0])}${toHex(rgb[1])}${toHex(rgb[2])}`;
     }
 
+    function updateContinuousLegend(targetEl, sampleFn, stopCount = 64) {
+      if (!targetEl) return;
+      const stops = [];
+      for (let i = 0; i <= stopCount; i += 1) {
+        const t = i / stopCount;
+        stops.push(`${rgbToHex(sampleFn(t))} ${(t * 100).toFixed(3)}%`);
+      }
+      targetEl.style.background = `linear-gradient(90deg, ${stops.join(", ")})`;
+    }
+
     function updateBedLegend() {
       if (!controlsUI.legendBar) return;
       if (!gmtReliefOceanLut.length || !gmtReliefLandLut.length) return;
@@ -652,16 +721,24 @@
     }
 
     function updateVelocityLegend() {
-      if (!controlsUI.velocityLegendBar) return;
-      const stopCount = 64;
-      const stops = [];
-      for (let i = 0; i <= stopCount; i += 1) {
-        const t = i / stopCount;
+      updateContinuousLegend(controlsUI.velocityLegendBar, (t) => {
         const speed = Math.expm1(t * Math.log1p(VELOCITY_REFERENCE_SPEED));
-        const rgb = velocityColor(speed);
-        stops.push(`${rgbToHex(rgb)} ${(t * 100).toFixed(3)}%`);
-      }
-      controlsUI.velocityLegendBar.style.background = `linear-gradient(90deg, ${stops.join(", ")})`;
+        return velocityColor(speed);
+      });
+    }
+
+    function updateEffectivePressureLegend() {
+      updateContinuousLegend(controlsUI.effectivePressureLegendBar, (t) => {
+        const pressure = t * EFFECTIVE_PRESSURE_REFERENCE_PA;
+        return effectivePressureColor(pressure);
+      });
+    }
+
+    function updateChannelLegend() {
+      updateContinuousLegend(controlsUI.channelLegendBar, (t) => {
+        const discharge = Math.expm1(t * Math.log1p(CHANNEL_DISCHARGE_REFERENCE));
+        return subglacialChannelColor(discharge);
+      });
     }
 
     function iceColor(thicknessMeters, maskValue) {
@@ -701,6 +778,33 @@
           [0.35, [0.08, 0.62, 0.86]],
           [0.65, [0.95, 0.9, 0.27]],
           [1.0, [0.9, 0.2, 0.12]],
+        ],
+        scaled
+      );
+    }
+
+    function effectivePressureColor(pressurePa) {
+      const scaled = clamp01(Math.max(0, pressurePa) / EFFECTIVE_PRESSURE_REFERENCE_PA);
+      if (effectivePressureLut.length) {
+        return sampleColorLUT(effectivePressureLut, scaled);
+      }
+      return sampleColorStops(
+        [
+          [0.0, [0.9, 0.95, 0.95]],
+          [1.0, [0.21, 0.05, 0.14]],
+        ],
+        scaled
+      );
+    }
+
+    function subglacialChannelColor(dischargeM3PerS) {
+      const scaled = Math.log1p(Math.max(0, dischargeM3PerS)) / Math.log1p(CHANNEL_DISCHARGE_REFERENCE);
+      return sampleColorStops(
+        [
+          [0.0, [0.06, 0.16, 0.38]],
+          [0.3, [0.05, 0.5, 0.74]],
+          [0.62, [0.73, 0.85, 0.25]],
+          [1.0, [0.86, 0.24, 0.1]],
         ],
         scaled
       );
@@ -903,6 +1007,27 @@
       if (field.dtype === "uint8") {
         return new Uint8Array(arrayBuffer, field.byte_offset, field.byte_length);
       }
+      if (field.dtype === "uint16") {
+        return new Uint16Array(arrayBuffer, field.byte_offset, field.byte_length / 2);
+      }
+      if (field.dtype === "int32") {
+        return new Int32Array(arrayBuffer, field.byte_offset, field.byte_length / 4);
+      }
+      if (field.dtype === "float32") {
+        if (field.byte_offset % 4 === 0) {
+          return new Float32Array(arrayBuffer, field.byte_offset, field.byte_length / 4);
+        }
+
+        // Some packed binaries place float32 fields at non-4-byte offsets.
+        // TypedArray construction fails in that case, so decode via DataView.
+        const count = field.byte_length / 4;
+        const view = new DataView(arrayBuffer, field.byte_offset, field.byte_length);
+        const out = new Float32Array(count);
+        for (let i = 0; i < count; i += 1) {
+          out[i] = view.getFloat32(i * 4, true);
+        }
+        return out;
+      }
       throw new Error(`Unsupported dtype for ${name}: ${field.dtype}`);
     }
 
@@ -1087,6 +1212,78 @@
       return lines;
     }
 
+    function buildSubglacialChannelMesh({
+      nx,
+      ny,
+      dxMeters,
+      dyMeters,
+      horizontalMetersPerUnit,
+      verticalMetersPerUnit,
+      bedHeights,
+      bedValid,
+      channelCol1,
+      channelRow1,
+      channelCol2,
+      channelRow2,
+      channelDischarge,
+    }) {
+      const halfX = (nx - 1) / 2;
+      const halfY = (ny - 1) / 2;
+      const absDy = Math.abs(dyMeters);
+
+      const positions = [];
+      const colors = [];
+      let kept = 0;
+
+      for (let i = 0; i < channelDischarge.length; i += 1) {
+        const c0 = channelCol1[i];
+        const r0 = channelRow1[i];
+        const c1 = channelCol2[i];
+        const r1 = channelRow2[i];
+        if (c0 < 0 || c0 >= nx || c1 < 0 || c1 >= nx || r0 < 0 || r0 >= ny || r1 < 0 || r1 >= ny) continue;
+
+        const idx0 = r0 * nx + c0;
+        const idx1 = r1 * nx + c1;
+        if (!bedValid[idx0] || !bedValid[idx1]) continue;
+
+        const h0 = bedHeights[idx0];
+        const h1 = bedHeights[idx1];
+        if (!Number.isFinite(h0) || !Number.isFinite(h1)) continue;
+
+        const discharge = channelDischarge[i];
+        if (!Number.isFinite(discharge) || discharge <= 0) continue;
+
+        const x0 = ((c0 - halfX) * dxMeters) / horizontalMetersPerUnit;
+        const z0 = ((r0 - halfY) * absDy) / horizontalMetersPerUnit;
+        const y0 = (h0 + SUBGLACIAL_CHANNEL_SURFACE_OFFSET_M) / verticalMetersPerUnit;
+        const x1 = ((c1 - halfX) * dxMeters) / horizontalMetersPerUnit;
+        const z1 = ((r1 - halfY) * absDy) / horizontalMetersPerUnit;
+        const y1 = (h1 + SUBGLACIAL_CHANNEL_SURFACE_OFFSET_M) / verticalMetersPerUnit;
+
+        const color = subglacialChannelColor(discharge);
+        positions.push(x0, y0, z0, x1, y1, z1);
+        colors.push(color[0], color[1], color[2], color[0], color[1], color[2]);
+        kept += 1;
+      }
+
+      if (!positions.length) return null;
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(positions), 3));
+      geometry.setAttribute("color", new THREE.BufferAttribute(new Float32Array(colors), 3));
+      const material = new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.94,
+        depthWrite: false,
+      });
+      const lines = new THREE.LineSegments(geometry, material);
+      lines.scale.y = Number(controlsUI.exaggeration.value);
+      lines.visible = controlsUI.showSubglacialChannels.checked;
+      lines.userData.channelCount = kept;
+      return lines;
+    }
+
     function initScene() {
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x0a2b43);
@@ -1105,7 +1302,7 @@
       orbit = new OrbitControls(camera, renderer.domElement);
       orbit.enableDamping = true;
       orbit.dampingFactor = 0.08;
-      orbit.minDistance = 20;
+      orbit.minDistance = isShowcaseMode ? 12 : 0.2;
       orbit.maxDistance = 360;
       orbit.target.copy(resetPose.target);
       if (isShowcaseMode) {
@@ -1151,6 +1348,8 @@
       iceBottomMesh = disposeMesh(iceBottomMesh);
       iceSideMesh = disposeMesh(iceSideMesh);
       velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
+      effectivePressureMesh = disposeMesh(effectivePressureMesh);
+      subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
       flowlineMesh = disposeMesh(flowlineMesh);
       seaLevelMesh = disposeMesh(seaLevelMesh);
       velocityField = null;
@@ -1331,6 +1530,8 @@
         if (iceBottomMesh) iceBottomMesh.scale.y = value;
         if (iceSideMesh) iceSideMesh.scale.y = value;
         if (velocitySurfaceMesh) velocitySurfaceMesh.scale.y = value;
+        if (effectivePressureMesh) effectivePressureMesh.scale.y = value;
+        if (subglacialChannelMesh) subglacialChannelMesh.scale.y = value;
         if (flowlineMesh) flowlineMesh.scale.y = value;
       });
 
@@ -1359,6 +1560,12 @@
       controlsUI.showFlowline.addEventListener("change", () => {
         updateFlowlineVisibility();
       });
+      controlsUI.showEffectivePressure.addEventListener("change", () => {
+        if (effectivePressureMesh) effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
+      });
+      controlsUI.showSubglacialChannels.addEventListener("change", () => {
+        if (subglacialChannelMesh) subglacialChannelMesh.visible = controlsUI.showSubglacialChannels.checked;
+      });
       controlsUI.showSea.addEventListener("change", () => {
         if (seaLevelMesh) seaLevelMesh.visible = controlsUI.showSea.checked;
       });
@@ -1370,6 +1577,7 @@
         if (iceBottomMesh) iceBottomMesh.material.wireframe = enable;
         if (iceSideMesh) iceSideMesh.material.wireframe = enable;
         if (velocitySurfaceMesh) velocitySurfaceMesh.material.wireframe = enable;
+        if (effectivePressureMesh) effectivePressureMesh.material.wireframe = enable;
       });
 
       controlsUI.resetView.addEventListener("click", () => {
@@ -1379,13 +1587,20 @@
       });
     }
 
-    function updateMeta(meta, dataset, velocityMeta) {
+    function updateMeta(meta, dataset, velocityMeta, hydrologyMeta) {
       const grid = meta.grid;
       const bedStats = meta.fields.find((f) => f.name === "bed").stats_m;
       const thickStats = meta.fields.find((f) => f.name === "thickness").stats_m;
       const speedStats = velocityMeta?.fields?.find((f) => f.name === "speed")?.stats_m_per_year;
+      const pressureStats = hydrologyMeta?.fields?.find((f) => f.name === "effective_pressure")?.stats_pa;
+      const channelStats = hydrologyMeta?.fields?.find((f) => f.name === "channel_discharge")?.stats_m3_per_s;
+      const channelCoverage = hydrologyMeta?.coverage;
       const stepKm = Math.abs(grid.dx_m) / 1000;
       const fmtInt = (value) => Math.round(Number(value)).toLocaleString("en-US");
+      const fmtMpa = (value) =>
+        (Number(value) / 1e6).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const fmtQ = (value) =>
+        Number(value).toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 
       metaListEl.innerHTML = `
         <li class="meta-group">Grid & Topography</li>
@@ -1399,11 +1614,19 @@
         <li><strong>Surface Speed:</strong> ${speedStats ? `${fmtInt(speedStats.min)} to ${fmtInt(speedStats.max)} m/yr` : "n/a"}</li>
         <li><strong>Mean Speed:</strong> ${speedStats ? `${fmtInt(speedStats.mean)} m/yr` : "n/a"}</li>
 
+        <li class="meta-group">Subglacial Hydrology</li>
+        <li><strong>Effective Pressure:</strong> ${pressureStats ? `${fmtMpa(pressureStats.min)} to ${fmtMpa(pressureStats.max)} MPa` : "n/a"}</li>
+        <li><strong>Channel Discharge:</strong> ${channelStats ? `${fmtQ(channelStats.min)} to ${fmtQ(channelStats.max)} m3/s` : "n/a"}</li>
+        <li><strong>Rendered Channels:</strong> ${channelCoverage ? fmtInt(channelCoverage.channel_segment_count_unique) : "n/a"}</li>
+
         <li class="meta-group">Sources</li>
         <li class="meta-compact"><strong>Bed/Ice Geometry:</strong> BedMachine Antarctica V4</li>
         <li class="meta-compact"><strong>Surface Velocity:</strong> MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1</li>
+        <li class="meta-compact"><strong>Subglacial Hydrology:</strong> Ehrenfeucht et al. (2024) Antarctic-wide subglacial hydrology modeling</li>
       `;
-      fieldStatsEl.textContent = `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m | Velocity max: ${speedStats ? Math.round(speedStats.max) : "--"} m/yr`;
+      const pressureMaxText = pressureStats ? `${fmtMpa(pressureStats.max)} MPa` : "--";
+      const channelMaxText = channelStats ? `${fmtQ(channelStats.max)} m3/s` : "--";
+      fieldStatsEl.textContent = `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m | Velocity max: ${speedStats ? Math.round(speedStats.max) : "--"} m/yr | Eff. pressure max: ${pressureMaxText} | Channel max: ${channelMaxText}`;
     }
 
     async function loadAndBuildMeshes(datasetKey = currentDatasetKey) {
@@ -1419,20 +1642,32 @@
       try {
         clearModelMeshes();
 
-        const [metaResp, binResp, velocityMetaResp, velocityBinResp] = await Promise.all([
+        const [metaResp, binResp, velocityMetaResp, velocityBinResp, hydrologyMetaResp, hydrologyBinResp] = await Promise.all([
           fetch(dataset.metaUrl),
           fetch(dataset.binUrl),
           fetch(dataset.velocityMetaUrl),
           fetch(dataset.velocityBinUrl),
+          fetch(dataset.hydrologyMetaUrl),
+          fetch(dataset.hydrologyBinUrl),
         ]);
         if (!metaResp.ok) throw new Error(`Failed to load metadata (${metaResp.status})`);
         if (!binResp.ok) throw new Error(`Failed to load binary data (${binResp.status})`);
         if (!velocityMetaResp.ok) throw new Error(`Failed to load velocity metadata (${velocityMetaResp.status})`);
         if (!velocityBinResp.ok) throw new Error(`Failed to load velocity data (${velocityBinResp.status})`);
+        if (!hydrologyMetaResp.ok) throw new Error(`Failed to load hydrology metadata (${hydrologyMetaResp.status})`);
+        if (!hydrologyBinResp.ok) throw new Error(`Failed to load hydrology data (${hydrologyBinResp.status})`);
         if (generation !== loadGeneration) return;
 
-        const [meta, velocityMeta] = await Promise.all([metaResp.json(), velocityMetaResp.json()]);
-        const [buffer, velocityBuffer] = await Promise.all([binResp.arrayBuffer(), velocityBinResp.arrayBuffer()]);
+        const [meta, velocityMeta, hydrologyMeta] = await Promise.all([
+          metaResp.json(),
+          velocityMetaResp.json(),
+          hydrologyMetaResp.json(),
+        ]);
+        const [buffer, velocityBuffer, hydrologyBuffer] = await Promise.all([
+          binResp.arrayBuffer(),
+          velocityBinResp.arrayBuffer(),
+          hydrologyBinResp.arrayBuffer(),
+        ]);
 
         const nx = meta.grid.nx;
         const ny = meta.grid.ny;
@@ -1441,6 +1676,9 @@
         const velocityFillInt16 = velocityMeta.quantization.int16_fill_value;
         const velocityScale = Number(velocityMeta.quantization.scale ?? 1);
         const velocityOffset = Number(velocityMeta.quantization.offset ?? 0);
+        const hydrologyFillInt16 = hydrologyMeta.quantization.int16_fill_value;
+        const pressureScale = Number(hydrologyMeta.quantization.effective_pressure_scale_pa_per_int16 ?? 1);
+        const pressureOffset = Number(hydrologyMeta.quantization.effective_pressure_offset_pa ?? 0);
 
         const bedInt = parseField(meta, buffer, "bed");
         const surfaceInt = parseField(meta, buffer, "surface");
@@ -1448,6 +1686,12 @@
         const mask = parseField(meta, buffer, "mask");
         const velocityXInt = parseField(velocityMeta, velocityBuffer, "vx");
         const velocityYInt = parseField(velocityMeta, velocityBuffer, "vy");
+        const pressureInt = parseField(hydrologyMeta, hydrologyBuffer, "effective_pressure");
+        const channelCol1 = parseField(hydrologyMeta, hydrologyBuffer, "channel_col1");
+        const channelRow1 = parseField(hydrologyMeta, hydrologyBuffer, "channel_row1");
+        const channelCol2 = parseField(hydrologyMeta, hydrologyBuffer, "channel_col2");
+        const channelRow2 = parseField(hydrologyMeta, hydrologyBuffer, "channel_row2");
+        const channelDischarge = parseField(hydrologyMeta, hydrologyBuffer, "channel_discharge");
 
         if (
           bedInt.length !== cellCount ||
@@ -1455,12 +1699,24 @@
           thicknessInt.length !== cellCount ||
           mask.length !== cellCount ||
           velocityXInt.length !== cellCount ||
-          velocityYInt.length !== cellCount
+          velocityYInt.length !== cellCount ||
+          pressureInt.length !== cellCount
         ) {
           throw new Error("Unexpected field length in data package.");
         }
         if (velocityMeta.grid.nx !== nx || velocityMeta.grid.ny !== ny) {
           throw new Error("Velocity grid is not aligned to BedMachine grid.");
+        }
+        if (hydrologyMeta.grid.nx !== nx || hydrologyMeta.grid.ny !== ny) {
+          throw new Error("Hydrology grid is not aligned to BedMachine grid.");
+        }
+        if (
+          channelCol1.length !== channelRow1.length ||
+          channelCol1.length !== channelCol2.length ||
+          channelCol1.length !== channelRow2.length ||
+          channelCol1.length !== channelDischarge.length
+        ) {
+          throw new Error("Hydrology channel fields are misaligned.");
         }
 
         const bedHeights = decodeQuantizedInt16(bedInt, { fillValue: fillInt16 });
@@ -1476,6 +1732,11 @@
           scale: velocityScale,
           offset: velocityOffset,
         });
+        const effectivePressure = decodeQuantizedInt16(pressureInt, {
+          fillValue: hydrologyFillInt16,
+          scale: pressureScale,
+          offset: pressureOffset,
+        });
         const iceBottomHeights = new Float32Array(cellCount);
 
         const bedValid = new Uint8Array(cellCount);
@@ -1485,6 +1746,8 @@
         const velocitySpeed = new Float32Array(cellCount);
         const velocitySurfaceValid = new Uint8Array(cellCount);
         const velocitySurfaceHeights = new Float32Array(cellCount);
+        const effectivePressureValid = new Uint8Array(cellCount);
+        const effectivePressureHeights = new Float32Array(cellCount);
         for (let i = 0; i < cellCount; i += 1) {
           bedValid[i] = Number(Number.isFinite(bedHeights[i]));
           iceValid[i] = Number((mask[i] === 2 || mask[i] === 3) && Number.isFinite(surfaceHeights[i]) && thickness[i] > 0);
@@ -1510,6 +1773,11 @@
 
           velocitySurfaceValid[i] = Number(iceValid[i] && hasVelocity);
           velocitySurfaceHeights[i] = velocitySurfaceValid[i] ? surfaceHeights[i] + FLOWLINE_SURFACE_OFFSET_M : Number.NaN;
+
+          const pressure = effectivePressure[i];
+          const hasPressure = bedValid[i] && Number.isFinite(pressure) && pressure > 0;
+          effectivePressureValid[i] = Number(hasPressure);
+          effectivePressureHeights[i] = hasPressure ? bedHeights[i] + EFFECTIVE_PRESSURE_SURFACE_OFFSET_M : Number.NaN;
         }
 
         const horizontalMetersPerUnit = 52000;
@@ -1625,6 +1893,46 @@
         velocitySurfaceMesh.material.wireframe = controlsUI.wireframe.checked;
         scene.add(velocitySurfaceMesh);
 
+        const effectivePressureGeometry = buildSurfaceGeometry({
+          ...baseConfig,
+          heights: effectivePressureHeights,
+          valid: effectivePressureValid,
+          extraField: effectivePressure,
+          colorFn: (_height, pressure) => effectivePressureColor(pressure),
+        });
+        const effectivePressureMaterial = new THREE.MeshBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.88,
+          side: THREE.DoubleSide,
+          depthWrite: false,
+          polygonOffset: true,
+          polygonOffsetFactor: -1,
+          polygonOffsetUnits: -1,
+        });
+        effectivePressureMesh = new THREE.Mesh(effectivePressureGeometry, effectivePressureMaterial);
+        effectivePressureMesh.scale.y = Number(controlsUI.exaggeration.value);
+        effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
+        effectivePressureMesh.material.wireframe = controlsUI.wireframe.checked;
+        scene.add(effectivePressureMesh);
+
+        subglacialChannelMesh = buildSubglacialChannelMesh({
+          ...baseConfig,
+          bedHeights,
+          bedValid,
+          channelCol1,
+          channelRow1,
+          channelCol2,
+          channelRow2,
+          channelDischarge,
+        });
+        if (subglacialChannelMesh) {
+          subglacialChannelMesh.visible = controlsUI.showSubglacialChannels.checked;
+          scene.add(subglacialChannelMesh);
+        } else {
+          controlsUI.showSubglacialChannels.checked = false;
+        }
+
         velocityField = {
           nx,
           ny,
@@ -1655,7 +1963,7 @@
         seaLevelMesh.visible = controlsUI.showSea.checked;
         scene.add(seaLevelMesh);
 
-        updateMeta(meta, dataset, velocityMeta);
+        updateMeta(meta, dataset, velocityMeta, hydrologyMeta);
         updateFlowlineVisibility();
         statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${dataset.label})`;
       } finally {
@@ -1672,9 +1980,11 @@
       renderLoop();
 
       try {
-        await loadBedColorTable();
+        await Promise.all([loadBedColorTable(), loadEffectivePressureColorTable()]);
         updateBedLegend();
         updateVelocityLegend();
+        updateEffectivePressureLegend();
+        updateChannelLegend();
         await loadAndBuildMeshes(lockedDatasetKey || currentDatasetKey);
       } catch (error) {
         reportLoadError(error);
