@@ -817,7 +817,12 @@
       const memory = Number(navigator.deviceMemory || 0);
       const cores = Number(navigator.hardwareConcurrency || 0);
       const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
-      return memory > 0 && memory <= 4 ? true : coarsePointer && cores > 0 && cores <= 6;
+      const veryLowMemory = memory > 0 && memory <= 3;
+      const constrainedCpu = cores > 0 && cores <= 4;
+      if (veryLowMemory) return true;
+      if (coarsePointer && memory > 0 && memory <= 4 && constrainedCpu) return true;
+      if (coarsePointer && memory === 0 && constrainedCpu) return true;
+      return false;
     }
 
     async function loadThreeRuntime() {
@@ -1599,9 +1604,10 @@
       camera.position.set(...resetPose.position);
 
       const lowEndDevice = detectLowEndDevice();
-      const maxPixelRatio = isShowcaseMode ? 1.5 : lowEndDevice ? 1.25 : 1.8;
+      const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+      const maxPixelRatio = isShowcaseMode ? 1.7 : coarsePointer ? (lowEndDevice ? 1.6 : 2.2) : lowEndDevice ? 1.5 : 2.0;
       renderer = new THREE.WebGLRenderer({
-        antialias: !lowEndDevice,
+        antialias: true,
         alpha: false,
         powerPreference: "high-performance",
       });
