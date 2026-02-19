@@ -483,6 +483,7 @@
         <label class="toggle"><input id="showIceBottom" type="checkbox" checked /> Show ice bottom surface</label>
         <label class="toggle"><input id="showVelocity" type="checkbox" /> Show ice surface velocity</label>
         <label class="toggle"><input id="showFlowline" type="checkbox" /> Show ice flowline</label>
+        <label class="toggle"><input id="showRefinedBasins" type="checkbox" /> Show refined basins</label>
         <label class="toggle"><input id="showEffectivePressure" type="checkbox" /> Show effective pressure</label>
         <label class="toggle"><input id="showSubglacialChannels" type="checkbox" /> Show subglacial channels</label>
         <label class="toggle"><input id="showSea" type="checkbox" /> Show sea level (0 m)</label>
@@ -630,6 +631,7 @@
       showIceBottom: document.getElementById("showIceBottom"),
       showVelocity: document.getElementById("showVelocity"),
       showFlowline: document.getElementById("showFlowline"),
+      showRefinedBasins: document.getElementById("showRefinedBasins"),
       showEffectivePressure: document.getElementById("showEffectivePressure"),
       showSubglacialChannels: document.getElementById("showSubglacialChannels"),
       showSea: document.getElementById("showSea"),
@@ -656,6 +658,13 @@
     let subglacialChannelMesh;
     let flowlineMesh;
     let seaLevelMesh;
+    let refinedBasinBedLines;
+    let refinedBasinSurfaceLines;
+    let refinedBasinBedLabels;
+    let refinedBasinSurfaceLabels;
+    let refinedBasinData = null;
+    let refinedBasinLoadPromise = null;
+    let refinedBasinUnavailable = false;
     let velocityField;
     let animationHandle;
     let currentDatasetKey = lockedDatasetKey || "balanced";
@@ -674,6 +683,7 @@
     let geometryWorker = null;
     let geometryWorkerRequestSeq = 0;
     const geometryWorkerPending = new Map();
+    const refinedBasinLabelTextureCache = new Map();
 
     const SHOWCASE_HINT_IDLE =
       "<strong>Scroll page:</strong> keep using wheel to continue reading.<br /><strong>Click this scene</strong> to enter 3D interaction.";
@@ -693,11 +703,13 @@
       controlsUI.showIceBottom.checked = true;
       controlsUI.showVelocity.checked = false;
       controlsUI.showFlowline.checked = false;
+      controlsUI.showRefinedBasins.checked = false;
       controlsUI.showEffectivePressure.checked = false;
       controlsUI.showSubglacialChannels.checked = false;
       controlsUI.showSea.checked = false;
       controlsUI.showVelocity.disabled = true;
       controlsUI.showFlowline.disabled = true;
+      controlsUI.showRefinedBasins.disabled = true;
       controlsUI.showEffectivePressure.disabled = true;
       controlsUI.showSubglacialChannels.disabled = true;
       interactionHintEl.innerHTML = SHOWCASE_HINT_IDLE;
@@ -744,6 +756,14 @@
     const CHANNEL_STRIP_WIDTH_M_MAX = 5000;
     const EFFECTIVE_PRESSURE_SURFACE_OFFSET_M = 10;
     const SUBGLACIAL_CHANNEL_SURFACE_OFFSET_M = 14;
+    const REFINED_BASINS_URL = "/tools/data/imbie_refined_basins_v2.json";
+    const REFINED_BASIN_BED_OFFSET_M = 90;
+    const REFINED_BASIN_SURFACE_OFFSET_M = 24;
+    const REFINED_BASIN_BED_LINE_WIDTH_M = 5000;
+    const REFINED_BASIN_SURFACE_LINE_WIDTH_M = 5000;
+    const REFINED_BASIN_BED_LABEL_OFFSET_M = 36;
+    const REFINED_BASIN_SURFACE_LABEL_OFFSET_M = 42;
+    const REFINED_BASIN_LABEL_WORLD_SCALE = 0.0076;
     // Keep HD velocity responsive with a decimated mesh.
     const HD_VELOCITY_MESH_STRIDE = 2;
     // Effective-pressure overlay should stay conformal to bed to avoid local intersections.
@@ -1659,6 +1679,34 @@
       return null;
     }
 
+    function disposeObject3D(object) {
+      if (!object) return null;
+      scene.remove(object);
+      object.traverse((child) => {
+        if (child.geometry && typeof child.geometry.dispose === "function") {
+          child.geometry.dispose();
+        }
+        if (!child.material) return;
+        if (Array.isArray(child.material)) {
+          for (const material of child.material) {
+            if (material && typeof material.dispose === "function") material.dispose();
+          }
+          return;
+        }
+        if (typeof child.material.dispose === "function") {
+          child.material.dispose();
+        }
+      });
+      return null;
+    }
+
+    function clearRefinedBasinOverlays() {
+      refinedBasinBedLines = disposeObject3D(refinedBasinBedLines);
+      refinedBasinSurfaceLines = disposeObject3D(refinedBasinSurfaceLines);
+      refinedBasinBedLabels = disposeObject3D(refinedBasinBedLabels);
+      refinedBasinSurfaceLabels = disposeObject3D(refinedBasinSurfaceLabels);
+    }
+
     function clearModelMeshes() {
       bedMesh = disposeMesh(bedMesh);
       iceMesh = disposeMesh(iceMesh);
@@ -1669,7 +1717,386 @@
       subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
       flowlineMesh = disposeMesh(flowlineMesh);
       seaLevelMesh = disposeMesh(seaLevelMesh);
+      clearRefinedBasinOverlays();
       velocityField = null;
+    }
+
+    function projectPs71PointToGrid(context, xMeters, yMeters) {
+      if (!context?.meta?.grid) return null;
+      const grid = context.meta.grid;
+      if (!Number.isFinite(xMeters) || !Number.isFinite(yMeters)) return null;
+      if (!Number.isFinite(grid.x0_m) || !Number.isFinite(grid.y0_m)) return null;
+      if (!Number.isFinite(grid.dx_m) || !Number.isFinite(grid.dy_m)) return null;
+      if (Math.abs(grid.dx_m) < 1e-9 || Math.abs(grid.dy_m) < 1e-9) return null;
+
+      const col = (xMeters - grid.x0_m) / grid.dx_m;
+      const row = (yMeters - grid.y0_m) / grid.dy_m;
+      if (!Number.isFinite(col) || !Number.isFinite(row)) return null;
+      if (col < 0 || row < 0 || col > context.nx - 1 || row > context.ny - 1) return null;
+      return { col, row };
+    }
+
+    function gridToSceneXZ(context, col, row) {
+      const halfX = (context.nx - 1) / 2;
+      const halfY = (context.ny - 1) / 2;
+      const x = ((col - halfX) * context.meta.grid.dx_m) / context.baseConfig.horizontalMetersPerUnit;
+      const z = ((row - halfY) * Math.abs(context.meta.grid.dy_m)) / context.baseConfig.horizontalMetersPerUnit;
+      return { x, z };
+    }
+
+    function sampleGridHeightNearest(context, col, row, layerKey) {
+      const c = Math.round(col);
+      const r = Math.round(row);
+      if (c < 0 || r < 0 || c >= context.nx || r >= context.ny) return Number.NaN;
+      const idx = r * context.nx + c;
+
+      if (layerKey === "bed") {
+        if (!context.bedValid[idx]) return Number.NaN;
+        const value = context.bedHeights[idx];
+        return Number.isFinite(value) ? value : Number.NaN;
+      }
+
+      const value = context.surfaceHeights[idx];
+      return Number.isFinite(value) ? value : Number.NaN;
+    }
+
+    function sampleRefinedBasinPoint(context, xMeters, yMeters, layerKey, offsetMeters) {
+      const gridPoint = projectPs71PointToGrid(context, xMeters, yMeters);
+      if (!gridPoint) return null;
+      const heightMeters = sampleGridHeightNearest(context, gridPoint.col, gridPoint.row, layerKey);
+      if (!Number.isFinite(heightMeters)) return null;
+      const scenePoint = gridToSceneXZ(context, gridPoint.col, gridPoint.row);
+      return {
+        x: scenePoint.x,
+        y: (heightMeters + offsetMeters) / context.baseConfig.verticalMetersPerUnit,
+        z: scenePoint.z,
+      };
+    }
+
+    function getRefinedBasinLabelTexture(
+      labelText,
+      {
+        keyPrefix = "refined-basin",
+        fontSize = 44,
+        textColor = "#f6f9ff",
+        strokeColor = "rgba(7, 17, 26, 0.95)",
+        strokeWidth = 7,
+        fontFamily = "system-ui, -apple-system, Segoe UI, sans-serif",
+      } = {}
+    ) {
+      const key = `${keyPrefix}|${labelText}`;
+      const cached = refinedBasinLabelTextureCache.get(key);
+      if (cached) return cached;
+
+      const canvas = document.createElement("canvas");
+      const probe = canvas.getContext("2d");
+      if (!probe) return null;
+
+      const padding = 14;
+      probe.font = `600 ${fontSize}px ${fontFamily}`;
+      const textWidth = Math.max(1, Math.ceil(probe.measureText(labelText).width));
+      canvas.width = textWidth + padding * 2 + strokeWidth * 2;
+      canvas.height = Math.ceil(fontSize * 1.45 + padding * 2);
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      ctx.font = `600 ${fontSize}px ${fontFamily}`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.lineJoin = "round";
+      ctx.lineWidth = strokeWidth;
+      ctx.strokeStyle = strokeColor;
+      ctx.fillStyle = textColor;
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      ctx.strokeText(labelText, centerX, centerY);
+      ctx.fillText(labelText, centerX, centerY);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.generateMipmaps = false;
+      refinedBasinLabelTextureCache.set(key, texture);
+      return texture;
+    }
+
+    function createRefinedBasinLabelSprite(labelText, labelStyle = {}) {
+      const texture = getRefinedBasinLabelTexture(labelText, labelStyle);
+      if (!texture) return null;
+
+      const sprite = new THREE.Sprite(
+        new THREE.SpriteMaterial({
+          map: texture,
+          transparent: true,
+          depthWrite: false,
+          depthTest: false,
+        })
+      );
+      const worldScale = Number.isFinite(labelStyle.worldScale) ? labelStyle.worldScale : REFINED_BASIN_LABEL_WORLD_SCALE;
+      const width = texture.image?.width || 256;
+      const height = texture.image?.height || 64;
+      sprite.scale.set(width * worldScale, height * worldScale, 1);
+      return sprite;
+    }
+
+    function buildRefinedBasinLineGroup(context, basins, layerKey, options = {}) {
+      const offsetMeters = Number(options.offsetMeters || 0);
+      const widthMeters = Number.isFinite(options.widthMeters) ? Math.max(0, options.widthMeters) : 0;
+      const halfWidthUnits = (widthMeters / context.baseConfig.horizontalMetersPerUnit) * 0.5;
+      const depthTest = options.depthTest !== false;
+      const polygonOffsetFactor = Number.isFinite(options.polygonOffsetFactor) ? options.polygonOffsetFactor : -2;
+      const polygonOffsetUnits = Number.isFinite(options.polygonOffsetUnits) ? options.polygonOffsetUnits : -2;
+      const positions = [];
+
+      for (const basin of basins) {
+        const segments = Array.isArray(basin?.segments_xy_m) ? basin.segments_xy_m : [];
+        for (const segment of segments) {
+          if (!Array.isArray(segment) || segment.length < 2) continue;
+          let prev = null;
+          for (const point of segment) {
+            if (!Array.isArray(point) || point.length < 2) {
+              prev = null;
+              continue;
+            }
+            const sample = sampleRefinedBasinPoint(context, Number(point[0]), Number(point[1]), layerKey, offsetMeters);
+            if (!sample) {
+              prev = null;
+              continue;
+            }
+            if (prev) {
+              const dx = sample.x - prev.x;
+              const dz = sample.z - prev.z;
+              const length = Math.hypot(dx, dz);
+              if (length > 1e-8 && halfWidthUnits > 0) {
+                const nx = -dz / length;
+                const nz = dx / length;
+                const left0x = prev.x + nx * halfWidthUnits;
+                const left0z = prev.z + nz * halfWidthUnits;
+                const right0x = prev.x - nx * halfWidthUnits;
+                const right0z = prev.z - nz * halfWidthUnits;
+                const left1x = sample.x + nx * halfWidthUnits;
+                const left1z = sample.z + nz * halfWidthUnits;
+                const right1x = sample.x - nx * halfWidthUnits;
+                const right1z = sample.z - nz * halfWidthUnits;
+
+                positions.push(
+                  left0x,
+                  prev.y,
+                  left0z,
+                  left1x,
+                  sample.y,
+                  left1z,
+                  right0x,
+                  prev.y,
+                  right0z,
+                  right0x,
+                  prev.y,
+                  right0z,
+                  left1x,
+                  sample.y,
+                  left1z,
+                  right1x,
+                  sample.y,
+                  right1z
+                );
+              }
+            }
+            prev = sample;
+          }
+        }
+      }
+
+      if (!positions.length) return null;
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(positions), 3));
+      const material = new THREE.MeshBasicMaterial({
+        color: options.color || 0xffffff,
+        transparent: true,
+        opacity: Number.isFinite(options.opacity) ? options.opacity : 0.95,
+        depthWrite: false,
+        depthTest,
+        side: THREE.DoubleSide,
+        polygonOffset: true,
+        polygonOffsetFactor,
+        polygonOffsetUnits,
+      });
+      const lines = new THREE.Mesh(geometry, material);
+      lines.scale.y = Number(controlsUI.exaggeration.value);
+      lines.renderOrder = Number.isFinite(options.renderOrder) ? options.renderOrder : 36;
+      return lines;
+    }
+
+    function buildRefinedBasinLabelGroup(context, basins, layerKey, options = {}) {
+      const group = new THREE.Group();
+      const offsetMeters = Number(options.offsetMeters || 0);
+      const style = options.labelStyle || {};
+
+      for (const basin of basins) {
+        const labelPoint = basin?.label_xy_m;
+        if (!Array.isArray(labelPoint) || labelPoint.length < 2) continue;
+        const name = String(basin?.name || "").trim();
+        if (!name) continue;
+
+        const sample = sampleRefinedBasinPoint(context, Number(labelPoint[0]), Number(labelPoint[1]), layerKey, offsetMeters);
+        if (!sample) continue;
+
+        const sprite = createRefinedBasinLabelSprite(name, style);
+        if (!sprite) continue;
+        sprite.userData.baseY = sample.y;
+        sprite.position.set(sample.x, sample.y, sample.z);
+        sprite.renderOrder = Number.isFinite(options.renderOrder) ? options.renderOrder : 44;
+        group.add(sprite);
+      }
+
+      return group.children.length ? group : null;
+    }
+
+    function updateRefinedBasinLabelPositionsForExaggeration() {
+      const exaggeration = Number(controlsUI.exaggeration.value);
+      const apply = (group) => {
+        if (!group) return;
+        for (const sprite of group.children) {
+          const baseY = Number(sprite.userData?.baseY);
+          if (!Number.isFinite(baseY)) continue;
+          sprite.position.y = baseY * exaggeration;
+        }
+      };
+      apply(refinedBasinBedLabels);
+      apply(refinedBasinSurfaceLabels);
+    }
+
+    function updateRefinedBasinVisibility() {
+      const enabled = controlsUI.showRefinedBasins.checked;
+      const showBed = enabled && controlsUI.showBed.checked;
+      const showSurface = enabled && controlsUI.showIce.checked;
+      const showBedLines = showBed && !showSurface;
+      const showBedLabels = showBed && !showSurface;
+
+      if (refinedBasinBedLines) refinedBasinBedLines.visible = showBedLines;
+      if (refinedBasinSurfaceLines) refinedBasinSurfaceLines.visible = showSurface;
+      if (refinedBasinBedLabels) refinedBasinBedLabels.visible = showBedLabels;
+      if (refinedBasinSurfaceLabels) refinedBasinSurfaceLabels.visible = showSurface;
+    }
+
+    function buildRefinedBasinOverlays(context, dataset) {
+      const basins = Array.isArray(dataset?.basins) ? dataset.basins : [];
+      if (!basins.length) return false;
+
+      clearRefinedBasinOverlays();
+
+      refinedBasinBedLines = buildRefinedBasinLineGroup(context, basins, "bed", {
+        offsetMeters: REFINED_BASIN_BED_OFFSET_M,
+        widthMeters: REFINED_BASIN_BED_LINE_WIDTH_M,
+        color: 0xf6d365,
+        opacity: 0.9,
+        polygonOffsetFactor: -12,
+        polygonOffsetUnits: -12,
+        renderOrder: 38,
+      });
+      refinedBasinSurfaceLines = buildRefinedBasinLineGroup(context, basins, "surface", {
+        offsetMeters: REFINED_BASIN_SURFACE_OFFSET_M,
+        widthMeters: REFINED_BASIN_SURFACE_LINE_WIDTH_M,
+        color: 0xff5f56,
+        opacity: 0.95,
+        renderOrder: 39,
+      });
+      refinedBasinBedLabels = buildRefinedBasinLabelGroup(context, basins, "bed", {
+        offsetMeters: REFINED_BASIN_BED_LABEL_OFFSET_M,
+        renderOrder: 46,
+        labelStyle: {
+          keyPrefix: "refined-basin-bed",
+          textColor: "#ffe8a3",
+          strokeColor: "rgba(22, 34, 44, 0.96)",
+          worldScale: REFINED_BASIN_LABEL_WORLD_SCALE,
+        },
+      });
+      refinedBasinSurfaceLabels = buildRefinedBasinLabelGroup(context, basins, "surface", {
+        offsetMeters: REFINED_BASIN_SURFACE_LABEL_OFFSET_M,
+        renderOrder: 47,
+        labelStyle: {
+          keyPrefix: "refined-basin-surface",
+          textColor: "#ffd9d5",
+          strokeColor: "rgba(20, 32, 46, 0.96)",
+          worldScale: REFINED_BASIN_LABEL_WORLD_SCALE,
+        },
+      });
+
+      if (refinedBasinBedLines) scene.add(refinedBasinBedLines);
+      if (refinedBasinSurfaceLines) scene.add(refinedBasinSurfaceLines);
+      if (refinedBasinBedLabels) scene.add(refinedBasinBedLabels);
+      if (refinedBasinSurfaceLabels) scene.add(refinedBasinSurfaceLabels);
+
+      updateRefinedBasinLabelPositionsForExaggeration();
+      updateRefinedBasinVisibility();
+
+      return Boolean(refinedBasinBedLines || refinedBasinSurfaceLines || refinedBasinBedLabels || refinedBasinSurfaceLabels);
+    }
+
+    async function ensureRefinedBasinsLoaded({ trigger = "prefetch" } = {}) {
+      const context = currentCoreContext;
+      if (!context || context.generation !== loadGeneration) return false;
+      if (refinedBasinUnavailable) return false;
+
+      const overlaysReady = refinedBasinBedLines || refinedBasinSurfaceLines || refinedBasinBedLabels || refinedBasinSurfaceLabels;
+      if (overlaysReady) {
+        updateRefinedBasinLabelPositionsForExaggeration();
+        updateRefinedBasinVisibility();
+        return true;
+      }
+
+      if (refinedBasinLoadPromise) {
+        return refinedBasinLoadPromise;
+      }
+
+      const pendingPromise = (async () => {
+        const showStatus = trigger === "toggle";
+        if (showStatus) {
+          statusEl.textContent = "Loading refined basins...";
+        }
+
+        if (!refinedBasinData) {
+          refinedBasinData = await fetchJsonStrict(REFINED_BASINS_URL, "Failed to load refined basin boundaries");
+        }
+
+        if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        const built = buildRefinedBasinOverlays(context, refinedBasinData);
+        if (!built) {
+          throw new Error("Refined basin dataset is empty.");
+        }
+
+        if (showStatus) {
+          statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+        }
+        return true;
+      })()
+        .catch((error) => {
+          console.error("Refined basin layer load failed:", error);
+          if (context === currentCoreContext && context.generation === loadGeneration) {
+            refinedBasinUnavailable = true;
+            controlsUI.showRefinedBasins.checked = false;
+            controlsUI.showRefinedBasins.disabled = true;
+            clearRefinedBasinOverlays();
+            const readyText = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+            const transientText = "Refined basins unavailable";
+            statusEl.textContent = transientText;
+            window.setTimeout(() => {
+              if (statusEl.textContent === transientText) {
+                statusEl.textContent = readyText;
+              }
+            }, 1800);
+          }
+          return false;
+        })
+        .finally(() => {
+          if (refinedBasinLoadPromise === pendingPromise) {
+            refinedBasinLoadPromise = null;
+          }
+        });
+
+      refinedBasinLoadPromise = pendingPromise;
+      return refinedBasinLoadPromise;
     }
 
     function updateIceSideVisibility() {
@@ -1862,6 +2289,9 @@
         if (effectivePressureMesh) effectivePressureMesh.scale.y = value;
         if (subglacialChannelMesh) subglacialChannelMesh.scale.y = value;
         if (flowlineMesh) flowlineMesh.scale.y = value;
+        if (refinedBasinBedLines) refinedBasinBedLines.scale.y = value;
+        if (refinedBasinSurfaceLines) refinedBasinSurfaceLines.scale.y = value;
+        updateRefinedBasinLabelPositionsForExaggeration();
       });
 
       controlsUI.iceOpacity.addEventListener("input", () => {
@@ -1874,10 +2304,12 @@
 
       controlsUI.showBed.addEventListener("change", () => {
         if (bedMesh) bedMesh.visible = controlsUI.showBed.checked;
+        updateRefinedBasinVisibility();
       });
       controlsUI.showIce.addEventListener("change", () => {
         if (iceMesh) iceMesh.visible = controlsUI.showIce.checked;
         updateIceSideVisibility();
+        updateRefinedBasinVisibility();
       });
       controlsUI.showIceBottom.addEventListener("change", () => {
         if (iceBottomMesh) iceBottomMesh.visible = controlsUI.showIceBottom.checked;
@@ -1896,6 +2328,18 @@
           return;
         }
         updateFlowlineVisibility();
+      });
+      controlsUI.showRefinedBasins.addEventListener("change", () => {
+        if (!controlsUI.showRefinedBasins.checked) {
+          updateRefinedBasinVisibility();
+          return;
+        }
+        const overlaysReady = refinedBasinBedLines || refinedBasinSurfaceLines || refinedBasinBedLabels || refinedBasinSurfaceLabels;
+        if (!overlaysReady) {
+          ensureRefinedBasinsLoaded({ trigger: "toggle" });
+          return;
+        }
+        updateRefinedBasinVisibility();
       });
       controlsUI.showEffectivePressure.addEventListener("change", () => {
         if (controlsUI.showEffectivePressure.checked && !effectivePressureMesh) {
@@ -1940,6 +2384,7 @@
       const pressureStats = hydrologyMeta?.fields?.find((f) => f.name === "effective_pressure")?.stats_pa;
       const channelStats = hydrologyMeta?.fields?.find((f) => f.name === "channel_discharge")?.stats_m3_per_s;
       const channelCoverage = hydrologyMeta?.coverage;
+      const refinedBasinCount = Number(refinedBasinData?.basin_count);
       const stepKm = Math.abs(grid.dx_m) / 1000;
       const fmtInt = (value) => Math.round(Number(value)).toLocaleString("en-US");
       const fmtMpa = (value) =>
@@ -1970,13 +2415,16 @@
         <li><strong>Rendered Channels:</strong> ${channelCoverage ? fmtInt(channelCoverage.channel_segment_count_unique) : "n/a"}</li>
 
         <li class="meta-group">Sources</li>
-        <li class="meta-compact"><strong>Bed/Ice Geometry:</strong> BedMachine Antarctica V4</li>
+        <li class="meta-compact"><strong>Bed/Ice Geometry:</strong> MEaSUREs BedMachine Antarctica, Version 4</li>
         <li class="meta-compact"><strong>Surface Velocity:</strong> MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1</li>
-        <li class="meta-compact"><strong>Subglacial Hydrology:</strong> Ehrenfeucht et al. (2024) Antarctic-wide subglacial hydrology modeling</li>
+        <li class="meta-compact"><strong>Basin Boundaries:</strong> MEaSUREs Antarctic Boundaries for IPY 2007-2009 (Version 2, IMBIE refined basins)${
+          Number.isFinite(refinedBasinCount) && refinedBasinCount > 0 ? `, ${fmtInt(refinedBasinCount)} basins` : ""
+        }</li>
+        <li class="meta-compact"><strong>Subglacial Hydrology:</strong> Ehrenfeucht et al. (2025) Antarctic Wide Subglacial Hydrology Modeling</li>
       `;
       const pressureMaxText = pressureStats ? `${fmtMpa(pressureStats.max)} MPa` : "--";
       const channelMaxText = channelStats ? `${fmtQ(channelStats.max)} m3/s` : "--";
-      fieldStatsEl.textContent = `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m | Velocity max: ${speedStats ? Math.round(speedStats.max) : "--"} m/yr | Eff. pressure max: ${pressureMaxText} | Channel max: ${channelMaxText}`;
+      fieldStatsEl.textContent = `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m | Velocity max: ${speedStats ? Math.round(speedStats.max) : "--"} m/yr`;
     }
 
     function updateMetaFromCurrentState() {
@@ -2626,6 +3074,7 @@
       currentVelocityMedianSpeed = Number.NaN;
       velocityLoadPromise = null;
       hydrologyLoadPromise = null;
+      refinedBasinLoadPromise = null;
       backgroundWarmupStarted = false;
       backgroundWarmupScheduled = false;
       viewerInteracted = false;
@@ -2639,6 +3088,7 @@
       controlsUI.resolutionPreset.disabled = true;
       controlsUI.showEffectivePressure.disabled = false;
       controlsUI.showSubglacialChannels.disabled = false;
+      controlsUI.showRefinedBasins.disabled = isShowcaseMode || refinedBasinUnavailable;
       statusEl.textContent = isShowcaseMode ? "Loading Balanced demo..." : `Loading ${dataset.label} core terrain...`;
       setLoadingOverlayVisible(true);
       updateLoadingProgress(0.02, "Preparing data streams...");
@@ -2750,6 +3200,9 @@
         }
         if (controlsUI.showEffectivePressure.checked || controlsUI.showSubglacialChannels.checked) {
           ensureHydrologyLoaded({ trigger: "toggle" });
+        }
+        if (controlsUI.showRefinedBasins.checked && !controlsUI.showRefinedBasins.disabled) {
+          ensureRefinedBasinsLoaded({ trigger: "toggle" });
         }
         if (!isShowcaseMode) {
           const warmupDelay = viewerInteracted ? 180 : 900;
