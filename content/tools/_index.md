@@ -55,8 +55,8 @@ sections:
           }
           #tools-demo .tools-embed {
             width: 100%;
-            height: 85vh;
-            min-height: 640px;
+            height: min(88dvh, 980px);
+            min-height: 560px;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
             overflow: hidden;
@@ -70,13 +70,20 @@ sections:
             border: 0;
             display: block;
           }
+          @media (max-width: 768px) {
+            #tools-demo .tools-embed {
+              height: 90dvh;
+              min-height: 0;
+              border-radius: 12px;
+            }
+          }
         </style>
         <div class="tools-embed">
           <iframe
             title="Regularised Coulomb Sliding Law interactive demo"
             src="/tools/rCoulomb_demo_YW.html"
-            loading="lazy"
-            fetchpriority="low"
+            loading="eager"
+            fetchpriority="high"
             referrerpolicy="no-referrer"
           ></iframe>
         </div>

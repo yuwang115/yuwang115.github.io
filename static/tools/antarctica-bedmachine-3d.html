@@ -556,6 +556,16 @@
         flex-wrap: wrap;
       }
 
+      body.mobile-drawer .status {
+        top: calc(env(safe-area-inset-top, 0px) + 12px + var(--mobile-toolbar-height, 72px) + 8px);
+        left: calc(env(safe-area-inset-left, 0px) + 12px);
+        right: auto;
+        max-width: min(72vw, 320px);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
       body.mobile-drawer .viewer-tool-btn {
         min-width: 0;
       }
@@ -792,6 +802,7 @@
 
     const viewerEl = document.getElementById("viewer");
     const viewerShellEl = document.getElementById("viewerShell");
+    const viewerToolbarEl = viewerShellEl ? viewerShellEl.querySelector(".viewer-toolbar") : null;
     const statusEl = document.getElementById("status");
     const metaListEl = document.getElementById("metaList");
     const fieldStatsEl = document.getElementById("fieldStats");
@@ -2435,17 +2446,27 @@
       const supported = fullscreenApiAvailable();
       const active = isViewerFullscreen();
       const label = active ? "Exit Fullscreen" : "Enter Fullscreen";
+      const hideOnMobileUnsupported = !supported && isCoarsePointerInput() && compactViewportQuery.matches;
 
       const apply = (buttonEl) => {
         if (!buttonEl) return;
+        buttonEl.hidden = hideOnMobileUnsupported;
+        if (hideOnMobileUnsupported) {
+          buttonEl.disabled = true;
+          buttonEl.setAttribute("aria-hidden", "true");
+          buttonEl.setAttribute("aria-pressed", "false");
+          return;
+        }
         buttonEl.disabled = !supported;
         buttonEl.textContent = supported ? label : "Fullscreen Unavailable";
+        buttonEl.removeAttribute("aria-hidden");
         buttonEl.setAttribute("aria-pressed", active ? "true" : "false");
       };
 
       apply(controlsUI.fullscreenToggle);
       apply(controlsUI.viewerFullscreenToggle);
       viewerShellEl.classList.toggle("is-fullscreen", active);
+      updateMobileStatusOffset();
     }
 
     async function toggleFullscreenMode() {
@@ -2502,6 +2523,17 @@
       controlsUI.interactionToggle.disabled = !showToggle;
       controlsUI.interactionToggle.textContent = interactionGateActive ? "Scroll Page" : "Enable 3D";
       controlsUI.interactionToggle.setAttribute("aria-pressed", interactionGateActive ? "true" : "false");
+      updateMobileStatusOffset();
+    }
+
+    function updateMobileStatusOffset() {
+      if (!viewerShellEl || !viewerToolbarEl) return;
+      if (!mobileDrawerEnabled) {
+        viewerShellEl.style.removeProperty("--mobile-toolbar-height");
+        return;
+      }
+      const toolbarHeight = Math.max(34, Math.ceil(viewerToolbarEl.getBoundingClientRect().height));
+      viewerShellEl.style.setProperty("--mobile-toolbar-height", `${toolbarHeight}px`);
     }
 
     function refreshResponsiveLayout() {
@@ -2522,6 +2554,8 @@
       } else {
         setMobilePanelOpen(mobilePanelOpen);
       }
+      updateMobileStatusOffset();
+      updateFullscreenControls();
     }
 
     function setInteractionGateActive(active) {

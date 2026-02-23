@@ -20,17 +20,25 @@
             --accent: #2563eb; /* Royal Blue */
             --accent-hover: #1d4ed8;
             --border: #e2e8f0;
+            --mobile-tabs-height: 56px;
+            --mobile-tabs-bg: #0f172a;
         }
 
+        html,
         body {
             margin: 0;
             padding: 0;
+            height: 100%;
+        }
+
+        body {
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
             color: var(--text-main);
-            height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
         /* Layout */
@@ -38,7 +46,29 @@
             display: flex;
             flex: 1;
             height: 100%;
+            min-height: 100dvh;
             overflow: hidden;
+        }
+
+        .mobile-tabs {
+            display: none;
+        }
+
+        .mobile-tab {
+            border: 1px solid transparent;
+            border-radius: 999px;
+            background: #1e293b;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 10px;
+            min-height: 40px;
+            cursor: pointer;
+        }
+
+        .mobile-tab.is-active {
+            background: #e2e8f0;
+            color: #0f172a;
         }
 
         /* Sidebar Controls */
@@ -48,6 +78,8 @@
             color: white;
             padding: 25px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
             display: flex;
             flex-direction: column;
             box-shadow: 4px 0 15px rgba(0,0,0,0.1);
@@ -116,8 +148,46 @@
 
         input[type="range"] {
             width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
             cursor: pointer;
             accent-color: var(--accent);
+            min-height: 32px;
+            touch-action: pan-x;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.35);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            margin-top: -7px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid #ffffff;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.35);
+        }
+
+        input[type="range"]::-moz-range-track {
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.35);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.35);
         }
 
         /* Main Content */
@@ -125,6 +195,8 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
             display: grid;
             grid-template-rows: auto 1fr;
             gap: 20px;
@@ -207,13 +279,116 @@
             .viz-grid { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
         }
         @media (max-width: 768px) {
-            .app-container { flex-direction: column; }
-            .sidebar { width: auto; height: auto; max-height: 300px; }
-            .viz-grid { grid-template-rows: 400px 400px; }
+            body {
+                min-height: 100svh;
+            }
+
+            .mobile-tabs {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 8px;
+                align-items: center;
+                padding: 8px;
+                min-height: var(--mobile-tabs-height);
+                box-sizing: border-box;
+                background: var(--mobile-tabs-bg);
+                border-bottom: 1px solid #1e293b;
+                position: sticky;
+                top: 0;
+                z-index: 30;
+            }
+
+            .app-container {
+                flex-direction: column;
+                height: calc(100dvh - var(--mobile-tabs-height));
+                min-height: calc(100svh - var(--mobile-tabs-height));
+            }
+
+            .sidebar {
+                width: auto;
+                height: 100%;
+                max-height: none;
+                padding: 18px 16px 24px;
+            }
+
+            .main-content {
+                height: 100%;
+                padding: 12px;
+                display: block;
+            }
+
+            .physics-banner {
+                display: none;
+            }
+
+            .viz-grid {
+                display: block;
+                min-height: 0;
+            }
+
+            .card {
+                min-height: calc(100dvh - 180px);
+                padding: 10px;
+            }
+
+            .card + .card {
+                margin-top: 12px;
+            }
+
+            .card-header {
+                font-size: 0.95rem;
+                margin-bottom: 8px;
+                padding-bottom: 8px;
+            }
+
+            .plot-area {
+                min-height: calc(100dvh - 260px);
+            }
+
+            .input-group {
+                margin-bottom: 22px;
+            }
+
+            .label-row {
+                font-size: 0.98rem;
+                margin-bottom: 10px;
+            }
+
+            .value-display {
+                font-size: 0.95rem;
+                padding: 4px 8px;
+            }
+
+            .section-title {
+                font-size: 0.8rem;
+            }
+
+            body.mobile-view-controls .main-content {
+                display: none;
+            }
+
+            body.mobile-view-2d .sidebar,
+            body.mobile-view-3d .sidebar {
+                display: none;
+            }
+
+            body.mobile-view-2d .card-3d {
+                display: none;
+            }
+
+            body.mobile-view-3d .card-2d {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+
+<div class="mobile-tabs" role="tablist" aria-label="Mobile view switcher">
+    <button type="button" class="mobile-tab" data-mobile-view="controls" aria-selected="false">Controls</button>
+    <button type="button" class="mobile-tab is-active" data-mobile-view="2d" aria-selected="true">2D</button>
+    <button type="button" class="mobile-tab" data-mobile-view="3d" aria-selected="false">3D</button>
+</div>
 
 <div class="app-container">
     <aside class="sidebar">
@@ -289,7 +464,7 @@
 
         <div class="viz-grid">
             
-            <div class="card">
+            <div class="card card-2d">
                 <div class="card-header">
                     <span>Cross-Section View</span>
                     <span class="badge badge-2d">2D Slice at current N</span>
@@ -297,7 +472,7 @@
                 <div id="plot2d" class="plot-area"></div>
             </div>
 
-            <div class="card">
+            <div class="card card-3d">
                 <div class="card-header">
                     <span>Parameter Space Topology</span>
                     <span class="badge badge-3d">Full N Spectrum</span>
@@ -336,6 +511,11 @@
         camera: { eye: {x: 1.5, y: 1.5, z: 1.2} } // Persist 3D view
     };
 
+    const THREE_D_DEBOUNCE_MS = 120;
+    const mobileMediaQuery = window.matchMedia('(max-width: 768px)');
+    const mobileViewClasses = ['mobile-view-controls', 'mobile-view-2d', 'mobile-view-3d'];
+    let pending3DUpdateTimer = null;
+
     // --- DOM Elements ---
     const sliders = {
         C: document.getElementById('slider_C'),
@@ -343,7 +523,7 @@
         n: document.getElementById('slider_n'),
         N: document.getElementById('slider_N')
     };
-    
+
     const displays = {
         C: document.getElementById('val_C'),
         As: document.getElementById('val_As'),
@@ -352,8 +532,73 @@
         u0: document.getElementById('val_u0')
     };
 
+    const plotElements = {
+        plot2d: document.getElementById('plot2d'),
+        plot3d: document.getElementById('plot3d')
+    };
+
+    const mobileTabs = Array.from(document.querySelectorAll('.mobile-tab'));
+
+    function setMobileView(view) {
+        if (!mobileMediaQuery.matches) return;
+
+        document.body.classList.remove(...mobileViewClasses);
+        document.body.classList.add(`mobile-view-${view}`);
+
+        mobileTabs.forEach(tab => {
+            const isActive = tab.dataset.mobileView === view;
+            tab.classList.toggle('is-active', isActive);
+            tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+
+        requestAnimationFrame(resizeVisiblePlots);
+    }
+
+    function syncMobileLayout() {
+        if (mobileMediaQuery.matches) {
+            const activeTab = mobileTabs.find(tab => tab.classList.contains('is-active'));
+            const activeView = activeTab ? activeTab.dataset.mobileView : '2d';
+            setMobileView(activeView);
+            return;
+        }
+
+        document.body.classList.remove(...mobileViewClasses);
+        requestAnimationFrame(resizeVisiblePlots);
+    }
+
+    function resizeVisiblePlots() {
+        if (plotElements.plot2d) Plotly.Plots.resize(plotElements.plot2d);
+        if (plotElements.plot3d) Plotly.Plots.resize(plotElements.plot3d);
+    }
+
+    function cancelScheduled3DUpdate() {
+        if (pending3DUpdateTimer === null) return;
+        clearTimeout(pending3DUpdateTimer);
+        pending3DUpdateTimer = null;
+    }
+
+    function schedule3DUpdate() {
+        cancelScheduled3DUpdate();
+        pending3DUpdateTimer = setTimeout(() => {
+            pending3DUpdateTimer = null;
+            generate3DPlot();
+        }, THREE_D_DEBOUNCE_MS);
+    }
+
+    function flush3DUpdate(force = false) {
+        if (pending3DUpdateTimer !== null) {
+            cancelScheduled3DUpdate();
+            generate3DPlot();
+            return;
+        }
+
+        if (force) generate3DPlot();
+    }
+
     // --- Plot Updates ---
-    function updateDashboard() {
+    function updateDashboard(options = {}) {
+        const { update3D = true } = options;
+
         // 1. Read Inputs
         state.C = parseFloat(sliders.C.value);
         state.As = parseFloat(sliders.As.value);
@@ -365,13 +610,13 @@
         displays.As.innerText = state.As;
         displays.n.innerText = state.n.toFixed(1);
         displays.N.innerText = state.N.toFixed(1) + " MPa";
-        
+
         const u0 = calculateTransitionVelocity(state.C, state.As, state.n, state.N);
         displays.u0.innerText = u0.toFixed(1) + " m/a";
 
         // 3. Generate Data
         generate2DPlot(u0);
-        generate3DPlot();
+        if (update3D) generate3DPlot();
     }
 
     function generate2DPlot(u0) {
@@ -425,7 +670,7 @@
             paper_bgcolor: '#fff'
         };
 
-        Plotly.react('plot2d', [traceLine, traceLimit, tracePoint], layout, {responsive: true, displayModeBar: false});
+        Plotly.react(plotElements.plot2d, [traceLine, traceLimit, tracePoint], layout, {responsive: true, displayModeBar: false});
     }
 
     function generate3DPlot() {
@@ -471,23 +716,48 @@
             paper_bgcolor: 'rgba(0,0,0,0)'
         };
 
-        Plotly.react('plot3d', data, layout, {responsive: true, displayModeBar: false}).then(gd => {
-            // Keep camera sync
-            gd.on('plotly_relayout', d => {
-                if (d['scene.camera']) state.camera = d['scene.camera'];
-            });
+        Plotly.react(plotElements.plot3d, data, layout, {responsive: true, displayModeBar: false}).then(gd => {
+            // Keep camera sync. Bind once to avoid repeated listeners.
+            if (!gd.__cameraListenerBound) {
+                gd.on('plotly_relayout', d => {
+                    if (d && d['scene.camera']) state.camera = d['scene.camera'];
+                });
+                gd.__cameraListenerBound = true;
+            }
         });
     }
 
     // --- Initialization ---
-    Object.values(sliders).forEach(s => s.addEventListener('input', updateDashboard));
-    window.addEventListener('resize', () => {
-        Plotly.Plots.resize('plot2d');
-        Plotly.Plots.resize('plot3d');
+    Object.values(sliders).forEach(slider => {
+        slider.addEventListener('input', () => {
+            updateDashboard({ update3D: false });
+            schedule3DUpdate();
+        });
+
+        slider.addEventListener('change', () => {
+            updateDashboard({ update3D: false });
+            flush3DUpdate(true);
+        });
+
+        slider.addEventListener('pointerup', () => flush3DUpdate());
+        slider.addEventListener('touchend', () => flush3DUpdate(), {passive: true});
     });
+
+    mobileTabs.forEach(tab => {
+        tab.addEventListener('click', () => setMobileView(tab.dataset.mobileView));
+    });
+
+    if (typeof mobileMediaQuery.addEventListener === 'function') {
+        mobileMediaQuery.addEventListener('change', syncMobileLayout);
+    } else if (typeof mobileMediaQuery.addListener === 'function') {
+        mobileMediaQuery.addListener(syncMobileLayout);
+    }
+
+    window.addEventListener('resize', resizeVisiblePlots);
 
     // Initial Render
     updateDashboard();
+    syncMobileLayout();
     
 </script>
 </body>
