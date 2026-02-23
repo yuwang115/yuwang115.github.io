@@ -63,6 +63,8 @@
       margin: 0 0 10px;
       padding-bottom: 8px;
       border-bottom: 1px solid #d6e6ef;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .panel-grab {
@@ -590,6 +592,7 @@
 
       body.mobile-drawer.mobile-panel-dragging .panel {
         transition: none;
+        overflow-y: hidden;
       }
 
       body.mobile-drawer .panel-header {
@@ -598,9 +601,21 @@
         top: 0;
         z-index: 2;
         margin: 0 -14px 10px;
-        padding: 10px 14px 8px;
+        padding: 12px 14px 10px;
+        min-height: 52px;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.94) 100%);
         backdrop-filter: blur(4px);
+        touch-action: none;
+        cursor: ns-resize;
+      }
+
+      body.mobile-drawer .panel-grab {
+        width: 74px;
+        height: 5px;
+      }
+
+      body.mobile-drawer .panel-header:active .panel-grab {
+        background: rgba(42, 82, 104, 0.54);
       }
 
       body.mobile-drawer .panel-close-btn {
@@ -799,7 +814,7 @@
     const viewerEl = document.getElementById("viewer");
     const viewerShellEl = document.getElementById("viewerShell");
     const panelEl = document.querySelector(".panel");
-    const panelGrabEl = document.querySelector(".panel-grab");
+    const panelHeaderEl = document.querySelector(".panel-header");
     const statusEl = document.getElementById("status");
     const metaListEl = document.getElementById("metaList");
     const fieldStatsEl = document.getElementById("fieldStats");
@@ -898,6 +913,12 @@
     const TOUCH_HINT_ACTIVE =
       "<strong>3D active:</strong> drag to orbit, pinch to zoom.<br /><strong>Tap Scroll</strong> to return to page scrolling.";
     const MOBILE_PANEL_PEEK_PX = 56;
+    const MOBILE_PANEL_DRAG_MOVE_THRESHOLD_PX = 3;
+    const MOBILE_PANEL_DRAG_SLOW_GAIN = 0.24;
+    const MOBILE_PANEL_DRAG_FAST_GAIN = 0.88;
+    const MOBILE_PANEL_DRAG_FAST_SPEED_PX_PER_MS = 1.2;
+    const MOBILE_PANEL_FLING_SPEED_PX_PER_MS = 0.55;
+    const MOBILE_PANEL_FLING_MIN_TRAVEL_PX = 24;
 
     if (isShowcaseMode) {
       controlsUI.resolutionPreset.value = "balanced";
@@ -922,6 +943,9 @@
       controlsUI.showEffectivePressure.disabled = true;
       controlsUI.showSubglacialChannels.disabled = true;
       interactionHintEl.innerHTML = SHOWCASE_HINT_IDLE;
+    } else if (shouldUseMobileDrawer()) {
+      controlsUI.iceOpacity.value = "1";
+      controlsUI.iceOpacityValue.textContent = "1.00";
     }
 
     const resetPose = isShowcaseMode
@@ -1057,6 +1081,34 @@
       if (coarsePointer && memory > 0 && memory <= 4 && constrainedCpu) return true;
       if (coarsePointer && memory === 0 && constrainedCpu) return true;
       return false;
+    }
+
+    function hasConstrainedNetwork() {
+      const connection = navigator.connection;
+      if (connection?.saveData) return true;
+      const networkType = String(connection?.effectiveType || "");
+      if (networkType.includes("2g") || networkType.includes("3g")) return true;
+      return false;
+    }
+
+    function detectMobileHighQualityDevice(rendererInstance = null) {
+      if (isShowcaseMode) return false;
+      if (!shouldUseMobileDrawer()) return false;
+      if (detectLowEndDevice()) return false;
+      if (hasConstrainedNetwork()) return false;
+
+      const memory = Number(navigator.deviceMemory || 0);
+      const cores = Number(navigator.hardwareConcurrency || 0);
+      const dpr = Number(window.devicePixelRatio || 1);
+      const strongHardware =
+        (memory >= 6 && cores >= 6) ||
+        (memory >= 4 && cores >= 8) ||
+        (memory === 0 && cores >= 6 && dpr >= 2.6);
+      if (!strongHardware) return false;
+
+      const maxTextureSize = Number(rendererInstance?.capabilities?.maxTextureSize || 0);
+      if (maxTextureSize > 0 && maxTextureSize < 4096) return false;
+      return true;
     }
 
     async function loadThreeRuntime() {
@@ -1848,17 +1900,22 @@
 
       const lowEndDevice = detectLowEndDevice();
       const coarsePointer = isCoarsePointerInput();
+      const mobileHighQuality = detectMobileHighQualityDevice();
       let maxPixelRatio;
       if (coarsePointer) {
-        maxPixelRatio = lowEndDevice ? 1.25 : 1.5;
+        if (mobileHighQuality) {
+          maxPixelRatio = 2.05;
+        } else {
+          maxPixelRatio = lowEndDevice ? 1.4 : 1.75;
+        }
         if (isShowcaseMode) {
-          maxPixelRatio = Math.min(maxPixelRatio, 1.4);
+          maxPixelRatio = Math.min(maxPixelRatio, 1.55);
         }
       } else {
         maxPixelRatio = lowEndDevice ? 1.5 : isShowcaseMode ? 1.7 : 2.0;
       }
       renderer = new THREE.WebGLRenderer({
-        antialias: !(coarsePointer && lowEndDevice),
+        antialias: !lowEndDevice,
         alpha: false,
         powerPreference: "high-performance",
       });
@@ -2537,60 +2594,105 @@
     }
 
     function bindMobileDrawerDrag() {
-      if (!panelGrabEl || !panelEl) return;
+      if (!panelHeaderEl || !panelEl) return;
 
       const start = (event) => {
         if (!mobileDrawerEnabled) return;
         if (event.pointerType === "mouse" && event.button !== 0) return;
+        if (event.target instanceof Element && event.target.closest("button, input, select, textarea, a, label")) return;
+        const now = performance.now();
         syncMobilePanelBounds({ preservePosition: true });
         mobilePanelDragState = {
           pointerId: event.pointerId,
           startY: event.clientY,
+          currentY: event.clientY,
+          lastTime: now,
           startOffset: mobilePanelOffsetPx,
+          displayOffset: mobilePanelOffsetPx,
+          velocityPxPerMs: 0,
           moved: false,
         };
         mobilePanelIgnoreTap = false;
         document.body.classList.add("mobile-panel-dragging");
-        panelGrabEl.setPointerCapture(event.pointerId);
+        panelHeaderEl.setPointerCapture(event.pointerId);
         event.preventDefault();
       };
 
       const move = (event) => {
         if (!mobilePanelDragState) return;
         if (event.pointerId !== mobilePanelDragState.pointerId) return;
+        const now = performance.now();
         const deltaY = event.clientY - mobilePanelDragState.startY;
-        if (Math.abs(deltaY) > 4) {
+        if (Math.abs(deltaY) > MOBILE_PANEL_DRAG_MOVE_THRESHOLD_PX) {
           mobilePanelDragState.moved = true;
         }
-        setMobilePanelOffset(mobilePanelDragState.startOffset + deltaY);
+
+        const rawOffset = clamp(mobilePanelDragState.startOffset + deltaY, 0, mobilePanelClosedOffsetPx);
+        const dt = Math.max(8, now - mobilePanelDragState.lastTime);
+        const dy = event.clientY - mobilePanelDragState.currentY;
+        const instantVelocity = dy / dt;
+        mobilePanelDragState.velocityPxPerMs = mobilePanelDragState.velocityPxPerMs * 0.62 + instantVelocity * 0.38;
+
+        const speedNorm = clamp(
+          Math.abs(mobilePanelDragState.velocityPxPerMs) / MOBILE_PANEL_DRAG_FAST_SPEED_PX_PER_MS,
+          0,
+          1
+        );
+        const followGain =
+          MOBILE_PANEL_DRAG_SLOW_GAIN + (MOBILE_PANEL_DRAG_FAST_GAIN - MOBILE_PANEL_DRAG_SLOW_GAIN) * speedNorm;
+
+        const nextDisplayOffset =
+          mobilePanelDragState.displayOffset + (rawOffset - mobilePanelDragState.displayOffset) * followGain;
+        mobilePanelDragState.displayOffset = nextDisplayOffset;
+        setMobilePanelOffset(nextDisplayOffset);
+        mobilePanelDragState.currentY = event.clientY;
+        mobilePanelDragState.lastTime = now;
         event.preventDefault();
       };
 
       const end = (event) => {
         if (!mobilePanelDragState) return;
         if (event.pointerId !== mobilePanelDragState.pointerId) return;
+        const releaseRawOffset = clamp(
+          mobilePanelDragState.startOffset + (event.clientY - mobilePanelDragState.startY),
+          0,
+          mobilePanelClosedOffsetPx
+        );
+        const releaseVelocity = mobilePanelDragState.velocityPxPerMs;
+        const dragTravel = Math.abs(event.clientY - mobilePanelDragState.startY);
         mobilePanelIgnoreTap = mobilePanelDragState.moved;
         mobilePanelDragState = null;
         document.body.classList.remove("mobile-panel-dragging");
-        const snapRange = 12;
-        if (mobilePanelOffsetPx <= snapRange) {
-          setMobilePanelOpen(true);
-        } else if (mobilePanelOffsetPx >= mobilePanelClosedOffsetPx - snapRange) {
-          setMobilePanelOpen(false);
+        setMobilePanelOffset(releaseRawOffset);
+
+        const shouldFling =
+          dragTravel >= MOBILE_PANEL_FLING_MIN_TRAVEL_PX &&
+          Math.abs(releaseVelocity) >= MOBILE_PANEL_FLING_SPEED_PX_PER_MS;
+        if (shouldFling) {
+          setMobilePanelOpen(releaseVelocity < 0);
+        } else {
+          const snapRange = 12;
+          if (mobilePanelOffsetPx <= snapRange) {
+            setMobilePanelOpen(true);
+          } else if (mobilePanelOffsetPx >= mobilePanelClosedOffsetPx - snapRange) {
+            setMobilePanelOpen(false);
+          }
         }
+
         try {
-          panelGrabEl.releasePointerCapture(event.pointerId);
+          panelHeaderEl.releasePointerCapture(event.pointerId);
         } catch (_err) {
           // No-op: pointer capture may already be released by browser.
         }
       };
 
-      panelGrabEl.addEventListener("pointerdown", start);
-      panelGrabEl.addEventListener("pointermove", move);
-      panelGrabEl.addEventListener("pointerup", end);
-      panelGrabEl.addEventListener("pointercancel", end);
-      panelGrabEl.addEventListener("click", () => {
+      panelHeaderEl.addEventListener("pointerdown", start);
+      panelHeaderEl.addEventListener("pointermove", move);
+      panelHeaderEl.addEventListener("pointerup", end);
+      panelHeaderEl.addEventListener("pointercancel", end);
+      panelHeaderEl.addEventListener("click", (event) => {
         if (!mobileDrawerEnabled) return;
+        if (event.target instanceof Element && event.target.closest("button, input, select, textarea, a, label")) return;
         if (mobilePanelIgnoreTap) {
           mobilePanelIgnoreTap = false;
           return;
