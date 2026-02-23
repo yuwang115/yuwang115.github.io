@@ -379,6 +379,10 @@
             body.mobile-view-3d .card-2d {
                 display: none;
             }
+
+            body.mobile-view-3d #plot3d {
+                touch-action: none;
+            }
         }
     </style>
 </head>
@@ -539,6 +543,19 @@
 
     const mobileTabs = Array.from(document.querySelectorAll('.mobile-tab'));
 
+    function isMobile3DMode() {
+        return mobileMediaQuery.matches && document.body.classList.contains('mobile-view-3d');
+    }
+
+    function get3DPlotConfig() {
+        return {
+            responsive: true,
+            displayModeBar: false,
+            // Enable two-finger pinch zoom only in mobile 3D view.
+            scrollZoom: isMobile3DMode()
+        };
+    }
+
     function setMobileView(view) {
         if (!mobileMediaQuery.matches) return;
 
@@ -550,6 +567,10 @@
             tab.classList.toggle('is-active', isActive);
             tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
         });
+
+        if (view === '3d') {
+            generate3DPlot();
+        }
 
         requestAnimationFrame(resizeVisiblePlots);
     }
@@ -716,7 +737,7 @@
             paper_bgcolor: 'rgba(0,0,0,0)'
         };
 
-        Plotly.react(plotElements.plot3d, data, layout, {responsive: true, displayModeBar: false}).then(gd => {
+        Plotly.react(plotElements.plot3d, data, layout, get3DPlotConfig()).then(gd => {
             // Keep camera sync. Bind once to avoid repeated listeners.
             if (!gd.__cameraListenerBound) {
                 gd.on('plotly_relayout', d => {

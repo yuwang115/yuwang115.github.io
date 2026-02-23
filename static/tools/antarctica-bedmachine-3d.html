@@ -70,6 +70,8 @@
       height: 4px;
       border-radius: 999px;
       background: rgba(50, 93, 116, 0.34);
+      cursor: ns-resize;
+      touch-action: none;
     }
 
     .panel-close-btn {
@@ -557,13 +559,7 @@
       }
 
       body.mobile-drawer .status {
-        top: calc(env(safe-area-inset-top, 0px) + 12px + var(--mobile-toolbar-height, 72px) + 8px);
-        left: calc(env(safe-area-inset-left, 0px) + 12px);
-        right: auto;
-        max-width: min(72vw, 320px);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        display: none;
       }
 
       body.mobile-drawer .viewer-tool-btn {
@@ -587,12 +583,13 @@
         padding: 0 14px 14px;
         overflow-y: auto;
         overscroll-behavior: contain;
-        transform: translateY(calc(100% - 56px));
+        transform: translateY(var(--mobile-panel-offset, calc(100% - 56px)));
         transition: transform 220ms ease;
+        will-change: transform;
       }
 
-      body.mobile-drawer.mobile-panel-open .panel {
-        transform: translateY(0);
+      body.mobile-drawer.mobile-panel-dragging .panel {
+        transition: none;
       }
 
       body.mobile-drawer .panel-header {
@@ -734,7 +731,6 @@
       </div>
       <div id="status" class="status">Loading data...</div>
       <div class="viewer-toolbar">
-        <button id="panelToggleButton" class="viewer-tool-btn is-hidden" type="button">Show Controls</button>
         <button id="interactionToggle" class="viewer-tool-btn is-hidden" type="button">Enable 3D</button>
         <button id="viewerFullscreenToggle" class="viewer-tool-btn" type="button">Enter Fullscreen</button>
       </div>
@@ -802,7 +798,8 @@
 
     const viewerEl = document.getElementById("viewer");
     const viewerShellEl = document.getElementById("viewerShell");
-    const viewerToolbarEl = viewerShellEl ? viewerShellEl.querySelector(".viewer-toolbar") : null;
+    const panelEl = document.querySelector(".panel");
+    const panelGrabEl = document.querySelector(".panel-grab");
     const statusEl = document.getElementById("status");
     const metaListEl = document.getElementById("metaList");
     const fieldStatsEl = document.getElementById("fieldStats");
@@ -834,7 +831,6 @@
       wireframe: document.getElementById("wireframe"),
       resetView: document.getElementById("resetView"),
       fullscreenToggle: document.getElementById("fullscreenToggle"),
-      panelToggleButton: document.getElementById("panelToggleButton"),
       interactionToggle: document.getElementById("interactionToggle"),
       viewerFullscreenToggle: document.getElementById("viewerFullscreenToggle"),
       legendBar: document.getElementById("legendBar"),
@@ -873,6 +869,11 @@
     let interactionGateActive = true;
     let mobileDrawerEnabled = false;
     let mobilePanelOpen = false;
+    let mobilePanelOffsetPx = 0;
+    let mobilePanelClosedOffsetPx = 0;
+    let mobilePanelDragState = null;
+    let mobilePanelIgnoreTap = false;
+    let mobilePanelResizeObserver = null;
     let currentCoreContext = null;
     let currentVelocityMeta = null;
     let currentHydrologyMeta = null;
@@ -896,6 +897,7 @@
       "<strong>Scroll page:</strong> swipe naturally.<br /><strong>Tap scene</strong> to enable 3D gestures.";
     const TOUCH_HINT_ACTIVE =
       "<strong>3D active:</strong> drag to orbit, pinch to zoom.<br /><strong>Tap Scroll</strong> to return to page scrolling.";
+    const MOBILE_PANEL_PEEK_PX = 56;
 
     if (isShowcaseMode) {
       controlsUI.resolutionPreset.value = "balanced";
@@ -936,6 +938,11 @@
     function clamp01(value) {
       if (!Number.isFinite(value)) return 0;
       return Math.min(1, Math.max(0, value));
+    }
+
+    function clamp(value, min, max) {
+      if (!Number.isFinite(value)) return min;
+      return Math.min(max, Math.max(min, value));
     }
 
     function lerp(a, b, t) {
@@ -2466,7 +2473,6 @@
       apply(controlsUI.fullscreenToggle);
       apply(controlsUI.viewerFullscreenToggle);
       viewerShellEl.classList.toggle("is-fullscreen", active);
-      updateMobileStatusOffset();
     }
 
     async function toggleFullscreenMode() {
@@ -2495,12 +2501,102 @@
       resizeRendererToViewer();
     }
 
-    function setMobilePanelOpen(open) {
-      mobilePanelOpen = mobileDrawerEnabled && Boolean(open);
+    function setMobilePanelOffset(offsetPx) {
+      if (!panelEl) return;
+      const clampedOffset = clamp(offsetPx, 0, mobilePanelClosedOffsetPx);
+      mobilePanelOffsetPx = clampedOffset;
+      panelEl.style.setProperty("--mobile-panel-offset", `${clampedOffset}px`);
+      const openThreshold = Math.max(8, mobilePanelClosedOffsetPx * 0.18);
+      mobilePanelOpen = clampedOffset <= openThreshold;
       document.body.classList.toggle("mobile-panel-open", mobilePanelOpen);
-      if (!controlsUI.panelToggleButton) return;
-      controlsUI.panelToggleButton.textContent = mobilePanelOpen ? "Hide Controls" : "Show Controls";
-      controlsUI.panelToggleButton.setAttribute("aria-pressed", mobilePanelOpen ? "true" : "false");
+    }
+
+    function syncMobilePanelBounds({ preservePosition = true } = {}) {
+      if (!mobileDrawerEnabled || !panelEl) return;
+      const previousClosedOffset = mobilePanelClosedOffsetPx;
+      const previousOffset = mobilePanelOffsetPx;
+      const panelHeight = Math.ceil(panelEl.getBoundingClientRect().height);
+      mobilePanelClosedOffsetPx = Math.max(0, panelHeight - MOBILE_PANEL_PEEK_PX);
+
+      let nextOffset = mobilePanelOpen ? 0 : mobilePanelClosedOffsetPx;
+      if (preservePosition && previousClosedOffset > 0) {
+        const ratio = clamp(previousOffset / previousClosedOffset, 0, 1);
+        nextOffset = ratio * mobilePanelClosedOffsetPx;
+      }
+      setMobilePanelOffset(nextOffset);
+    }
+
+    function setMobilePanelOpen(open) {
+      if (!mobileDrawerEnabled || !panelEl) {
+        mobilePanelOpen = false;
+        document.body.classList.remove("mobile-panel-open");
+        return;
+      }
+      syncMobilePanelBounds({ preservePosition: true });
+      setMobilePanelOffset(open ? 0 : mobilePanelClosedOffsetPx);
+    }
+
+    function bindMobileDrawerDrag() {
+      if (!panelGrabEl || !panelEl) return;
+
+      const start = (event) => {
+        if (!mobileDrawerEnabled) return;
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        syncMobilePanelBounds({ preservePosition: true });
+        mobilePanelDragState = {
+          pointerId: event.pointerId,
+          startY: event.clientY,
+          startOffset: mobilePanelOffsetPx,
+          moved: false,
+        };
+        mobilePanelIgnoreTap = false;
+        document.body.classList.add("mobile-panel-dragging");
+        panelGrabEl.setPointerCapture(event.pointerId);
+        event.preventDefault();
+      };
+
+      const move = (event) => {
+        if (!mobilePanelDragState) return;
+        if (event.pointerId !== mobilePanelDragState.pointerId) return;
+        const deltaY = event.clientY - mobilePanelDragState.startY;
+        if (Math.abs(deltaY) > 4) {
+          mobilePanelDragState.moved = true;
+        }
+        setMobilePanelOffset(mobilePanelDragState.startOffset + deltaY);
+        event.preventDefault();
+      };
+
+      const end = (event) => {
+        if (!mobilePanelDragState) return;
+        if (event.pointerId !== mobilePanelDragState.pointerId) return;
+        mobilePanelIgnoreTap = mobilePanelDragState.moved;
+        mobilePanelDragState = null;
+        document.body.classList.remove("mobile-panel-dragging");
+        const snapRange = 12;
+        if (mobilePanelOffsetPx <= snapRange) {
+          setMobilePanelOpen(true);
+        } else if (mobilePanelOffsetPx >= mobilePanelClosedOffsetPx - snapRange) {
+          setMobilePanelOpen(false);
+        }
+        try {
+          panelGrabEl.releasePointerCapture(event.pointerId);
+        } catch (_err) {
+          // No-op: pointer capture may already be released by browser.
+        }
+      };
+
+      panelGrabEl.addEventListener("pointerdown", start);
+      panelGrabEl.addEventListener("pointermove", move);
+      panelGrabEl.addEventListener("pointerup", end);
+      panelGrabEl.addEventListener("pointercancel", end);
+      panelGrabEl.addEventListener("click", () => {
+        if (!mobileDrawerEnabled) return;
+        if (mobilePanelIgnoreTap) {
+          mobilePanelIgnoreTap = false;
+          return;
+        }
+        setMobilePanelOpen(!mobilePanelOpen);
+      });
     }
 
     function updateInteractionHint(active) {
@@ -2523,38 +2619,36 @@
       controlsUI.interactionToggle.disabled = !showToggle;
       controlsUI.interactionToggle.textContent = interactionGateActive ? "Scroll Page" : "Enable 3D";
       controlsUI.interactionToggle.setAttribute("aria-pressed", interactionGateActive ? "true" : "false");
-      updateMobileStatusOffset();
-    }
-
-    function updateMobileStatusOffset() {
-      if (!viewerShellEl || !viewerToolbarEl) return;
-      if (!mobileDrawerEnabled) {
-        viewerShellEl.style.removeProperty("--mobile-toolbar-height");
-        return;
-      }
-      const toolbarHeight = Math.max(34, Math.ceil(viewerToolbarEl.getBoundingClientRect().height));
-      viewerShellEl.style.setProperty("--mobile-toolbar-height", `${toolbarHeight}px`);
     }
 
     function refreshResponsiveLayout() {
+      const previouslyEnabled = mobileDrawerEnabled;
       mobileDrawerEnabled = shouldUseMobileDrawer();
       document.body.classList.toggle("mobile-drawer", mobileDrawerEnabled);
-
-      if (controlsUI.panelToggleButton) {
-        controlsUI.panelToggleButton.classList.toggle("is-hidden", !mobileDrawerEnabled);
-        controlsUI.panelToggleButton.disabled = !mobileDrawerEnabled;
+      if (statusEl) {
+        statusEl.hidden = mobileDrawerEnabled;
       }
+
       if (controlsUI.panelCloseButton) {
-        controlsUI.panelCloseButton.classList.toggle("is-hidden", !mobileDrawerEnabled);
+        controlsUI.panelCloseButton.hidden = !mobileDrawerEnabled;
         controlsUI.panelCloseButton.disabled = !mobileDrawerEnabled;
       }
 
       if (!mobileDrawerEnabled) {
+        document.body.classList.remove("mobile-panel-dragging");
+        if (panelEl) {
+          panelEl.style.removeProperty("--mobile-panel-offset");
+        }
         setMobilePanelOpen(false);
+        mobilePanelClosedOffsetPx = 0;
+        mobilePanelOffsetPx = 0;
+        mobilePanelIgnoreTap = false;
       } else {
-        setMobilePanelOpen(mobilePanelOpen);
+        syncMobilePanelBounds({ preservePosition: previouslyEnabled });
+        if (!previouslyEnabled) {
+          setMobilePanelOpen(false);
+        }
       }
-      updateMobileStatusOffset();
       updateFullscreenControls();
     }
 
@@ -2589,7 +2683,7 @@
 
       const activate = () => {
         if (!interactionGateEnabled || interactionGateActive) return;
-        if (mobileDrawerEnabled && mobilePanelOpen) {
+        if (mobileDrawerEnabled) {
           setMobilePanelOpen(false);
         }
         setInteractionGateActive(true);
@@ -2662,14 +2756,13 @@
     }
 
     function bindUI() {
-      if (controlsUI.panelToggleButton) {
-        controlsUI.panelToggleButton.addEventListener("click", () => {
-          const open = !mobilePanelOpen;
-          setMobilePanelOpen(open);
-          if (open && interactionGateEnabled) {
-            setInteractionGateActive(false);
-          }
+      bindMobileDrawerDrag();
+      if (panelEl && !mobilePanelResizeObserver && "ResizeObserver" in window) {
+        mobilePanelResizeObserver = new ResizeObserver(() => {
+          if (!mobileDrawerEnabled || mobilePanelDragState) return;
+          syncMobilePanelBounds({ preservePosition: true });
         });
+        mobilePanelResizeObserver.observe(panelEl);
       }
 
       if (controlsUI.panelCloseButton) {
