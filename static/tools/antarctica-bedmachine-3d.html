@@ -55,6 +55,38 @@
       overflow-y: auto;
     }
 
+    .panel-header {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #d6e6ef;
+    }
+
+    .panel-grab {
+      width: 46px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(50, 93, 116, 0.34);
+    }
+
+    .panel-close-btn {
+      display: none;
+      width: auto;
+      min-width: 78px;
+      height: 34px;
+      margin: 0;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid #86aeca;
+      background: #eef7fc;
+      color: #17425c;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
     .viewer-shell {
       position: relative;
       min-height: 420px;
@@ -359,6 +391,9 @@
       top: 12px;
       left: 12px;
       z-index: 6;
+      display: flex;
+      gap: 8px;
+      align-items: center;
       pointer-events: none;
     }
 
@@ -387,6 +422,10 @@
       opacity: 0.55;
       cursor: not-allowed;
       filter: none;
+    }
+
+    .viewer-tool-btn.is-hidden {
+      display: none;
     }
 
     .viewer-shell:fullscreen,
@@ -484,13 +523,83 @@
     }
 
     @media (max-width: 980px) {
-      .app {
+      body:not(.mobile-drawer) .app {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr;
       }
 
-      .panel {
+      body:not(.mobile-drawer) .panel {
         max-height: 44vh;
+      }
+
+      body.mobile-drawer .app {
+        display: block;
+        height: 100vh;
+        height: 100dvh;
+        padding: 0;
+      }
+
+      body.mobile-drawer .viewer-shell {
+        min-height: 100vh;
+        min-height: 100dvh;
+        height: 100vh;
+        height: 100dvh;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      body.mobile-drawer .viewer-toolbar {
+        top: calc(env(safe-area-inset-top, 0px) + 12px);
+        left: calc(env(safe-area-inset-left, 0px) + 12px);
+        right: calc(env(safe-area-inset-right, 0px) + 12px);
+        flex-wrap: wrap;
+      }
+
+      body.mobile-drawer .viewer-tool-btn {
+        min-width: 0;
+      }
+
+      body.mobile-drawer .hud {
+        left: calc(env(safe-area-inset-left, 0px) + 10px);
+        right: calc(env(safe-area-inset-right, 0px) + 10px);
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 72px);
+      }
+
+      body.mobile-drawer .panel {
+        position: fixed;
+        z-index: 20;
+        left: calc(env(safe-area-inset-left, 0px) + 8px);
+        right: calc(env(safe-area-inset-right, 0px) + 8px);
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+        max-height: min(74dvh, 680px);
+        border-radius: 14px;
+        padding: 0 14px 14px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        transform: translateY(calc(100% - 56px));
+        transition: transform 220ms ease;
+      }
+
+      body.mobile-drawer.mobile-panel-open .panel {
+        transform: translateY(0);
+      }
+
+      body.mobile-drawer .panel-header {
+        display: flex;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        margin: 0 -14px 10px;
+        padding: 10px 14px 8px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.94) 100%);
+        backdrop-filter: blur(4px);
+      }
+
+      body.mobile-drawer .panel-close-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
 
       body.showcase .hud {
@@ -503,6 +612,10 @@
 <body>
   <div class="app">
     <aside class="panel">
+      <div class="panel-header">
+        <div class="panel-grab" aria-hidden="true"></div>
+        <button id="panelCloseButton" class="panel-close-btn" type="button">Done</button>
+      </div>
       <p class="subtitle">
         Rotate, zoom, and explore Antarctica with interactive layers
         for bed topography, ice surface/base, velocity, flowlines, subglacial environments.
@@ -611,6 +724,8 @@
       </div>
       <div id="status" class="status">Loading data...</div>
       <div class="viewer-toolbar">
+        <button id="panelToggleButton" class="viewer-tool-btn is-hidden" type="button">Show Controls</button>
+        <button id="interactionToggle" class="viewer-tool-btn is-hidden" type="button">Enable 3D</button>
         <button id="viewerFullscreenToggle" class="viewer-tool-btn" type="button">Enter Fullscreen</button>
       </div>
       <div class="hud">
@@ -628,8 +743,26 @@
     const mode = (queryParams.get("mode") || "").toLowerCase();
     const isShowcaseMode = mode === "showcase";
     const lockedDatasetKey = isShowcaseMode ? "balanced" : null;
+    const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
+    const compactViewportQuery = window.matchMedia("(max-width: 980px)");
+
+    function isCoarsePointerInput() {
+      return coarsePointerQuery.matches;
+    }
+
+    function shouldUseMobileDrawer() {
+      return !isShowcaseMode && isCoarsePointerInput() && compactViewportQuery.matches;
+    }
+
+    function shouldUseInteractionGate() {
+      return isShowcaseMode || isCoarsePointerInput();
+    }
+
     if (isShowcaseMode) {
       document.body.classList.add("showcase");
+    }
+    if (shouldUseMobileDrawer()) {
+      document.body.classList.add("mobile-drawer");
     }
 
     const DATASETS = {
@@ -668,8 +801,10 @@
     const loadingFillEl = document.getElementById("loadingFill");
     const loadingPercentEl = document.getElementById("loadingPercent");
     const loadingHintEl = document.getElementById("loadingHint");
+    const DEFAULT_INTERACTION_HINT = interactionHintEl ? interactionHintEl.innerHTML : "";
 
     const controlsUI = {
+      panelCloseButton: document.getElementById("panelCloseButton"),
       resolutionPreset: document.getElementById("resolutionPreset"),
       resolutionValue: document.getElementById("resolutionValue"),
       exaggeration: document.getElementById("exaggeration"),
@@ -688,6 +823,8 @@
       wireframe: document.getElementById("wireframe"),
       resetView: document.getElementById("resetView"),
       fullscreenToggle: document.getElementById("fullscreenToggle"),
+      panelToggleButton: document.getElementById("panelToggleButton"),
+      interactionToggle: document.getElementById("interactionToggle"),
       viewerFullscreenToggle: document.getElementById("viewerFullscreenToggle"),
       legendBar: document.getElementById("legendBar"),
       velocityLegendBar: document.getElementById("velocityLegendBar"),
@@ -721,7 +858,10 @@
     let animationHandle;
     let currentDatasetKey = lockedDatasetKey || "balanced";
     let loadGeneration = 0;
-    let showcaseInteractionActive = !isShowcaseMode;
+    let interactionGateEnabled = false;
+    let interactionGateActive = true;
+    let mobileDrawerEnabled = false;
+    let mobilePanelOpen = false;
     let currentCoreContext = null;
     let currentVelocityMeta = null;
     let currentHydrologyMeta = null;
@@ -741,6 +881,10 @@
       "<strong>Scroll page:</strong> keep using wheel to continue reading.<br /><strong>Click this scene</strong> to enter 3D interaction.";
     const SHOWCASE_HINT_ACTIVE =
       "<strong>Interactive:</strong> drag to orbit, wheel to zoom, right-drag to pan. Press <strong>Esc</strong> to return to page scrolling.";
+    const TOUCH_HINT_IDLE =
+      "<strong>Scroll page:</strong> swipe naturally.<br /><strong>Tap scene</strong> to enable 3D gestures.";
+    const TOUCH_HINT_ACTIVE =
+      "<strong>3D active:</strong> drag to orbit, pinch to zoom.<br /><strong>Tap Scroll</strong> to return to page scrolling.";
 
     if (isShowcaseMode) {
       controlsUI.resolutionPreset.value = "balanced";
@@ -774,8 +918,8 @@
           target: [4.52, -6.48, 1.43],
         }
       : {
-          position: [0, 52, 150],
-          target: [0, -0.4, 0],
+          position: [3, 53, 77],
+          target: [3.5, -7, 3],
         };
 
     function clamp01(value) {
@@ -888,7 +1032,7 @@
     function detectLowEndDevice() {
       const memory = Number(navigator.deviceMemory || 0);
       const cores = Number(navigator.hardwareConcurrency || 0);
-      const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+      const coarsePointer = isCoarsePointerInput();
       const veryLowMemory = memory > 0 && memory <= 3;
       const constrainedCpu = cores > 0 && cores <= 4;
       if (veryLowMemory) return true;
@@ -1685,10 +1829,18 @@
       camera.position.set(...resetPose.position);
 
       const lowEndDevice = detectLowEndDevice();
-      const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
-      const maxPixelRatio = isShowcaseMode ? 1.7 : coarsePointer ? (lowEndDevice ? 1.6 : 2.2) : lowEndDevice ? 1.5 : 2.0;
+      const coarsePointer = isCoarsePointerInput();
+      let maxPixelRatio;
+      if (coarsePointer) {
+        maxPixelRatio = lowEndDevice ? 1.25 : 1.5;
+        if (isShowcaseMode) {
+          maxPixelRatio = Math.min(maxPixelRatio, 1.4);
+        }
+      } else {
+        maxPixelRatio = lowEndDevice ? 1.5 : isShowcaseMode ? 1.7 : 2.0;
+      }
       renderer = new THREE.WebGLRenderer({
-        antialias: true,
+        antialias: !(coarsePointer && lowEndDevice),
         alpha: false,
         powerPreference: "high-performance",
       });
@@ -1703,11 +1855,8 @@
       orbit.minDistance = isShowcaseMode ? 12 : 0.2;
       orbit.maxDistance = 360;
       orbit.target.set(...resetPose.target);
-      if (isShowcaseMode) {
-        orbit.enabled = false;
-        // Allow native page scrolling until the user explicitly activates 3D interaction.
-        renderer.domElement.style.touchAction = "auto";
-      }
+      orbit.enabled = true;
+      renderer.domElement.style.touchAction = "none";
 
       const ambient = new THREE.AmbientLight(0xddefff, 0.75);
       const key = new THREE.DirectionalLight(0xffffff, 0.9);
@@ -2325,41 +2474,113 @@
       resizeRendererToViewer();
     }
 
-    function setShowcaseInteractionActive(active) {
-      if (!isShowcaseMode || !orbit || !renderer || !viewerShellEl) return;
-      showcaseInteractionActive = active;
-      orbit.enabled = active;
-      renderer.domElement.style.touchAction = active ? "none" : "auto";
-      viewerShellEl.classList.toggle("showcase-idle", !active);
-      interactionHintEl.innerHTML = active ? SHOWCASE_HINT_ACTIVE : SHOWCASE_HINT_IDLE;
+    function setMobilePanelOpen(open) {
+      mobilePanelOpen = mobileDrawerEnabled && Boolean(open);
+      document.body.classList.toggle("mobile-panel-open", mobilePanelOpen);
+      if (!controlsUI.panelToggleButton) return;
+      controlsUI.panelToggleButton.textContent = mobilePanelOpen ? "Hide Controls" : "Show Controls";
+      controlsUI.panelToggleButton.setAttribute("aria-pressed", mobilePanelOpen ? "true" : "false");
     }
 
-    function bindShowcaseInteractionGate() {
-      if (!isShowcaseMode || !renderer || !viewerShellEl) return;
+    function updateInteractionHint(active) {
+      if (!interactionHintEl) return;
+      if (isShowcaseMode) {
+        interactionHintEl.innerHTML = active ? SHOWCASE_HINT_ACTIVE : SHOWCASE_HINT_IDLE;
+        return;
+      }
+      if (!interactionGateEnabled) {
+        interactionHintEl.innerHTML = DEFAULT_INTERACTION_HINT;
+        return;
+      }
+      interactionHintEl.innerHTML = active ? TOUCH_HINT_ACTIVE : TOUCH_HINT_IDLE;
+    }
+
+    function syncInteractionToggleButton() {
+      if (!controlsUI.interactionToggle) return;
+      const showToggle = interactionGateEnabled && isCoarsePointerInput();
+      controlsUI.interactionToggle.classList.toggle("is-hidden", !showToggle);
+      controlsUI.interactionToggle.disabled = !showToggle;
+      controlsUI.interactionToggle.textContent = interactionGateActive ? "Scroll Page" : "Enable 3D";
+      controlsUI.interactionToggle.setAttribute("aria-pressed", interactionGateActive ? "true" : "false");
+    }
+
+    function refreshResponsiveLayout() {
+      mobileDrawerEnabled = shouldUseMobileDrawer();
+      document.body.classList.toggle("mobile-drawer", mobileDrawerEnabled);
+
+      if (controlsUI.panelToggleButton) {
+        controlsUI.panelToggleButton.classList.toggle("is-hidden", !mobileDrawerEnabled);
+        controlsUI.panelToggleButton.disabled = !mobileDrawerEnabled;
+      }
+      if (controlsUI.panelCloseButton) {
+        controlsUI.panelCloseButton.classList.toggle("is-hidden", !mobileDrawerEnabled);
+        controlsUI.panelCloseButton.disabled = !mobileDrawerEnabled;
+      }
+
+      if (!mobileDrawerEnabled) {
+        setMobilePanelOpen(false);
+      } else {
+        setMobilePanelOpen(mobilePanelOpen);
+      }
+    }
+
+    function setInteractionGateActive(active) {
+      if (!orbit || !renderer || !viewerShellEl) return;
+      if (!interactionGateEnabled) {
+        interactionGateActive = true;
+        orbit.enabled = true;
+        renderer.domElement.style.touchAction = "none";
+        viewerShellEl.classList.remove("showcase-idle");
+        updateInteractionHint(true);
+        syncInteractionToggleButton();
+        return;
+      }
+
+      interactionGateActive = Boolean(active);
+      orbit.enabled = interactionGateActive;
+      renderer.domElement.style.touchAction = interactionGateActive ? "none" : "auto";
+      if (isShowcaseMode) {
+        viewerShellEl.classList.toggle("showcase-idle", !interactionGateActive);
+      } else {
+        viewerShellEl.classList.remove("showcase-idle");
+      }
+      updateInteractionHint(interactionGateActive);
+      syncInteractionToggleButton();
+    }
+
+    function bindInteractionGate() {
+      if (!renderer || !viewerShellEl || !orbit) return;
 
       const canvas = renderer.domElement;
 
       const activate = () => {
-        if (!showcaseInteractionActive) {
-          setShowcaseInteractionActive(true);
+        if (!interactionGateEnabled || interactionGateActive) return;
+        if (mobileDrawerEnabled && mobilePanelOpen) {
+          setMobilePanelOpen(false);
         }
+        setInteractionGateActive(true);
       };
 
       const deactivate = () => {
-        if (showcaseInteractionActive) {
-          setShowcaseInteractionActive(false);
-        }
+        if (!interactionGateEnabled || !interactionGateActive) return;
+        setInteractionGateActive(false);
       };
+
+      interactionGateEnabled = shouldUseInteractionGate();
 
       // Capture phase: enable controls before OrbitControls handles the same pointerdown.
       canvas.addEventListener("pointerdown", activate, { capture: true });
-      viewerShellEl.addEventListener("mouseleave", deactivate);
       window.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
           deactivate();
         }
       });
       window.addEventListener("blur", deactivate);
+
+      if (isShowcaseMode) {
+        viewerShellEl.addEventListener("mouseleave", deactivate);
+      }
+
       window.addEventListener("keydown", (event) => {
         const activeTag = document.activeElement?.tagName || "";
         if (activeTag === "INPUT" || activeTag === "SELECT" || activeTag === "TEXTAREA") return;
@@ -2371,25 +2592,27 @@
 
       // In an iframe, wheel events do not reach the parent page by default.
       // Forward wheel scrolling to the parent page while 3D interaction is idle.
-      canvas.addEventListener(
-        "wheel",
-        (event) => {
-          if (showcaseInteractionActive) return;
-          if (event.ctrlKey || event.metaKey) return;
+      if (isShowcaseMode) {
+        canvas.addEventListener(
+          "wheel",
+          (event) => {
+            if (interactionGateActive) return;
+            if (event.ctrlKey || event.metaKey) return;
 
-          event.preventDefault();
+            event.preventDefault();
 
-          const targetWindow = window.parent && window.parent !== window ? window.parent : window;
-          try {
-            targetWindow.scrollBy({ left: event.deltaX, top: event.deltaY, behavior: "auto" });
-          } catch (_err) {
-            window.scrollBy({ left: event.deltaX, top: event.deltaY, behavior: "auto" });
-          }
-        },
-        { passive: false }
-      );
+            const targetWindow = window.parent && window.parent !== window ? window.parent : window;
+            try {
+              targetWindow.scrollBy({ left: event.deltaX, top: event.deltaY, behavior: "auto" });
+            } catch (_err) {
+              window.scrollBy({ left: event.deltaX, top: event.deltaY, behavior: "auto" });
+            }
+          },
+          { passive: false }
+        );
+      }
 
-      setShowcaseInteractionActive(false);
+      setInteractionGateActive(interactionGateEnabled ? false : true);
     }
 
     function bindBackgroundWarmupTrigger() {
@@ -2405,6 +2628,29 @@
     }
 
     function bindUI() {
+      if (controlsUI.panelToggleButton) {
+        controlsUI.panelToggleButton.addEventListener("click", () => {
+          const open = !mobilePanelOpen;
+          setMobilePanelOpen(open);
+          if (open && interactionGateEnabled) {
+            setInteractionGateActive(false);
+          }
+        });
+      }
+
+      if (controlsUI.panelCloseButton) {
+        controlsUI.panelCloseButton.addEventListener("click", () => {
+          setMobilePanelOpen(false);
+        });
+      }
+
+      if (controlsUI.interactionToggle) {
+        controlsUI.interactionToggle.addEventListener("click", () => {
+          if (!interactionGateEnabled) return;
+          setInteractionGateActive(!interactionGateActive);
+        });
+      }
+
       if (!lockedDatasetKey) {
         controlsUI.resolutionPreset.addEventListener("change", () => {
           loadAndBuildMeshes(controlsUI.resolutionPreset.value).catch(reportLoadError);
@@ -2528,6 +2774,8 @@
         toggleFullscreenMode();
       });
 
+      refreshResponsiveLayout();
+      window.addEventListener("resize", refreshResponsiveLayout);
       updateFullscreenControls();
     }
 
@@ -3385,7 +3633,7 @@
         bindUI();
         document.addEventListener("fullscreenchange", handleFullscreenChange);
         document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
-        bindShowcaseInteractionGate();
+        bindInteractionGate();
         bindBackgroundWarmupTrigger();
         renderLoop();
 
