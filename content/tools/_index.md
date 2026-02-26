@@ -89,4 +89,50 @@ sections:
         </div>
     design:
       columns: "1"
+  - block: markdown
+    id: misi-flowline-demo
+    content:
+      title: "1D Marine Ice Sheet Flowline Lab 🥶 (unfinished demo)"
+      text: |
+        <style>
+          #misi-flowline-demo .max-w-prose {
+            max-width: none;
+            width: 100%;
+          }
+          #misi-flowline-demo .tools-embed {
+            width: 100%;
+            height: 88vh;
+            min-height: 680px;
+            border: 1px solid #c9e0ea;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
+            position: relative;
+            background: linear-gradient(160deg, #edf8fd 0%, #d8ebf3 100%);
+          }
+          #misi-flowline-demo .tools-embed iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+          }
+          @media (max-width: 768px) {
+            #misi-flowline-demo .tools-embed {
+              height: 90dvh;
+              min-height: 0;
+              border-radius: 12px;
+            }
+          }
+        </style>
+        <div class="tools-embed">
+          <iframe
+            title="Marine ice sheet flowline simulator"
+            src="/tools/marine-ice-sheet-flowline.html"
+            loading="lazy"
+            fetchpriority="low"
+            referrerpolicy="no-referrer"
+          ></iframe>
+        </div>
+    design:
+      columns: "1"
 ---

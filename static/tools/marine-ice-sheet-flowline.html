@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1D Marine Ice Sheet Flowline Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/tools/marine-ice-sheet-flowline.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js" defer></script>
+  <script type="module" src="/tools/marine-ice-sheet-flowline.js" defer></script>
+</head>
+<body>
+  <div class="misi-app">
+    <header class="app-header">
+      <h1>1D Marine Ice Sheet Flowline Simulator</h1>
+      <p>
+        Client-side scaffold for MISI experiments with a staggered flowline grid.
+        Includes interactive calving (strain + MICI), hydrofracture forcing, and drifting iceberg particles.
+      </p>
+    </header>
+
+    <main class="misi-layout">
+      <section class="panel canvas-panel">
+        <div class="panel-head">
+          <div>
+            <h2>Flowline Cross-Section</h2>
+            <p class="panel-note">Bed + initialized ice geometry with flotation-based grounding line detection.</p>
+          </div>
+          <div class="metrics-grid">
+            <div class="metric">
+              <span class="metric-label">Time</span>
+              <span class="metric-value" id="timeMetric">0.00 yr</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Grounding Line</span>
+              <span class="metric-value" id="glMetric">-</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Volume</span>
+              <span class="metric-value" id="volumeMetric">-</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Icebergs</span>
+              <span class="metric-value" id="icebergMetric">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="profileCanvas" aria-label="Marine ice sheet cross-section canvas"></canvas>
+        </div>
+      </section>
+
+      <section class="panel controls-panel">
+        <div class="controls-head">
+          <h2>Controls</h2>
+          <span class="status-badge" id="simStatus">Ready</span>
+        </div>
+
+        <div class="control-group">
+          <label for="bedPreset">Bed Topography Preset</label>
+          <select id="bedPreset">
+            <option value="linear">MISMIP EXP 1 (linear down-slope)</option>
+            <option value="retrograde">MISMIP+ style (retrograde polynomial)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="label-row">
+            <label for="aSlider">Ice Softness A (Glen)</label>
+            <output id="aValue">1.00e-24</output>
+          </div>
+          <input id="aSlider" type="range" min="-26" max="-15" value="-24" step="0.1" />
+          <p class="control-hint">Log10(A), units Pa^-3 s^-1</p>
+        </div>
+
+        <div class="control-group">
+          <div class="label-row">
+            <label for="cSlider">Basal Friction C</label>
+            <output id="cValue">1.58e+06</output>
+          </div>
+          <input id="cSlider" type="range" min="4" max="8" value="6.2" step="0.05" />
+          <p class="control-hint">Log10(C), flow-law dependent units</p>
+        </div>
+
+        <div class="control-group">
+          <div class="label-row">
+            <label for="meltSlider">Basal Melt (floating only)</label>
+            <output id="meltValue">0.50 m/yr</output>
+          </div>
+          <input id="meltSlider" type="range" min="0" max="20" value="0.5" step="0.1" />
+          <p class="control-hint">Applied to floating nodes in future prognostic updates.</p>
+        </div>
+
+        <div class="control-group">
+          <div class="label-row">
+            <label for="kCalvingSlider">Strain Calving Rate K</label>
+            <output id="kCalvingValue">3200 m</output>
+          </div>
+          <input id="kCalvingSlider" type="range" min="0" max="20000" value="3200" step="100" />
+          <p class="control-hint">Background calving: c_bg = K * eps_xx (m/yr).</p>
+        </div>
+
+        <div class="control-group">
+          <div class="label-row">
+            <label for="gammaSlider">MICI Vulnerability gamma</label>
+            <output id="gammaValue">1.00e-4</output>
+          </div>
+          <input id="gammaSlider" type="range" min="-6.5" max="-2.5" value="-4" step="0.1" />
+          <p class="control-hint">MICI term when grounded cliff > 800 m: c_mici = gamma * (H-800)^2.</p>
+        </div>
+
+        <div class="control-group">
+          <div class="section-title">Velocity Visualization</div>
+          <label class="check-row" for="showVelocityColormap">
+            <input id="showVelocityColormap" type="checkbox" checked />
+            <span>Show Velocity Colormap</span>
+          </label>
+          <label class="check-row" for="showFlowParticles">
+            <input id="showFlowParticles" type="checkbox" checked />
+            <span>Show Flow Particles</span>
+          </label>
+          <p class="control-hint">Toggle between simple snow-white ice and velocity-resolved diagnostics.</p>
+        </div>
+
+        <div class="button-row single-action">
+          <button id="hydrofractureBtn" type="button" class="btn btn-warning">Trigger Hydrofracture (Break Shelf)</button>
+        </div>
+
+        <div class="button-row">
+          <button id="startBtn" type="button" class="btn btn-primary">Start</button>
+          <button id="pauseBtn" type="button" class="btn btn-secondary" disabled>Pause</button>
+          <button id="resetBtn" type="button" class="btn btn-ghost">Reset</button>
+        </div>
+      </section>
+
+      <section class="panel charts-panel">
+        <article class="chart-card">
+          <h3>Grounding Line Position vs Time</h3>
+          <div class="chart-wrap">
+            <canvas id="glChart" aria-label="Grounding line chart"></canvas>
+          </div>
+        </article>
+        <article class="chart-card">
+          <h3>Total Ice Volume vs Time</h3>
+          <div class="chart-wrap">
+            <canvas id="volumeChart" aria-label="Ice volume chart"></canvas>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
