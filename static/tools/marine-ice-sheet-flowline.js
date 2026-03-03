@@ -15,11 +15,14 @@ const DEFAULTS = Object.freeze({
   basalMeltMyr: 0.5,
   strainCalvingK: 3200.0,
   miciGammaExponent: -4.0,
-  showVelocityColormap: true,
+  showVelocityColormap: false,
   showFlowParticles: true,
   velocityColorCap: 3000.0,
   flowParticleCount: 260,
+  penguinCount: 8,
+  penguinDiveDurationSeconds: 1.35,
   flowParticleVisualTimeScale: 0.32,
+  timeSpeed: 1.0,
   dtYears: 0.02,
   chartSampleYears: 0.1,
   maxChartPoints: 2500,
@@ -69,6 +72,7 @@ function createModelState() {
     accumulatedCalving: 0.0,
     icebergs: [],
     flowParticles: [],
+    penguins: [],
     calving: {
       cBg: 0.0,
       cMici: 0.0,
@@ -102,11 +106,13 @@ function initializeState(state) {
   state.accumulatedCalving = 0.0;
   state.icebergs.length = 0;
   state.flowParticles.length = 0;
+  state.penguins.length = 0;
   state.calving.cBg = 0.0;
   state.calving.cMici = 0.0;
   state.calving.cTotal = 0.0;
   recomputeDerivedFields(state);
   initializeFlowParticles(state);
+  initializePenguins(state);
   state.timeYears = 0;
   resetHistory(state);
 }
@@ -335,6 +341,96 @@ function updateFlowParticles(state, elapsedSeconds) {
     const localThickness = zTop - zBase;
     if (p.x >= terminusX || localThickness <= 1.0 || !Number.isFinite(localThickness)) {
       recycleFlowParticle(state, p);
+    }
+  }
+}
+
+function resetPenguinToIce(state, penguin) {
+  const terminusX = getTerminusX(state, 2.0);
+  const minX = state.grid.dx;
+  const maxX = Math.max(
+    minX + 0.5 * state.grid.dx,
+    Math.min(0.22 * state.grid.domainLength, 0.3 * Math.max(terminusX, state.grid.dx)),
+  );
+  penguin.x = minX + Math.random() * Math.max(maxX - minX, 0.25 * state.grid.dx);
+  penguin.phase = Math.random() * Math.PI * 2.0;
+  penguin.scale = 0.76 + 0.22 * Math.random();
+  penguin.status = "on_ice";
+  penguin.diveT = 0.0;
+  penguin.diveDuration = state.params.penguinDiveDurationSeconds;
+  penguin.diveStartX = penguin.x;
+  penguin.diveStartZ = 0.0;
+  penguin.diveForward = 0.0;
+  penguin.diveArc = 0.0;
+  penguin.diveDepth = 0.0;
+}
+
+function initializePenguins(state) {
+  state.penguins.length = 0;
+  for (let i = 0; i < state.params.penguinCount; i += 1) {
+    const penguin = {};
+    resetPenguinToIce(state, penguin);
+    penguin.phase += i * 0.57;
+    state.penguins.push(penguin);
+  }
+}
+
+function penguinHasIceSupport(state, penguin) {
+  const x = clamp(penguin.x, 0.0, state.grid.domainLength);
+  const terminusX = getTerminusX(state, 1.0);
+  if (x >= terminusX - 0.12 * state.grid.dx) {
+    return false;
+  }
+  const zTop = interpolateCenteredFieldAtX(state, state.surface, x);
+  const zBase = interpolateCenteredFieldAtX(state, state.iceBase, x);
+  const thickness = zTop - zBase;
+  if (!Number.isFinite(zTop) || !Number.isFinite(thickness)) {
+    return false;
+  }
+  return thickness > 5.0 && zTop > -0.5;
+}
+
+function startPenguinDive(state, penguin) {
+  if (penguin.status === "diving") {
+    return;
+  }
+  const x = clamp(penguin.x, 0.0, state.grid.domainLength);
+  const zTop = interpolateCenteredFieldAtX(state, state.surface, x);
+  penguin.status = "diving";
+  penguin.diveT = 0.0;
+  penguin.diveDuration =
+    state.params.penguinDiveDurationSeconds * (0.9 + 0.28 * Math.random());
+  penguin.diveStartX = x;
+  penguin.diveStartZ = Number.isFinite(zTop) ? Math.max(zTop, 0.0) : 0.0;
+  penguin.diveForward = (0.16 + 0.26 * Math.random()) * state.grid.dx;
+  penguin.diveArc = 6.0 + 7.0 * Math.random();
+  penguin.diveDepth = 10.0 + 16.0 * Math.random();
+}
+
+function updatePenguins(state, dtYears, elapsedSeconds) {
+  if (state.penguins.length === 0) {
+    return;
+  }
+
+  const dtAdvect = Math.max(dtYears, 0.0);
+  const dtVisual = Math.max(elapsedSeconds, 0.0);
+
+  for (let i = 0; i < state.penguins.length; i += 1) {
+    const penguin = state.penguins[i];
+    if (penguin.status === "on_ice") {
+      const uLocal = Math.max(interpolateEdgeVelocityAtX(state, penguin.x), 0.0);
+      penguin.x = clamp(penguin.x + uLocal * dtAdvect, 0.0, state.grid.domainLength);
+      if (!penguinHasIceSupport(state, penguin)) {
+        startPenguinDive(state, penguin);
+      }
+      continue;
+    }
+
+    if (penguin.status === "diving") {
+      penguin.diveT += dtVisual;
+      if (penguin.diveT >= penguin.diveDuration) {
+        resetPenguinToIce(state, penguin);
+      }
     }
   }
 }
@@ -767,6 +863,165 @@ class FlowlineRenderer {
     this.ctx.restore();
   }
 
+  drawPenguinSprite(scale, phase, animationScale = 1.0) {
+    const wingSwing = 0.5 * animationScale * Math.sin(this.state.timeYears * 4.2 + phase);
+    const bob = 0.7 * animationScale * Math.sin(this.state.timeYears * 3.1 + phase);
+
+    this.ctx.save();
+    this.ctx.translate(0, bob);
+    this.ctx.scale(scale, scale);
+
+    this.ctx.fillStyle = "rgba(25, 42, 60, 0.2)";
+    this.ctx.beginPath();
+    this.ctx.ellipse(0, 9.6, 5.8, 1.55, 0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    this.ctx.fillStyle = "#f49c2e";
+    this.ctx.beginPath();
+    this.ctx.ellipse(-2.1, 8.2, 1.6, 0.85, 0, 0, Math.PI * 2);
+    this.ctx.ellipse(2.1, 8.2, 1.6, 0.85, 0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    this.ctx.fillStyle = "#0f1a28";
+    this.ctx.beginPath();
+    this.ctx.ellipse(0, 1.5, 4.7, 7.6, 0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    this.ctx.strokeStyle = "#0b1622";
+    this.ctx.lineWidth = 1.05;
+    this.ctx.beginPath();
+    this.ctx.moveTo(-3.9, 0.8);
+    this.ctx.quadraticCurveTo(-6.0, 2.9 + wingSwing, -4.9, 5.7);
+    this.ctx.stroke();
+    this.ctx.beginPath();
+    this.ctx.moveTo(3.9, 0.8);
+    this.ctx.quadraticCurveTo(6.0, 2.9 - wingSwing, 4.9, 5.7);
+    this.ctx.stroke();
+
+    this.ctx.fillStyle = "#f6fbff";
+    this.ctx.beginPath();
+    this.ctx.ellipse(0, 2.8, 2.35, 4.7, 0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    this.ctx.fillStyle = "#0f1a28";
+    this.ctx.beginPath();
+    this.ctx.arc(0, -5.55, 3.0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    this.ctx.fillStyle = "#ffffff";
+    this.ctx.beginPath();
+    this.ctx.arc(-1.0, -5.95, 0.62, 0, Math.PI * 2);
+    this.ctx.arc(1.0, -5.95, 0.62, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    this.ctx.fillStyle = "#1f2730";
+    this.ctx.beginPath();
+    this.ctx.arc(-1.0, -5.95, 0.28, 0, Math.PI * 2);
+    this.ctx.arc(1.0, -5.95, 0.28, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    this.ctx.fillStyle = "#f49c2e";
+    this.ctx.beginPath();
+    this.ctx.moveTo(0.0, -4.7);
+    this.ctx.lineTo(-1.15, -4.2);
+    this.ctx.lineTo(1.15, -4.2);
+    this.ctx.closePath();
+    this.ctx.fill();
+
+    this.ctx.restore();
+  }
+
+  drawPenguinDiveSplash(xPx, ySeaPx, progress) {
+    const s = clamp((progress - 0.45) / 0.55, 0.0, 1.0);
+    if (s <= 0.0) {
+      return;
+    }
+
+    const ringRadius = 3.0 + 18.0 * s;
+    this.ctx.save();
+    this.ctx.strokeStyle = `rgba(224, 247, 255, ${(0.42 * (1.0 - 0.55 * s)).toFixed(3)})`;
+    this.ctx.lineWidth = Math.max(0.8, 2.2 - 1.2 * s);
+    this.ctx.beginPath();
+    this.ctx.ellipse(xPx, ySeaPx + 0.8, ringRadius, 1.8 + 1.1 * s, 0, 0, Math.PI * 2);
+    this.ctx.stroke();
+
+    for (let i = 0; i < 3; i += 1) {
+      const t = (s + i * 0.17) % 1.0;
+      const dropX = xPx + (i - 1) * (4.0 + 3.2 * t);
+      const dropY = ySeaPx - (8.0 * t * (1.0 - 0.35 * s));
+      this.ctx.fillStyle = `rgba(225, 248, 255, ${(0.35 * (1.0 - t)).toFixed(3)})`;
+      this.ctx.beginPath();
+      this.ctx.arc(dropX, dropY, 1.0 + 0.7 * (1.0 - t), 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+    this.ctx.restore();
+  }
+
+  drawPenguins(frame) {
+    if (this.state.penguins.length === 0) {
+      return;
+    }
+
+    const slopeDx = 0.7 * this.state.grid.dx;
+    const ySeaPx = frame.zToPx(0.0);
+    for (let i = 0; i < this.state.penguins.length; i += 1) {
+      const penguin = this.state.penguins[i];
+      if (penguin.status === "on_ice") {
+        const x = clamp(penguin.x, 0.0, this.state.grid.domainLength);
+        const zTop = interpolateCenteredFieldAtX(this.state, this.state.surface, x);
+        const zBase = interpolateCenteredFieldAtX(this.state, this.state.iceBase, x);
+        if (!Number.isFinite(zTop) || !Number.isFinite(zBase) || zTop - zBase <= 1.0) {
+          continue;
+        }
+
+        const zL = interpolateCenteredFieldAtX(this.state, this.state.surface, Math.max(x - slopeDx, 0.0));
+        const zR = interpolateCenteredFieldAtX(
+          this.state,
+          this.state.surface,
+          Math.min(x + slopeDx, this.state.grid.domainLength),
+        );
+        const surfaceSlope = (zR - zL) / Math.max(2.0 * slopeDx, 1e-6);
+        const tilt = clamp(-1.7 * surfaceSlope, -0.18, 0.18);
+        const xPx = frame.xToPx(x);
+        const yPx = frame.zToPx(zTop) - 1.4;
+
+        this.ctx.save();
+        this.ctx.translate(xPx, yPx);
+        this.ctx.rotate(tilt);
+        this.drawPenguinSprite(penguin.scale, penguin.phase);
+        this.ctx.restore();
+        continue;
+      }
+
+      if (penguin.status === "diving") {
+        const progress = clamp(
+          penguin.diveT / Math.max(penguin.diveDuration, 1e-6),
+          0.0,
+          1.0,
+        );
+        const x = penguin.diveStartX + penguin.diveForward * progress;
+        const z =
+          penguin.diveStartZ +
+          penguin.diveArc * Math.sin(Math.PI * progress) -
+          penguin.diveDepth * progress * progress;
+        const xPx = frame.xToPx(x);
+        const yPx = frame.zToPx(z) - 1.2;
+        const tilt = 0.22 + 1.2 * progress;
+
+        this.ctx.save();
+        this.ctx.translate(xPx, yPx);
+        this.ctx.rotate(tilt);
+        this.drawPenguinSprite(
+          Math.max(0.72, penguin.scale * 0.96),
+          penguin.phase + 0.6 * progress,
+          0.36,
+        );
+        this.ctx.restore();
+        this.drawPenguinDiveSplash(xPx, ySeaPx, progress);
+      }
+    }
+  }
+
   drawSeaLevel(frame) {
     const ySea = frame.zToPx(0.0);
     this.ctx.save();
@@ -1053,6 +1308,7 @@ class FlowlineRenderer {
     this.drawBed(frame);
     this.drawIce(frame);
     this.drawFlowParticles(frame);
+    this.drawPenguins(frame);
     this.drawSeaLevel(frame);
     this.drawIcebergs(frame);
     this.drawGroundingLine(frame);
@@ -1071,6 +1327,7 @@ class Dashboard {
       aSlider: document.getElementById("aSlider"),
       cSlider: document.getElementById("cSlider"),
       meltSlider: document.getElementById("meltSlider"),
+      timeSpeedSlider: document.getElementById("timeSpeedSlider"),
       kCalvingSlider: document.getElementById("kCalvingSlider"),
       gammaSlider: document.getElementById("gammaSlider"),
       showVelocityColormap: document.getElementById("showVelocityColormap"),
@@ -1078,6 +1335,7 @@ class Dashboard {
       aValue: document.getElementById("aValue"),
       cValue: document.getElementById("cValue"),
       meltValue: document.getElementById("meltValue"),
+      timeSpeedValue: document.getElementById("timeSpeedValue"),
       kCalvingValue: document.getElementById("kCalvingValue"),
       gammaValue: document.getElementById("gammaValue"),
       simStatus: document.getElementById("simStatus"),
@@ -1209,6 +1467,11 @@ class Dashboard {
       this.updateReadouts();
     });
 
+    this.el.timeSpeedSlider.addEventListener("input", () => {
+      this.state.params.timeSpeed = Number(this.el.timeSpeedSlider.value);
+      this.updateReadouts();
+    });
+
     this.el.kCalvingSlider.addEventListener("input", () => {
       this.state.params.strainCalvingK = Number(this.el.kCalvingSlider.value);
       this.updateReadouts();
@@ -1271,6 +1534,7 @@ class Dashboard {
     this.el.aSlider.value = String(this.state.params.AExponent);
     this.el.cSlider.value = String(this.state.params.CExponent);
     this.el.meltSlider.value = String(this.state.params.basalMeltMyr);
+    this.el.timeSpeedSlider.value = String(this.state.params.timeSpeed);
     this.el.kCalvingSlider.value = String(this.state.params.strainCalvingK);
     this.el.gammaSlider.value = String(this.state.params.miciGammaExponent);
     this.el.showVelocityColormap.checked = Boolean(this.state.params.showVelocityColormap);
@@ -1281,6 +1545,7 @@ class Dashboard {
     this.el.aValue.textContent = scientificString(this.state.params.A, 2);
     this.el.cValue.textContent = scientificString(this.state.params.C, 2);
     this.el.meltValue.textContent = `${this.state.params.basalMeltMyr.toFixed(2)} m/yr`;
+    this.el.timeSpeedValue.textContent = `${this.state.params.timeSpeed.toFixed(2)}x`;
     this.el.kCalvingValue.textContent = `${Math.round(this.state.params.strainCalvingK)} m`;
     this.el.gammaValue.textContent = scientificString(this.state.params.miciGamma, 2);
   }
@@ -1530,6 +1795,7 @@ class SimulationController {
     const detachedCount = triggerHydrofractureBreakShelf(this.state);
     if (detachedCount > 0) {
       recomputeDerivedFields(this.state);
+      updatePenguins(this.state, 0.0, 0.0);
       appendHistoryPoint(this.state);
       this.dashboard.setStatus(`Hydrofracture: ${detachedCount} shelf cells`, false);
       this.dashboard.updateMetrics();
@@ -1550,14 +1816,16 @@ class SimulationController {
     }
     const elapsed = Math.min(0.25, (timeMs - this.lastFrameMs) / 1000.0);
     this.lastFrameMs = timeMs;
-    this.accumulator += elapsed;
+    const timeScale = Math.max(this.state.params.timeSpeed, 0.0);
+    this.accumulator += elapsed * timeScale;
 
     while (this.accumulator >= this.realStepSeconds) {
       this.advanceOneModelStep();
       this.accumulator -= this.realStepSeconds;
     }
 
-    updateFlowParticles(this.state, elapsed);
+    updateFlowParticles(this.state, elapsed * timeScale);
+    updatePenguins(this.state, 0.0, elapsed);
     this.renderer.draw();
     this.dashboard.updateMetrics();
     this.dashboard.updateCharts();
@@ -1574,6 +1842,7 @@ class SimulationController {
 
     this.state.timeYears += this.state.params.dtYears;
     recomputeDerivedFields(this.state);
+    updatePenguins(this.state, this.state.params.dtYears, 0.0);
 
     const history = this.state.history.time;
     const lastSavedTime = history.length > 0 ? history[history.length - 1] : -Infinity;
