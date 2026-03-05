@@ -13,8 +13,11 @@ const DEFAULTS = Object.freeze({
   AExponent: -24.0,
   CExponent: 6.2,
   basalMeltMyr: 0.5,
-  strainCalvingK: 3200.0,
-  miciGammaExponent: -4.0,
+  miciButtressing: 0.65,
+  miciCriticalFreeboard: 40.0,
+  miciFailureTimescale: 1.2,
+  miciExponent: 2.0,
+  miciRateCap: 8000.0,
   showVelocityColormap: false,
   showFlowParticles: true,
   velocityColorCap: 3000.0,
@@ -57,7 +60,6 @@ function createModelState() {
       ...DEFAULTS,
       A: 10 ** DEFAULTS.AExponent,
       C: 10 ** DEFAULTS.CExponent,
-      miciGamma: 10 ** DEFAULTS.miciGammaExponent,
     },
     grid,
     bed: new Float64Array(grid.xH.length),
@@ -74,9 +76,15 @@ function createModelState() {
     flowParticles: [],
     penguins: [],
     calving: {
-      cBg: 0.0,
-      cMici: 0.0,
-      cTotal: 0.0,
+      retreatRate: 0.0,
+      freeboard: 0.0,
+      criticalFreeboard: DEFAULTS.miciCriticalFreeboard,
+      buttressingEffective: 0.0,
+      active: false,
+      groundedMarineCliff: false,
+      cliffX: 0.0,
+      lastEventX: Number.NaN,
+      eventFlash: 0.0,
     },
     history: {
       time: [],
@@ -107,12 +115,19 @@ function initializeState(state) {
   state.icebergs.length = 0;
   state.flowParticles.length = 0;
   state.penguins.length = 0;
-  state.calving.cBg = 0.0;
-  state.calving.cMici = 0.0;
-  state.calving.cTotal = 0.0;
+  state.calving.retreatRate = 0.0;
+  state.calving.freeboard = 0.0;
+  state.calving.criticalFreeboard = state.params.miciCriticalFreeboard;
+  state.calving.buttressingEffective = 0.0;
+  state.calving.active = false;
+  state.calving.groundedMarineCliff = false;
+  state.calving.cliffX = 0.0;
+  state.calving.lastEventX = Number.NaN;
+  state.calving.eventFlash = 0.0;
   recomputeDerivedFields(state);
   initializeFlowParticles(state);
   initializePenguins(state);
+  applyMiciCalvingStep(state, 0.0);
   state.timeYears = 0;
   resetHistory(state);
 }
@@ -210,6 +225,16 @@ function hasFloatingShelf(state) {
     }
   }
   return false;
+}
+
+function findMiciCliffIndex(state, terminusIndex) {
+  const iMax = terminusIndex >= 0 ? terminusIndex : findTerminusIndex(state, 1.0);
+  for (let i = iMax; i >= 0; i -= 1) {
+    if (state.H[i] > 1.0 && state.afloat[i] === 0) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 function spawnIceberg(state, x, width, H, driftSpeed = state.params.icebergDefaultDriftSpeed) {
@@ -1161,6 +1186,34 @@ class FlowlineRenderer {
     }
   }
 
+  drawCalvingEvent(frame) {
+    const flash = this.state.calving.eventFlash;
+    if (flash <= 0.0 || !Number.isFinite(this.state.calving.lastEventX)) {
+      return;
+    }
+
+    const x = frame.xToPx(this.state.calving.lastEventX);
+    const ySea = frame.zToPx(0.0);
+    const amp = clamp(flash, 0.0, 1.0);
+
+    this.ctx.save();
+    this.ctx.strokeStyle = `rgba(229, 250, 255, ${(0.65 * amp).toFixed(3)})`;
+    this.ctx.lineWidth = 1.0 + 2.0 * amp;
+    this.ctx.beginPath();
+    this.ctx.ellipse(x, ySea + 1.2, 7 + 22 * (1.0 - amp), 2.2 + 1.8 * (1.0 - amp), 0, 0, Math.PI * 2);
+    this.ctx.stroke();
+
+    this.ctx.fillStyle = `rgba(241, 251, 255, ${(0.8 * amp).toFixed(3)})`;
+    for (let i = 0; i < 6; i += 1) {
+      const spread = (i - 2.5) * 3.2;
+      const lift = 10.0 * amp * (0.35 + 0.1 * (i % 3));
+      this.ctx.beginPath();
+      this.ctx.arc(x + spread, ySea - lift, 1.1 + 0.9 * amp, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+    this.ctx.restore();
+  }
+
   drawAxes(frame) {
     const xTicks = 6;
     const yTicks = buildNiceTicks(frame.zMin, frame.zMax, 6);
@@ -1311,6 +1364,7 @@ class FlowlineRenderer {
     this.drawPenguins(frame);
     this.drawSeaLevel(frame);
     this.drawIcebergs(frame);
+    this.drawCalvingEvent(frame);
     this.drawGroundingLine(frame);
     this.drawAxes(frame);
     this.drawLegend(frame);
@@ -1328,16 +1382,22 @@ class Dashboard {
       cSlider: document.getElementById("cSlider"),
       meltSlider: document.getElementById("meltSlider"),
       timeSpeedSlider: document.getElementById("timeSpeedSlider"),
-      kCalvingSlider: document.getElementById("kCalvingSlider"),
-      gammaSlider: document.getElementById("gammaSlider"),
+      miciButtressingSlider: document.getElementById("miciButtressingSlider"),
+      miciCriticalFreeboardSlider: document.getElementById("miciCriticalFreeboardSlider"),
+      miciFailureTimescaleSlider: document.getElementById("miciFailureTimescaleSlider"),
       showVelocityColormap: document.getElementById("showVelocityColormap"),
       showFlowParticles: document.getElementById("showFlowParticles"),
       aValue: document.getElementById("aValue"),
       cValue: document.getElementById("cValue"),
       meltValue: document.getElementById("meltValue"),
       timeSpeedValue: document.getElementById("timeSpeedValue"),
-      kCalvingValue: document.getElementById("kCalvingValue"),
-      gammaValue: document.getElementById("gammaValue"),
+      miciButtressingValue: document.getElementById("miciButtressingValue"),
+      miciCriticalFreeboardValue: document.getElementById("miciCriticalFreeboardValue"),
+      miciFailureTimescaleValue: document.getElementById("miciFailureTimescaleValue"),
+      miciDiagFreeboard: document.getElementById("miciDiagFreeboard"),
+      miciDiagCritical: document.getElementById("miciDiagCritical"),
+      miciDiagRate: document.getElementById("miciDiagRate"),
+      miciDiagState: document.getElementById("miciDiagState"),
       simStatus: document.getElementById("simStatus"),
       timeMetric: document.getElementById("timeMetric"),
       glMetric: document.getElementById("glMetric"),
@@ -1472,15 +1532,29 @@ class Dashboard {
       this.updateReadouts();
     });
 
-    this.el.kCalvingSlider.addEventListener("input", () => {
-      this.state.params.strainCalvingK = Number(this.el.kCalvingSlider.value);
+    this.el.miciButtressingSlider.addEventListener("input", () => {
+      this.state.params.miciButtressing = Number(this.el.miciButtressingSlider.value);
+      applyMiciCalvingStep(this.state, 0.0);
       this.updateReadouts();
+      this.updateMetrics();
+      this.renderer.draw();
     });
 
-    this.el.gammaSlider.addEventListener("input", () => {
-      this.state.params.miciGammaExponent = Number(this.el.gammaSlider.value);
-      this.state.params.miciGamma = 10 ** this.state.params.miciGammaExponent;
+    this.el.miciCriticalFreeboardSlider.addEventListener("input", () => {
+      this.state.params.miciCriticalFreeboard = Number(this.el.miciCriticalFreeboardSlider.value);
+      this.state.calving.criticalFreeboard = this.state.params.miciCriticalFreeboard;
+      applyMiciCalvingStep(this.state, 0.0);
       this.updateReadouts();
+      this.updateMetrics();
+      this.renderer.draw();
+    });
+
+    this.el.miciFailureTimescaleSlider.addEventListener("input", () => {
+      this.state.params.miciFailureTimescale = Number(this.el.miciFailureTimescaleSlider.value);
+      applyMiciCalvingStep(this.state, 0.0);
+      this.updateReadouts();
+      this.updateMetrics();
+      this.renderer.draw();
     });
 
     this.el.showVelocityColormap.addEventListener("change", () => {
@@ -1535,8 +1609,9 @@ class Dashboard {
     this.el.cSlider.value = String(this.state.params.CExponent);
     this.el.meltSlider.value = String(this.state.params.basalMeltMyr);
     this.el.timeSpeedSlider.value = String(this.state.params.timeSpeed);
-    this.el.kCalvingSlider.value = String(this.state.params.strainCalvingK);
-    this.el.gammaSlider.value = String(this.state.params.miciGammaExponent);
+    this.el.miciButtressingSlider.value = String(this.state.params.miciButtressing);
+    this.el.miciCriticalFreeboardSlider.value = String(this.state.params.miciCriticalFreeboard);
+    this.el.miciFailureTimescaleSlider.value = String(this.state.params.miciFailureTimescale);
     this.el.showVelocityColormap.checked = Boolean(this.state.params.showVelocityColormap);
     this.el.showFlowParticles.checked = Boolean(this.state.params.showFlowParticles);
   }
@@ -1546,8 +1621,9 @@ class Dashboard {
     this.el.cValue.textContent = scientificString(this.state.params.C, 2);
     this.el.meltValue.textContent = `${this.state.params.basalMeltMyr.toFixed(2)} m/yr`;
     this.el.timeSpeedValue.textContent = `${this.state.params.timeSpeed.toFixed(2)}x`;
-    this.el.kCalvingValue.textContent = `${Math.round(this.state.params.strainCalvingK)} m`;
-    this.el.gammaValue.textContent = scientificString(this.state.params.miciGamma, 2);
+    this.el.miciButtressingValue.textContent = `${this.state.params.miciButtressing.toFixed(2)}`;
+    this.el.miciCriticalFreeboardValue.textContent = `${this.state.params.miciCriticalFreeboard.toFixed(0)} m`;
+    this.el.miciFailureTimescaleValue.textContent = `${this.state.params.miciFailureTimescale.toFixed(2)} yr`;
   }
 
   updateMetrics() {
@@ -1555,6 +1631,15 @@ class Dashboard {
     this.el.glMetric.textContent = `${(this.state.groundingLineX / 1000.0).toFixed(1)} km`;
     this.el.volumeMetric.textContent = `${(this.state.volume / 1e9).toFixed(3)} x10^9 m^2`;
     this.el.icebergMetric.textContent = `${this.state.icebergs.length}`;
+
+    this.el.miciDiagFreeboard.textContent = `${this.state.calving.freeboard.toFixed(1)} m`;
+    this.el.miciDiagCritical.textContent = `${this.state.calving.criticalFreeboard.toFixed(1)} m`;
+    this.el.miciDiagRate.textContent = `${this.state.calving.retreatRate.toFixed(1)} m/yr`;
+    this.el.miciDiagState.textContent = this.state.calving.active
+      ? "Unstable (MICI on)"
+      : this.state.calving.groundedMarineCliff
+        ? "Stable marine cliff"
+        : "No grounded marine cliff";
   }
 
   updateCharts() {
@@ -1665,33 +1750,71 @@ function groundingLineFluxParameterization(state) {
   return state.groundingLineX;
 }
 
-function applyCalvingStep(state, dtYears) {
+function applyMiciCalvingStep(state, dtYears) {
   const { dx, xH } = state.grid;
   const terminusIndex = findTerminusIndex(state, 1.0);
   if (terminusIndex < 0) {
-    state.calving.cBg = 0.0;
-    state.calving.cMici = 0.0;
-    state.calving.cTotal = 0.0;
+    state.calving.retreatRate = 0.0;
+    state.calving.freeboard = 0.0;
+    state.calving.criticalFreeboard = state.params.miciCriticalFreeboard;
+    state.calving.buttressingEffective = 0.0;
+    state.calving.active = false;
+    state.calving.groundedMarineCliff = false;
+    state.calving.cliffX = 0.0;
+    state.accumulatedCalving = 0.0;
     return;
   }
 
-  const epsXx = Math.max((state.u[terminusIndex + 1] - state.u[terminusIndex]) / dx, 0.0);
-  const cBg = Math.max(state.params.strainCalvingK * epsXx, 0.0);
+  const cliffIndex = findMiciCliffIndex(state, terminusIndex);
+  if (cliffIndex < 0) {
+    state.calving.retreatRate = 0.0;
+    state.calving.freeboard = 0.0;
+    state.calving.criticalFreeboard = state.params.miciCriticalFreeboard;
+    state.calving.buttressingEffective = 0.0;
+    state.calving.active = false;
+    state.calving.groundedMarineCliff = false;
+    state.calving.cliffX = 0.0;
+    return;
+  }
 
-  const HTerm = state.H[terminusIndex];
-  const groundedTerminus = state.afloat[terminusIndex] === 0;
-  const noShelf = !hasFloatingShelf(state);
-  const cMici =
-    noShelf && groundedTerminus && HTerm > 800.0
-      ? state.params.miciGamma * Math.pow(HTerm - 800.0, 2)
+  const bedCliff = state.bed[cliffIndex];
+  const surfaceCliff = state.surface[cliffIndex];
+  const freeboard = Math.max(surfaceCliff, 0.0);
+  const groundedMarineCliff = bedCliff < 0.0;
+  state.calving.cliffX = state.grid.xH[cliffIndex];
+
+  const shelfPresent = terminusIndex > cliffIndex || hasFloatingShelf(state);
+  const buttressingBase = clamp(state.params.miciButtressing, 0.0, 1.0);
+  const buttressingEffective = shelfPresent ? buttressingBase : 0.0;
+  const criticalFreeboard = Math.max(state.params.miciCriticalFreeboard, 1.0);
+  const freeboardExcess = Math.max(freeboard - criticalFreeboard, 0.0);
+  const instability = freeboardExcess / criticalFreeboard;
+
+  const tauYears = Math.max(state.params.miciFailureTimescale, 0.1);
+  const retreatScale = dx / tauYears;
+  const exponent = Math.max(state.params.miciExponent, 1.0);
+  const waterDepth = Math.max(-bedCliff, 0.0);
+  const waterAmplification = 1.0 + 0.45 * clamp(waterDepth / 700.0, 0.0, 2.0);
+  const buttressingDamp = Math.pow(1.0 - buttressingEffective, 2.0);
+
+  const retreatRaw =
+    retreatScale *
+    Math.pow(instability, exponent) *
+    waterAmplification *
+    buttressingDamp;
+  const retreatRate =
+    groundedMarineCliff && freeboardExcess > 0.0
+      ? Math.min(retreatRaw, state.params.miciRateCap)
       : 0.0;
 
-  const cTotal = Math.max(cBg + cMici, 0.0);
-  state.calving.cBg = cBg;
-  state.calving.cMici = cMici;
-  state.calving.cTotal = cTotal;
-  state.accumulatedCalving += cTotal * dtYears;
+  state.calving.retreatRate = retreatRate;
+  state.calving.freeboard = freeboard;
+  state.calving.criticalFreeboard = criticalFreeboard;
+  state.calving.buttressingEffective = buttressingEffective;
+  state.calving.active = retreatRate > 0.0;
+  state.calving.groundedMarineCliff = groundedMarineCliff;
 
+  state.accumulatedCalving += retreatRate * dtYears;
   let safety = 0;
   while (state.accumulatedCalving >= dx && safety < state.H.length) {
     const idx = findTerminusIndex(state, 1.0);
@@ -1704,10 +1827,21 @@ function applyCalvingStep(state, dtYears) {
     if (HCell > 0.0) {
       state.H[idx] = 0.0;
       spawnIceberg(state, xH[idx], dx, HCell, state.params.icebergDefaultDriftSpeed);
+      state.calving.lastEventX = xH[idx];
+      state.calving.eventFlash = 1.0;
     }
     state.accumulatedCalving -= dx;
     safety += 1;
   }
+}
+
+function updateCalvingVisuals(state, elapsedSeconds) {
+  if (!Number.isFinite(state.calving.eventFlash) || state.calving.eventFlash <= 0.0) {
+    state.calving.eventFlash = 0.0;
+    return;
+  }
+  const decay = Math.max(elapsedSeconds, 0.0) / 0.55;
+  state.calving.eventFlash = Math.max(state.calving.eventFlash - decay, 0.0);
 }
 
 function updateIcebergParticles(state, dtYears) {
@@ -1795,6 +1929,7 @@ class SimulationController {
     const detachedCount = triggerHydrofractureBreakShelf(this.state);
     if (detachedCount > 0) {
       recomputeDerivedFields(this.state);
+      applyMiciCalvingStep(this.state, 0.0);
       updatePenguins(this.state, 0.0, 0.0);
       appendHistoryPoint(this.state);
       this.dashboard.setStatus(`Hydrofracture: ${detachedCount} shelf cells`, false);
@@ -1826,6 +1961,7 @@ class SimulationController {
 
     updateFlowParticles(this.state, elapsed * timeScale);
     updatePenguins(this.state, 0.0, elapsed);
+    updateCalvingVisuals(this.state, elapsed);
     this.renderer.draw();
     this.dashboard.updateMetrics();
     this.dashboard.updateCharts();
@@ -1837,7 +1973,7 @@ class SimulationController {
     updateThicknessMassConservation(this.state, this.state.params.dtYears);
     groundingLineFluxParameterization(this.state);
     recomputeDerivedFields(this.state);
-    applyCalvingStep(this.state, this.state.params.dtYears);
+    applyMiciCalvingStep(this.state, this.state.params.dtYears);
     updateIcebergParticles(this.state, this.state.params.dtYears);
 
     this.state.timeYears += this.state.params.dtYears;

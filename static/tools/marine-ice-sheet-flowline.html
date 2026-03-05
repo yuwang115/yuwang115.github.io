@@ -16,8 +16,8 @@
     <header class="app-header">
       <h1>1D Marine Ice Sheet Flowline Simulator</h1>
       <p>
-        Client-side scaffold for MISI experiments with a staggered flowline grid.
-        Includes interactive calving (strain + MICI), hydrofracture forcing, and drifting iceberg particles.
+        Toy-model lab for undergraduate MICI intuition on a 1D flowline grid.
+        Explore how cliff freeboard, shelf buttressing, and failure timescale control marine cliff retreat.
       </p>
     </header>
 
@@ -26,7 +26,7 @@
         <div class="panel-head">
           <div>
             <h2>Flowline Cross-Section</h2>
-            <p class="panel-note">Bed + initialized ice geometry with flotation-based grounding line detection.</p>
+            <p class="panel-note">Watch grounding-line migration, cliff exposure, and MICI-driven retreat in real time.</p>
           </div>
           <div class="metrics-grid">
             <div class="metric">
@@ -104,20 +104,49 @@
 
         <div class="control-group">
           <div class="label-row">
-            <label for="kCalvingSlider">Strain Calving Rate K</label>
-            <output id="kCalvingValue">3200 m</output>
+            <label for="miciButtressingSlider">Shelf Buttressing B</label>
+            <output id="miciButtressingValue">0.65</output>
           </div>
-          <input id="kCalvingSlider" type="range" min="0" max="20000" value="3200" step="100" />
-          <p class="control-hint">Background calving: c_bg = K * eps_xx (m/yr).</p>
+          <input id="miciButtressingSlider" type="range" min="0" max="1" value="0.65" step="0.01" />
+          <p class="control-hint">B=1 means strong shelf support; B=0 means no buttressing and easier cliff failure.</p>
         </div>
 
         <div class="control-group">
           <div class="label-row">
-            <label for="gammaSlider">MICI Vulnerability gamma</label>
-            <output id="gammaValue">1.00e-4</output>
+            <label for="miciCriticalFreeboardSlider">Critical Freeboard F_c</label>
+            <output id="miciCriticalFreeboardValue">40 m</output>
           </div>
-          <input id="gammaSlider" type="range" min="-6.5" max="-2.5" value="-4" step="0.1" />
-          <p class="control-hint">MICI term when grounded cliff > 800 m: c_mici = gamma * (H-800)^2.</p>
+          <input id="miciCriticalFreeboardSlider" type="range" min="20" max="140" value="40" step="1" />
+          <p class="control-hint">Toy-model MICI activates when grounded marine cliff freeboard exceeds F_c.</p>
+        </div>
+
+        <div class="control-group">
+          <div class="label-row">
+            <label for="miciFailureTimescaleSlider">Failure Timescale tau</label>
+            <output id="miciFailureTimescaleValue">1.20 yr</output>
+          </div>
+          <input id="miciFailureTimescaleSlider" type="range" min="0.2" max="10" value="1.2" step="0.1" />
+          <p class="control-hint">Smaller tau gives faster cliff retreat once instability starts.</p>
+        </div>
+
+        <div class="control-group">
+          <div class="section-title">MICI Diagnostics</div>
+          <div class="label-row">
+            <label>Cliff Freeboard</label>
+            <output id="miciDiagFreeboard">0.0 m</output>
+          </div>
+          <div class="label-row">
+            <label>Critical F_c</label>
+            <output id="miciDiagCritical">40.0 m</output>
+          </div>
+          <div class="label-row">
+            <label>Retreat Rate</label>
+            <output id="miciDiagRate">0.0 m/yr</output>
+          </div>
+          <div class="label-row">
+            <label>State</label>
+            <output id="miciDiagState">Stable</output>
+          </div>
         </div>
 
         <div class="control-group">
