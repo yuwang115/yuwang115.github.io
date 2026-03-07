@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Antarctic Ice Sheet & Subglacial Hydrology 3D Explorer</title>
+  <title>3D Antarctica &amp; Greenland Ice Sheet Explorer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -638,7 +638,7 @@
         <div class="panel-grab" aria-hidden="true"></div>
         <button id="panelCloseButton" class="panel-close-btn" type="button">Done</button>
       </div>
-      <p class="subtitle">
+      <p id="panelSubtitle" class="subtitle">
         Rotate, zoom, and explore Antarctica with interactive layers
         for bed topography, ice surface/base, velocity, flowlines, subglacial environments.
       </p>
@@ -646,7 +646,14 @@
       <section class="section">
         <h2 class="section-title">View Controls</h2>
         <div class="control">
-          <label for="resolutionPreset">Resolution preset <span id="resolutionValue" class="mono">Balanced</span></label>
+          <label for="regionPreset">Region</label>
+          <select id="regionPreset">
+            <option value="antarctica" selected>Antarctica</option>
+            <option value="greenland">Greenland</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="resolutionPreset">Resolution preset</label>
           <select id="resolutionPreset">
             <option value="balanced" selected>Balanced (10 km, ~5.8 MB)</option>
             <option value="hd">HD (4 km, ~35.4 MB, desktop recommended)</option>
@@ -762,7 +769,9 @@
   <script type="module">
     const queryParams = new URLSearchParams(window.location.search);
     const mode = (queryParams.get("mode") || "").toLowerCase();
+    const regionParam = (queryParams.get("region") || "").toLowerCase();
     const isShowcaseMode = mode === "showcase";
+    const lockedRegionKey = isShowcaseMode ? "antarctica" : null;
     const lockedDatasetKey = isShowcaseMode ? "balanced" : null;
     const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
     const compactViewportQuery = window.matchMedia("(max-width: 980px)");
@@ -786,34 +795,113 @@
       document.body.classList.add("mobile-drawer");
     }
 
-    const DATASETS = {
-      balanced: {
-        id: "balanced",
-        label: "Balanced",
-        summary: "10 km grid (~5.8 MB)",
-        metaUrl: "/tools/data/bedmachine_antarctica_v4_480.meta.json",
-        binUrl: "/tools/data/bedmachine_antarctica_v4_480.bin",
-        velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.meta.json",
-        velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.bin",
-        hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_480.meta.json",
-        hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_480.bin",
+    const REGIONS = {
+      antarctica: {
+        key: "antarctica",
+        label: "Antarctica",
+        intro:
+          "Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, flowlines, subglacial environments.",
+        defaultDatasetKey: "balanced",
+        capabilities: {
+          velocity: true,
+          flowline: true,
+          refinedBasins: true,
+          hydrology: true,
+        },
+        sources: {
+          geometry: "MEaSUREs BedMachine Antarctica, Version 4",
+          velocity: "MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1",
+          basins: "MEaSUREs Antarctic Boundaries for IPY 2007-2009 (Version 2, IMBIE refined basins)",
+          hydrology: "Ehrenfeucht et al. (2025) Antarctic Wide Subglacial Hydrology Modeling",
+        },
+        datasets: {
+          balanced: {
+            id: "balanced",
+            label: "Balanced",
+            summary: "10 km grid (~5.8 MB)",
+            metaUrl: "/tools/data/bedmachine_antarctica_v4_480.meta.json",
+            binUrl: "/tools/data/bedmachine_antarctica_v4_480.bin",
+            velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.meta.json",
+            velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.bin",
+            hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_480.meta.json",
+            hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_480.bin",
+          },
+          hd: {
+            id: "hd",
+            label: "HD",
+            summary: "4 km grid (~35.4 MB, desktop preferred)",
+            metaUrl: "/tools/data/bedmachine_antarctica_v4_741.meta.json",
+            binUrl: "/tools/data/bedmachine_antarctica_v4_741.bin",
+            velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.meta.json",
+            velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.bin",
+            hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_741.meta.json",
+            hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_741.bin",
+          },
+        },
       },
-      hd: {
-        id: "hd",
-        label: "HD",
-        summary: "4 km grid (~35.4 MB, desktop preferred)",
-        metaUrl: "/tools/data/bedmachine_antarctica_v4_741.meta.json",
-        binUrl: "/tools/data/bedmachine_antarctica_v4_741.bin",
-        velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.meta.json",
-        velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.bin",
-        hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_741.meta.json",
-        hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_741.bin",
+      greenland: {
+        key: "greenland",
+        label: "Greenland",
+        intro:
+          "Rotate, zoom, and explore Greenland with the base BedMachine geometry layers for bed topography, ice surface, and ice base.",
+        defaultDatasetKey: "3km",
+        capabilities: {
+          velocity: false,
+          flowline: false,
+          refinedBasins: false,
+          hydrology: false,
+        },
+        sources: {
+          geometry: "BedMachine Greenland, Version 6",
+        },
+        datasets: {
+          "3km": {
+            id: "3km",
+            label: "3 km",
+            summary: "3 km grid (~3.1 MB)",
+            metaUrl: "/tools/data/bedmachine_greenland_v6_3km.meta.json",
+            binUrl: "/tools/data/bedmachine_greenland_v6_3km.bin",
+          },
+          "1km": {
+            id: "1km",
+            label: "1 km",
+            summary: "1 km grid (~28.2 MB)",
+            metaUrl: "/tools/data/bedmachine_greenland_v6_1km.meta.json",
+            binUrl: "/tools/data/bedmachine_greenland_v6_1km.bin",
+          },
+        },
       },
     };
+
+    function getRegionConfig(regionKey) {
+      return REGIONS[regionKey] || REGIONS.antarctica;
+    }
+
+    function getDefaultDatasetKey(regionKey) {
+      const region = getRegionConfig(regionKey);
+      return region.defaultDatasetKey || Object.keys(region.datasets)[0] || "balanced";
+    }
+
+    function getDatasetConfig(regionKey, datasetKey) {
+      const region = getRegionConfig(regionKey);
+      const dataset = region.datasets[datasetKey] || region.datasets[getDefaultDatasetKey(regionKey)];
+      if (!dataset) return null;
+      return {
+        ...dataset,
+        regionKey: region.key,
+        regionLabel: region.label,
+        capabilities: region.capabilities,
+        sources: region.sources,
+      };
+    }
+
+    const initialRegionKey = lockedRegionKey || (REGIONS[regionParam] ? regionParam : "antarctica");
+    const datasetSelectionByRegion = {};
 
     const viewerEl = document.getElementById("viewer");
     const viewerShellEl = document.getElementById("viewerShell");
     const panelEl = document.querySelector(".panel");
+    const panelSubtitleEl = document.getElementById("panelSubtitle");
     const panelHeaderEl = document.querySelector(".panel-header");
     const statusEl = document.getElementById("status");
     const metaListEl = document.getElementById("metaList");
@@ -828,8 +916,8 @@
 
     const controlsUI = {
       panelCloseButton: document.getElementById("panelCloseButton"),
+      regionPreset: document.getElementById("regionPreset"),
       resolutionPreset: document.getElementById("resolutionPreset"),
-      resolutionValue: document.getElementById("resolutionValue"),
       exaggeration: document.getElementById("exaggeration"),
       exaggerationValue: document.getElementById("exaggerationValue"),
       iceOpacity: document.getElementById("iceOpacity"),
@@ -878,7 +966,8 @@
     let refinedBasinUnavailable = false;
     let velocityField;
     let animationHandle;
-    let currentDatasetKey = lockedDatasetKey || "balanced";
+    let currentRegionKey = initialRegionKey;
+    let currentDatasetKey = lockedDatasetKey || getDefaultDatasetKey(currentRegionKey);
     let loadGeneration = 0;
     let interactionGateEnabled = false;
     let interactionGateActive = true;
@@ -899,6 +988,7 @@
     let backgroundWarmupScheduled = false;
     let backgroundWarmupStarted = false;
     let backgroundWarmupTimer = null;
+    let pendingViewResetOnLoad = false;
     let geometryWorker = null;
     let geometryWorkerRequestSeq = 0;
     const geometryWorkerPending = new Map();
@@ -920,9 +1010,85 @@
     const MOBILE_PANEL_FLING_SPEED_PX_PER_MS = 0.55;
     const MOBILE_PANEL_FLING_MIN_TRAVEL_PX = 24;
 
+    function getReadyStatusText(context) {
+      if (isShowcaseMode) return "Ready (Balanced Demo)";
+      return context ? `Ready (${context.dataset.regionLabel} ${context.dataset.label})` : "Ready";
+    }
+
+    function getLoadingStatusText(region, dataset) {
+      if (isShowcaseMode) return "Loading Balanced demo...";
+      return `Loading ${region.label} ${dataset.label} core terrain...`;
+    }
+
+    function setToggleAvailability(control, enabled) {
+      if (!control) return;
+      control.disabled = !enabled;
+      if (!enabled) {
+        control.checked = false;
+      }
+    }
+
+    function updateResolutionControlAvailability({ isLoading = false } = {}) {
+      if (!controlsUI.resolutionPreset) return;
+      const region = getRegionConfig(currentRegionKey);
+      const datasetCount = Object.keys(region.datasets).length;
+      controlsUI.resolutionPreset.disabled = Boolean(isLoading || lockedDatasetKey || datasetCount < 2);
+    }
+
+    function updateRegionControlAvailability({ isLoading = false } = {}) {
+      if (!controlsUI.regionPreset) return;
+      controlsUI.regionPreset.disabled = Boolean(isLoading || lockedRegionKey);
+    }
+
+    function updateRegionLayerAvailability(regionKey) {
+      const region = getRegionConfig(regionKey);
+      const capabilities = region.capabilities;
+      setToggleAvailability(controlsUI.showVelocity, capabilities.velocity);
+      setToggleAvailability(controlsUI.showFlowline, capabilities.velocity && capabilities.flowline);
+      setToggleAvailability(controlsUI.showRefinedBasins, !isShowcaseMode && capabilities.refinedBasins && !refinedBasinUnavailable);
+      setToggleAvailability(controlsUI.showEffectivePressure, capabilities.hydrology);
+      setToggleAvailability(controlsUI.showSubglacialChannels, capabilities.hydrology);
+    }
+
+    function populateResolutionPreset(regionKey, preferredDatasetKey = null) {
+      const region = getRegionConfig(regionKey);
+      const candidateKey = preferredDatasetKey || datasetSelectionByRegion[region.key] || getDefaultDatasetKey(region.key);
+      const selectedKey = region.datasets[candidateKey] ? candidateKey : getDefaultDatasetKey(region.key);
+
+      controlsUI.resolutionPreset.innerHTML = "";
+      Object.values(region.datasets).forEach((dataset) => {
+        const option = document.createElement("option");
+        option.value = dataset.id;
+        option.textContent = `${dataset.label} (${dataset.summary})`;
+        controlsUI.resolutionPreset.appendChild(option);
+      });
+
+      controlsUI.resolutionPreset.value = selectedKey;
+      datasetSelectionByRegion[region.key] = selectedKey;
+      return selectedKey;
+    }
+
+    function refreshRegionUi(regionKey, preferredDatasetKey = null) {
+      const region = getRegionConfig(regionKey);
+      if (panelSubtitleEl) {
+        panelSubtitleEl.textContent = region.intro;
+      }
+      if (controlsUI.regionPreset) {
+        controlsUI.regionPreset.value = region.key;
+      }
+      const resolvedDatasetKey = populateResolutionPreset(region.key, preferredDatasetKey);
+      updateRegionLayerAvailability(region.key);
+      updateRegionControlAvailability();
+      updateResolutionControlAvailability();
+      return resolvedDatasetKey;
+    }
+
+    datasetSelectionByRegion[currentRegionKey] = currentDatasetKey;
+    currentDatasetKey = refreshRegionUi(currentRegionKey, currentDatasetKey);
+
     if (isShowcaseMode) {
+      controlsUI.regionPreset.value = "antarctica";
       controlsUI.resolutionPreset.value = "balanced";
-      controlsUI.resolutionValue.textContent = "Balanced";
       controlsUI.exaggeration.value = "4.8";
       controlsUI.exaggerationValue.textContent = "4.8x";
       controlsUI.iceOpacity.value = "1";
@@ -979,6 +1145,8 @@
 
     const BED_ELEVATION_MIN = -7000;
     const BED_ELEVATION_MAX = 3500;
+    const TARGET_WORLD_EXTENT_UNITS = 128;
+    const BASE_HORIZONTAL_VERTICAL_SCALE_RATIO = 52000 / 3800;
     const FLOWLINE_SURFACE_OFFSET_M = 18;
     const FLOWLINE_SEED_TARGET = 2400;
     const FLOWLINE_SEED_PASSES = 2;
@@ -1943,6 +2111,13 @@
       window.addEventListener("resize", resizeRendererToViewer);
     }
 
+    function resetCameraToDefaultPose() {
+      if (!camera || !orbit) return;
+      camera.position.set(...resetPose.position);
+      orbit.target.set(...resetPose.target);
+      orbit.update();
+    }
+
     function renderLoop() {
       orbit.update();
       renderer.render(scene, camera);
@@ -2315,6 +2490,7 @@
     async function ensureRefinedBasinsLoaded({ trigger = "prefetch" } = {}) {
       const context = currentCoreContext;
       if (!context || context.generation !== loadGeneration) return false;
+      if (!context.dataset.capabilities.refinedBasins) return false;
       if (refinedBasinUnavailable) return false;
 
       const overlaysReady = refinedBasinBedLines || refinedBasinSurfaceLines || refinedBasinBedLabels || refinedBasinSurfaceLabels;
@@ -2345,7 +2521,7 @@
         }
 
         if (showStatus) {
-          statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+          statusEl.textContent = getReadyStatusText(context);
         }
         return true;
       })()
@@ -2356,7 +2532,7 @@
             controlsUI.showRefinedBasins.checked = false;
             controlsUI.showRefinedBasins.disabled = true;
             clearRefinedBasinOverlays();
-            const readyText = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+            const readyText = getReadyStatusText(context);
             const transientText = "Refined basins unavailable";
             statusEl.textContent = transientText;
             window.setTimeout(() => {
@@ -2880,9 +3056,22 @@
         });
       }
 
+      if (!lockedRegionKey && controlsUI.regionPreset) {
+        controlsUI.regionPreset.addEventListener("change", () => {
+          const nextRegionKey = getRegionConfig(controlsUI.regionPreset.value).key;
+          const preferredDatasetKey = datasetSelectionByRegion[nextRegionKey] || getDefaultDatasetKey(nextRegionKey);
+          currentRegionKey = nextRegionKey;
+          currentDatasetKey = refreshRegionUi(currentRegionKey, preferredDatasetKey);
+          pendingViewResetOnLoad = true;
+          loadAndBuildMeshes(currentDatasetKey).catch(reportLoadError);
+        });
+      }
+
       if (!lockedDatasetKey) {
         controlsUI.resolutionPreset.addEventListener("change", () => {
-          loadAndBuildMeshes(controlsUI.resolutionPreset.value).catch(reportLoadError);
+          currentDatasetKey = controlsUI.resolutionPreset.value;
+          datasetSelectionByRegion[currentRegionKey] = currentDatasetKey;
+          loadAndBuildMeshes(currentDatasetKey).catch(reportLoadError);
         });
       }
 
@@ -2978,9 +3167,7 @@
       });
 
       controlsUI.resetView.addEventListener("click", () => {
-        camera.position.set(...resetPose.position);
-        orbit.target.set(...resetPose.target);
-        orbit.update();
+        resetCameraToDefaultPose();
       });
 
       if (controlsUI.fullscreenToggle) {
@@ -3009,6 +3196,8 @@
     }
 
     function updateMeta(meta, dataset, velocityMeta, hydrologyMeta, velocityMedianSpeed) {
+      const region = getRegionConfig(dataset.regionKey);
+      const capabilities = dataset.capabilities || region.capabilities;
       const grid = meta.grid;
       const bedStats = meta.fields.find((f) => f.name === "bed").stats_m;
       const thickStats = meta.fields.find((f) => f.name === "thickness").stats_m;
@@ -3024,14 +3213,8 @@
       const fmtQ = (value) =>
         Number(value).toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 
-      metaListEl.innerHTML = `
-        <li class="meta-group">Grid & Topography</li>
-        <li><strong>Preset:</strong> ${dataset.label} (${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km)</li>
-        <li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)}</li>
-        <li><strong>Bed Elevation:</strong> ${fmtInt(bedStats.min)} to ${fmtInt(bedStats.max)} m</li>
-        <li><strong>Max Ice Thickness:</strong> ${fmtInt(thickStats.max)} m</li>
-        <li><strong>Mean Ice Thickness:</strong> ${Number.isFinite(thickStats.mean) ? `${fmtInt(thickStats.mean)} m` : "n/a"}</li>
-
+      const velocitySection = capabilities.velocity
+        ? `
         <li class="meta-group">Velocity</li>
         <li><strong>Surface Speed:</strong> ${speedStats ? `${fmtInt(speedStats.min)} to ${fmtInt(speedStats.max)} m/yr` : "n/a"}</li>
         <li><strong>Mean Speed:</strong> ${speedStats ? `${fmtInt(speedStats.mean)} m/yr` : "n/a"}</li>
@@ -3040,24 +3223,62 @@
             ? `<li><strong>Median Speed:</strong> ${fmtInt(velocityMedianSpeed)} m/yr</li>`
             : ""
         }
+      `
+        : `
+        <li class="meta-group">Velocity</li>
+        <li><strong>Status:</strong> Not yet added for ${region.label}</li>
+      `;
 
+      const hydrologySection = capabilities.hydrology
+        ? `
         <li class="meta-group">Subglacial Hydrology</li>
         <li><strong>Effective Pressure:</strong> ${pressureStats ? `${fmtMpa(pressureStats.min)} to ${fmtMpa(pressureStats.max)} MPa` : "n/a"}</li>
         <li><strong>Channel Discharge:</strong> ${channelStats ? `${fmtQ(channelStats.min)} to ${fmtQ(channelStats.max)} m3/s` : "n/a"}</li>
         <li><strong>Rendered Channels:</strong> ${channelCoverage ? fmtInt(channelCoverage.channel_segment_count_unique) : "n/a"}</li>
+      `
+        : `
+        <li class="meta-group">Subglacial Hydrology</li>
+        <li><strong>Status:</strong> Not yet added for ${region.label}</li>
+      `;
+
+      const sourceLines = [`<li class="meta-compact"><strong>Bed/Ice Geometry:</strong> ${dataset.sources.geometry}</li>`];
+      if (capabilities.velocity && dataset.sources.velocity) {
+        sourceLines.push(`<li class="meta-compact"><strong>Surface Velocity:</strong> ${dataset.sources.velocity}</li>`);
+      }
+      if (capabilities.refinedBasins && dataset.sources.basins) {
+        sourceLines.push(
+          `<li class="meta-compact"><strong>Basin Boundaries:</strong> ${dataset.sources.basins}${
+            Number.isFinite(refinedBasinCount) && refinedBasinCount > 0 ? `, ${fmtInt(refinedBasinCount)} basins` : ""
+          }</li>`
+        );
+      }
+      if (capabilities.hydrology && dataset.sources.hydrology) {
+        sourceLines.push(`<li class="meta-compact"><strong>Subglacial Hydrology:</strong> ${dataset.sources.hydrology}</li>`);
+      }
+      if (!capabilities.velocity && !capabilities.hydrology && !capabilities.refinedBasins) {
+        sourceLines.push(
+          `<li class="meta-compact"><strong>Current ${region.label} scope:</strong> Bed topography, ice surface, and ice base are enabled in this version.</li>`
+        );
+      }
+
+      metaListEl.innerHTML = `
+        <li class="meta-group">Grid & Topography</li>
+        <li><strong>Preset:</strong> ${region.label} ${dataset.label} (${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km)</li>
+        <li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)}</li>
+        <li><strong>Bed Elevation:</strong> ${fmtInt(bedStats.min)} to ${fmtInt(bedStats.max)} m</li>
+        <li><strong>Max Ice Thickness:</strong> ${fmtInt(thickStats.max)} m</li>
+        <li><strong>Mean Ice Thickness:</strong> ${Number.isFinite(thickStats.mean) ? `${fmtInt(thickStats.mean)} m` : "n/a"}</li>
+
+        ${velocitySection}
+        ${hydrologySection}
 
         <li class="meta-group">Sources</li>
-        <li class="meta-compact"><strong>Bed/Ice Geometry:</strong> MEaSUREs BedMachine Antarctica, Version 4</li>
-        <li class="meta-compact"><strong>Surface Velocity:</strong> MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1</li>
-        <li class="meta-compact"><strong>Basin Boundaries:</strong> MEaSUREs Antarctic Boundaries for IPY 2007-2009 (Version 2, IMBIE refined basins)${
-          Number.isFinite(refinedBasinCount) && refinedBasinCount > 0 ? `, ${fmtInt(refinedBasinCount)} basins` : ""
-        }</li>
-        <li class="meta-compact"><strong>Subglacial Hydrology:</strong> Ehrenfeucht et al. (2025) Antarctic Wide Subglacial Hydrology Modeling</li>
+        ${sourceLines.join("")}
       `;
-      const pressureMaxText = pressureStats ? `${fmtMpa(pressureStats.max)} MPa` : "--";
-      const channelMaxText = channelStats ? `${fmtQ(channelStats.max)} m3/s` : "--";
       if (fieldStatsEl) {
-        fieldStatsEl.textContent = `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m | Velocity max: ${speedStats ? Math.round(speedStats.max) : "--"} m/yr`;
+        fieldStatsEl.textContent = `${region.label} | Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m | Velocity max: ${
+          capabilities.velocity && speedStats ? Math.round(speedStats.max) : "n/a"
+        } ${capabilities.velocity ? "m/yr" : ""}`.trim();
       }
     }
 
@@ -3203,14 +3424,18 @@
     function primeLayerMetadata(context) {
       if (!context) return;
 
-      const velocityMetaPromise = context.velocityPrefetchMeta
+      const velocityMetaPromise = !context.dataset.velocityMetaUrl
+        ? Promise.resolve(null)
+        : context.velocityPrefetchMeta
         ? Promise.resolve(context.velocityPrefetchMeta)
         : fetchJsonStrict(context.dataset.velocityMetaUrl, "Failed to load velocity metadata").catch((error) => {
             console.warn("Velocity metadata prefetch failed:", error);
             return null;
           });
 
-      const hydrologyMetaPromise = context.hydrologyPrefetchMeta
+      const hydrologyMetaPromise = !context.dataset.hydrologyMetaUrl
+        ? Promise.resolve(null)
+        : context.hydrologyPrefetchMeta
         ? Promise.resolve(context.hydrologyPrefetchMeta)
         : fetchJsonStrict(context.dataset.hydrologyMetaUrl, "Failed to load hydrology metadata").catch((error) => {
             console.warn("Hydrology metadata prefetch failed:", error);
@@ -3336,7 +3561,7 @@
       updateMetaFromCurrentState();
       updateFlowlineVisibility();
       if (updateStatus) {
-        statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+        statusEl.textContent = getReadyStatusText(context);
       }
       if (showOverlay) {
         updateLoadingProgress(1, "Velocity layer ready");
@@ -3348,6 +3573,10 @@
     async function ensureVelocityLoaded({ trigger = "prefetch" } = {}) {
       const context = currentCoreContext;
       if (!context || context.generation !== loadGeneration) return false;
+      if (!context.dataset.capabilities.velocity || !context.dataset.velocityMetaUrl || !context.dataset.velocityBinUrl) {
+        context.velocityUnavailable = true;
+        return false;
+      }
       if (context.velocityLoaded) {
         if (velocitySurfaceMesh) velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
         if (controlsUI.showFlowline.checked) updateFlowlineVisibility();
@@ -3425,7 +3654,7 @@
             velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
             flowlineMesh = disposeMesh(flowlineMesh);
             velocityField = null;
-            const readyText = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+            const readyText = getReadyStatusText(context);
             const transientText = "Velocity layer unavailable";
             statusEl.textContent = transientText;
             window.setTimeout(() => {
@@ -3449,6 +3678,10 @@
     async function ensureHydrologyLoaded({ trigger = "prefetch" } = {}) {
       const context = currentCoreContext;
       if (!context || context.generation !== loadGeneration) return false;
+      if (!context.dataset.capabilities.hydrology || !context.dataset.hydrologyMetaUrl || !context.dataset.hydrologyBinUrl) {
+        context.hydrologyUnavailable = true;
+        return false;
+      }
       if (context.hydrologyLoaded) {
         if (effectivePressureMesh) effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
         if (subglacialChannelMesh) subglacialChannelMesh.visible = controlsUI.showSubglacialChannels.checked;
@@ -3609,7 +3842,7 @@
         currentHydrologyMeta = hydrologyMeta;
         updateMetaFromCurrentState();
         if (showOverlay) {
-          statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+          statusEl.textContent = getReadyStatusText(context);
           updateLoadingProgress(1, "Hydrology layer ready");
           setLoadingOverlayVisible(false);
         }
@@ -3625,7 +3858,7 @@
             controlsUI.showSubglacialChannels.disabled = true;
             effectivePressureMesh = disposeMesh(effectivePressureMesh);
             subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
-            const readyText = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${context.dataset.label})`;
+            const readyText = getReadyStatusText(context);
             const transientText = "Hydrology layer unavailable";
             statusEl.textContent = transientText;
             window.setTimeout(() => {
@@ -3698,10 +3931,19 @@
     }
 
     async function loadAndBuildMeshes(datasetKey = currentDatasetKey) {
-      const effectiveDatasetKey = lockedDatasetKey || datasetKey;
-      const dataset = DATASETS[effectiveDatasetKey] || DATASETS.balanced;
+      const effectiveRegionKey = lockedRegionKey || currentRegionKey;
+      const region = getRegionConfig(effectiveRegionKey);
+      const effectiveDatasetKey =
+        lockedDatasetKey || datasetKey || datasetSelectionByRegion[region.key] || getDefaultDatasetKey(region.key);
+      const dataset = getDatasetConfig(region.key, effectiveDatasetKey);
+      if (!dataset) {
+        throw new Error(`Unknown terrain preset: ${String(effectiveDatasetKey)}`);
+      }
+
       const generation = ++loadGeneration;
+      currentRegionKey = region.key;
       currentDatasetKey = dataset.id;
+      datasetSelectionByRegion[currentRegionKey] = currentDatasetKey;
       currentCoreContext = null;
       currentVelocityMeta = null;
       currentHydrologyMeta = null;
@@ -3717,13 +3959,10 @@
         backgroundWarmupTimer = null;
       }
       terminateGeometryWorker();
-      controlsUI.resolutionPreset.value = dataset.id;
-      controlsUI.resolutionValue.textContent = dataset.label;
-      controlsUI.resolutionPreset.disabled = true;
-      controlsUI.showEffectivePressure.disabled = false;
-      controlsUI.showSubglacialChannels.disabled = false;
-      controlsUI.showRefinedBasins.disabled = isShowcaseMode || refinedBasinUnavailable;
-      statusEl.textContent = isShowcaseMode ? "Loading Balanced demo..." : `Loading ${dataset.label} core terrain...`;
+      currentDatasetKey = refreshRegionUi(currentRegionKey, currentDatasetKey);
+      updateRegionControlAvailability({ isLoading: true });
+      updateResolutionControlAvailability({ isLoading: true });
+      statusEl.textContent = getLoadingStatusText(region, dataset);
       setLoadingOverlayVisible(true);
       updateLoadingProgress(0.02, "Preparing data streams...");
 
@@ -3777,8 +4016,10 @@
           }
         }
 
-        const horizontalMetersPerUnit = 52000;
-        const verticalMetersPerUnit = 3800;
+        const widthMeters = Math.abs(meta.grid.dx_m) * Math.max(1, nx - 1);
+        const depthMeters = Math.abs(meta.grid.dy_m) * Math.max(1, ny - 1);
+        const horizontalMetersPerUnit = Math.max(1, Math.max(widthMeters, depthMeters) / TARGET_WORLD_EXTENT_UNITS);
+        const verticalMetersPerUnit = Math.max(1, horizontalMetersPerUnit / BASE_HORIZONTAL_VERTICAL_SCALE_RATIO);
         const baseConfig = {
           nx,
           ny,
@@ -3818,9 +4059,13 @@
 
         updateLoadingProgress(0.88, "Building base meshes...");
         buildCoreSceneFromContext(currentCoreContext);
+        if (pendingViewResetOnLoad) {
+          resetCameraToDefaultPose();
+          pendingViewResetOnLoad = false;
+        }
         updateMetaFromCurrentState();
         updateFlowlineVisibility();
-        statusEl.textContent = isShowcaseMode ? "Ready (Balanced Demo)" : `Ready (${dataset.label})`;
+        statusEl.textContent = getReadyStatusText(currentCoreContext);
         updateLoadingProgress(1, "Core terrain ready");
 
         window.setTimeout(() => {
@@ -3846,9 +4091,9 @@
           }, warmupDelay);
         }
       } finally {
-        if (!lockedDatasetKey) {
-          controlsUI.resolutionPreset.disabled = false;
-        }
+        updateRegionLayerAvailability(currentRegionKey);
+        updateRegionControlAvailability();
+        updateResolutionControlAvailability();
       }
     }
 
@@ -3877,6 +4122,70 @@
         reportLoadError(error);
       }
     }
+
+    window.render_game_to_text = () => {
+      const payload = {
+        mode: isShowcaseMode ? "showcase" : "interactive",
+        region: currentRegionKey,
+        dataset: currentDatasetKey,
+        status: statusEl?.textContent || "",
+        controls: {
+          showBed: controlsUI.showBed.checked,
+          showIce: controlsUI.showIce.checked,
+          showIceBottom: controlsUI.showIceBottom.checked,
+          showVelocity: controlsUI.showVelocity.checked,
+          showFlowline: controlsUI.showFlowline.checked,
+          showEffectivePressure: controlsUI.showEffectivePressure.checked,
+          showSubglacialChannels: controlsUI.showSubglacialChannels.checked,
+        },
+        grid: currentCoreContext
+          ? {
+              nx: currentCoreContext.nx,
+              ny: currentCoreContext.ny,
+              dx_m: currentCoreContext.meta.grid.dx_m,
+              dy_m: currentCoreContext.meta.grid.dy_m,
+              origin: "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row.",
+            }
+          : null,
+        meshes: {
+          bed: Boolean(bedMesh && bedMesh.visible),
+          ice: Boolean(iceMesh && iceMesh.visible),
+          iceBottom: Boolean(iceBottomMesh && iceBottomMesh.visible),
+          velocity: Boolean(velocitySurfaceMesh && velocitySurfaceMesh.visible),
+          flowline: Boolean(flowlineMesh && flowlineMesh.visible),
+          hydrology: Boolean(
+            (effectivePressureMesh && effectivePressureMesh.visible) ||
+              (subglacialChannelMesh && subglacialChannelMesh.visible)
+          ),
+        },
+        camera:
+          camera && orbit
+            ? {
+                position: {
+                  x: Number(camera.position.x.toFixed(2)),
+                  y: Number(camera.position.y.toFixed(2)),
+                  z: Number(camera.position.z.toFixed(2)),
+                },
+                target: {
+                  x: Number(orbit.target.x.toFixed(2)),
+                  y: Number(orbit.target.y.toFixed(2)),
+                  z: Number(orbit.target.z.toFixed(2)),
+                },
+              }
+            : null,
+      };
+      return JSON.stringify(payload);
+    };
+
+    window.advanceTime = (ms = 16) => {
+      const steps = Math.max(1, Math.round(Number(ms) / (1000 / 60)));
+      for (let i = 0; i < steps; i += 1) {
+        if (orbit) orbit.update();
+      }
+      if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+      }
+    };
 
     window.addEventListener("beforeunload", () => {
       if (animationHandle) cancelAnimationFrame(animationHandle);
