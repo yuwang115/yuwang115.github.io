@@ -672,7 +672,7 @@
         <label class="toggle"><input id="showIceBottom" type="checkbox" checked /> Show ice bottom surface</label>
         <label class="toggle"><input id="showVelocity" type="checkbox" /> Show ice surface velocity</label>
         <label class="toggle"><input id="showFlowline" type="checkbox" /> Show ice flowline</label>
-        <label class="toggle"><input id="showRefinedBasins" type="checkbox" /> Show refined basins</label>
+        <label class="toggle"><input id="showRefinedBasins" type="checkbox" /> <span id="showRefinedBasinsLabel">Show refined basins</span></label>
         <label class="toggle"><input id="showEffectivePressure" type="checkbox" /> Show effective pressure</label>
         <label class="toggle"><input id="showSubglacialChannels" type="checkbox" /> Show subglacial channels</label>
         <label class="toggle"><input id="showSea" type="checkbox" /> Show sea level (0 m)</label>
@@ -801,6 +801,9 @@
         label: "Antarctica",
         intro:
           "Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, flowlines, subglacial environments.",
+        refinedBasinsUrl: "/tools/data/imbie_refined_basins_v2.json",
+        basinToggleLabel: "Show refined basins",
+        basinStatusLabel: "refined basins",
         defaultDatasetKey: "balanced",
         capabilities: {
           velocity: true,
@@ -818,7 +821,7 @@
           balanced: {
             id: "balanced",
             label: "Balanced",
-            summary: "10 km grid (~5.8 MB)",
+            summary: "10 km grid; ~5.8 MB",
             metaUrl: "/tools/data/bedmachine_antarctica_v4_480.meta.json",
             binUrl: "/tools/data/bedmachine_antarctica_v4_480.bin",
             velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.meta.json",
@@ -829,7 +832,7 @@
           hd: {
             id: "hd",
             label: "HD",
-            summary: "4 km grid (~35.4 MB, desktop preferred)",
+            summary: "4 km grid; ~35.4 MB",
             metaUrl: "/tools/data/bedmachine_antarctica_v4_741.meta.json",
             binUrl: "/tools/data/bedmachine_antarctica_v4_741.bin",
             velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.meta.json",
@@ -843,31 +846,42 @@
         key: "greenland",
         label: "Greenland",
         intro:
-          "Rotate, zoom, and explore Greenland with the base BedMachine geometry layers for bed topography, ice surface, and ice base.",
+          "Rotate, zoom, and explore Greenland with BedMachine geometry plus surface-velocity and flowline overlays aligned to the ice-sheet grid.",
+        refinedBasinsUrl: "/tools/data/greenland_basins_ps_v1_4_2.json",
+        basinToggleLabel: "Show basins",
+        basinStatusLabel: "basins",
         defaultDatasetKey: "3km",
         capabilities: {
-          velocity: false,
-          flowline: false,
-          refinedBasins: false,
+          velocity: true,
+          flowline: true,
+          refinedBasins: true,
           hydrology: false,
         },
         sources: {
           geometry: "BedMachine Greenland, Version 6",
+          velocity: "ITS_LIVE Greenland ice surface velocity mosaic (120 m, V02.1)",
+          basins: "Greenland Basins PS v1.4.2 catchment boundaries",
         },
         datasets: {
           "3km": {
             id: "3km",
-            label: "3 km",
-            summary: "3 km grid (~3.1 MB)",
+            label: "Balanced",
+            summary: "3 km grid; ~3.1 MB",
             metaUrl: "/tools/data/bedmachine_greenland_v6_3km.meta.json",
             binUrl: "/tools/data/bedmachine_greenland_v6_3km.bin",
+            velocityMetaUrl: "/tools/data/greenland_ice_velocity_3km.meta.json",
+            velocityBinUrl: "/tools/data/greenland_ice_velocity_3km.bin",
           },
           "1km": {
             id: "1km",
-            label: "1 km",
-            summary: "1 km grid (~28.2 MB)",
+            label: "HD",
+            summary: "1 km grid; ~28.2 MB",
             metaUrl: "/tools/data/bedmachine_greenland_v6_1km.meta.json",
             binUrl: "/tools/data/bedmachine_greenland_v6_1km.bin",
+            velocityMetaUrl: "/tools/data/greenland_ice_velocity_1km.meta.json",
+            velocityBinUrl: "/tools/data/greenland_ice_velocity_1km.bin",
+            velocityMeshStride: 3,
+            disableBackgroundWarmup: true,
           },
         },
       },
@@ -892,6 +906,9 @@
         regionLabel: region.label,
         capabilities: region.capabilities,
         sources: region.sources,
+        refinedBasinsUrl: dataset.refinedBasinsUrl || region.refinedBasinsUrl || null,
+        basinToggleLabel: dataset.basinToggleLabel || region.basinToggleLabel || "Show refined basins",
+        basinStatusLabel: dataset.basinStatusLabel || region.basinStatusLabel || "refined basins",
       };
     }
 
@@ -928,6 +945,7 @@
       showVelocity: document.getElementById("showVelocity"),
       showFlowline: document.getElementById("showFlowline"),
       showRefinedBasins: document.getElementById("showRefinedBasins"),
+      showRefinedBasinsLabel: document.getElementById("showRefinedBasinsLabel"),
       showEffectivePressure: document.getElementById("showEffectivePressure"),
       showSubglacialChannels: document.getElementById("showSubglacialChannels"),
       showSea: document.getElementById("showSea"),
@@ -961,9 +979,9 @@
     let refinedBasinSurfaceLines;
     let refinedBasinBedLabels;
     let refinedBasinSurfaceLabels;
-    let refinedBasinData = null;
+    let currentRefinedBasinData = null;
     let refinedBasinLoadPromise = null;
-    let refinedBasinUnavailable = false;
+    let refinedBasinLoadingUrl = null;
     let velocityField;
     let animationHandle;
     let currentRegionKey = initialRegionKey;
@@ -993,6 +1011,8 @@
     let geometryWorkerRequestSeq = 0;
     const geometryWorkerPending = new Map();
     const refinedBasinLabelTextureCache = new Map();
+    const refinedBasinDataCache = new Map();
+    const refinedBasinUnavailableUrls = new Set();
 
     const SHOWCASE_HINT_IDLE =
       "<strong>Scroll page:</strong> keep using wheel to continue reading.<br /><strong>Click this scene</strong> to enter 3D interaction.";
@@ -1028,6 +1048,17 @@
       }
     }
 
+    function getDatasetBasinUnavailable(dataset) {
+      const basinsUrl = typeof dataset?.refinedBasinsUrl === "string" ? dataset.refinedBasinsUrl : "";
+      return basinsUrl ? refinedBasinUnavailableUrls.has(basinsUrl) : false;
+    }
+
+    function updateRefinedBasinToggleLabel(regionKey) {
+      if (!controlsUI.showRefinedBasinsLabel) return;
+      const region = getRegionConfig(regionKey);
+      controlsUI.showRefinedBasinsLabel.textContent = region.basinToggleLabel || "Show refined basins";
+    }
+
     function updateResolutionControlAvailability({ isLoading = false } = {}) {
       if (!controlsUI.resolutionPreset) return;
       const region = getRegionConfig(currentRegionKey);
@@ -1043,9 +1074,14 @@
     function updateRegionLayerAvailability(regionKey) {
       const region = getRegionConfig(regionKey);
       const capabilities = region.capabilities;
+      const datasetKey = datasetSelectionByRegion[region.key] || getDefaultDatasetKey(region.key);
+      const dataset = getDatasetConfig(region.key, datasetKey);
+      const basinAvailable = Boolean(
+        !isShowcaseMode && capabilities.refinedBasins && dataset?.refinedBasinsUrl && !getDatasetBasinUnavailable(dataset)
+      );
       setToggleAvailability(controlsUI.showVelocity, capabilities.velocity);
       setToggleAvailability(controlsUI.showFlowline, capabilities.velocity && capabilities.flowline);
-      setToggleAvailability(controlsUI.showRefinedBasins, !isShowcaseMode && capabilities.refinedBasins && !refinedBasinUnavailable);
+      setToggleAvailability(controlsUI.showRefinedBasins, basinAvailable);
       setToggleAvailability(controlsUI.showEffectivePressure, capabilities.hydrology);
       setToggleAvailability(controlsUI.showSubglacialChannels, capabilities.hydrology);
     }
@@ -1073,6 +1109,7 @@
       if (panelSubtitleEl) {
         panelSubtitleEl.textContent = region.intro;
       }
+      updateRefinedBasinToggleLabel(region.key);
       if (controlsUI.regionPreset) {
         controlsUI.regionPreset.value = region.key;
       }
@@ -1114,16 +1151,30 @@
       controlsUI.iceOpacityValue.textContent = "1.00";
     }
 
-    const resetPose = isShowcaseMode
-      ? {
+    const DEFAULT_CAMERA_POSES = {
+      antarctica: {
+        position: [3, 53, 77],
+        target: [3.5, -7, 3],
+        fov: 45,
+      },
+      greenland: {
+        position: [3.36, 81.62, 82.79],
+        target: [5.14, -11.77, 6.48],
+        fov: 45,
+      },
+    };
+
+    function getDefaultCameraPose(regionKey = currentRegionKey) {
+      if (isShowcaseMode) {
+        return {
           // Closer, slightly angled hero framing for homepage impact.
           position: [11.01, 62.36, 79.95],
           target: [4.52, -6.48, 1.43],
-        }
-      : {
-          position: [3, 53, 77],
-          target: [3.5, -7, 3],
+          fov: 40,
         };
+      }
+      return DEFAULT_CAMERA_POSES[regionKey] || DEFAULT_CAMERA_POSES.antarctica;
+    }
 
     function clamp01(value) {
       if (!Number.isFinite(value)) return 0;
@@ -1162,7 +1213,6 @@
     const CHANNEL_STRIP_WIDTH_M_MAX = 5000;
     const EFFECTIVE_PRESSURE_SURFACE_OFFSET_M = 10;
     const SUBGLACIAL_CHANNEL_SURFACE_OFFSET_M = 14;
-    const REFINED_BASINS_URL = "/tools/data/imbie_refined_basins_v2.json";
     const REFINED_BASIN_BED_OFFSET_M = 90;
     const REFINED_BASIN_SURFACE_OFFSET_M = 24;
     const REFINED_BASIN_BED_LINE_WIDTH_M = 5000;
@@ -1170,6 +1220,7 @@
     const REFINED_BASIN_BED_LABEL_OFFSET_M = 36;
     const REFINED_BASIN_SURFACE_LABEL_OFFSET_M = 42;
     const REFINED_BASIN_LABEL_WORLD_SCALE = 0.0076;
+    const GREENLAND_REFINED_BASIN_LABEL_WORLD_SCALE = 0.0104;
     // Keep HD velocity responsive with a decimated mesh.
     const HD_VELOCITY_MESH_STRIDE = 2;
     // Effective-pressure overlay should stay conformal to bed to avoid local intersections.
@@ -2062,9 +2113,9 @@
       scene.background = new THREE.Color(0x0a2b43);
       scene.fog = new THREE.Fog(0x0a2b43, 80, 240);
 
-      const initialFov = isShowcaseMode ? 40 : 45;
-      camera = new THREE.PerspectiveCamera(initialFov, viewerEl.clientWidth / viewerEl.clientHeight, 0.1, 200);
-      camera.position.set(...resetPose.position);
+      const initialPose = getDefaultCameraPose();
+      camera = new THREE.PerspectiveCamera(initialPose.fov, viewerEl.clientWidth / viewerEl.clientHeight, 0.1, 200);
+      camera.position.set(...initialPose.position);
 
       const lowEndDevice = detectLowEndDevice();
       const coarsePointer = isCoarsePointerInput();
@@ -2097,7 +2148,7 @@
       orbit.dampingFactor = 0.08;
       orbit.minDistance = isShowcaseMode ? 12 : 0.2;
       orbit.maxDistance = 360;
-      orbit.target.set(...resetPose.target);
+      orbit.target.set(...initialPose.target);
       orbit.enabled = true;
       renderer.domElement.style.touchAction = "none";
 
@@ -2113,9 +2164,16 @@
 
     function resetCameraToDefaultPose() {
       if (!camera || !orbit) return;
-      camera.position.set(...resetPose.position);
-      orbit.target.set(...resetPose.target);
+      const pose = getDefaultCameraPose();
+      const previousDamping = orbit.enableDamping;
+      orbit.enableDamping = false;
       orbit.update();
+      camera.position.set(...pose.position);
+      camera.fov = pose.fov;
+      camera.updateProjectionMatrix();
+      orbit.target.set(...pose.target);
+      orbit.update();
+      orbit.enableDamping = previousDamping;
     }
 
     function renderLoop() {
@@ -2406,6 +2464,20 @@
       return group.children.length ? group : null;
     }
 
+    function getRefinedBasinLabelStyle(context, layerKey) {
+      const regionKey = context?.dataset?.regionKey || "antarctica";
+      const isBedLayer = layerKey === "bed";
+      const isGreenland = regionKey === "greenland";
+      return {
+        keyPrefix: `${regionKey}-refined-basin-${isBedLayer ? "bed" : "surface"}`,
+        textColor: isBedLayer ? "#ffe8a3" : "#ffd9d5",
+        strokeColor: isBedLayer ? "rgba(22, 34, 44, 0.96)" : "rgba(20, 32, 46, 0.96)",
+        fontSize: isGreenland ? 56 : 44,
+        strokeWidth: isGreenland ? 8 : 7,
+        worldScale: isGreenland ? GREENLAND_REFINED_BASIN_LABEL_WORLD_SCALE : REFINED_BASIN_LABEL_WORLD_SCALE,
+      };
+    }
+
     function updateRefinedBasinLabelPositionsForExaggeration() {
       const exaggeration = Number(controlsUI.exaggeration.value);
       const apply = (group) => {
@@ -2458,22 +2530,12 @@
       refinedBasinBedLabels = buildRefinedBasinLabelGroup(context, basins, "bed", {
         offsetMeters: REFINED_BASIN_BED_LABEL_OFFSET_M,
         renderOrder: 46,
-        labelStyle: {
-          keyPrefix: "refined-basin-bed",
-          textColor: "#ffe8a3",
-          strokeColor: "rgba(22, 34, 44, 0.96)",
-          worldScale: REFINED_BASIN_LABEL_WORLD_SCALE,
-        },
+        labelStyle: getRefinedBasinLabelStyle(context, "bed"),
       });
       refinedBasinSurfaceLabels = buildRefinedBasinLabelGroup(context, basins, "surface", {
         offsetMeters: REFINED_BASIN_SURFACE_LABEL_OFFSET_M,
         renderOrder: 47,
-        labelStyle: {
-          keyPrefix: "refined-basin-surface",
-          textColor: "#ffd9d5",
-          strokeColor: "rgba(20, 32, 46, 0.96)",
-          worldScale: REFINED_BASIN_LABEL_WORLD_SCALE,
-        },
+        labelStyle: getRefinedBasinLabelStyle(context, "surface"),
       });
 
       if (refinedBasinBedLines) scene.add(refinedBasinBedLines);
@@ -2491,50 +2553,61 @@
       const context = currentCoreContext;
       if (!context || context.generation !== loadGeneration) return false;
       if (!context.dataset.capabilities.refinedBasins) return false;
-      if (refinedBasinUnavailable) return false;
+      const basinsUrl = context.dataset.refinedBasinsUrl;
+      if (!basinsUrl) return false;
+      if (refinedBasinUnavailableUrls.has(basinsUrl)) return false;
+
+      const basinStatusLabel = String(context.dataset.basinStatusLabel || "refined basins");
+      const basinStatusTitle = basinStatusLabel.charAt(0).toUpperCase() + basinStatusLabel.slice(1);
 
       const overlaysReady = refinedBasinBedLines || refinedBasinSurfaceLines || refinedBasinBedLabels || refinedBasinSurfaceLabels;
       if (overlaysReady) {
+        currentRefinedBasinData = refinedBasinDataCache.get(basinsUrl) || currentRefinedBasinData;
         updateRefinedBasinLabelPositionsForExaggeration();
         updateRefinedBasinVisibility();
+        updateMetaFromCurrentState();
         return true;
       }
 
-      if (refinedBasinLoadPromise) {
+      if (refinedBasinLoadPromise && refinedBasinLoadingUrl === basinsUrl) {
         return refinedBasinLoadPromise;
       }
 
       const pendingPromise = (async () => {
         const showStatus = trigger === "toggle";
         if (showStatus) {
-          statusEl.textContent = "Loading refined basins...";
+          statusEl.textContent = `Loading ${basinStatusLabel}...`;
         }
 
-        if (!refinedBasinData) {
-          refinedBasinData = await fetchJsonStrict(REFINED_BASINS_URL, "Failed to load refined basin boundaries");
+        let basinData = refinedBasinDataCache.get(basinsUrl);
+        if (!basinData) {
+          basinData = await fetchJsonStrict(basinsUrl, "Failed to load basin boundaries");
+          refinedBasinDataCache.set(basinsUrl, basinData);
         }
+        currentRefinedBasinData = basinData;
 
         if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
-        const built = buildRefinedBasinOverlays(context, refinedBasinData);
+        const built = buildRefinedBasinOverlays(context, basinData);
         if (!built) {
-          throw new Error("Refined basin dataset is empty.");
+          throw new Error("Basin dataset is empty.");
         }
 
         if (showStatus) {
           statusEl.textContent = getReadyStatusText(context);
         }
+        updateMetaFromCurrentState();
         return true;
       })()
         .catch((error) => {
-          console.error("Refined basin layer load failed:", error);
+          console.error("Basin layer load failed:", error);
           if (context === currentCoreContext && context.generation === loadGeneration) {
-            refinedBasinUnavailable = true;
+            refinedBasinUnavailableUrls.add(basinsUrl);
             controlsUI.showRefinedBasins.checked = false;
-            controlsUI.showRefinedBasins.disabled = true;
             clearRefinedBasinOverlays();
             const readyText = getReadyStatusText(context);
-            const transientText = "Refined basins unavailable";
+            const transientText = `${basinStatusTitle} unavailable`;
             statusEl.textContent = transientText;
+            updateRegionLayerAvailability(currentRegionKey);
             window.setTimeout(() => {
               if (statusEl.textContent === transientText) {
                 statusEl.textContent = readyText;
@@ -2546,9 +2619,11 @@
         .finally(() => {
           if (refinedBasinLoadPromise === pendingPromise) {
             refinedBasinLoadPromise = null;
+            refinedBasinLoadingUrl = null;
           }
         });
 
+      refinedBasinLoadingUrl = basinsUrl;
       refinedBasinLoadPromise = pendingPromise;
       return refinedBasinLoadPromise;
     }
@@ -3205,33 +3280,76 @@
       const pressureStats = hydrologyMeta?.fields?.find((f) => f.name === "effective_pressure")?.stats_pa;
       const channelStats = hydrologyMeta?.fields?.find((f) => f.name === "channel_discharge")?.stats_m3_per_s;
       const channelCoverage = hydrologyMeta?.coverage;
-      const refinedBasinCount = Number(refinedBasinData?.basin_count);
+      const refinedBasinCount = Number(currentRefinedBasinData?.basin_count);
       const stepKm = Math.abs(grid.dx_m) / 1000;
       const fmtInt = (value) => Math.round(Number(value)).toLocaleString("en-US");
+      const fmtPercent = (value) =>
+        Number(value).toLocaleString("en-US", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
       const fmtMpa = (value) =>
         (Number(value) / 1e6).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const fmtQ = (value) =>
         Number(value).toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+      const projectionLabel = dataset.regionKey === "greenland" ? "EPSG:3413" : dataset.regionKey === "antarctica" ? "EPSG:3031" : "Polar stereographic";
+      const formatProduct = (title, version, sourceFile) =>
+        [title, version ? `(${version})` : "", sourceFile ? `- ${sourceFile}` : ""].filter(Boolean).join(" ");
+      const velocityCoverage = velocityMeta?.coverage;
+      const geometryProduct = formatProduct(meta.title, meta.product_version, meta.source_file);
+      const velocityProduct = velocityMeta
+        ? formatProduct(velocityMeta.title, velocityMeta.product_version, velocityMeta.source_file)
+        : dataset.sources.velocity || "";
+      const basinProduct = currentRefinedBasinData
+        ? formatProduct(
+            currentRefinedBasinData.dataset,
+            currentRefinedBasinData.dataset_key,
+            currentRefinedBasinData.source_shapefile
+          )
+        : dataset.sources.basins || "";
+      const hydrologyProduct = hydrologyMeta
+        ? formatProduct(hydrologyMeta.title, hydrologyMeta.product_version, hydrologyMeta.source_file)
+        : dataset.sources.hydrology || "";
+      const basinStatus = !capabilities.refinedBasins
+        ? `Not yet added for ${region.label}`
+        : Number.isFinite(refinedBasinCount) && refinedBasinCount > 0
+        ? `${fmtInt(refinedBasinCount)} basin boundaries ready`
+        : dataset.refinedBasinsUrl
+        ? "Available on demand"
+        : "n/a";
 
       const velocitySection = capabilities.velocity
         ? `
         <li class="meta-group">Velocity</li>
+        <li><strong>Coverage:</strong> ${
+          velocityCoverage
+            ? `${fmtPercent(velocityCoverage.valid_fraction)} of grid (${fmtInt(velocityCoverage.valid_count)} / ${fmtInt(
+                velocityCoverage.cell_count
+              )} cells)`
+            : "Available on demand"
+        }</li>
         <li><strong>Surface Speed:</strong> ${speedStats ? `${fmtInt(speedStats.min)} to ${fmtInt(speedStats.max)} m/yr` : "n/a"}</li>
         <li><strong>Mean Speed:</strong> ${speedStats ? `${fmtInt(speedStats.mean)} m/yr` : "n/a"}</li>
-        ${
-          Number.isFinite(velocityMedianSpeed) && velocityMedianSpeed > 0
-            ? `<li><strong>Median Speed:</strong> ${fmtInt(velocityMedianSpeed)} m/yr</li>`
-            : ""
-        }
+        <li><strong>Median Speed:</strong> ${
+          Number.isFinite(velocityMedianSpeed) && velocityMedianSpeed > 0 ? `${fmtInt(velocityMedianSpeed)} m/yr` : "n/a"
+        }</li>
       `
         : `
         <li class="meta-group">Velocity</li>
         <li><strong>Status:</strong> Not yet added for ${region.label}</li>
       `;
 
+      const basinSection = `
+        <li class="meta-group">Basin Boundaries</li>
+        <li><strong>Toggle Label:</strong> ${dataset.basinToggleLabel}</li>
+        <li><strong>Status:</strong> ${basinStatus}</li>
+      `;
+
       const hydrologySection = capabilities.hydrology
         ? `
         <li class="meta-group">Subglacial Hydrology</li>
+        <li><strong>Coverage:</strong> ${
+          channelCoverage
+            ? `${fmtPercent(channelCoverage.effective_pressure_valid_fraction)} pressure coverage`
+            : "Available on demand"
+        }</li>
         <li><strong>Effective Pressure:</strong> ${pressureStats ? `${fmtMpa(pressureStats.min)} to ${fmtMpa(pressureStats.max)} MPa` : "n/a"}</li>
         <li><strong>Channel Discharge:</strong> ${channelStats ? `${fmtQ(channelStats.min)} to ${fmtQ(channelStats.max)} m3/s` : "n/a"}</li>
         <li><strong>Rendered Channels:</strong> ${channelCoverage ? fmtInt(channelCoverage.channel_segment_count_unique) : "n/a"}</li>
@@ -3241,44 +3359,50 @@
         <li><strong>Status:</strong> Not yet added for ${region.label}</li>
       `;
 
-      const sourceLines = [`<li class="meta-compact"><strong>Bed/Ice Geometry:</strong> ${dataset.sources.geometry}</li>`];
-      if (capabilities.velocity && dataset.sources.velocity) {
-        sourceLines.push(`<li class="meta-compact"><strong>Surface Velocity:</strong> ${dataset.sources.velocity}</li>`);
+      const productLines = [
+        `<li class="meta-compact"><strong>Geometry:</strong> ${geometryProduct}</li>`,
+      ];
+      if (capabilities.velocity && velocityProduct) {
+        productLines.push(`<li class="meta-compact"><strong>Surface Velocity:</strong> ${velocityProduct}</li>`);
       }
-      if (capabilities.refinedBasins && dataset.sources.basins) {
-        sourceLines.push(
-          `<li class="meta-compact"><strong>Basin Boundaries:</strong> ${dataset.sources.basins}${
-            Number.isFinite(refinedBasinCount) && refinedBasinCount > 0 ? `, ${fmtInt(refinedBasinCount)} basins` : ""
-          }</li>`
-        );
+      if (capabilities.refinedBasins && basinProduct) {
+        productLines.push(`<li class="meta-compact"><strong>Basin Boundaries:</strong> ${basinProduct}</li>`);
       }
-      if (capabilities.hydrology && dataset.sources.hydrology) {
-        sourceLines.push(`<li class="meta-compact"><strong>Subglacial Hydrology:</strong> ${dataset.sources.hydrology}</li>`);
-      }
-      if (!capabilities.velocity && !capabilities.hydrology && !capabilities.refinedBasins) {
-        sourceLines.push(
-          `<li class="meta-compact"><strong>Current ${region.label} scope:</strong> Bed topography, ice surface, and ice base are enabled in this version.</li>`
-        );
+      if (capabilities.hydrology && hydrologyProduct) {
+        productLines.push(`<li class="meta-compact"><strong>Subglacial Hydrology:</strong> ${hydrologyProduct}</li>`);
       }
 
       metaListEl.innerHTML = `
         <li class="meta-group">Grid & Topography</li>
-        <li><strong>Preset:</strong> ${region.label} ${dataset.label} (${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km)</li>
-        <li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)}</li>
+        <li><strong>Region:</strong> ${region.label}</li>
+        <li><strong>Preset:</strong> ${dataset.label}</li>
+        <li><strong>Terrain Package:</strong> ${dataset.summary}</li>
+        <li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)} cells</li>
+        <li><strong>Resolution:</strong> ${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km</li>
+        <li><strong>Projection:</strong> ${projectionLabel}</li>
         <li><strong>Bed Elevation:</strong> ${fmtInt(bedStats.min)} to ${fmtInt(bedStats.max)} m</li>
         <li><strong>Max Ice Thickness:</strong> ${fmtInt(thickStats.max)} m</li>
         <li><strong>Mean Ice Thickness:</strong> ${Number.isFinite(thickStats.mean) ? `${fmtInt(thickStats.mean)} m` : "n/a"}</li>
 
         ${velocitySection}
+        ${basinSection}
         ${hydrologySection}
 
-        <li class="meta-group">Sources</li>
-        ${sourceLines.join("")}
+        <li class="meta-group">Data Products</li>
+        ${productLines.join("")}
       `;
       if (fieldStatsEl) {
-        fieldStatsEl.textContent = `${region.label} | Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m | Ice thickness max: ${Math.round(thickStats.max)} m | Velocity max: ${
-          capabilities.velocity && speedStats ? Math.round(speedStats.max) : "n/a"
-        } ${capabilities.velocity ? "m/yr" : ""}`.trim();
+        const fieldParts = [
+          `${region.label}`,
+          `${dataset.label}`,
+          `Bed: ${Math.round(bedStats.min)} m to ${Math.round(bedStats.max)} m`,
+          `Ice max: ${Math.round(thickStats.max)} m`,
+          `Velocity max: ${capabilities.velocity && speedStats ? `${Math.round(speedStats.max)} m/yr` : "n/a"}`,
+        ];
+        if (capabilities.refinedBasins && Number.isFinite(refinedBasinCount) && refinedBasinCount > 0) {
+          fieldParts.push(`Basins: ${fmtInt(refinedBasinCount)}`);
+        }
+        fieldStatsEl.textContent = fieldParts.join(" | ");
       }
     }
 
@@ -3423,6 +3547,7 @@
 
     function primeLayerMetadata(context) {
       if (!context) return;
+      const basinsUrl = context.dataset.refinedBasinsUrl;
 
       const velocityMetaPromise = !context.dataset.velocityMetaUrl
         ? Promise.resolve(null)
@@ -3442,7 +3567,18 @@
             return null;
           });
 
-      Promise.all([velocityMetaPromise, hydrologyMetaPromise]).then(([velocityMeta, hydrologyMeta]) => {
+      const basinMetaPromise =
+        isShowcaseMode || !context.dataset.capabilities.refinedBasins || !basinsUrl
+          ? Promise.resolve(null)
+          : refinedBasinDataCache.get(basinsUrl)
+          ? Promise.resolve(refinedBasinDataCache.get(basinsUrl))
+          : fetchJsonStrict(basinsUrl, "Failed to load basin boundaries").catch((error) => {
+              console.warn("Basin metadata prefetch failed:", error);
+              return null;
+            });
+
+      Promise.all([velocityMetaPromise, hydrologyMetaPromise, basinMetaPromise]).then(
+        ([velocityMeta, hydrologyMeta, basinData]) => {
         if (context !== currentCoreContext || context.generation !== loadGeneration) return;
 
         let hasUpdate = false;
@@ -3456,14 +3592,24 @@
           currentHydrologyMeta = hydrologyMeta;
           hasUpdate = true;
         }
+        if (basinData && basinsUrl) {
+          refinedBasinDataCache.set(basinsUrl, basinData);
+          currentRefinedBasinData = basinData;
+          hasUpdate = true;
+        }
         if (hasUpdate) {
           updateMetaFromCurrentState();
         }
-      });
+      }
+      );
     }
 
     function getVelocityLayerMeshStride(context) {
       if (!context?.dataset) return 1;
+      const datasetStride = Number(context.dataset.velocityMeshStride);
+      if (Number.isFinite(datasetStride) && datasetStride > 0) {
+        return Math.max(1, Math.round(datasetStride));
+      }
       return context.dataset.id === "hd" ? HD_VELOCITY_MESH_STRIDE : 1;
     }
 
@@ -3883,6 +4029,7 @@
       if (isShowcaseMode) return false;
       if (!currentCoreContext) return false;
       if (backgroundWarmupStarted) return false;
+      if (currentCoreContext.dataset?.disableBackgroundWarmup) return false;
       // HD warmup can starve on-demand layer toggles because it competes for the same worker.
       if (currentCoreContext.dataset?.id === "hd") return false;
       const connection = navigator.connection;
@@ -3908,6 +4055,9 @@
         if (!context || context !== currentCoreContext || context.generation !== loadGeneration) return;
         await nextAnimationFrame();
         await ensureHydrologyLoaded({ trigger: "warmup" });
+        if (!context || context !== currentCoreContext || context.generation !== loadGeneration) return;
+        await nextAnimationFrame();
+        await ensureRefinedBasinsLoaded({ trigger: "warmup" });
       })().catch((error) => {
         console.warn("Background warmup failed:", error);
       });
@@ -3948,9 +4098,11 @@
       currentVelocityMeta = null;
       currentHydrologyMeta = null;
       currentVelocityMedianSpeed = Number.NaN;
+      currentRefinedBasinData = null;
       velocityLoadPromise = null;
       hydrologyLoadPromise = null;
       refinedBasinLoadPromise = null;
+      refinedBasinLoadingUrl = null;
       backgroundWarmupStarted = false;
       backgroundWarmupScheduled = false;
       viewerInteracted = false;
@@ -4135,6 +4287,7 @@
           showIceBottom: controlsUI.showIceBottom.checked,
           showVelocity: controlsUI.showVelocity.checked,
           showFlowline: controlsUI.showFlowline.checked,
+          showRefinedBasins: controlsUI.showRefinedBasins.checked,
           showEffectivePressure: controlsUI.showEffectivePressure.checked,
           showSubglacialChannels: controlsUI.showSubglacialChannels.checked,
         },
@@ -4153,6 +4306,12 @@
           iceBottom: Boolean(iceBottomMesh && iceBottomMesh.visible),
           velocity: Boolean(velocitySurfaceMesh && velocitySurfaceMesh.visible),
           flowline: Boolean(flowlineMesh && flowlineMesh.visible),
+          basins: Boolean(
+            (refinedBasinBedLines && refinedBasinBedLines.visible) ||
+              (refinedBasinSurfaceLines && refinedBasinSurfaceLines.visible) ||
+              (refinedBasinBedLabels && refinedBasinBedLabels.visible) ||
+              (refinedBasinSurfaceLabels && refinedBasinSurfaceLabels.visible)
+          ),
           hydrology: Boolean(
             (effectivePressureMesh && effectivePressureMesh.visible) ||
               (subglacialChannelMesh && subglacialChannelMesh.visible)
