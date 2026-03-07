@@ -7,7 +7,7 @@ sections:
   - block: markdown
     id: antarctica-3d-demo
     content:
-      title: "3D Antarctica Explorer 🇦🇶" 
+      title: "3D Antarctica & Greenland Explorer 🇦🇶" 
       text: |
         <style>
           #antarctica-3d-demo .max-w-prose {
@@ -34,7 +34,7 @@ sections:
         </style>
         <div class="tools-embed">
           <iframe
-            title="Antarctic Ice Dynamics and Subglacial Hydrology 3D explorer"
+            title="3D Antarctica & Greenland Explorer 🇦🇶"
             src="/tools/antarctica-bedmachine-3d.html"
             loading="lazy"
             fetchpriority="low"

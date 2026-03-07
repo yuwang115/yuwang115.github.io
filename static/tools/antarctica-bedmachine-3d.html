@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3D Antarctica &amp; Greenland Ice Sheet Explorer</title>
+  <title>3D Antarctica &amp; Greenland Explorer 🇦🇶</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -3289,28 +3289,17 @@
         (Number(value) / 1e6).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const fmtQ = (value) =>
         Number(value).toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-      const projectionLabel = dataset.regionKey === "greenland" ? "EPSG:3413" : dataset.regionKey === "antarctica" ? "EPSG:3031" : "Polar stereographic";
-      const formatProduct = (title, version, sourceFile) =>
-        [title, version ? `(${version})` : "", sourceFile ? `- ${sourceFile}` : ""].filter(Boolean).join(" ");
+      const projectionLabel =
+        dataset.regionKey === "greenland"
+          ? "EPSG:3413 polar stereographic"
+          : dataset.regionKey === "antarctica"
+          ? "EPSG:3031 polar stereographic"
+          : "Polar stereographic";
       const velocityCoverage = velocityMeta?.coverage;
-      const geometryProduct = formatProduct(meta.title, meta.product_version, meta.source_file);
-      const velocityProduct = velocityMeta
-        ? formatProduct(velocityMeta.title, velocityMeta.product_version, velocityMeta.source_file)
-        : dataset.sources.velocity || "";
-      const basinProduct = currentRefinedBasinData
-        ? formatProduct(
-            currentRefinedBasinData.dataset,
-            currentRefinedBasinData.dataset_key,
-            currentRefinedBasinData.source_shapefile
-          )
-        : dataset.sources.basins || "";
-      const hydrologyProduct = hydrologyMeta
-        ? formatProduct(hydrologyMeta.title, hydrologyMeta.product_version, hydrologyMeta.source_file)
-        : dataset.sources.hydrology || "";
       const basinStatus = !capabilities.refinedBasins
         ? `Not yet added for ${region.label}`
         : Number.isFinite(refinedBasinCount) && refinedBasinCount > 0
-        ? `${fmtInt(refinedBasinCount)} basin boundaries ready`
+        ? "Available"
         : dataset.refinedBasinsUrl
         ? "Available on demand"
         : "n/a";
@@ -3318,7 +3307,7 @@
       const velocitySection = capabilities.velocity
         ? `
         <li class="meta-group">Velocity</li>
-        <li><strong>Coverage:</strong> ${
+        <li><strong>Valid Coverage:</strong> ${
           velocityCoverage
             ? `${fmtPercent(velocityCoverage.valid_fraction)} of grid (${fmtInt(velocityCoverage.valid_count)} / ${fmtInt(
                 velocityCoverage.cell_count
@@ -3327,9 +3316,11 @@
         }</li>
         <li><strong>Surface Speed:</strong> ${speedStats ? `${fmtInt(speedStats.min)} to ${fmtInt(speedStats.max)} m/yr` : "n/a"}</li>
         <li><strong>Mean Speed:</strong> ${speedStats ? `${fmtInt(speedStats.mean)} m/yr` : "n/a"}</li>
-        <li><strong>Median Speed:</strong> ${
-          Number.isFinite(velocityMedianSpeed) && velocityMedianSpeed > 0 ? `${fmtInt(velocityMedianSpeed)} m/yr` : "n/a"
-        }</li>
+        ${
+          Number.isFinite(velocityMedianSpeed) && velocityMedianSpeed > 0
+            ? `<li><strong>Median Speed:</strong> ${fmtInt(velocityMedianSpeed)} m/yr</li>`
+            : ""
+        }
       `
         : `
         <li class="meta-group">Velocity</li>
@@ -3338,14 +3329,18 @@
 
       const basinSection = `
         <li class="meta-group">Basin Boundaries</li>
-        <li><strong>Toggle Label:</strong> ${dataset.basinToggleLabel}</li>
         <li><strong>Status:</strong> ${basinStatus}</li>
+        ${
+          Number.isFinite(refinedBasinCount) && refinedBasinCount > 0
+            ? `<li><strong>Basin Count:</strong> ${fmtInt(refinedBasinCount)}</li>`
+            : ""
+        }
       `;
 
       const hydrologySection = capabilities.hydrology
         ? `
         <li class="meta-group">Subglacial Hydrology</li>
-        <li><strong>Coverage:</strong> ${
+        <li><strong>Pressure Coverage:</strong> ${
           channelCoverage
             ? `${fmtPercent(channelCoverage.effective_pressure_valid_fraction)} pressure coverage`
             : "Available on demand"
@@ -3359,26 +3354,30 @@
         <li><strong>Status:</strong> Not yet added for ${region.label}</li>
       `;
 
-      const productLines = [
-        `<li class="meta-compact"><strong>Geometry:</strong> ${geometryProduct}</li>`,
-      ];
-      if (capabilities.velocity && velocityProduct) {
-        productLines.push(`<li class="meta-compact"><strong>Surface Velocity:</strong> ${velocityProduct}</li>`);
+      const sourceLines = [`<li class="meta-compact"><strong>Bed/Ice Geometry:</strong> ${dataset.sources.geometry}</li>`];
+      if (capabilities.velocity && dataset.sources.velocity) {
+        sourceLines.push(`<li class="meta-compact"><strong>Surface Velocity:</strong> ${dataset.sources.velocity}</li>`);
       }
-      if (capabilities.refinedBasins && basinProduct) {
-        productLines.push(`<li class="meta-compact"><strong>Basin Boundaries:</strong> ${basinProduct}</li>`);
+      if (capabilities.refinedBasins && dataset.sources.basins) {
+        sourceLines.push(
+          `<li class="meta-compact"><strong>Basin Boundaries:</strong> ${dataset.sources.basins}${
+            Number.isFinite(refinedBasinCount) && refinedBasinCount > 0 ? ` (${fmtInt(refinedBasinCount)} basins)` : ""
+          }</li>`
+        );
       }
-      if (capabilities.hydrology && hydrologyProduct) {
-        productLines.push(`<li class="meta-compact"><strong>Subglacial Hydrology:</strong> ${hydrologyProduct}</li>`);
+      if (capabilities.hydrology && dataset.sources.hydrology) {
+        sourceLines.push(`<li class="meta-compact"><strong>Subglacial Hydrology:</strong> ${dataset.sources.hydrology}</li>`);
+      }
+      if (!capabilities.velocity && !capabilities.hydrology && !capabilities.refinedBasins) {
+        sourceLines.push(
+          `<li class="meta-compact"><strong>Current ${region.label} scope:</strong> Bed topography, ice surface, and ice base are enabled in this version.</li>`
+        );
       }
 
       metaListEl.innerHTML = `
         <li class="meta-group">Grid & Topography</li>
-        <li><strong>Region:</strong> ${region.label}</li>
-        <li><strong>Preset:</strong> ${dataset.label}</li>
-        <li><strong>Terrain Package:</strong> ${dataset.summary}</li>
-        <li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)} cells</li>
-        <li><strong>Resolution:</strong> ${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km</li>
+        <li><strong>Preset:</strong> ${region.label} ${dataset.label} (${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km grid)</li>
+        <li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)}</li>
         <li><strong>Projection:</strong> ${projectionLabel}</li>
         <li><strong>Bed Elevation:</strong> ${fmtInt(bedStats.min)} to ${fmtInt(bedStats.max)} m</li>
         <li><strong>Max Ice Thickness:</strong> ${fmtInt(thickStats.max)} m</li>
@@ -3388,8 +3387,8 @@
         ${basinSection}
         ${hydrologySection}
 
-        <li class="meta-group">Data Products</li>
-        ${productLines.join("")}
+        <li class="meta-group">Sources</li>
+        ${sourceLines.join("")}
       `;
       if (fieldStatsEl) {
         const fieldParts = [
