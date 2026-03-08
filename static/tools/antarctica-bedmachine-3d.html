@@ -456,6 +456,65 @@
       font-family: "IBM Plex Mono", monospace;
     }
 
+    .ocean-legend-wrap {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .ocean-legend-y-axis {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 10px;
+      min-width: 54px;
+      padding: 3px 0;
+      color: #3e5d6f;
+      font-size: 0.68rem;
+      line-height: 1.2;
+      font-family: "IBM Plex Mono", monospace;
+      text-align: right;
+    }
+
+    .ocean-legend-y-axis strong,
+    .ocean-legend-x-axis strong {
+      display: block;
+      color: #264a60;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.71rem;
+      letter-spacing: 0.01em;
+    }
+
+    .ocean-legend-canvas {
+      display: block;
+      width: 100%;
+      height: 126px;
+      border-radius: 12px;
+      border: 1px solid #bdd2de;
+      background: #d7e8ef;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+
+    .ocean-legend-x-axis {
+      margin-top: 7px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #3e5d6f;
+      font-size: 0.68rem;
+      line-height: 1.2;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .ocean-legend-note {
+      margin-top: 8px;
+      color: #567082;
+      font-size: 0.72rem;
+      line-height: 1.35;
+    }
+
     body.showcase {
       background:
         radial-gradient(circle at 18% 22%, #0f3b57 0%, #0a2d45 36%, transparent 62%),
@@ -676,7 +735,8 @@
         <label class="toggle"><input id="showIce" type="checkbox" checked /> Show ice surface</label>
         <label class="toggle"><input id="showIceBottom" type="checkbox" checked /> Show ice bottom surface</label>
         <label class="toggle"><input id="showVelocity" type="checkbox" /> Show ice surface velocity</label>
-        <label class="toggle"><input id="showFlowline" type="checkbox" /> Show ice flowline</label>
+        <label class="toggle"><input id="showFlowline" type="checkbox" /> Show ice flowlines</label>
+        <label class="toggle"><input id="showOceanCurrents" type="checkbox" /> Show ocean streamlines</label>
         <label class="toggle"><input id="showRefinedBasins" type="checkbox" /> <span id="showRefinedBasinsLabel">Show refined basins</span></label>
         <label class="toggle"><input id="showEffectivePressure" type="checkbox" /> Show effective pressure</label>
         <label class="toggle"><input id="showSubglacialChannels" type="checkbox" /> Show subglacial channels</label>
@@ -705,6 +765,22 @@
           <span>500</span>
           <span>1500+</span>
         </div>
+      </section>
+
+      <section id="oceanLegendSection" class="section" hidden>
+        <h2 class="section-title">Ocean Flowline Color</h2>
+        <div class="ocean-legend-wrap">
+          <div class="ocean-legend-y-axis">
+            <span id="oceanLegendWarmLabel"><strong>Warm</strong>8.0 °C</span>
+            <span id="oceanLegendColdLabel"><strong>Cold</strong>-2.0 °C</span>
+          </div>
+          <canvas id="oceanLegendCanvas" class="ocean-legend-canvas" width="184" height="126" aria-hidden="true"></canvas>
+        </div>
+        <div class="ocean-legend-x-axis">
+          <span id="oceanLegendFreshLabel"><strong>Fresh</strong>30.0 PSU</span>
+          <span id="oceanLegendSaltyLabel"><strong>Salty</strong>35.0 PSU</span>
+        </div>
+        <div class="ocean-legend-note">Bivariate temperature-salinity color key for Greenland ocean flowlines.</div>
       </section>
 
       <section class="section">
@@ -813,6 +889,7 @@
         capabilities: {
           velocity: true,
           flowline: true,
+          oceanCurrents: false,
           refinedBasins: true,
           hydrology: true,
         },
@@ -851,7 +928,7 @@
         key: "greenland",
         label: "Greenland",
         intro:
-          "Rotate, zoom, and explore Greenland with BedMachine geometry plus surface-velocity and flowline overlays aligned to the ice-sheet grid.",
+          "Rotate, zoom, and explore Greenland with BedMachine geometry plus ice-sheet and ocean-flowline overlays aligned to the polar grid.",
         refinedBasinsUrl: "/tools/data/greenland_basins_ps_v1_4_2.json",
         basinToggleLabel: "Show basins",
         basinStatusLabel: "basins",
@@ -859,12 +936,15 @@
         capabilities: {
           velocity: true,
           flowline: true,
+          oceanCurrents: true,
           refinedBasins: true,
           hydrology: false,
         },
         sources: {
           geometry: "BedMachine Greenland, Version 6",
           velocity: "ITS_LIVE Greenland ice surface velocity mosaic (120 m, V02.1)",
+          oceanCurrents:
+            "Copernicus Marine Arctic Ocean Physics Analysis and Forecast (monthly mean ocean velocity, temperature, and salinity)",
           basins: "Greenland Basins PS v1.4.2 catchment boundaries",
         },
         datasets: {
@@ -876,6 +956,8 @@
             binUrl: "/tools/data/bedmachine_greenland_v6_3km.bin",
             velocityMetaUrl: "/tools/data/greenland_ice_velocity_3km.meta.json",
             velocityBinUrl: "/tools/data/greenland_ice_velocity_3km.bin",
+            oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260308-deepbottom",
+            oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260308-deepbottom",
           },
           "1km": {
             id: "1km",
@@ -885,6 +967,8 @@
             binUrl: "/tools/data/bedmachine_greenland_v6_1km.bin",
             velocityMetaUrl: "/tools/data/greenland_ice_velocity_1km.meta.json",
             velocityBinUrl: "/tools/data/greenland_ice_velocity_1km.bin",
+            oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260308-deepbottom",
+            oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260308-deepbottom",
             velocityMeshStride: 3,
             disableBackgroundWarmup: true,
           },
@@ -949,6 +1033,7 @@
       showIceBottom: document.getElementById("showIceBottom"),
       showVelocity: document.getElementById("showVelocity"),
       showFlowline: document.getElementById("showFlowline"),
+      showOceanCurrents: document.getElementById("showOceanCurrents"),
       showRefinedBasins: document.getElementById("showRefinedBasins"),
       showRefinedBasinsLabel: document.getElementById("showRefinedBasinsLabel"),
       showEffectivePressure: document.getElementById("showEffectivePressure"),
@@ -961,6 +1046,12 @@
       viewerFullscreenToggle: document.getElementById("viewerFullscreenToggle"),
       legendBar: document.getElementById("legendBar"),
       velocityLegendBar: document.getElementById("velocityLegendBar"),
+      oceanLegendSection: document.getElementById("oceanLegendSection"),
+      oceanLegendCanvas: document.getElementById("oceanLegendCanvas"),
+      oceanLegendWarmLabel: document.getElementById("oceanLegendWarmLabel"),
+      oceanLegendColdLabel: document.getElementById("oceanLegendColdLabel"),
+      oceanLegendFreshLabel: document.getElementById("oceanLegendFreshLabel"),
+      oceanLegendSaltyLabel: document.getElementById("oceanLegendSaltyLabel"),
       effectivePressureLegendBar: document.getElementById("effectivePressureLegendBar"),
       channelLegendBar: document.getElementById("channelLegendBar"),
     };
@@ -979,6 +1070,7 @@
     let effectivePressureMesh;
     let subglacialChannelMesh;
     let flowlineMesh;
+    let oceanCurrentMesh;
     let seaLevelMesh;
     let refinedBasinBedLines;
     let refinedBasinSurfaceLines;
@@ -1004,9 +1096,11 @@
     let currentCoreContext = null;
     let currentVelocityMeta = null;
     let currentHydrologyMeta = null;
+    let currentOceanCurrentMeta = null;
     let currentVelocityMedianSpeed = Number.NaN;
     let velocityLoadPromise = null;
     let hydrologyLoadPromise = null;
+    let oceanCurrentLoadPromise = null;
     let viewerInteracted = false;
     let backgroundWarmupScheduled = false;
     let backgroundWarmupStarted = false;
@@ -1084,8 +1178,12 @@
       const basinAvailable = Boolean(
         !isShowcaseMode && capabilities.refinedBasins && dataset?.refinedBasinsUrl && !getDatasetBasinUnavailable(dataset)
       );
+      const oceanCurrentAvailable = Boolean(
+        !isShowcaseMode && capabilities.oceanCurrents && dataset?.oceanCurrentsMetaUrl && dataset?.oceanCurrentsBinUrl
+      );
       setToggleAvailability(controlsUI.showVelocity, capabilities.velocity);
       setToggleAvailability(controlsUI.showFlowline, capabilities.velocity && capabilities.flowline);
+      setToggleAvailability(controlsUI.showOceanCurrents, oceanCurrentAvailable);
       setToggleAvailability(controlsUI.showRefinedBasins, basinAvailable);
       setToggleAvailability(controlsUI.showEffectivePressure, capabilities.hydrology);
       setToggleAvailability(controlsUI.showSubglacialChannels, capabilities.hydrology);
@@ -1122,6 +1220,7 @@
       updateRegionLayerAvailability(region.key);
       updateRegionControlAvailability();
       updateResolutionControlAvailability();
+      updateOceanCurrentLegend();
       return resolvedDatasetKey;
     }
 
@@ -1141,12 +1240,14 @@
       controlsUI.showIceBottom.checked = true;
       controlsUI.showVelocity.checked = false;
       controlsUI.showFlowline.checked = false;
+      controlsUI.showOceanCurrents.checked = false;
       controlsUI.showRefinedBasins.checked = false;
       controlsUI.showEffectivePressure.checked = false;
       controlsUI.showSubglacialChannels.checked = false;
       controlsUI.showSea.checked = false;
       controlsUI.showVelocity.disabled = true;
       controlsUI.showFlowline.disabled = true;
+      controlsUI.showOceanCurrents.disabled = true;
       controlsUI.showRefinedBasins.disabled = true;
       controlsUI.showEffectivePressure.disabled = true;
       controlsUI.showSubglacialChannels.disabled = true;
@@ -1211,6 +1312,7 @@
     const FLOWLINE_MAX_STEPS = 110;
     const FLOWLINE_STEP_CELLS = 1.0;
     const VELOCITY_REFERENCE_SPEED = 1800;
+    const OCEAN_CURRENT_BED_CLEARANCE_M = 20;
     const EFFECTIVE_PRESSURE_REFERENCE_PA = 5_000_000;
     const CHANNEL_DISCHARGE_MIN = 1e-3;
     const CHANNEL_DISCHARGE_MAX = 100;
@@ -1226,6 +1328,10 @@
     const REFINED_BASIN_SURFACE_LABEL_OFFSET_M = 42;
     const REFINED_BASIN_LABEL_WORLD_SCALE = 0.0076;
     const GREENLAND_REFINED_BASIN_LABEL_WORLD_SCALE = 0.0104;
+    const OCEAN_CURRENT_ARROW_HEAD_RATIO = 0.4;
+    const OCEAN_CURRENT_ARROW_HEAD_MIN_UNITS = 0.16;
+    const OCEAN_CURRENT_ARROW_HEAD_MAX_UNITS = 1.0;
+    const OCEAN_CURRENT_ARROW_HEAD_WIDTH_RATIO = 0.65;
     // Keep HD velocity responsive with a decimated mesh.
     const HD_VELOCITY_MESH_STRIDE = 2;
     // Effective-pressure overlay should stay conformal to bed to avoid local intersections.
@@ -1563,6 +1669,80 @@
       });
     }
 
+    function getOceanCurrentVisualizationRanges(oceanMeta) {
+      const visualization = oceanMeta?.visualization || {};
+      const thetaRange = Array.isArray(visualization.temperature_range_c) ? visualization.temperature_range_c : [-2, 8];
+      const salinityRange = Array.isArray(visualization.salinity_range_psu) ? visualization.salinity_range_psu : [30, 35];
+      return {
+        thetaMin: Number(thetaRange[0]),
+        thetaMax: Number(thetaRange[1]),
+        salinityMin: Number(salinityRange[0]),
+        salinityMax: Number(salinityRange[1]),
+      };
+    }
+
+    function formatOceanLegendValue(value, unit, digits = 1) {
+      if (!Number.isFinite(value)) return `n/a ${unit}`;
+      return `${Number(value).toLocaleString("en-US", {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits,
+      })} ${unit}`;
+    }
+
+    function updateOceanCurrentLegend() {
+      if (
+        !controlsUI.oceanLegendSection ||
+        !controlsUI.oceanLegendCanvas ||
+        !controlsUI.oceanLegendWarmLabel ||
+        !controlsUI.oceanLegendColdLabel ||
+        !controlsUI.oceanLegendFreshLabel ||
+        !controlsUI.oceanLegendSaltyLabel
+      ) {
+        return;
+      }
+
+      const region = getRegionConfig(currentRegionKey);
+      const datasetKey = currentDatasetKey || datasetSelectionByRegion[region.key] || getDefaultDatasetKey(region.key);
+      const dataset = getDatasetConfig(region.key, datasetKey);
+      const oceanLegendVisible = Boolean(
+        !isShowcaseMode && region.capabilities?.oceanCurrents && dataset?.oceanCurrentsMetaUrl
+      );
+      controlsUI.oceanLegendSection.hidden = !oceanLegendVisible;
+      if (!oceanLegendVisible) return;
+
+      const ranges = getOceanCurrentVisualizationRanges(currentOceanCurrentMeta);
+      const { thetaMin, thetaMax, salinityMin, salinityMax } = ranges;
+      controlsUI.oceanLegendWarmLabel.innerHTML = `<strong>Warm</strong>${formatOceanLegendValue(thetaMax, "°C")}`;
+      controlsUI.oceanLegendColdLabel.innerHTML = `<strong>Cold</strong>${formatOceanLegendValue(thetaMin, "°C")}`;
+      controlsUI.oceanLegendFreshLabel.innerHTML = `<strong>Fresh</strong>${formatOceanLegendValue(salinityMin, "PSU")}`;
+      controlsUI.oceanLegendSaltyLabel.innerHTML = `<strong>Salty</strong>${formatOceanLegendValue(salinityMax, "PSU")}`;
+
+      const canvas = controlsUI.oceanLegendCanvas;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      const width = canvas.width;
+      const height = canvas.height;
+      const image = ctx.createImageData(width, height);
+      const data = image.data;
+      const thetaSpan = Math.max(1e-6, thetaMax - thetaMin);
+      const salinitySpan = Math.max(1e-6, salinityMax - salinityMin);
+
+      for (let y = 0; y < height; y += 1) {
+        const theta = thetaMin + ((height - 1 - y) / Math.max(1, height - 1)) * thetaSpan;
+        for (let x = 0; x < width; x += 1) {
+          const salinity = salinityMin + (x / Math.max(1, width - 1)) * salinitySpan;
+          const color = oceanCurrentColor(theta, salinity, currentOceanCurrentMeta);
+          const idx = (y * width + x) * 4;
+          data[idx] = Math.round(clamp01(color[0]) * 255);
+          data[idx + 1] = Math.round(clamp01(color[1]) * 255);
+          data[idx + 2] = Math.round(clamp01(color[2]) * 255);
+          data[idx + 3] = 255;
+        }
+      }
+
+      ctx.putImageData(image, 0, 0);
+    }
+
     function iceColor(thicknessMeters, maskValue) {
       const t = clamp01(thicknessMeters / 4200);
       const grounded = lerpColor([0.72, 0.84, 0.95], [0.97, 0.99, 1.0], t);
@@ -1603,6 +1783,31 @@
         ],
         scaled
       );
+    }
+
+    function oceanCurrentColor(thetaC, salinityPsu, oceanMeta) {
+      const visualization = oceanMeta?.visualization || {};
+      const thetaRange = Array.isArray(visualization.temperature_range_c) ? visualization.temperature_range_c : [-2, 8];
+      const salinityRange = Array.isArray(visualization.salinity_range_psu) ? visualization.salinity_range_psu : [30, 35];
+      const thetaSpan = Math.max(1e-6, Number(thetaRange[1]) - Number(thetaRange[0]));
+      const salinitySpan = Math.max(1e-6, Number(salinityRange[1]) - Number(salinityRange[0]));
+      const thetaT = clamp01((Number(thetaC) - Number(thetaRange[0])) / thetaSpan);
+      const salinityT = clamp01((Number(salinityPsu) - Number(salinityRange[0])) / salinitySpan);
+
+      const coldFresh = [0.15, 0.78, 0.95];
+      const coldSalty = [0.39, 0.31, 0.84];
+      const warmFresh = [0.09, 0.72, 0.52];
+      const warmSalty = [0.96, 0.55, 0.17];
+
+      const freshBlend = lerpColor(coldFresh, warmFresh, thetaT);
+      const saltyBlend = lerpColor(coldSalty, warmSalty, thetaT);
+      const color = lerpColor(freshBlend, saltyBlend, salinityT);
+      const brightnessLift = 0.06 + thetaT * 0.05;
+      return [
+        clamp01(color[0] + brightnessLift),
+        clamp01(color[1] + brightnessLift * 0.9),
+        clamp01(color[2] + brightnessLift * 0.35),
+      ];
     }
 
     function effectivePressureColor(pressurePa) {
@@ -2104,6 +2309,157 @@
       return lines;
     }
 
+    function buildOceanCurrentMesh(context, oceanMeta, oceanBuffer) {
+      if (!context || !oceanMeta || !(oceanBuffer instanceof ArrayBuffer)) return null;
+
+      const x0Ps = parseField(oceanMeta, oceanBuffer, "x0_ps_m");
+      const y0Ps = parseField(oceanMeta, oceanBuffer, "y0_ps_m");
+      const depth0M = parseField(oceanMeta, oceanBuffer, "depth0_m");
+      const x1Ps = parseField(oceanMeta, oceanBuffer, "x1_ps_m");
+      const y1Ps = parseField(oceanMeta, oceanBuffer, "y1_ps_m");
+      const depth1M = parseField(oceanMeta, oceanBuffer, "depth1_m");
+      const theta0C = parseField(oceanMeta, oceanBuffer, "theta0_c");
+      const sal0Psu = parseField(oceanMeta, oceanBuffer, "sal0_psu");
+      const theta1C = parseField(oceanMeta, oceanBuffer, "theta1_c");
+      const sal1Psu = parseField(oceanMeta, oceanBuffer, "sal1_psu");
+      const terminalFlag = parseField(oceanMeta, oceanBuffer, "terminal_flag");
+      const count = x0Ps.length;
+
+      if (
+        y0Ps.length !== count ||
+        depth0M.length !== count ||
+        x1Ps.length !== count ||
+        y1Ps.length !== count ||
+        depth1M.length !== count ||
+        theta0C.length !== count ||
+        sal0Psu.length !== count ||
+        theta1C.length !== count ||
+        sal1Psu.length !== count ||
+        terminalFlag.length !== count
+      ) {
+        throw new Error("Ocean-current package fields are misaligned.");
+      }
+
+      const positions = [];
+      const colors = [];
+      let segmentCount = 0;
+
+      for (let i = 0; i < count; i += 1) {
+        const projected0 = projectPs71PointToGrid(context, x0Ps[i], y0Ps[i]);
+        const projected1 = projectPs71PointToGrid(context, x1Ps[i], y1Ps[i]);
+        if (!projected0 || !projected1) continue;
+
+        const depth0 = Math.max(0, Number(depth0M[i]));
+        const depth1 = Math.max(0, Number(depth1M[i]));
+        const col0 = projected0.col;
+        const row0 = projected0.row;
+        const col1 = projected1.col;
+        const row1 = projected1.row;
+        if (col0 < 0 || row0 < 0 || col0 >= context.nx || row0 >= context.ny) continue;
+        if (col1 < 0 || row1 < 0 || col1 >= context.nx || row1 >= context.ny) continue;
+
+        const col0Nearest = Math.min(context.nx - 1, Math.max(0, Math.round(col0)));
+        const row0Nearest = Math.min(context.ny - 1, Math.max(0, Math.round(row0)));
+        const col1Nearest = Math.min(context.nx - 1, Math.max(0, Math.round(col1)));
+        const row1Nearest = Math.min(context.ny - 1, Math.max(0, Math.round(row1)));
+        const idx0 = row0Nearest * context.nx + col0Nearest;
+        const idx1 = row1Nearest * context.nx + col1Nearest;
+        if (context.mask[idx0] !== 0 || context.mask[idx1] !== 0) continue;
+
+        const bedHeight0 = sampleGridHeightNearest(context, col0, row0, "bed");
+        const bedHeight1 = sampleGridHeightNearest(context, col1, row1, "bed");
+        if (!Number.isFinite(bedHeight0) || !Number.isFinite(bedHeight1)) continue;
+        if (-bedHeight0 < depth0 + OCEAN_CURRENT_BED_CLEARANCE_M) continue;
+        if (-bedHeight1 < depth1 + OCEAN_CURRENT_BED_CLEARANCE_M) continue;
+
+        const scenePoint0 = gridToSceneXZ(context, col0, row0);
+        const scenePoint1 = gridToSceneXZ(context, col1, row1);
+        const y0 = -depth0 / context.baseConfig.verticalMetersPerUnit;
+        const y1 = -depth1 / context.baseConfig.verticalMetersPerUnit;
+        const color0 = oceanCurrentColor(theta0C[i], sal0Psu[i], oceanMeta);
+        const color1 = oceanCurrentColor(theta1C[i], sal1Psu[i], oceanMeta);
+
+        positions.push(scenePoint0.x, y0, scenePoint0.z, scenePoint1.x, y1, scenePoint1.z);
+        colors.push(color0[0], color0[1], color0[2], color1[0], color1[1], color1[2]);
+
+        if (terminalFlag[i]) {
+          const dx = scenePoint1.x - scenePoint0.x;
+          const dy = y1 - y0;
+          const dz = scenePoint1.z - scenePoint0.z;
+          const length = Math.hypot(dx, dy, dz);
+          if (Number.isFinite(length) && length > 1e-5) {
+            const headLength = clamp(
+              length * OCEAN_CURRENT_ARROW_HEAD_RATIO,
+              OCEAN_CURRENT_ARROW_HEAD_MIN_UNITS,
+              OCEAN_CURRENT_ARROW_HEAD_MAX_UNITS
+            );
+            const headWidth = headLength * OCEAN_CURRENT_ARROW_HEAD_WIDTH_RATIO;
+            const direction = new THREE.Vector3(dx, dy, dz).normalize();
+            let side = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0));
+            if (side.lengthSq() < 1e-6) {
+              side = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(1, 0, 0));
+            }
+            side.normalize().multiplyScalar(headWidth);
+            const tip = new THREE.Vector3(scenePoint1.x, y1, scenePoint1.z);
+            const headBase = tip.clone().addScaledVector(direction, -headLength);
+            const headA = headBase.clone().add(side);
+            const headB = headBase.clone().sub(side);
+            const arrowColor = lerpColor(color1, [1, 1, 1], 0.35);
+            positions.push(
+              tip.x,
+              tip.y,
+              tip.z,
+              headA.x,
+              headA.y,
+              headA.z,
+              tip.x,
+              tip.y,
+              tip.z,
+              headB.x,
+              headB.y,
+              headB.z
+            );
+            colors.push(
+              arrowColor[0],
+              arrowColor[1],
+              arrowColor[2],
+              arrowColor[0],
+              arrowColor[1],
+              arrowColor[2],
+              arrowColor[0],
+              arrowColor[1],
+              arrowColor[2],
+              arrowColor[0],
+              arrowColor[1],
+              arrowColor[2]
+            );
+          }
+        }
+        segmentCount += 1;
+      }
+
+      if (!positions.length) return null;
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(positions), 3));
+      geometry.setAttribute("color", new THREE.BufferAttribute(new Float32Array(colors), 3));
+      geometry.computeBoundingSphere();
+      const material = new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.98,
+        depthWrite: false,
+        depthTest: false,
+      });
+      const lines = new THREE.LineSegments(geometry, material);
+      lines.scale.y = Number(controlsUI.exaggeration.value);
+      lines.visible = controlsUI.showOceanCurrents.checked;
+      lines.renderOrder = 28;
+      lines.userData.flowlineCount = Number(oceanMeta.streamline_count || oceanMeta.flowline_count || 0);
+      lines.userData.segmentCount = segmentCount;
+      return lines;
+    }
+
     function resizeRendererToViewer() {
       if (!renderer || !camera) return;
       const w = Math.max(1, viewerEl.clientWidth);
@@ -2232,6 +2588,7 @@
       effectivePressureMesh = disposeMesh(effectivePressureMesh);
       subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
       flowlineMesh = disposeMesh(flowlineMesh);
+      oceanCurrentMesh = disposeObject3D(oceanCurrentMesh);
       seaLevelMesh = disposeMesh(seaLevelMesh);
       clearRefinedBasinOverlays();
       velocityField = null;
@@ -3196,6 +3553,7 @@
         if (effectivePressureMesh) effectivePressureMesh.scale.y = value;
         if (subglacialChannelMesh) subglacialChannelMesh.scale.y = value;
         if (flowlineMesh) flowlineMesh.scale.y = value;
+        if (oceanCurrentMesh) oceanCurrentMesh.scale.y = value;
         if (refinedBasinBedLines) refinedBasinBedLines.scale.y = value;
         if (refinedBasinSurfaceLines) refinedBasinSurfaceLines.scale.y = value;
         updateRefinedBasinLabelPositionsForExaggeration();
@@ -3235,6 +3593,13 @@
           return;
         }
         updateFlowlineVisibility();
+      });
+      controlsUI.showOceanCurrents.addEventListener("change", () => {
+        if (controlsUI.showOceanCurrents.checked && !oceanCurrentMesh) {
+          ensureOceanCurrentsLoaded({ trigger: "toggle" });
+          return;
+        }
+        if (oceanCurrentMesh) oceanCurrentMesh.visible = controlsUI.showOceanCurrents.checked;
       });
       controlsUI.showRefinedBasins.addEventListener("change", () => {
         if (!controlsUI.showRefinedBasins.checked) {
@@ -3305,7 +3670,7 @@
       updateFullscreenControls();
     }
 
-    function updateMeta(meta, dataset, velocityMeta, hydrologyMeta, velocityMedianSpeed) {
+    function updateMeta(meta, dataset, velocityMeta, hydrologyMeta, oceanCurrentMeta, velocityMedianSpeed) {
       const region = getRegionConfig(dataset.regionKey);
       const capabilities = dataset.capabilities || region.capabilities;
       const grid = meta.grid;
@@ -3315,6 +3680,24 @@
       const pressureStats = hydrologyMeta?.fields?.find((f) => f.name === "effective_pressure")?.stats_pa;
       const channelStats = hydrologyMeta?.fields?.find((f) => f.name === "channel_discharge")?.stats_m3_per_s;
       const channelCoverage = hydrologyMeta?.coverage;
+      const oceanStreamlineCount = Number(oceanCurrentMeta?.streamline_count || oceanCurrentMeta?.flowline_count || 0);
+      const oceanCurrentSegmentCount = Number(oceanCurrentMeta?.segment_count || 0);
+      const oceanCurrentSpeedStats = oceanCurrentMeta?.fields?.find((f) => f.name === "speed_mps")?.stats;
+      const oceanCurrentThetaStats = oceanCurrentMeta?.fields?.find((f) => f.name === "theta_c_summary")?.stats;
+      const oceanCurrentSalinityStats = oceanCurrentMeta?.fields?.find((f) => f.name === "sal_psu_summary")?.stats;
+      const oceanCurrentCoverage = oceanCurrentMeta?.coverage;
+      const oceanCurrentDepths = oceanCurrentMeta?.sampling?.seed_depths_m || oceanCurrentMeta?.sampling?.depth_levels_m;
+      const adaptiveBottomSampling = oceanCurrentMeta?.sampling?.adaptive_bottom_seeding;
+      const adaptiveBottomStreamlineCount = Number(oceanCurrentCoverage?.streamlines_by_seed_depth?.adaptive_bottom || 0);
+      const oceanCurrentDepthMin = Number(oceanCurrentCoverage?.depth_min_m);
+      const oceanCurrentDepthMax = Number(oceanCurrentCoverage?.depth_max_m);
+      const oceanCurrentMonth = oceanCurrentMeta?.source_time_utc
+        ? new Date(oceanCurrentMeta.source_time_utc).toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+            timeZone: "UTC",
+          })
+        : "";
       const refinedBasinCount = Number(currentRefinedBasinData?.basin_count);
       const stepKm = Math.abs(grid.dx_m) / 1000;
       const fmtInt = (value) => Math.round(Number(value)).toLocaleString("en-US");
@@ -3324,6 +3707,8 @@
         (Number(value) / 1e6).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const fmtQ = (value) =>
         Number(value).toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+      const fmtShort = (value, digits = 2) =>
+        Number(value).toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
       const projectionLabel =
         dataset.regionKey === "greenland"
           ? "EPSG:3413 polar stereographic"
@@ -3362,6 +3747,52 @@
         <li><strong>Status:</strong> Not yet added for ${region.label}</li>
       `;
 
+      const oceanCurrentSection = capabilities.oceanCurrents
+        ? `
+        <li class="meta-group">Ocean Circulation</li>
+        <li><strong>Flowline Field:</strong> ${
+          oceanCurrentMeta
+            ? `${fmtInt(oceanStreamlineCount)} 3D traces (${fmtInt(oceanCurrentSegmentCount)} segments) seeded from ${fmtInt(
+                Array.isArray(oceanCurrentDepths) ? oceanCurrentDepths.length : 0
+              )} depth levels`
+            : "Available on demand"
+        }</li>
+        <li><strong>Reference Month:</strong> ${oceanCurrentMonth || "Monthly mean snapshot"}</li>
+        <li><strong>Seed Depths:</strong> ${
+          Array.isArray(oceanCurrentDepths) && oceanCurrentDepths.length
+            ? `${oceanCurrentDepths.map((value) => fmtInt(Math.abs(Number(value)) < 1e-6 ? 0 : value)).join(", ")} m`
+            : "n/a"
+        }</li>
+        ${
+          adaptiveBottomSampling?.enabled
+            ? `<li><strong>Adaptive Bottom Seeds:</strong> ${
+                oceanCurrentMeta
+                  ? `${fmtInt(adaptiveBottomStreamlineCount)} traces in water columns deeper than ${fmtInt(
+                      adaptiveBottomSampling.min_model_depth_m
+                    )} m`
+                  : "Enabled for deep-basin water columns"
+              }</li>`
+            : ""
+        }
+        <li><strong>3D Depth Span:</strong> ${
+          Number.isFinite(oceanCurrentDepthMin) && Number.isFinite(oceanCurrentDepthMax)
+            ? `${fmtShort(oceanCurrentDepthMin, 0)} to ${fmtShort(oceanCurrentDepthMax, 0)} m`
+            : "n/a"
+        }</li>
+        <li><strong>Horizontal Speed:</strong> ${
+          oceanCurrentSpeedStats ? `${fmtShort(oceanCurrentSpeedStats.min)} to ${fmtShort(oceanCurrentSpeedStats.max)} m/s` : "n/a"
+        }</li>
+        <li><strong>Water-Mass Color:</strong> ${
+          oceanCurrentThetaStats && oceanCurrentSalinityStats
+            ? `${fmtShort(oceanCurrentThetaStats.min, 1)} to ${fmtShort(oceanCurrentThetaStats.max, 1)} °C; ${fmtShort(
+                oceanCurrentSalinityStats.min,
+                1
+              )} to ${fmtShort(oceanCurrentSalinityStats.max, 1)} PSU`
+            : "Temperature-salinity blend"
+        }</li>
+      `
+        : "";
+
       const basinSection = `
         <li class="meta-group">Basin Boundaries</li>
         <li><strong>Status:</strong> ${basinStatus}</li>
@@ -3393,6 +3824,15 @@
       if (capabilities.velocity && dataset.sources.velocity) {
         sourceLines.push(`<li class="meta-compact"><strong>Surface Velocity:</strong> ${dataset.sources.velocity}</li>`);
       }
+      if (capabilities.oceanCurrents && dataset.sources.oceanCurrents) {
+        sourceLines.push(
+          `<li class="meta-compact"><strong>Ocean Circulation:</strong> ${dataset.sources.oceanCurrents}${
+            oceanCurrentCoverage?.streamlines_by_seed_depth || oceanCurrentCoverage?.segments_by_seed_depth || oceanCurrentCoverage?.counts_by_depth
+              ? ` (${fmtInt(oceanStreamlineCount)} 3D flowlines)`
+              : ""
+          }</li>`
+        );
+      }
       if (capabilities.refinedBasins && dataset.sources.basins) {
         sourceLines.push(
           `<li class="meta-compact"><strong>Basin Boundaries:</strong> ${dataset.sources.basins}${
@@ -3419,6 +3859,7 @@
         <li><strong>Mean Ice Thickness:</strong> ${Number.isFinite(thickStats.mean) ? `${fmtInt(thickStats.mean)} m` : "n/a"}</li>
 
         ${velocitySection}
+        ${oceanCurrentSection}
         ${basinSection}
         ${hydrologySection}
 
@@ -3433,6 +3874,9 @@
           `Ice max: ${Math.round(thickStats.max)} m`,
           `Velocity max: ${capabilities.velocity && speedStats ? `${Math.round(speedStats.max)} m/yr` : "n/a"}`,
         ];
+        if (capabilities.oceanCurrents && oceanStreamlineCount > 0) {
+          fieldParts.push(`Ocean flowlines: ${fmtInt(oceanStreamlineCount)}`);
+        }
         if (capabilities.refinedBasins && Number.isFinite(refinedBasinCount) && refinedBasinCount > 0) {
           fieldParts.push(`Basins: ${fmtInt(refinedBasinCount)}`);
         }
@@ -3441,14 +3885,19 @@
     }
 
     function updateMetaFromCurrentState() {
-      if (!currentCoreContext) return;
+      if (!currentCoreContext) {
+        updateOceanCurrentLegend();
+        return;
+      }
       updateMeta(
         currentCoreContext.meta,
         currentCoreContext.dataset,
         currentVelocityMeta,
         currentHydrologyMeta,
+        currentOceanCurrentMeta,
         currentVelocityMedianSpeed
       );
+      updateOceanCurrentLegend();
     }
 
     function buildCoreSceneFromContext(context) {
@@ -3601,6 +4050,15 @@
             return null;
           });
 
+      const oceanCurrentMetaPromise = !context.dataset.oceanCurrentsMetaUrl
+        ? Promise.resolve(null)
+        : context.oceanCurrentPrefetchMeta
+        ? Promise.resolve(context.oceanCurrentPrefetchMeta)
+        : fetchJsonStrict(context.dataset.oceanCurrentsMetaUrl, "Failed to load ocean-current metadata").catch((error) => {
+            console.warn("Ocean-current metadata prefetch failed:", error);
+            return null;
+          });
+
       const basinMetaPromise =
         isShowcaseMode || !context.dataset.capabilities.refinedBasins || !basinsUrl
           ? Promise.resolve(null)
@@ -3611,8 +4069,8 @@
               return null;
             });
 
-      Promise.all([velocityMetaPromise, hydrologyMetaPromise, basinMetaPromise]).then(
-        ([velocityMeta, hydrologyMeta, basinData]) => {
+      Promise.all([velocityMetaPromise, hydrologyMetaPromise, oceanCurrentMetaPromise, basinMetaPromise]).then(
+        ([velocityMeta, hydrologyMeta, oceanCurrentMeta, basinData]) => {
         if (context !== currentCoreContext || context.generation !== loadGeneration) return;
 
         let hasUpdate = false;
@@ -3624,6 +4082,11 @@
         if (hydrologyMeta) {
           context.hydrologyPrefetchMeta = hydrologyMeta;
           currentHydrologyMeta = hydrologyMeta;
+          hasUpdate = true;
+        }
+        if (oceanCurrentMeta) {
+          context.oceanCurrentPrefetchMeta = oceanCurrentMeta;
+          currentOceanCurrentMeta = oceanCurrentMeta;
           hasUpdate = true;
         }
         if (basinData && basinsUrl) {
@@ -3748,6 +4211,135 @@
         setLoadingOverlayVisible(false);
       }
       return true;
+    }
+
+    async function ensureOceanCurrentsLoaded({ trigger = "prefetch" } = {}) {
+      const context = currentCoreContext;
+      if (!context || context.generation !== loadGeneration) return false;
+      if (
+        !context.dataset.capabilities.oceanCurrents ||
+        !context.dataset.oceanCurrentsMetaUrl ||
+        !context.dataset.oceanCurrentsBinUrl
+      ) {
+        context.oceanCurrentUnavailable = true;
+        return false;
+      }
+      if (context.oceanCurrentLoaded) {
+        if (oceanCurrentMesh) oceanCurrentMesh.visible = controlsUI.showOceanCurrents.checked;
+        return true;
+      }
+      if (context.oceanCurrentUnavailable) return false;
+
+      const showOverlay = trigger === "toggle";
+      const buildLayer = trigger === "toggle" || trigger === "warmup";
+
+      if (oceanCurrentLoadPromise) {
+        const settled = await oceanCurrentLoadPromise;
+        if (
+          trigger === "toggle" &&
+          context === currentCoreContext &&
+          context.generation === loadGeneration &&
+          !context.oceanCurrentLoaded &&
+          !context.oceanCurrentUnavailable
+        ) {
+          return ensureOceanCurrentsLoaded({ trigger: "toggle" });
+        }
+        return settled;
+      }
+
+      oceanCurrentLoadPromise = (async () => {
+        const hasPrefetchedPayload = Boolean(context.oceanCurrentPrefetchMeta && context.oceanCurrentPrefetchBuffer);
+
+        if (showOverlay) {
+          setLoadingOverlayVisible(true);
+          updateLoadingProgress(
+            hasPrefetchedPayload ? 0.34 : 0.12,
+            hasPrefetchedPayload ? "Applying prefetched ocean-current data..." : "Loading ocean-current metadata..."
+          );
+          statusEl.textContent = "Loading 3D ocean flowlines...";
+        }
+
+        let oceanMeta = context.oceanCurrentPrefetchMeta;
+        let oceanBuffer = context.oceanCurrentPrefetchBuffer;
+
+        if (!oceanMeta) {
+          oceanMeta = await fetchJsonStrict(context.dataset.oceanCurrentsMetaUrl, "Failed to load ocean-current metadata");
+          if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        }
+        if (context === currentCoreContext && context.generation === loadGeneration && oceanMeta) {
+          currentOceanCurrentMeta = oceanMeta;
+          updateMetaFromCurrentState();
+        }
+
+        if (!oceanBuffer) {
+          oceanBuffer = showOverlay
+            ? await fetchArrayBufferWithProgress(
+                context.dataset.oceanCurrentsBinUrl,
+                0.2,
+                0.78,
+                "Downloading ocean-current vectors"
+              )
+            : await fetchArrayBufferStrict(context.dataset.oceanCurrentsBinUrl, "Failed to load ocean-current vectors");
+          if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        }
+
+        if (!buildLayer) {
+          context.oceanCurrentPrefetchMeta = oceanMeta;
+          context.oceanCurrentPrefetchBuffer = oceanBuffer;
+          return true;
+        }
+
+        context.oceanCurrentPrefetchMeta = null;
+        context.oceanCurrentPrefetchBuffer = null;
+
+        if (showOverlay) {
+          updateLoadingProgress(0.86, "Building ocean flowlines...");
+        }
+
+        const builtMesh = buildOceanCurrentMesh(context, oceanMeta, oceanBuffer);
+        if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        if (!builtMesh) {
+          throw new Error("Ocean-current dataset is empty after Greenland clipping.");
+        }
+
+        oceanCurrentMesh = disposeObject3D(oceanCurrentMesh);
+        oceanCurrentMesh = builtMesh;
+        currentOceanCurrentMeta = oceanMeta;
+        context.oceanCurrentLoaded = true;
+        scene.add(oceanCurrentMesh);
+        updateMetaFromCurrentState();
+        if (showOverlay) {
+          statusEl.textContent = getReadyStatusText(context);
+          updateLoadingProgress(1, "Ocean flowlines ready");
+          setLoadingOverlayVisible(false);
+        }
+        return true;
+      })()
+        .catch((error) => {
+          console.error("Ocean-current layer load failed:", error);
+          if (context === currentCoreContext && context.generation === loadGeneration && trigger === "toggle") {
+            context.oceanCurrentUnavailable = true;
+            controlsUI.showOceanCurrents.checked = false;
+            oceanCurrentMesh = disposeObject3D(oceanCurrentMesh);
+            const readyText = getReadyStatusText(context);
+            const transientText = "3D ocean flowlines unavailable";
+            statusEl.textContent = transientText;
+            window.setTimeout(() => {
+              if (statusEl.textContent === transientText) {
+                statusEl.textContent = readyText;
+              }
+            }, 1800);
+            setLoadingOverlayVisible(false);
+          }
+          return false;
+        })
+        .finally(() => {
+          if (context === currentCoreContext) {
+            oceanCurrentLoadPromise = null;
+          }
+        });
+
+      return oceanCurrentLoadPromise;
     }
 
     async function ensureVelocityLoaded({ trigger = "prefetch" } = {}) {
@@ -4092,6 +4684,9 @@
         if (!context || context !== currentCoreContext || context.generation !== loadGeneration) return;
         await nextAnimationFrame();
         await ensureRefinedBasinsLoaded({ trigger: "warmup" });
+        if (!context || context !== currentCoreContext || context.generation !== loadGeneration) return;
+        await nextAnimationFrame();
+        await ensureOceanCurrentsLoaded({ trigger: "warmup" });
       })().catch((error) => {
         console.warn("Background warmup failed:", error);
       });
@@ -4131,10 +4726,12 @@
       currentCoreContext = null;
       currentVelocityMeta = null;
       currentHydrologyMeta = null;
+      currentOceanCurrentMeta = null;
       currentVelocityMedianSpeed = Number.NaN;
       currentRefinedBasinData = null;
       velocityLoadPromise = null;
       hydrologyLoadPromise = null;
+      oceanCurrentLoadPromise = null;
       refinedBasinLoadPromise = null;
       refinedBasinLoadingUrl = null;
       backgroundWarmupStarted = false;
@@ -4240,6 +4837,10 @@
           hydrologyUnavailable: false,
           hydrologyPrefetchMeta: null,
           hydrologyPrefetchBuffer: null,
+          oceanCurrentLoaded: false,
+          oceanCurrentUnavailable: false,
+          oceanCurrentPrefetchMeta: null,
+          oceanCurrentPrefetchBuffer: null,
         };
         primeLayerMetadata(currentCoreContext);
 
@@ -4265,6 +4866,9 @@
         }
         if (controlsUI.showEffectivePressure.checked || controlsUI.showSubglacialChannels.checked) {
           ensureHydrologyLoaded({ trigger: "toggle" });
+        }
+        if (controlsUI.showOceanCurrents.checked && !controlsUI.showOceanCurrents.disabled) {
+          ensureOceanCurrentsLoaded({ trigger: "toggle" });
         }
         if (controlsUI.showRefinedBasins.checked && !controlsUI.showRefinedBasins.disabled) {
           ensureRefinedBasinsLoaded({ trigger: "toggle" });
@@ -4297,9 +4901,10 @@
         bindBackgroundWarmupTrigger();
         renderLoop();
 
-        await loadBedColorTable();
+        await Promise.all([loadBedColorTable(), ensureHydrologyColorTables()]);
         updateBedLegend();
         updateVelocityLegend();
+        updateOceanCurrentLegend();
         updateEffectivePressureLegend();
         updateChannelLegend();
 
@@ -4321,6 +4926,7 @@
           showIceBottom: controlsUI.showIceBottom.checked,
           showVelocity: controlsUI.showVelocity.checked,
           showFlowline: controlsUI.showFlowline.checked,
+          showOceanCurrents: controlsUI.showOceanCurrents.checked,
           showRefinedBasins: controlsUI.showRefinedBasins.checked,
           showEffectivePressure: controlsUI.showEffectivePressure.checked,
           showSubglacialChannels: controlsUI.showSubglacialChannels.checked,
@@ -4340,6 +4946,7 @@
           iceBottom: Boolean(iceBottomMesh && iceBottomMesh.visible),
           velocity: Boolean(velocitySurfaceMesh && velocitySurfaceMesh.visible),
           flowline: Boolean(flowlineMesh && flowlineMesh.visible),
+          oceanCurrents: Boolean(oceanCurrentMesh && oceanCurrentMesh.visible),
           basins: Boolean(
             (refinedBasinBedLines && refinedBasinBedLines.visible) ||
               (refinedBasinSurfaceLines && refinedBasinSurfaceLines.visible) ||
