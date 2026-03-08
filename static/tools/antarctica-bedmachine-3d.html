@@ -526,6 +526,11 @@
       left: 16px;
     }
 
+    body.showcase #fullscreenToggle,
+    body.showcase #viewerFullscreenToggle {
+      display: none !important;
+    }
+
     @media (max-width: 980px) {
       body:not(.mobile-drawer) .app {
         grid-template-columns: 1fr;
@@ -2722,6 +2727,7 @@
     }
 
     function fullscreenApiAvailable() {
+      if (isShowcaseMode) return false;
       const hasRequest =
         typeof viewerShellEl?.requestFullscreen === "function" ||
         typeof viewerShellEl?.webkitRequestFullscreen === "function";
@@ -2761,12 +2767,13 @@
       const supported = fullscreenApiAvailable();
       const active = isViewerFullscreen();
       const label = active ? "Exit Fullscreen" : "Enter Fullscreen";
+      const hiddenInShowcase = isShowcaseMode;
       const hideOnMobileUnsupported = !supported && isCoarsePointerInput() && compactViewportQuery.matches;
 
       const apply = (buttonEl) => {
         if (!buttonEl) return;
-        buttonEl.hidden = hideOnMobileUnsupported;
-        if (hideOnMobileUnsupported) {
+        buttonEl.hidden = hiddenInShowcase || hideOnMobileUnsupported;
+        if (hiddenInShowcase || hideOnMobileUnsupported) {
           buttonEl.disabled = true;
           buttonEl.setAttribute("aria-hidden", "true");
           buttonEl.setAttribute("aria-pressed", "false");
@@ -3033,6 +3040,11 @@
       if (!renderer || !viewerShellEl || !orbit) return;
 
       const canvas = renderer.domElement;
+      const pointerIsInsideViewer = (event) => {
+        if (!event || !Number.isFinite(event.clientX) || !Number.isFinite(event.clientY)) return false;
+        const hit = document.elementFromPoint(event.clientX, event.clientY);
+        return Boolean(hit && viewerShellEl.contains(hit));
+      };
 
       const activate = () => {
         if (!interactionGateEnabled || interactionGateActive) return;
@@ -3060,6 +3072,29 @@
 
       if (isShowcaseMode) {
         viewerShellEl.addEventListener("mouseleave", deactivate);
+        canvas.addEventListener(
+          "pointerup",
+          (event) => {
+            if (!pointerIsInsideViewer(event)) {
+              deactivate();
+            }
+          },
+          { capture: true }
+        );
+        canvas.addEventListener(
+          "pointercancel",
+          () => {
+            deactivate();
+          },
+          { capture: true }
+        );
+        canvas.addEventListener("lostpointercapture", () => {
+          window.requestAnimationFrame(() => {
+            if (!viewerShellEl.matches(":hover")) {
+              deactivate();
+            }
+          });
+        });
       }
 
       window.addEventListener("keydown", (event) => {
