@@ -458,7 +458,7 @@
 
     .ocean-legend-wrap {
       display: grid;
-      grid-template-columns: auto 1fr;
+      grid-template-columns: var(--ocean-legend-axis-width, 54px) 1fr;
       gap: 8px;
       align-items: stretch;
     }
@@ -502,6 +502,8 @@
       display: flex;
       justify-content: space-between;
       gap: 10px;
+      margin-left: calc(var(--ocean-legend-axis-width, 54px) + 14px);
+      width: calc(100% - (var(--ocean-legend-axis-width, 54px) + 14px));
       color: #3e5d6f;
       font-size: 0.68rem;
       line-height: 1.2;
@@ -780,7 +782,7 @@
           <span id="oceanLegendFreshLabel"><strong>Fresh</strong>30.0 PSU</span>
           <span id="oceanLegendSaltyLabel"><strong>Salty</strong>35.0 PSU</span>
         </div>
-        <div class="ocean-legend-note">Bivariate temperature-salinity color key for Greenland ocean flowlines.</div>
+        <div class="ocean-legend-note">Bivariate temperature-salinity color key for Greenland ocean streamlines.</div>
       </section>
 
       <section class="section">
@@ -928,7 +930,7 @@
         key: "greenland",
         label: "Greenland",
         intro:
-          "Rotate, zoom, and explore Greenland with BedMachine geometry plus ice-sheet and ocean-flowline overlays aligned to the polar grid.",
+          "Rotate, zoom, and explore Greenland in 3D with BedMachine terrain, ice-sheet structure, and ocean-circulation overlays on a shared polar grid.",
         refinedBasinsUrl: "/tools/data/greenland_basins_ps_v1_4_2.json",
         basinToggleLabel: "Show basins",
         basinStatusLabel: "basins",
@@ -956,8 +958,8 @@
             binUrl: "/tools/data/bedmachine_greenland_v6_3km.bin",
             velocityMetaUrl: "/tools/data/greenland_ice_velocity_3km.meta.json",
             velocityBinUrl: "/tools/data/greenland_ice_velocity_3km.bin",
-            oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260308-deepbottom",
-            oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260308-deepbottom",
+            oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260308-adaptive-seeds-v2",
+            oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260308-adaptive-seeds-v2",
           },
           "1km": {
             id: "1km",
@@ -967,8 +969,8 @@
             binUrl: "/tools/data/bedmachine_greenland_v6_1km.bin",
             velocityMetaUrl: "/tools/data/greenland_ice_velocity_1km.meta.json",
             velocityBinUrl: "/tools/data/greenland_ice_velocity_1km.bin",
-            oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260308-deepbottom",
-            oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260308-deepbottom",
+            oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260308-adaptive-seeds-v2",
+            oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260308-adaptive-seeds-v2",
             velocityMeshStride: 3,
             disableBackgroundWarmup: true,
           },
@@ -1794,19 +1796,19 @@
       const thetaT = clamp01((Number(thetaC) - Number(thetaRange[0])) / thetaSpan);
       const salinityT = clamp01((Number(salinityPsu) - Number(salinityRange[0])) / salinitySpan);
 
-      const coldFresh = [0.15, 0.78, 0.95];
-      const coldSalty = [0.39, 0.31, 0.84];
-      const warmFresh = [0.09, 0.72, 0.52];
-      const warmSalty = [0.96, 0.55, 0.17];
+      const coldFresh = [0.0, 0.87, 0.99];
+      const coldSalty = [0.23, 0.11, 0.88];
+      const warmFresh = [0.0, 0.76, 0.2];
+      const warmSalty = [0.99, 0.28, 0.0];
 
       const freshBlend = lerpColor(coldFresh, warmFresh, thetaT);
       const saltyBlend = lerpColor(coldSalty, warmSalty, thetaT);
       const color = lerpColor(freshBlend, saltyBlend, salinityT);
-      const brightnessLift = 0.06 + thetaT * 0.05;
+      const brightnessLift = 0.022 + thetaT * 0.018;
       return [
         clamp01(color[0] + brightnessLift),
-        clamp01(color[1] + brightnessLift * 0.9),
-        clamp01(color[2] + brightnessLift * 0.35),
+        clamp01(color[1] + brightnessLift * 0.65),
+        clamp01(color[2] + brightnessLift * 0.18),
       ];
     }
 
@@ -3687,8 +3689,11 @@
       const oceanCurrentSalinityStats = oceanCurrentMeta?.fields?.find((f) => f.name === "sal_psu_summary")?.stats;
       const oceanCurrentCoverage = oceanCurrentMeta?.coverage;
       const oceanCurrentDepths = oceanCurrentMeta?.sampling?.seed_depths_m || oceanCurrentMeta?.sampling?.depth_levels_m;
-      const adaptiveBottomSampling = oceanCurrentMeta?.sampling?.adaptive_bottom_seeding;
-      const adaptiveBottomStreamlineCount = Number(oceanCurrentCoverage?.streamlines_by_seed_depth?.adaptive_bottom || 0);
+      const adaptiveDeepSampling = oceanCurrentMeta?.sampling?.adaptive_deep_seeding || oceanCurrentMeta?.sampling?.adaptive_bottom_seeding;
+      const adaptiveDeepStreamlineCount = Object.entries(oceanCurrentCoverage?.streamlines_by_seed_depth || {}).reduce(
+        (sum, [key, value]) => (key.startsWith("adaptive_") ? sum + Number(value || 0) : sum),
+        0
+      );
       const oceanCurrentDepthMin = Number(oceanCurrentCoverage?.depth_min_m);
       const oceanCurrentDepthMax = Number(oceanCurrentCoverage?.depth_max_m);
       const oceanCurrentMonth = oceanCurrentMeta?.source_time_utc
@@ -3750,9 +3755,9 @@
       const oceanCurrentSection = capabilities.oceanCurrents
         ? `
         <li class="meta-group">Ocean Circulation</li>
-        <li><strong>Flowline Field:</strong> ${
+        <li><strong>Streamline Field:</strong> ${
           oceanCurrentMeta
-            ? `${fmtInt(oceanStreamlineCount)} 3D traces (${fmtInt(oceanCurrentSegmentCount)} segments) seeded from ${fmtInt(
+            ? `${fmtInt(oceanStreamlineCount)} 3D streamlines (${fmtInt(oceanCurrentSegmentCount)} segments) seeded from ${fmtInt(
                 Array.isArray(oceanCurrentDepths) ? oceanCurrentDepths.length : 0
               )} depth levels`
             : "Available on demand"
@@ -3764,11 +3769,11 @@
             : "n/a"
         }</li>
         ${
-          adaptiveBottomSampling?.enabled
-            ? `<li><strong>Adaptive Bottom Seeds:</strong> ${
+          adaptiveDeepSampling?.enabled
+            ? `<li><strong>Adaptive Deep Seeds:</strong> ${
                 oceanCurrentMeta
-                  ? `${fmtInt(adaptiveBottomStreamlineCount)} traces in water columns deeper than ${fmtInt(
-                      adaptiveBottomSampling.min_model_depth_m
+                  ? `${fmtInt(adaptiveDeepStreamlineCount)} streamlines in water columns deeper than ${fmtInt(
+                      adaptiveDeepSampling.min_model_depth_m
                     )} m`
                   : "Enabled for deep-basin water columns"
               }</li>`
@@ -3784,18 +3789,21 @@
         }</li>
         <li><strong>Water-Mass Color:</strong> ${
           oceanCurrentThetaStats && oceanCurrentSalinityStats
-            ? `${fmtShort(oceanCurrentThetaStats.min, 1)} to ${fmtShort(oceanCurrentThetaStats.max, 1)} °C; ${fmtShort(
-                oceanCurrentSalinityStats.min,
+            ? `Cold-fresh cyan, cold-salty indigo, warm-fresh green, warm-salty orange-red (${fmtShort(
+                oceanCurrentThetaStats.min,
                 1
-              )} to ${fmtShort(oceanCurrentSalinityStats.max, 1)} PSU`
-            : "Temperature-salinity blend"
+              )} to ${fmtShort(oceanCurrentThetaStats.max, 1)} °C; ${fmtShort(oceanCurrentSalinityStats.min, 1)} to ${fmtShort(
+                oceanCurrentSalinityStats.max,
+                1
+              )} PSU)`
+            : "Four-corner temperature-salinity palette"
         }</li>
       `
         : "";
 
       const basinSection = `
         <li class="meta-group">Basin Boundaries</li>
-        <li><strong>Status:</strong> ${basinStatus}</li>
+        ${basinStatus === "Available" ? "" : `<li><strong>Status:</strong> ${basinStatus}</li>`}
         ${
           Number.isFinite(refinedBasinCount) && refinedBasinCount > 0
             ? `<li><strong>Basin Count:</strong> ${fmtInt(refinedBasinCount)}</li>`
@@ -3828,7 +3836,7 @@
         sourceLines.push(
           `<li class="meta-compact"><strong>Ocean Circulation:</strong> ${dataset.sources.oceanCurrents}${
             oceanCurrentCoverage?.streamlines_by_seed_depth || oceanCurrentCoverage?.segments_by_seed_depth || oceanCurrentCoverage?.counts_by_depth
-              ? ` (${fmtInt(oceanStreamlineCount)} 3D flowlines)`
+              ? ` (${fmtInt(oceanStreamlineCount)} 3D streamlines)`
               : ""
           }</li>`
         );
