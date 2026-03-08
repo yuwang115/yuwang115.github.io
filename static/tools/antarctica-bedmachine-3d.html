@@ -770,7 +770,7 @@
       </section>
 
       <section id="oceanLegendSection" class="section" hidden>
-        <h2 class="section-title">Ocean Flowline Color</h2>
+        <h2 class="section-title">Ocean Streamline Color</h2>
         <div class="ocean-legend-wrap">
           <div class="ocean-legend-y-axis">
             <span id="oceanLegendWarmLabel"><strong>Warm</strong>8.0 °C</span>
@@ -785,7 +785,7 @@
         <div class="ocean-legend-note">Bivariate temperature-salinity color key for Greenland ocean streamlines.</div>
       </section>
 
-      <section class="section">
+      <section id="effectivePressureLegendSection" class="section">
         <h2 class="section-title">Effective Pressure Color</h2>
         <div id="effectivePressureLegendBar" class="legend" aria-hidden="true"></div>
         <div class="legend-labels">
@@ -796,7 +796,7 @@
         </div>
       </section>
 
-      <section class="section">
+      <section id="channelLegendSection" class="section">
         <h2 class="section-title">Channel Discharge Color</h2>
         <div id="channelLegendBar" class="legend" aria-hidden="true"></div>
         <div class="legend-labels">
@@ -1054,7 +1054,9 @@
       oceanLegendColdLabel: document.getElementById("oceanLegendColdLabel"),
       oceanLegendFreshLabel: document.getElementById("oceanLegendFreshLabel"),
       oceanLegendSaltyLabel: document.getElementById("oceanLegendSaltyLabel"),
+      effectivePressureLegendSection: document.getElementById("effectivePressureLegendSection"),
       effectivePressureLegendBar: document.getElementById("effectivePressureLegendBar"),
+      channelLegendSection: document.getElementById("channelLegendSection"),
       channelLegendBar: document.getElementById("channelLegendBar"),
     };
 
@@ -1189,6 +1191,12 @@
       setToggleAvailability(controlsUI.showRefinedBasins, basinAvailable);
       setToggleAvailability(controlsUI.showEffectivePressure, capabilities.hydrology);
       setToggleAvailability(controlsUI.showSubglacialChannels, capabilities.hydrology);
+      if (controlsUI.effectivePressureLegendSection) {
+        controlsUI.effectivePressureLegendSection.hidden = !capabilities.hydrology;
+      }
+      if (controlsUI.channelLegendSection) {
+        controlsUI.channelLegendSection.hidden = !capabilities.hydrology;
+      }
     }
 
     function populateResolutionPreset(regionKey, preferredDatasetKey = null) {

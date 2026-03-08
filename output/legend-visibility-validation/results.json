@@ -1,0 +1,12 @@
+{
+  "greenland": {
+    "oceanTitle": "Ocean Streamline Color",
+    "pressureHidden": true,
+    "channelHidden": true
+  },
+  "antarctica": {
+    "oceanTitle": "Ocean Streamline Color",
+    "pressureHidden": false,
+    "channelHidden": false
+  }
+}
