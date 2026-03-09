@@ -3186,15 +3186,13 @@
           map: texture,
           transparent: true,
           depthWrite: false,
-          depthTest: true,
+          depthTest: false,
         })
       );
       const worldScale = Number.isFinite(labelStyle.worldScale) ? labelStyle.worldScale : REFINED_BASIN_LABEL_WORLD_SCALE;
       const width = texture.image?.width || 256;
       const height = texture.image?.height || 64;
       sprite.scale.set(width * worldScale, height * worldScale, 1);
-      sprite.center.set(0.5, 0);
-      sprite.userData.labelLiftUnits = Math.max(sprite.scale.y * 0.08, 0.035);
       return sprite;
     }
 
@@ -3302,9 +3300,7 @@
         const sprite = createRefinedBasinLabelSprite(name, style);
         if (!sprite) continue;
         sprite.userData.baseY = sample.y;
-        const exaggeration = Number(controlsUI.exaggeration.value);
-        const labelLiftUnits = Number(sprite.userData?.labelLiftUnits) || 0;
-        sprite.position.set(sample.x, sample.y * exaggeration + labelLiftUnits, sample.z);
+        sprite.position.set(sample.x, sample.y, sample.z);
         sprite.renderOrder = Number.isFinite(options.renderOrder) ? options.renderOrder : 44;
         group.add(sprite);
       }
@@ -3333,8 +3329,7 @@
         for (const sprite of group.children) {
           const baseY = Number(sprite.userData?.baseY);
           if (!Number.isFinite(baseY)) continue;
-          const labelLiftUnits = Number(sprite.userData?.labelLiftUnits) || 0;
-          sprite.position.y = baseY * exaggeration + labelLiftUnits;
+          sprite.position.y = baseY * exaggeration;
         }
       };
       apply(refinedBasinBedLabels);
