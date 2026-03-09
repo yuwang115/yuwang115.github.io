@@ -1197,6 +1197,9 @@
     let velocityField;
     let velocityDataTexture = null;
     let velocityContinuousSamplingWarningIssued = false;
+    let basalMeltDataTexture = null;
+    let thermalDrivingDataTexture = null;
+    let riseContinuousSamplingWarningIssued = false;
     let animationHandle;
     let currentRegionKey = initialRegionKey;
     let currentDatasetKey = lockedDatasetKey || getDefaultDatasetKey(currentRegionKey);
@@ -1468,20 +1471,20 @@
     const BED_ELEVATION_MAX = 3500;
     const TARGET_WORLD_EXTENT_UNITS = 128;
     const BASE_HORIZONTAL_VERTICAL_SCALE_RATIO = 52000 / 3800;
-    const FLOWLINE_SURFACE_OFFSET_M = 18;
+    const FLOWLINE_SURFACE_OFFSET_M = 26;
     const FLOWLINE_SEED_TARGET = 2400;
     const FLOWLINE_SEED_PASSES = 2;
     const FLOWLINE_MIN_SEED_SPEED = 15;
     const FLOWLINE_MIN_TRACE_SPEED = 4;
-    const FLOWLINE_MAX_STEPS = 110;
-    const FLOWLINE_STEP_CELLS = 1.0;
+    const FLOWLINE_MAX_STEPS = 180;
+    const FLOWLINE_STEP_CELLS = 0.6;
+    const FLOWLINE_REVERSE_DIRECTION_DOT = -0.12;
     const VELOCITY_VISUALIZATION = Object.freeze({
       range: [0, 3000],
       knee: 20,
       ticks: [0, 30, 100, 300, 1000, 3000],
       note: "nonlinear scale clipped to 0 to 3000 m/yr",
     });
-    const VELOCITY_CONTINUOUS_SAMPLING_MAX_CELLS = 1_000_000;
     const VELOCITY_BLOCKING_OVERLAY_ENABLED = false;
     const VELOCITY_SURFACE_OPACITY = 0.82;
     const OCEAN_CURRENT_BED_CLEARANCE_M = 20;
@@ -2081,10 +2084,6 @@
 
     function getVelocityTextureType(rendererInstance, nx = 0, ny = 0) {
       if (!THREE || !rendererInstance) return null;
-      const cellCount = Math.max(0, Number(nx) || 0) * Math.max(0, Number(ny) || 0);
-      if (cellCount > VELOCITY_CONTINUOUS_SAMPLING_MAX_CELLS) {
-        return null;
-      }
       const maxDimension = Math.max(0, Number(nx) || 0, Number(ny) || 0);
       const maxTextureSize = Number(rendererInstance.capabilities?.maxTextureSize || 0);
       if (maxDimension > 0 && maxTextureSize > 0 && maxDimension > maxTextureSize) {
@@ -2093,11 +2092,11 @@
 
       const isWebGL2 = Boolean(rendererInstance.capabilities?.isWebGL2);
       const extensions = rendererInstance.extensions;
-      if (isWebGL2 || extensions?.get("OES_texture_half_float")) {
-        return THREE.HalfFloatType;
-      }
       if (isWebGL2 || extensions?.get("OES_texture_float")) {
         return THREE.FloatType;
+      }
+      if (isWebGL2 || extensions?.get("OES_texture_half_float")) {
+        return THREE.HalfFloatType;
       }
       return null;
     }
@@ -2142,6 +2141,57 @@
           textureData[base] = toHalfFloat(isValid ? workerResult.velocityX[i] : 0);
           textureData[base + 1] = toHalfFloat(isValid ? workerResult.velocityY[i] : 0);
           textureData[base + 2] = toHalfFloat(isValid ? 1 : 0);
+          textureData[base + 3] = toHalfFloat(0);
+        }
+      }
+
+      const texture = new THREE.DataTexture(textureData, nx, ny, THREE.RGBAFormat, textureType);
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
+      texture.wrapS = THREE.ClampToEdgeWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      texture.generateMipmaps = false;
+      texture.flipY = false;
+      texture.unpackAlignment = 1;
+      if ("colorSpace" in texture && "NoColorSpace" in THREE) {
+        texture.colorSpace = THREE.NoColorSpace;
+      }
+      texture.needsUpdate = true;
+      return texture;
+    }
+
+    function createScalarFieldDataTexture(values, validMask, nx, ny, rendererInstance) {
+      const textureType = getVelocityTextureType(rendererInstance, nx, ny);
+      if (!textureType) return null;
+
+      const cellCount = nx * ny;
+      if (values.length !== cellCount || validMask.length !== cellCount) {
+        throw new Error("Scalar field texture length mismatch.");
+      }
+
+      let textureData;
+      if (textureType === THREE.FloatType) {
+        textureData = new Float32Array(cellCount * 4);
+        for (let i = 0; i < cellCount; i += 1) {
+          const base = i * 4;
+          const isValid = validMask[i] > 0 && Number.isFinite(values[i]);
+          textureData[base] = isValid ? values[i] : 0;
+          textureData[base + 1] = isValid ? 1 : 0;
+          textureData[base + 2] = 0;
+          textureData[base + 3] = 0;
+        }
+      } else {
+        const toHalfFloat = THREE.DataUtils?.toHalfFloat;
+        if (typeof toHalfFloat !== "function") {
+          return null;
+        }
+        textureData = new Uint16Array(cellCount * 4);
+        for (let i = 0; i < cellCount; i += 1) {
+          const base = i * 4;
+          const isValid = validMask[i] > 0 && Number.isFinite(values[i]);
+          textureData[base] = toHalfFloat(isValid ? values[i] : 0);
+          textureData[base + 1] = toHalfFloat(isValid ? 1 : 0);
+          textureData[base + 2] = toHalfFloat(0);
           textureData[base + 3] = toHalfFloat(0);
         }
       }
@@ -2249,8 +2299,8 @@
       });
     }
 
-    function getRiseVisualizationRange(key) {
-      const visualization = currentRiseMeta?.visualization?.[key];
+    function getRiseVisualizationRangeForMeta(riseMeta, key) {
+      const visualization = riseMeta?.visualization?.[key];
       if (key === "basal_melt") {
         const { range } = getBasalMeltVisualizationConfig();
         return [Number(range[0]), Number(range[1])];
@@ -2262,6 +2312,10 @@
       return [0, 1];
     }
 
+    function getRiseVisualizationRange(key) {
+      return getRiseVisualizationRangeForMeta(currentRiseMeta, key);
+    }
+
     function basalMeltColor(meltMetersPerYear) {
       const t = basalMeltScaleT(meltMetersPerYear);
       return sampleColorStops(RISE_BASAL_MELT_COLOR_STOPS, t);
@@ -2271,6 +2325,136 @@
       const [minValue, maxValue] = getRiseVisualizationRange("thermal_driving");
       const t = clamp01((Number(thermalDrivingC) - minValue) / Math.max(1e-6, maxValue - minValue));
       return sampleColorStops(RISE_THERMAL_DRIVING_COLOR_STOPS, t);
+    }
+
+    function createRiseFieldShaderMaterial(texture, nx, ny, { kind, riseMeta }) {
+      const thermalRange = getRiseVisualizationRangeForMeta(riseMeta, "thermal_driving");
+      const basalVisualization = getBasalMeltVisualizationConfig();
+      const mode = kind === "basal_melt" ? 0 : 1;
+      return new THREE.ShaderMaterial({
+        glslVersion: THREE.GLSL1,
+        uniforms: {
+          uFieldTex: { value: texture },
+          uFieldTexSize: { value: new THREE.Vector2(nx, ny) },
+          uMode: { value: mode },
+          uThermalRange: { value: new THREE.Vector2(Number(thermalRange[0]), Number(thermalRange[1])) },
+          uBasalRange: { value: new THREE.Vector2(Number(basalVisualization.range[0]), Number(basalVisualization.range[1])) },
+          uBasalLinthresh: { value: Math.max(1e-6, Number(basalVisualization.linthresh) || 1) },
+          uOpacity: { value: 0.98 },
+        },
+        vertexShader: `
+          precision highp float;
+
+          varying vec2 vUv;
+
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          precision highp float;
+
+          uniform sampler2D uFieldTex;
+          uniform vec2 uFieldTexSize;
+          uniform float uMode;
+          uniform vec2 uThermalRange;
+          uniform vec2 uBasalRange;
+          uniform float uBasalLinthresh;
+          uniform float uOpacity;
+
+          varying vec2 vUv;
+
+          vec3 basalPalette(float t) {
+            const vec3 c0 = vec3(0.082, 0.216, 0.376);
+            const vec3 c1 = vec3(0.310, 0.655, 0.847);
+            const vec3 c2 = vec3(0.965, 0.969, 0.984);
+            const vec3 c3 = vec3(0.969, 0.639, 0.357);
+            const vec3 c4 = vec3(0.541, 0.067, 0.090);
+            float clamped = clamp(t, 0.0, 1.0);
+            if (clamped <= 0.22) {
+              return mix(c0, c1, clamped / 0.22);
+            }
+            if (clamped <= 0.50) {
+              return mix(c1, c2, (clamped - 0.22) / 0.28);
+            }
+            if (clamped <= 0.78) {
+              return mix(c2, c3, (clamped - 0.50) / 0.28);
+            }
+            return mix(c3, c4, (clamped - 0.78) / 0.22);
+          }
+
+          vec3 thermalPalette(float t) {
+            const vec3 c0 = vec3(0.031, 0.114, 0.345);
+            const vec3 c1 = vec3(0.133, 0.369, 0.659);
+            const vec3 c2 = vec3(0.114, 0.569, 0.753);
+            const vec3 c3 = vec3(0.498, 0.804, 0.733);
+            const vec3 c4 = vec3(1.000, 0.953, 0.639);
+            float clamped = clamp(t, 0.0, 1.0);
+            if (clamped <= 0.22) {
+              return mix(c0, c1, clamped / 0.22);
+            }
+            if (clamped <= 0.52) {
+              return mix(c1, c2, (clamped - 0.22) / 0.30);
+            }
+            if (clamped <= 0.78) {
+              return mix(c2, c3, (clamped - 0.52) / 0.26);
+            }
+            return mix(c3, c4, (clamped - 0.78) / 0.22);
+          }
+
+          float basalScaleT(float value) {
+            float clampedValue = clamp(value, uBasalRange.x, uBasalRange.y);
+            if (clampedValue <= 0.0) {
+              float magnitude = abs(clampedValue);
+              float negativeMax = max(uBasalLinthresh, abs(uBasalRange.x));
+              float scaled = log(1.0 + magnitude / uBasalLinthresh) / log(1.0 + negativeMax / uBasalLinthresh);
+              return 0.5 * (1.0 - clamp(scaled, 0.0, 1.0));
+            }
+            float positiveMax = max(uBasalLinthresh, uBasalRange.y);
+            float scaled = log(1.0 + clampedValue / uBasalLinthresh) / log(1.0 + positiveMax / uBasalLinthresh);
+            return 0.5 + 0.5 * clamp(scaled, 0.0, 1.0);
+          }
+
+          void main() {
+            vec2 texSize = max(uFieldTexSize, vec2(1.0));
+            vec2 texelPos = clamp(vUv, vec2(0.0), vec2(1.0)) * (texSize - 1.0);
+            vec2 maxBase = max(texSize - 2.0, vec2(0.0));
+            vec2 base = clamp(floor(texelPos), vec2(0.0), maxBase);
+            vec2 frac = clamp(texelPos - base, vec2(0.0), vec2(1.0));
+            vec2 texelSize = 1.0 / texSize;
+
+            vec4 s00 = texture2D(uFieldTex, (base + vec2(0.5, 0.5)) * texelSize);
+            vec4 s10 = texture2D(uFieldTex, (base + vec2(1.5, 0.5)) * texelSize);
+            vec4 s01 = texture2D(uFieldTex, (base + vec2(0.5, 1.5)) * texelSize);
+            vec4 s11 = texture2D(uFieldTex, (base + vec2(1.5, 1.5)) * texelSize);
+
+            if (s00.g < 0.5 || s10.g < 0.5 || s01.g < 0.5 || s11.g < 0.5) {
+              discard;
+            }
+
+            float v0 = mix(s00.r, s10.r, frac.x);
+            float v1 = mix(s01.r, s11.r, frac.x);
+            float value = mix(v0, v1, frac.y);
+
+            vec3 color;
+            if (uMode < 0.5) {
+              color = basalPalette(basalScaleT(value));
+            } else {
+              float t = clamp((value - uThermalRange.x) / max(1e-6, uThermalRange.y - uThermalRange.x), 0.0, 1.0);
+              color = thermalPalette(t);
+            }
+
+            gl_FragColor = vec4(color, uOpacity);
+          }
+        `,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+        polygonOffsetUnits: -1,
+      });
     }
 
     function oceanCurrentColor(thetaC, salinityPsu, oceanMeta) {
@@ -2703,6 +2887,55 @@
       return { vx, vy, speed };
     }
 
+    function sampleSurfaceBilinear(field, col, row) {
+      if (col < 1 || row < 1 || col > field.nx - 2 || row > field.ny - 2) return Number.NaN;
+
+      const c0 = Math.floor(col);
+      const c1 = c0 + 1;
+      const r0 = Math.floor(row);
+      const r1 = r0 + 1;
+      const i00 = r0 * field.nx + c0;
+      const i10 = r0 * field.nx + c1;
+      const i01 = r1 * field.nx + c0;
+      const i11 = r1 * field.nx + c1;
+      if (!field.iceValid[i00] || !field.iceValid[i10] || !field.iceValid[i01] || !field.iceValid[i11]) {
+        return sampleSurfaceNearest(field, col, row);
+      }
+
+      const h00 = field.surfaceHeights[i00];
+      const h10 = field.surfaceHeights[i10];
+      const h01 = field.surfaceHeights[i01];
+      const h11 = field.surfaceHeights[i11];
+      if (!Number.isFinite(h00) || !Number.isFinite(h10) || !Number.isFinite(h01) || !Number.isFinite(h11)) {
+        return sampleSurfaceNearest(field, col, row);
+      }
+
+      const tx = col - c0;
+      const ty = row - r0;
+      const w00 = (1 - tx) * (1 - ty);
+      const w10 = tx * (1 - ty);
+      const w01 = (1 - tx) * ty;
+      const w11 = tx * ty;
+      return h00 * w00 + h10 * w10 + h01 * w01 + h11 * w11;
+    }
+
+    function velocityGridDirection(field, col, row) {
+      const velocity = sampleVelocityBilinear(field, col, row);
+      if (!velocity || velocity.speed < FLOWLINE_MIN_TRACE_SPEED) return null;
+
+      const absDx = Math.abs(field.dxMeters);
+      const absDy = Math.abs(field.dyMeters);
+      const dCol = velocity.vx / absDx;
+      const dRow = -velocity.vy / absDy;
+      const norm = Math.hypot(dCol, dRow);
+      if (norm < 1e-8) return null;
+      return {
+        speed: velocity.speed,
+        dCol: dCol / norm,
+        dRow: dRow / norm,
+      };
+    }
+
     function sampleSurfaceNearest(field, col, row) {
       const c = Math.round(col);
       const r = Math.round(row);
@@ -2717,25 +2950,40 @@
       const out = [];
       let col = seedCol;
       let row = seedRow;
-      const absDx = Math.abs(field.dxMeters);
-      const absDy = Math.abs(field.dyMeters);
+      let previousDirection = null;
 
       for (let step = 0; step < FLOWLINE_MAX_STEPS; step += 1) {
-        const velocity = sampleVelocityBilinear(field, col, row);
-        if (!velocity || velocity.speed < FLOWLINE_MIN_TRACE_SPEED) break;
+        const guide = velocityGridDirection(field, col, row);
+        if (!guide) break;
 
-        const surface = sampleSurfaceNearest(field, col, row);
+        const surface = sampleSurfaceBilinear(field, col, row);
         if (!Number.isFinite(surface)) break;
 
-        out.push({ col, row, speed: velocity.speed, surface });
+        if (
+          previousDirection &&
+          guide.dCol * previousDirection.dCol + guide.dRow * previousDirection.dRow < FLOWLINE_REVERSE_DIRECTION_DOT
+        ) {
+          break;
+        }
 
-        const dCol = velocity.vx / absDx;
-        const dRow = -velocity.vy / absDy;
-        const norm = Math.hypot(dCol, dRow);
-        if (norm < 1e-8) break;
+        out.push({ col, row, speed: guide.speed, surface });
 
-        col += direction * (dCol / norm) * FLOWLINE_STEP_CELLS;
-        row += direction * (dRow / norm) * FLOWLINE_STEP_CELLS;
+        const halfStep = FLOWLINE_STEP_CELLS * 0.5;
+        const midCol = col + direction * guide.dCol * halfStep;
+        const midRow = row + direction * guide.dRow * halfStep;
+        const midGuide = velocityGridDirection(field, midCol, midRow);
+        const nextGuide = midGuide || guide;
+
+        if (
+          previousDirection &&
+          nextGuide.dCol * previousDirection.dCol + nextGuide.dRow * previousDirection.dRow < FLOWLINE_REVERSE_DIRECTION_DOT
+        ) {
+          break;
+        }
+
+        col += direction * nextGuide.dCol * FLOWLINE_STEP_CELLS;
+        row += direction * nextGuide.dRow * FLOWLINE_STEP_CELLS;
+        previousDirection = nextGuide;
       }
 
       return out;
@@ -2836,10 +3084,12 @@
         vertexColors: true,
         transparent: true,
         opacity: 0.9,
+        depthWrite: false,
       });
       const lines = new THREE.LineSegments(geometry, material);
       lines.scale.y = Number(controlsUI.exaggeration.value);
       lines.visible = controlsUI.showFlowline.checked;
+      lines.renderOrder = 16;
       lines.userData.flowlineCount = flowlineCount;
       return lines;
     }
@@ -3299,7 +3549,9 @@
       velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
       velocityDataTexture = disposeTexture(velocityDataTexture);
       basalMeltMesh = disposeMesh(basalMeltMesh);
+      basalMeltDataTexture = disposeTexture(basalMeltDataTexture);
       thermalDrivingMesh = disposeMesh(thermalDrivingMesh);
+      thermalDrivingDataTexture = disposeTexture(thermalDrivingDataTexture);
       effectivePressureMesh = disposeMesh(effectivePressureMesh);
       subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
       flowlineMesh = disposeMesh(flowlineMesh);
@@ -4837,8 +5089,68 @@
       scene.add(seaLevelMesh);
     }
 
-    function buildRiseOverlayMesh(context, values, colorFn) {
-      if (!context || !values) return null;
+    function buildRiseOverlayGeometry(context, heights, validMask) {
+      const vertexCount = context.cellCount;
+      const positions = new Float32Array(vertexCount * 3);
+      const uvs = new Float32Array(vertexCount * 2);
+      const indices = [];
+      const halfX = (context.nx - 1) / 2;
+      const halfY = (context.ny - 1) / 2;
+      const absDy = Math.abs(context.meta.grid.dy_m);
+
+      for (let row = 0; row < context.ny; row += 1) {
+        for (let col = 0; col < context.nx; col += 1) {
+          const index = row * context.nx + col;
+          positions[3 * index] = ((col - halfX) * context.meta.grid.dx_m) / context.baseConfig.horizontalMetersPerUnit;
+          positions[3 * index + 1] = validMask[index] ? heights[index] / context.baseConfig.verticalMetersPerUnit : 0;
+          positions[3 * index + 2] = ((row - halfY) * absDy) / context.baseConfig.horizontalMetersPerUnit;
+          uvs[2 * index] = col / Math.max(1, context.nx - 1);
+          uvs[2 * index + 1] = row / Math.max(1, context.ny - 1);
+        }
+      }
+
+      for (let row = 0; row < context.ny - 1; row += 1) {
+        for (let col = 0; col < context.nx - 1; col += 1) {
+          const i0 = row * context.nx + col;
+          const i1 = i0 + 1;
+          const i2 = i0 + context.nx;
+          const i3 = i2 + 1;
+          if (validMask[i0] && validMask[i2] && validMask[i1]) {
+            indices.push(i0, i2, i1);
+          }
+          if (validMask[i1] && validMask[i2] && validMask[i3]) {
+            indices.push(i1, i2, i3);
+          }
+        }
+      }
+
+      if (!indices.length) {
+        return null;
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+      geometry.setIndex(indices);
+      return geometry;
+    }
+
+    function buildRiseOverlayColorAttribute(values, validMask, colorFn) {
+      const colors = new Uint8Array(validMask.length * 3);
+      for (let i = 0; i < validMask.length; i += 1) {
+        if (!validMask[i]) continue;
+        const rgb = colorFn(values[i]);
+        colors[3 * i] = Math.round(clamp01(rgb[0]) * 255);
+        colors[3 * i + 1] = Math.round(clamp01(rgb[1]) * 255);
+        colors[3 * i + 2] = Math.round(clamp01(rgb[2]) * 255);
+      }
+      return new THREE.BufferAttribute(colors, 3, true);
+    }
+
+    function buildRiseOverlayMesh(context, values, { kind, riseMeta, fallbackColorFn }) {
+      if (!context || !values) {
+        return { mesh: null, dataTexture: null };
+      }
 
       const overlayHeights = new Float32Array(context.cellCount);
       const overlayValid = new Uint8Array(context.cellCount);
@@ -4848,35 +5160,50 @@
         if (isShelf && Number.isFinite(value)) {
           overlayHeights[i] = context.iceBottomHeights[i] + RISE_SURFACE_OFFSET_M;
           overlayValid[i] = 1;
-        } else {
-          overlayHeights[i] = Number.NaN;
-          overlayValid[i] = 0;
         }
       }
 
-      const geometry = buildSurfaceGeometry({
-        ...context.baseConfig,
-        heights: overlayHeights,
-        valid: overlayValid,
-        extraField: values,
-        mask: context.riseMask,
-        colorFn: (_height, fieldValue) => colorFn(fieldValue),
-      });
-      const material = new THREE.MeshBasicMaterial({
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.98,
-        side: THREE.DoubleSide,
-        polygonOffset: true,
-        polygonOffsetFactor: -1,
-        polygonOffsetUnits: -1,
-        depthWrite: false,
-      });
+      const geometry = buildRiseOverlayGeometry(context, overlayHeights, overlayValid);
+      if (!geometry) {
+        return { mesh: null, dataTexture: null };
+      }
+
+      let dataTexture = null;
+      let material = null;
+
+      try {
+        dataTexture = createScalarFieldDataTexture(values, overlayValid, context.nx, context.ny, renderer);
+        if (dataTexture) {
+          material = createRiseFieldShaderMaterial(dataTexture, context.nx, context.ny, { kind, riseMeta });
+        }
+      } catch (error) {
+        console.warn(`Continuous ${kind} sampling failed; using vertex-colored fallback.`, error);
+      }
+
+      if (!material) {
+        dataTexture = disposeTexture(dataTexture);
+        if (!riseContinuousSamplingWarningIssued) {
+          console.warn("Continuous RISE sampling unavailable; using vertex-colored overlay fallback.");
+          riseContinuousSamplingWarningIssued = true;
+        }
+        geometry.setAttribute("color", buildRiseOverlayColorAttribute(values, overlayValid, fallbackColorFn));
+        material = new THREE.MeshBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.98,
+          side: THREE.DoubleSide,
+          polygonOffset: true,
+          polygonOffsetFactor: -1,
+          polygonOffsetUnits: -1,
+          depthWrite: false,
+        });
+      }
+
       const mesh = new THREE.Mesh(geometry, material);
       mesh.scale.y = Number(controlsUI.exaggeration.value);
       mesh.material.wireframe = controlsUI.wireframe.checked;
-      mesh.renderOrder = 18;
-      return mesh;
+      mesh.renderOrder = 10;
+      return { mesh, dataTexture };
     }
 
     function updateRiseOverlayVisibility() {
@@ -5188,14 +5515,28 @@
           context.riseThermalDriving = riseThermalDriving;
 
           basalMeltMesh = disposeMesh(basalMeltMesh);
+          basalMeltDataTexture = disposeTexture(basalMeltDataTexture);
           thermalDrivingMesh = disposeMesh(thermalDrivingMesh);
+          thermalDrivingDataTexture = disposeTexture(thermalDrivingDataTexture);
 
           if (showOverlay) {
             updateLoadingProgress(0.93, "Building RISE overlay meshes...");
           }
 
-          basalMeltMesh = buildRiseOverlayMesh(context, riseBasalMelt, basalMeltColor);
-          thermalDrivingMesh = buildRiseOverlayMesh(context, riseThermalDriving, thermalDrivingColor);
+          const basalMeltLayer = buildRiseOverlayMesh(context, riseBasalMelt, {
+            kind: "basal_melt",
+            riseMeta,
+            fallbackColorFn: basalMeltColor,
+          });
+          const thermalDrivingLayer = buildRiseOverlayMesh(context, riseThermalDriving, {
+            kind: "thermal_driving",
+            riseMeta,
+            fallbackColorFn: thermalDrivingColor,
+          });
+          basalMeltMesh = basalMeltLayer.mesh;
+          basalMeltDataTexture = basalMeltLayer.dataTexture;
+          thermalDrivingMesh = thermalDrivingLayer.mesh;
+          thermalDrivingDataTexture = thermalDrivingLayer.dataTexture;
 
           if (basalMeltMesh) scene.add(basalMeltMesh);
           if (thermalDrivingMesh) scene.add(thermalDrivingMesh);
@@ -5218,7 +5559,9 @@
             controlsUI.showBasalMelt.checked = false;
             controlsUI.showThermalDriving.checked = false;
             basalMeltMesh = disposeMesh(basalMeltMesh);
+            basalMeltDataTexture = disposeTexture(basalMeltDataTexture);
             thermalDrivingMesh = disposeMesh(thermalDrivingMesh);
+            thermalDrivingDataTexture = disposeTexture(thermalDrivingDataTexture);
             updateMetaFromCurrentState();
           }
           if (showOverlay) {
