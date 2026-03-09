@@ -803,12 +803,15 @@
       <section id="velocityLegendSection" class="section">
         <h2 class="section-title">Ice Surface Velocity Color</h2>
         <div id="velocityLegendBar" class="legend" aria-hidden="true"></div>
-        <div class="legend-labels">
-          <span>0 m/yr</span>
+        <div id="velocityLegendLabels" class="legend-labels">
+          <span>0</span>
+          <span>30</span>
           <span>100</span>
-          <span>500</span>
-          <span>1500+</span>
+          <span>300</span>
+          <span>1000</span>
+          <span>3000</span>
         </div>
+        <div id="velocityLegendNote" class="legend-note">nonlinear scale clipped to 0 to 3000 m/yr</div>
       </section>
 
       <section id="basalMeltLegendSection" class="section">
@@ -1145,6 +1148,8 @@
       legendBar: document.getElementById("legendBar"),
       velocityLegendSection: document.getElementById("velocityLegendSection"),
       velocityLegendBar: document.getElementById("velocityLegendBar"),
+      velocityLegendLabels: document.getElementById("velocityLegendLabels"),
+      velocityLegendNote: document.getElementById("velocityLegendNote"),
       basalMeltLegendSection: document.getElementById("basalMeltLegendSection"),
       basalMeltLegendBar: document.getElementById("basalMeltLegendBar"),
       basalMeltLegendLabels: document.getElementById("basalMeltLegendLabels"),
@@ -1190,6 +1195,8 @@
     let refinedBasinLoadPromise = null;
     let refinedBasinLoadingUrl = null;
     let velocityField;
+    let velocityDataTexture = null;
+    let velocityContinuousSamplingWarningIssued = false;
     let animationHandle;
     let currentRegionKey = initialRegionKey;
     let currentDatasetKey = lockedDatasetKey || getDefaultDatasetKey(currentRegionKey);
@@ -1468,7 +1475,15 @@
     const FLOWLINE_MIN_TRACE_SPEED = 4;
     const FLOWLINE_MAX_STEPS = 110;
     const FLOWLINE_STEP_CELLS = 1.0;
-    const VELOCITY_REFERENCE_SPEED = 1800;
+    const VELOCITY_VISUALIZATION = Object.freeze({
+      range: [0, 3000],
+      knee: 20,
+      ticks: [0, 30, 100, 300, 1000, 3000],
+      note: "nonlinear scale clipped to 0 to 3000 m/yr",
+    });
+    const VELOCITY_CONTINUOUS_SAMPLING_MAX_CELLS = 1_000_000;
+    const VELOCITY_BLOCKING_OVERLAY_ENABLED = false;
+    const VELOCITY_SURFACE_OPACITY = 0.82;
     const OCEAN_CURRENT_BED_CLEARANCE_M = 20;
     const EFFECTIVE_PRESSURE_REFERENCE_PA = 5_000_000;
     const CHANNEL_DISCHARGE_MIN = 1e-3;
@@ -1803,6 +1818,38 @@
       targetEl.style.background = `linear-gradient(90deg, ${stops.join(", ")})`;
     }
 
+    function getVelocityVisualizationConfig() {
+      return VELOCITY_VISUALIZATION;
+    }
+
+    function velocityScaleT(speedMetersPerYear) {
+      const { range, knee } = getVelocityVisualizationConfig();
+      const minValue = Number(range[0]);
+      const maxValue = Number(range[1]);
+      const clamped = Math.max(minValue, Math.min(maxValue, Number(speedMetersPerYear)));
+      const safeKnee = Math.max(1e-6, Number(knee) || 1);
+      const scaled = Math.log1p(clamped / safeKnee) / Math.log1p(maxValue / safeKnee);
+      return clamp01(scaled);
+    }
+
+    function formatVelocityTick(value) {
+      return formatCoord(value, 0);
+    }
+
+    function renderVelocityLegendTicks() {
+      if (!controlsUI.velocityLegendLabels) return;
+      const { ticks } = getVelocityVisualizationConfig();
+      controlsUI.velocityLegendLabels.classList.add("legend-labels--ticks");
+      controlsUI.velocityLegendLabels.innerHTML = ticks
+        .map((value) => {
+          const left = velocityScaleT(value) * 100;
+          const translate =
+            left <= 4 ? "translateX(0)" : left >= 94 ? "translateX(-100%)" : "translateX(-50%)";
+          return `<span style="left:${left.toFixed(2)}%;transform:${translate};">${formatVelocityTick(value)}</span>`;
+        })
+        .join("");
+    }
+
     function formatBasalMeltTick(value) {
       if (value === 0) return "0";
       if (Math.abs(value) >= 10) return formatCoord(value, 0);
@@ -1869,9 +1916,16 @@
 
     function updateVelocityLegend() {
       updateContinuousLegend(controlsUI.velocityLegendBar, (t) => {
-        const speed = Math.expm1(t * Math.log1p(VELOCITY_REFERENCE_SPEED));
+        const { range, knee } = getVelocityVisualizationConfig();
+        const maxValue = Number(range[1]);
+        const safeKnee = Math.max(1e-6, Number(knee) || 1);
+        const speed = safeKnee * Math.expm1(t * Math.log1p(maxValue / safeKnee));
         return velocityColor(speed);
       });
+      renderVelocityLegendTicks();
+      if (controlsUI.velocityLegendNote) {
+        controlsUI.velocityLegendNote.textContent = getVelocityVisualizationConfig().note;
+      }
     }
 
     function updateBasalMeltLegend() {
@@ -2013,7 +2067,7 @@
     }
 
     function velocityColor(speedMetersPerYear) {
-      const scaled = Math.log1p(Math.max(0, speedMetersPerYear)) / Math.log1p(VELOCITY_REFERENCE_SPEED);
+      const scaled = velocityScaleT(speedMetersPerYear);
       return sampleColorStops(
         [
           [0.0, [0.06, 0.2, 0.5]],
@@ -2023,6 +2077,176 @@
         ],
         scaled
       );
+    }
+
+    function getVelocityTextureType(rendererInstance, nx = 0, ny = 0) {
+      if (!THREE || !rendererInstance) return null;
+      const cellCount = Math.max(0, Number(nx) || 0) * Math.max(0, Number(ny) || 0);
+      if (cellCount > VELOCITY_CONTINUOUS_SAMPLING_MAX_CELLS) {
+        return null;
+      }
+      const maxDimension = Math.max(0, Number(nx) || 0, Number(ny) || 0);
+      const maxTextureSize = Number(rendererInstance.capabilities?.maxTextureSize || 0);
+      if (maxDimension > 0 && maxTextureSize > 0 && maxDimension > maxTextureSize) {
+        return null;
+      }
+
+      const isWebGL2 = Boolean(rendererInstance.capabilities?.isWebGL2);
+      const extensions = rendererInstance.extensions;
+      if (isWebGL2 || extensions?.get("OES_texture_half_float")) {
+        return THREE.HalfFloatType;
+      }
+      if (isWebGL2 || extensions?.get("OES_texture_float")) {
+        return THREE.FloatType;
+      }
+      return null;
+    }
+
+    function supportsContinuousVelocitySampling(rendererInstance, nx = 0, ny = 0) {
+      return Boolean(getVelocityTextureType(rendererInstance, nx, ny));
+    }
+
+    function createVelocityDataTexture(workerResult, nx, ny, rendererInstance) {
+      const textureType = getVelocityTextureType(rendererInstance, nx, ny);
+      if (!textureType) return null;
+
+      const cellCount = nx * ny;
+      if (
+        workerResult.velocityX.length !== cellCount ||
+        workerResult.velocityY.length !== cellCount ||
+        workerResult.velocityValid.length !== cellCount
+      ) {
+        throw new Error("Velocity texture field length mismatch.");
+      }
+
+      let textureData;
+      if (textureType === THREE.FloatType) {
+        textureData = new Float32Array(cellCount * 4);
+        for (let i = 0; i < cellCount; i += 1) {
+          const base = i * 4;
+          const isValid = workerResult.velocityValid[i] > 0;
+          textureData[base] = isValid ? workerResult.velocityX[i] : 0;
+          textureData[base + 1] = isValid ? workerResult.velocityY[i] : 0;
+          textureData[base + 2] = isValid ? 1 : 0;
+          textureData[base + 3] = 0;
+        }
+      } else {
+        const toHalfFloat = THREE.DataUtils?.toHalfFloat;
+        if (typeof toHalfFloat !== "function") {
+          return null;
+        }
+        textureData = new Uint16Array(cellCount * 4);
+        for (let i = 0; i < cellCount; i += 1) {
+          const base = i * 4;
+          const isValid = workerResult.velocityValid[i] > 0;
+          textureData[base] = toHalfFloat(isValid ? workerResult.velocityX[i] : 0);
+          textureData[base + 1] = toHalfFloat(isValid ? workerResult.velocityY[i] : 0);
+          textureData[base + 2] = toHalfFloat(isValid ? 1 : 0);
+          textureData[base + 3] = toHalfFloat(0);
+        }
+      }
+
+      const texture = new THREE.DataTexture(textureData, nx, ny, THREE.RGBAFormat, textureType);
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
+      texture.wrapS = THREE.ClampToEdgeWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      texture.generateMipmaps = false;
+      texture.flipY = false;
+      texture.unpackAlignment = 1;
+      if ("colorSpace" in texture && "NoColorSpace" in THREE) {
+        texture.colorSpace = THREE.NoColorSpace;
+      }
+      texture.needsUpdate = true;
+      return texture;
+    }
+
+    function createVelocitySurfaceShaderMaterial(texture, nx, ny) {
+      const { range, knee } = getVelocityVisualizationConfig();
+      const velocityMax = Number(range[1]);
+      const safeKnee = Math.max(1e-6, Number(knee) || 1);
+      return new THREE.ShaderMaterial({
+        glslVersion: THREE.GLSL1,
+        uniforms: {
+          uVelocityTex: { value: texture },
+          uVelocityTexSize: { value: new THREE.Vector2(nx, ny) },
+          uVelocityMax: { value: velocityMax },
+          uVelocityKnee: { value: safeKnee },
+          uOpacity: { value: VELOCITY_SURFACE_OPACITY },
+        },
+        vertexShader: `
+          precision highp float;
+
+          varying vec2 vUv;
+
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          precision highp float;
+
+          uniform sampler2D uVelocityTex;
+          uniform vec2 uVelocityTexSize;
+          uniform float uVelocityMax;
+          uniform float uVelocityKnee;
+          uniform float uOpacity;
+
+          varying vec2 vUv;
+
+          vec3 velocityPalette(float t) {
+            const vec3 c0 = vec3(0.06, 0.20, 0.50);
+            const vec3 c1 = vec3(0.08, 0.62, 0.86);
+            const vec3 c2 = vec3(0.95, 0.90, 0.27);
+            const vec3 c3 = vec3(0.90, 0.20, 0.12);
+            float clamped = clamp(t, 0.0, 1.0);
+            if (clamped <= 0.35) {
+              return mix(c0, c1, clamped / 0.35);
+            }
+            if (clamped <= 0.65) {
+              return mix(c1, c2, (clamped - 0.35) / 0.30);
+            }
+            return mix(c2, c3, (clamped - 0.65) / 0.35);
+          }
+
+          float velocityScaleT(float speed) {
+            float clamped = clamp(speed, 0.0, uVelocityMax);
+            return clamp(log(1.0 + clamped / uVelocityKnee) / log(1.0 + uVelocityMax / uVelocityKnee), 0.0, 1.0);
+          }
+
+          void main() {
+            vec2 texSize = max(uVelocityTexSize, vec2(1.0));
+            vec2 texelPos = clamp(vUv, vec2(0.0), vec2(1.0)) * (texSize - 1.0);
+            vec2 maxBase = max(texSize - 2.0, vec2(0.0));
+            vec2 base = clamp(floor(texelPos), vec2(0.0), maxBase);
+            vec2 frac = clamp(texelPos - base, vec2(0.0), vec2(1.0));
+            vec2 texelSize = 1.0 / texSize;
+
+            vec4 s00 = texture2D(uVelocityTex, (base + vec2(0.5, 0.5)) * texelSize);
+            vec4 s10 = texture2D(uVelocityTex, (base + vec2(1.5, 0.5)) * texelSize);
+            vec4 s01 = texture2D(uVelocityTex, (base + vec2(0.5, 1.5)) * texelSize);
+            vec4 s11 = texture2D(uVelocityTex, (base + vec2(1.5, 1.5)) * texelSize);
+
+            if (s00.b < 0.5 || s10.b < 0.5 || s01.b < 0.5 || s11.b < 0.5) {
+              discard;
+            }
+
+            vec2 v0 = mix(s00.rg, s10.rg, frac.x);
+            vec2 v1 = mix(s01.rg, s11.rg, frac.x);
+            vec2 velocity = mix(v0, v1, frac.y);
+            float speed = length(velocity);
+            vec3 color = velocityPalette(velocityScaleT(speed));
+            gl_FragColor = vec4(color, uOpacity);
+          }
+        `,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+        polygonOffsetUnits: -1,
+      });
     }
 
     function getRiseVisualizationRange(key) {
@@ -3031,6 +3255,14 @@
       return null;
     }
 
+    function disposeTexture(texture) {
+      if (!texture) return null;
+      if (typeof texture.dispose === "function") {
+        texture.dispose();
+      }
+      return null;
+    }
+
     function disposeObject3D(object) {
       if (!object) return null;
       scene.remove(object);
@@ -3065,6 +3297,7 @@
       iceBottomMesh = disposeMesh(iceBottomMesh);
       iceSideMesh = disposeMesh(iceSideMesh);
       velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
+      velocityDataTexture = disposeTexture(velocityDataTexture);
       basalMeltMesh = disposeMesh(basalMeltMesh);
       thermalDrivingMesh = disposeMesh(thermalDrivingMesh);
       effectivePressureMesh = disposeMesh(effectivePressureMesh);
@@ -4819,20 +5052,35 @@
 
       velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
       flowlineMesh = disposeMesh(flowlineMesh);
+      velocityDataTexture = disposeTexture(velocityDataTexture);
       const velocitySurfaceGeometry = new THREE.BufferGeometry();
       velocitySurfaceGeometry.setAttribute("position", new THREE.BufferAttribute(workerResult.positions, 3));
-      velocitySurfaceGeometry.setAttribute("color", new THREE.BufferAttribute(workerResult.colors, 3, true));
+      velocitySurfaceGeometry.setAttribute("uv", new THREE.BufferAttribute(workerResult.uvs, 2));
       velocitySurfaceGeometry.setIndex(new THREE.BufferAttribute(workerResult.indices, 1));
-      const velocitySurfaceMaterial = new THREE.MeshBasicMaterial({
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.82,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-        polygonOffset: true,
-        polygonOffsetFactor: -1,
-        polygonOffsetUnits: -1,
-      });
+      let velocitySurfaceMaterial = null;
+      if (supportsContinuousVelocitySampling(renderer, context.nx, context.ny)) {
+        velocityDataTexture = createVelocityDataTexture(workerResult, context.nx, context.ny, renderer);
+        if (velocityDataTexture) {
+          velocitySurfaceMaterial = createVelocitySurfaceShaderMaterial(velocityDataTexture, context.nx, context.ny);
+        }
+      }
+      if (!velocitySurfaceMaterial) {
+        if (!velocityContinuousSamplingWarningIssued) {
+          console.warn("Continuous velocity sampling unavailable; using vertex-colored velocity surface fallback.");
+          velocityContinuousSamplingWarningIssued = true;
+        }
+        velocitySurfaceGeometry.setAttribute("color", new THREE.BufferAttribute(workerResult.colors, 3, true));
+        velocitySurfaceMaterial = new THREE.MeshBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: VELOCITY_SURFACE_OPACITY,
+          side: THREE.DoubleSide,
+          depthWrite: false,
+          polygonOffset: true,
+          polygonOffsetFactor: -1,
+          polygonOffsetUnits: -1,
+        });
+      }
       velocitySurfaceMesh = new THREE.Mesh(velocitySurfaceGeometry, velocitySurfaceMaterial);
       velocitySurfaceMesh.scale.y = Number(controlsUI.exaggeration.value);
       velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
@@ -5005,7 +5253,8 @@
       }
       if (context.oceanCurrentUnavailable) return false;
 
-      const showOverlay = trigger === "toggle";
+      const updateStatus = trigger === "toggle";
+      const showOverlay = updateStatus && VELOCITY_BLOCKING_OVERLAY_ENABLED;
       const buildLayer = trigger === "toggle" || trigger === "warmup";
 
       if (oceanCurrentLoadPromise) {
@@ -5131,7 +5380,8 @@
       }
       if (context.velocityUnavailable) return false;
 
-      const showOverlay = trigger === "toggle";
+      const updateStatus = trigger === "toggle";
+      const showOverlay = updateStatus && VELOCITY_BLOCKING_OVERLAY_ENABLED;
       const buildLayer = trigger === "toggle" || trigger === "warmup";
 
       if (velocityLoadPromise) {
@@ -5151,12 +5401,14 @@
       velocityLoadPromise = (async () => {
         const hasPrefetchedPayload = Boolean(context.velocityPrefetchMeta && context.velocityPrefetchBuffer);
 
-        if (showOverlay) {
-          setLoadingOverlayVisible(true);
-          updateLoadingProgress(
-            hasPrefetchedPayload ? 0.34 : 0.1,
-            hasPrefetchedPayload ? "Applying prefetched velocity data..." : "Loading velocity metadata..."
-          );
+        if (updateStatus) {
+          if (showOverlay) {
+            setLoadingOverlayVisible(true);
+            updateLoadingProgress(
+              hasPrefetchedPayload ? 0.34 : 0.1,
+              hasPrefetchedPayload ? "Applying prefetched velocity data..." : "Loading velocity metadata..."
+            );
+          }
           statusEl.textContent = "Loading velocity layer...";
         }
 
@@ -5189,7 +5441,7 @@
         context.velocityPrefetchBuffer = null;
         return buildVelocityLayerFromPayload(context, velocityMeta, velocityBuffer, {
           showOverlay,
-          updateStatus: showOverlay,
+          updateStatus,
         });
       })()
         .catch((error) => {
@@ -5200,6 +5452,7 @@
             controlsUI.showFlowline.checked = false;
             velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
             flowlineMesh = disposeMesh(flowlineMesh);
+            velocityDataTexture = disposeTexture(velocityDataTexture);
             velocityField = null;
             const readyText = getReadyStatusText(context);
             const transientText = "Velocity layer unavailable";

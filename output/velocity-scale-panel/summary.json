@@ -1,0 +1,85 @@
+{
+  "consoleErrors": [],
+  "pageErrors": [],
+  "state": {
+    "ready": true,
+    "mode": "interactive",
+    "region": "antarctica",
+    "dataset": "balanced",
+    "status": "Ready (Antarctica Balanced)",
+    "toggles": {
+      "showBed": true,
+      "showIce": true,
+      "showIceBottom": true,
+      "showVelocity": true,
+      "showFlowline": false,
+      "showBasalMelt": false,
+      "showThermalDriving": false,
+      "showOceanCurrents": false,
+      "showRefinedBasins": false,
+      "showEffectivePressure": false,
+      "showSubglacialChannels": false,
+      "showSea": false,
+      "wireframe": false
+    },
+    "controls": {
+      "showBed": true,
+      "showIce": true,
+      "showIceBottom": true,
+      "showVelocity": true,
+      "showFlowline": false,
+      "showBasalMelt": false,
+      "showThermalDriving": false,
+      "showOceanCurrents": false,
+      "showRefinedBasins": false,
+      "showEffectivePressure": false,
+      "showSubglacialChannels": false,
+      "showSea": false,
+      "wireframe": false
+    },
+    "legends": {
+      "bed": true,
+      "velocity": true,
+      "basalMelt": false,
+      "thermalDriving": false,
+      "oceanCurrents": false,
+      "effectivePressure": false,
+      "subglacialChannels": false
+    },
+    "camera": {
+      "position": {
+        "x": 3,
+        "y": 53,
+        "z": 77
+      },
+      "target": {
+        "x": 3.5,
+        "y": -7,
+        "z": 3
+      },
+      "fov": 45
+    },
+    "grid": {
+      "nx": 667,
+      "ny": 667,
+      "dx_m": 10000,
+      "dy_m": -10000,
+      "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+    },
+    "meshes": {
+      "bed": true,
+      "ice": true,
+      "iceBottom": true,
+      "velocity": true,
+      "flowline": false,
+      "basalMelt": false,
+      "thermalDriving": false,
+      "oceanCurrents": false,
+      "basins": false,
+      "hydrology": false
+    }
+  },
+  "labelsText": "0\n30\n100\n300\n1000\n3000",
+  "noteText": "nonlinear scale clipped to 0 to 3000 m/yr",
+  "labelsHtml": "<span style=\"left:0.00%;transform:translateX(0);\">0</span><span style=\"left:18.26%;transform:translateX(-50%);\">30</span><span style=\"left:35.71%;transform:translateX(-50%);\">100</span><span style=\"left:55.26%;transform:translateX(-50%);\">300</span><span style=\"left:78.37%;transform:translateX(-50%);\">1000</span><span style=\"left:100.00%;transform:translateX(-100%);\">3000</span>"
+}
