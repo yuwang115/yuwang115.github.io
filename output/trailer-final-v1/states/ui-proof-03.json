@@ -1,0 +1,162 @@
+{
+  "id": "ui-proof-03",
+  "mode": "interactive",
+  "url": "http://127.0.0.1:1313/tools/antarctica-bedmachine-3d.html?region=greenland&preset=balanced",
+  "durationMs": 2000,
+  "captureMode": "realtime-video",
+  "checkpoints": [
+    {
+      "atMs": 0,
+      "state": {
+        "ready": true,
+        "mode": "interactive",
+        "region": "greenland",
+        "preset": "3km",
+        "dataset": "3km",
+        "status": "Ready (Greenland Balanced)",
+        "toggles": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": true,
+          "showVelocity": true,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": true,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": true,
+          "showVelocity": true,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": true,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": false,
+          "variant": "label",
+          "align": "left",
+          "kicker": "",
+          "title": "",
+          "body": "",
+          "cta": ""
+        },
+        "camera": {
+          "position": {
+            "x": 3,
+            "y": 53,
+            "z": 77
+          },
+          "target": {
+            "x": 3.5,
+            "y": -7,
+            "z": 3
+          },
+          "fov": 45
+        },
+        "grid": {
+          "nx": 511,
+          "ny": 918,
+          "dx_m": 3000,
+          "dy_m": -3000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": true,
+          "velocity": true,
+          "flowline": false,
+          "oceanCurrents": false,
+          "basins": true,
+          "hydrology": false
+        }
+      }
+    },
+    {
+      "atMs": 2000,
+      "state": {
+        "ready": true,
+        "mode": "interactive",
+        "region": "greenland",
+        "preset": "3km",
+        "dataset": "3km",
+        "status": "Ready (Greenland Balanced)",
+        "toggles": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": true,
+          "showVelocity": true,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": true,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": true,
+          "showVelocity": true,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": true,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": false,
+          "variant": "label",
+          "align": "left",
+          "kicker": "",
+          "title": "",
+          "body": "",
+          "cta": ""
+        },
+        "camera": {
+          "position": {
+            "x": 3,
+            "y": 53,
+            "z": 77
+          },
+          "target": {
+            "x": 3.5,
+            "y": -7,
+            "z": 3
+          },
+          "fov": 45
+        },
+        "grid": {
+          "nx": 511,
+          "ny": 918,
+          "dx_m": 3000,
+          "dy_m": -3000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": true,
+          "velocity": true,
+          "flowline": false,
+          "oceanCurrents": false,
+          "basins": true,
+          "hydrology": false
+        }
+      }
+    }
+  ],
+  "trimStartMs": 7562
+}

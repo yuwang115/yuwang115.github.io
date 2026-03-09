@@ -1,0 +1,134 @@
+{
+  "id": "antarctica-hero",
+  "mode": "trailer",
+  "url": "http://127.0.0.1:1313/tools/antarctica-bedmachine-3d.html?mode=trailer&region=antarctica&preset=balanced",
+  "durationMs": 5000,
+  "captureMode": "realtime-video",
+  "checkpoints": [
+    {
+      "atMs": 0,
+      "state": {
+        "ready": true,
+        "mode": "trailer",
+        "region": "antarctica",
+        "dataset": "balanced",
+        "status": "Ready (Antarctica Balanced)",
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": true,
+          "variant": "hero",
+          "align": "left",
+          "kicker": "Dual-Polar Scientific Explorer",
+          "title": "3D Antarctica & Greenland Explorer",
+          "body": "Terrain, ice-sheet structure, and polar process layers in one 3D environment.",
+          "cta": ""
+        },
+        "camera": {
+          "position": {
+            "x": 10.8,
+            "y": 61.5,
+            "z": 86.2
+          },
+          "target": {
+            "x": 3.4,
+            "y": -7.1,
+            "z": 3.2
+          },
+          "fov": 40
+        },
+        "grid": {
+          "nx": 667,
+          "ny": 667,
+          "dx_m": 10000,
+          "dy_m": -10000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": false,
+          "velocity": false,
+          "flowline": false,
+          "oceanCurrents": false,
+          "basins": false,
+          "hydrology": false
+        }
+      }
+    },
+    {
+      "atMs": 5000,
+      "state": {
+        "ready": true,
+        "mode": "trailer",
+        "region": "antarctica",
+        "dataset": "balanced",
+        "status": "Ready (Antarctica Balanced)",
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": true,
+          "variant": "hero",
+          "align": "left",
+          "kicker": "Dual-Polar Scientific Explorer",
+          "title": "3D Antarctica & Greenland Explorer",
+          "body": "Terrain, ice-sheet structure, and polar process layers in one 3D environment.",
+          "cta": ""
+        },
+        "camera": {
+          "position": {
+            "x": 2.8,
+            "y": 54.2,
+            "z": 75.5
+          },
+          "target": {
+            "x": 3.8,
+            "y": -7.5,
+            "z": 2
+          },
+          "fov": 42
+        },
+        "grid": {
+          "nx": 667,
+          "ny": 667,
+          "dx_m": 10000,
+          "dy_m": -10000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": false,
+          "velocity": false,
+          "flowline": false,
+          "oceanCurrents": false,
+          "basins": false,
+          "hydrology": false
+        }
+      }
+    }
+  ],
+  "trimStartMs": 9438
+}

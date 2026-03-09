@@ -1,0 +1,134 @@
+{
+  "id": "greenland-basins-velocity",
+  "mode": "trailer",
+  "url": "http://127.0.0.1:1313/tools/antarctica-bedmachine-3d.html?mode=trailer&region=greenland&preset=balanced",
+  "durationMs": 7000,
+  "captureMode": "realtime-video",
+  "checkpoints": [
+    {
+      "atMs": 0,
+      "state": {
+        "ready": true,
+        "mode": "trailer",
+        "region": "greenland",
+        "dataset": "3km",
+        "status": "Ready (Greenland Balanced)",
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": true,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": true,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": true,
+          "variant": "label",
+          "align": "left",
+          "kicker": "Greenland",
+          "title": "Basins and Velocity",
+          "body": "Catchment sectors and ice-speed structure show how regional flow reorganizes.",
+          "cta": ""
+        },
+        "camera": {
+          "position": {
+            "x": 18,
+            "y": 65,
+            "z": 61
+          },
+          "target": {
+            "x": 9,
+            "y": -7.5,
+            "z": -1.5
+          },
+          "fov": 39
+        },
+        "grid": {
+          "nx": 511,
+          "ny": 918,
+          "dx_m": 3000,
+          "dy_m": -3000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": false,
+          "velocity": true,
+          "flowline": false,
+          "oceanCurrents": false,
+          "basins": true,
+          "hydrology": false
+        }
+      }
+    },
+    {
+      "atMs": 7000,
+      "state": {
+        "ready": true,
+        "mode": "trailer",
+        "region": "greenland",
+        "dataset": "3km",
+        "status": "Ready (Greenland Balanced)",
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": true,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": true,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": true,
+          "variant": "label",
+          "align": "left",
+          "kicker": "Greenland",
+          "title": "Basins and Velocity",
+          "body": "Catchment sectors and ice-speed structure show how regional flow reorganizes.",
+          "cta": ""
+        },
+        "camera": {
+          "position": {
+            "x": 10.2,
+            "y": 58,
+            "z": 48
+          },
+          "target": {
+            "x": 5.8,
+            "y": -8.8,
+            "z": 1.5
+          },
+          "fov": 38
+        },
+        "grid": {
+          "nx": 511,
+          "ny": 918,
+          "dx_m": 3000,
+          "dy_m": -3000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": false,
+          "velocity": true,
+          "flowline": false,
+          "oceanCurrents": false,
+          "basins": true,
+          "hydrology": false
+        }
+      }
+    }
+  ],
+  "trimStartMs": 11303
+}

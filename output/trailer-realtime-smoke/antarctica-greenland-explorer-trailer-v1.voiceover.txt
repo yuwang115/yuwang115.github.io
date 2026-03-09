@@ -1,0 +1,6 @@
+Title: 3D Antarctica & Greenland Explorer
+Language: en-AU
+Style: Calm, precise, academic, and concise.
+
+1. Explore Antarctica and Greenland in a shared three-dimensional scientific viewer.
+

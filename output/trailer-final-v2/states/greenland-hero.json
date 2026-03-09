@@ -1,0 +1,134 @@
+{
+  "id": "greenland-hero",
+  "mode": "trailer",
+  "url": "http://127.0.0.1:1313/tools/antarctica-bedmachine-3d.html?mode=trailer&region=greenland&preset=balanced",
+  "durationMs": 5000,
+  "captureMode": "realtime-video",
+  "checkpoints": [
+    {
+      "atMs": 0,
+      "state": {
+        "ready": true,
+        "mode": "trailer",
+        "region": "greenland",
+        "dataset": "3km",
+        "status": "Ready (Greenland Balanced)",
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": true,
+          "variant": "label",
+          "align": "left",
+          "kicker": "Greenland",
+          "title": "Shared Polar Workflow",
+          "body": "The same 3D language carries directly across regions on a consistent scientific grid.",
+          "cta": ""
+        },
+        "camera": {
+          "position": {
+            "x": 10.5,
+            "y": 88,
+            "z": 91
+          },
+          "target": {
+            "x": 4.6,
+            "y": -11.8,
+            "z": 6.2
+          },
+          "fov": 42
+        },
+        "grid": {
+          "nx": 511,
+          "ny": 918,
+          "dx_m": 3000,
+          "dy_m": -3000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": false,
+          "velocity": false,
+          "flowline": false,
+          "oceanCurrents": false,
+          "basins": false,
+          "hydrology": false
+        }
+      }
+    },
+    {
+      "atMs": 5000,
+      "state": {
+        "ready": true,
+        "mode": "trailer",
+        "region": "greenland",
+        "dataset": "3km",
+        "status": "Ready (Greenland Balanced)",
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": true,
+          "variant": "label",
+          "align": "left",
+          "kicker": "Greenland",
+          "title": "Shared Polar Workflow",
+          "body": "The same 3D language carries directly across regions on a consistent scientific grid.",
+          "cta": ""
+        },
+        "camera": {
+          "position": {
+            "x": 2.8,
+            "y": 79,
+            "z": 80
+          },
+          "target": {
+            "x": 5,
+            "y": -11.6,
+            "z": 5.4
+          },
+          "fov": 41
+        },
+        "grid": {
+          "nx": 511,
+          "ny": 918,
+          "dx_m": 3000,
+          "dy_m": -3000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": false,
+          "velocity": false,
+          "flowline": false,
+          "oceanCurrents": false,
+          "basins": false,
+          "hydrology": false
+        }
+      }
+    }
+  ],
+  "trimStartMs": 11029
+}

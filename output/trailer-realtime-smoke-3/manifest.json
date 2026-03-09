@@ -1,0 +1,21 @@
+{
+  "spec": "file:///Users/eddie/Documents/yuwang115.github.io/scripts/trailer/scenes.json",
+  "baseUrl": "http://127.0.0.1:1313",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "antarctica-hero",
+      "clip": "/Users/eddie/Documents/yuwang115.github.io/output/trailer-realtime-smoke-3/clips/antarctica-hero.mp4",
+      "rawVideo": "/Users/eddie/Documents/yuwang115.github.io/output/trailer-realtime-smoke-3/raw-video/antarctica-hero/e27258890cab4a829001fe2c5e896e9c.webm",
+      "rawDurationSec": 12.12,
+      "trimStartMs": 6252,
+      "trimStartSec": 6.999999999999999,
+      "durationMs": 5000,
+      "captureMode": "realtime-video"
+    }
+  ],
+  "ffmpeg": "/opt/homebrew/bin/ffmpeg",
+  "masterClip": "/Users/eddie/Documents/yuwang115.github.io/output/trailer-realtime-smoke-3/antarctica-greenland-explorer-trailer-v1.mp4"
+}

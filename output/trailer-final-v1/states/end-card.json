@@ -1,0 +1,162 @@
+{
+  "id": "end-card",
+  "mode": "trailer",
+  "url": "http://127.0.0.1:1313/tools/antarctica-bedmachine-3d.html?mode=trailer&region=greenland&preset=balanced",
+  "durationMs": 4000,
+  "captureMode": "realtime-video",
+  "checkpoints": [
+    {
+      "atMs": 0,
+      "state": {
+        "ready": true,
+        "mode": "trailer",
+        "region": "greenland",
+        "preset": "3km",
+        "dataset": "3km",
+        "status": "Ready (Greenland Balanced)",
+        "toggles": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": true,
+          "variant": "title-card",
+          "align": "left",
+          "kicker": "Research Communication Demo",
+          "title": "3D Antarctica & Greenland Explorer",
+          "body": "Built for research communication, teaching, and collaboration across polar datasets.",
+          "cta": "Yu Wang  |  yuwang115.github.io/tools/"
+        },
+        "camera": {
+          "position": {
+            "x": 6,
+            "y": 70,
+            "z": 76
+          },
+          "target": {
+            "x": 4.8,
+            "y": -10.5,
+            "z": 4.2
+          },
+          "fov": 39
+        },
+        "grid": {
+          "nx": 511,
+          "ny": 918,
+          "dx_m": 3000,
+          "dy_m": -3000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": false,
+          "velocity": false,
+          "flowline": false,
+          "oceanCurrents": false,
+          "basins": false,
+          "hydrology": false
+        }
+      }
+    },
+    {
+      "atMs": 4000,
+      "state": {
+        "ready": true,
+        "mode": "trailer",
+        "region": "greenland",
+        "preset": "3km",
+        "dataset": "3km",
+        "status": "Ready (Greenland Balanced)",
+        "toggles": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": false,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": false,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": true,
+          "variant": "title-card",
+          "align": "left",
+          "kicker": "Research Communication Demo",
+          "title": "3D Antarctica & Greenland Explorer",
+          "body": "Built for research communication, teaching, and collaboration across polar datasets.",
+          "cta": "Yu Wang  |  yuwang115.github.io/tools/"
+        },
+        "camera": {
+          "position": {
+            "x": 4.4,
+            "y": 66,
+            "z": 71
+          },
+          "target": {
+            "x": 4.8,
+            "y": -10.5,
+            "z": 4.2
+          },
+          "fov": 38
+        },
+        "grid": {
+          "nx": 511,
+          "ny": 918,
+          "dx_m": 3000,
+          "dy_m": -3000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": false,
+          "velocity": false,
+          "flowline": false,
+          "oceanCurrents": false,
+          "basins": false,
+          "hydrology": false
+        }
+      }
+    }
+  ],
+  "trimStartMs": 6077
+}

@@ -348,6 +348,26 @@
       line-height: 1.4;
     }
 
+    .meta-list .meta-link {
+      color: #166789;
+      text-decoration: underline;
+      text-decoration-color: rgba(22, 103, 137, 0.42);
+      text-underline-offset: 2px;
+      font: inherit;
+    }
+
+    .meta-list .meta-link:hover {
+      color: #0f5976;
+      text-decoration-color: currentColor;
+    }
+
+    .meta-list .meta-link:focus-visible {
+      outline: 2px solid rgba(20, 116, 150, 0.4);
+      outline-offset: 2px;
+      border-radius: 3px;
+      text-decoration-color: currentColor;
+    }
+
     .hud {
       position: absolute;
       left: 12px;
@@ -454,6 +474,25 @@
       color: #3e5d6f;
       font-size: 0.71rem;
       font-family: "IBM Plex Mono", monospace;
+    }
+
+    .legend-labels.legend-labels--ticks {
+      position: relative;
+      display: block;
+      height: 1.1rem;
+    }
+
+    .legend-labels.legend-labels--ticks span {
+      position: absolute;
+      top: 0;
+      white-space: nowrap;
+    }
+
+    .legend-note {
+      margin-top: 4px;
+      color: #567486;
+      font-size: 0.68rem;
+      line-height: 1.35;
     }
 
     .ocean-legend-wrap {
@@ -694,6 +733,7 @@
         flex-direction: column;
         align-items: flex-start;
       }
+
     }
   </style>
 </head>
@@ -706,7 +746,7 @@
       </div>
       <p id="panelSubtitle" class="subtitle">
         Rotate, zoom, and explore Antarctica with interactive layers
-        for bed topography, ice surface/base, velocity, flowlines, subglacial environments.
+        for bed topography, ice surface/base, velocity, flowlines, subglacial environments, and ice-shelf melt drivers.
       </p>
 
       <section class="section">
@@ -738,6 +778,8 @@
         <label class="toggle"><input id="showIceBottom" type="checkbox" checked /> Show ice bottom surface</label>
         <label class="toggle"><input id="showVelocity" type="checkbox" /> Show ice surface velocity</label>
         <label class="toggle"><input id="showFlowline" type="checkbox" /> Show ice flowlines</label>
+        <label class="toggle"><input id="showBasalMelt" type="checkbox" /> Show basal melt</label>
+        <label class="toggle"><input id="showThermalDriving" type="checkbox" /> Show thermal driving</label>
         <label class="toggle"><input id="showOceanCurrents" type="checkbox" /> Show ocean streamlines</label>
         <label class="toggle"><input id="showRefinedBasins" type="checkbox" /> <span id="showRefinedBasinsLabel">Show refined basins</span></label>
         <label class="toggle"><input id="showEffectivePressure" type="checkbox" /> Show effective pressure</label>
@@ -766,6 +808,27 @@
           <span>100</span>
           <span>500</span>
           <span>1500+</span>
+        </div>
+      </section>
+
+      <section id="basalMeltLegendSection" class="section">
+        <h2 class="section-title">Basal Melt Color</h2>
+        <div id="basalMeltLegendBar" class="legend" aria-hidden="true"></div>
+        <div id="basalMeltLegendLabels" class="legend-labels">
+          <span>-4 m/yr</span>
+          <span>0</span>
+          <span>+4 m/yr</span>
+        </div>
+        <div id="basalMeltLegendNote" class="legend-note">symlog scale clipped to -1 to 15 m/yr</div>
+      </section>
+
+      <section id="thermalDrivingLegendSection" class="section">
+        <h2 class="section-title">Thermal Driving Color</h2>
+        <div id="thermalDrivingLegendBar" class="legend" aria-hidden="true"></div>
+        <div id="thermalDrivingLegendLabels" class="legend-labels">
+          <span>0 °C</span>
+          <span>0.4</span>
+          <span>0.8</span>
         </div>
       </section>
 
@@ -883,7 +946,7 @@
         key: "antarctica",
         label: "Antarctica",
         intro:
-          "Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, flowlines, subglacial environments.",
+          "Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, flowlines, subglacial environments, and RISE basal melt drivers.",
         refinedBasinsUrl: "/tools/data/imbie_refined_basins_v2.json",
         basinToggleLabel: "Show refined basins",
         basinStatusLabel: "refined basins",
@@ -891,15 +954,32 @@
         capabilities: {
           velocity: true,
           flowline: true,
+          rise: true,
           oceanCurrents: false,
           refinedBasins: true,
           hydrology: true,
         },
         sources: {
-          geometry: "MEaSUREs BedMachine Antarctica, Version 4",
-          velocity: "MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1",
-          basins: "MEaSUREs Antarctic Boundaries for IPY 2007-2009 (Version 2, IMBIE refined basins)",
-          hydrology: "Ehrenfeucht et al. (2025) Antarctic Wide Subglacial Hydrology Modeling",
+          geometry: {
+            text: "MEaSUREs BedMachine Antarctica, Version 4",
+            url: "https://nsidc.org/data/NSIDC-0756/versions/4",
+          },
+          velocity: {
+            text: "MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1",
+            url: "https://nsidc.org/data/NSIDC-0754/versions/1",
+          },
+          rise: {
+            text: "Galton-Fenzi et al. (2025) Multi-model estimate of Antarctic ice-shelf basal melting and ocean drivers, V1",
+            url: "https://data.aad.gov.au/metadata/RISE",
+          },
+          basins: {
+            text: "MEaSUREs Antarctic Boundaries for IPY 2007-2009 (Version 2, IMBIE refined basins)",
+            url: "https://nsidc.org/data/NSIDC-0709/versions/2",
+          },
+          hydrology: {
+            text: "Ehrenfeucht et al. (2025) Antarctic Wide Subglacial Hydrology Modeling",
+            url: "https://zenodo.org/records/12738170",
+          },
         },
         datasets: {
           balanced: {
@@ -910,6 +990,8 @@
             binUrl: "/tools/data/bedmachine_antarctica_v4_480.bin",
             velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.meta.json",
             velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.bin",
+            riseMetaUrl: "/tools/data/rise_antarctica_480.meta.json",
+            riseBinUrl: "/tools/data/rise_antarctica_480.bin",
             hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_480.meta.json",
             hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_480.bin",
           },
@@ -921,6 +1003,8 @@
             binUrl: "/tools/data/bedmachine_antarctica_v4_741.bin",
             velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.meta.json",
             velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.bin",
+            riseMetaUrl: "/tools/data/rise_antarctica_741.meta.json",
+            riseBinUrl: "/tools/data/rise_antarctica_741.bin",
             hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_741.meta.json",
             hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_741.bin",
           },
@@ -938,15 +1022,24 @@
         capabilities: {
           velocity: true,
           flowline: true,
+          rise: false,
           oceanCurrents: true,
           refinedBasins: true,
           hydrology: false,
         },
         sources: {
-          geometry: "BedMachine Greenland, Version 6",
-          velocity: "ITS_LIVE Greenland ice surface velocity mosaic (120 m, V02.1)",
-          oceanCurrents:
-            "Copernicus Marine Arctic Ocean Physics Analysis and Forecast (monthly mean ocean velocity, temperature, and salinity)",
+          geometry: {
+            text: "BedMachine Greenland, Version 6",
+            url: "https://nsidc.org/data/idbmg4/versions/6",
+          },
+          velocity: {
+            text: "ITS_LIVE Greenland ice surface velocity mosaic (120 m, V02.1)",
+            url: "https://nsidc.org/data/NSIDC-0776/versions/2",
+          },
+          oceanCurrents: {
+            text: "Copernicus Marine Arctic Ocean Physics Analysis and Forecast (monthly mean ocean velocity, temperature, and salinity)",
+            url: "https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description",
+          },
           basins: "Greenland Basins PS v1.4.2 catchment boundaries",
         },
         datasets: {
@@ -1035,6 +1128,8 @@
       showIceBottom: document.getElementById("showIceBottom"),
       showVelocity: document.getElementById("showVelocity"),
       showFlowline: document.getElementById("showFlowline"),
+      showBasalMelt: document.getElementById("showBasalMelt"),
+      showThermalDriving: document.getElementById("showThermalDriving"),
       showOceanCurrents: document.getElementById("showOceanCurrents"),
       showRefinedBasins: document.getElementById("showRefinedBasins"),
       showRefinedBasinsLabel: document.getElementById("showRefinedBasinsLabel"),
@@ -1048,6 +1143,13 @@
       viewerFullscreenToggle: document.getElementById("viewerFullscreenToggle"),
       legendBar: document.getElementById("legendBar"),
       velocityLegendBar: document.getElementById("velocityLegendBar"),
+      basalMeltLegendSection: document.getElementById("basalMeltLegendSection"),
+      basalMeltLegendBar: document.getElementById("basalMeltLegendBar"),
+      basalMeltLegendLabels: document.getElementById("basalMeltLegendLabels"),
+      basalMeltLegendNote: document.getElementById("basalMeltLegendNote"),
+      thermalDrivingLegendSection: document.getElementById("thermalDrivingLegendSection"),
+      thermalDrivingLegendBar: document.getElementById("thermalDrivingLegendBar"),
+      thermalDrivingLegendLabels: document.getElementById("thermalDrivingLegendLabels"),
       oceanLegendSection: document.getElementById("oceanLegendSection"),
       oceanLegendCanvas: document.getElementById("oceanLegendCanvas"),
       oceanLegendWarmLabel: document.getElementById("oceanLegendWarmLabel"),
@@ -1071,6 +1173,8 @@
     let iceBottomMesh;
     let iceSideMesh;
     let velocitySurfaceMesh;
+    let basalMeltMesh;
+    let thermalDrivingMesh;
     let effectivePressureMesh;
     let subglacialChannelMesh;
     let flowlineMesh;
@@ -1099,10 +1203,12 @@
     let mobilePanelResizeObserver = null;
     let currentCoreContext = null;
     let currentVelocityMeta = null;
+    let currentRiseMeta = null;
     let currentHydrologyMeta = null;
     let currentOceanCurrentMeta = null;
     let currentVelocityMedianSpeed = Number.NaN;
     let velocityLoadPromise = null;
+    let riseLoadPromise = null;
     let hydrologyLoadPromise = null;
     let oceanCurrentLoadPromise = null;
     let viewerInteracted = false;
@@ -1182,15 +1288,24 @@
       const basinAvailable = Boolean(
         !isShowcaseMode && capabilities.refinedBasins && dataset?.refinedBasinsUrl && !getDatasetBasinUnavailable(dataset)
       );
+      const riseAvailable = Boolean(!isShowcaseMode && capabilities.rise && dataset?.riseMetaUrl && dataset?.riseBinUrl);
       const oceanCurrentAvailable = Boolean(
         !isShowcaseMode && capabilities.oceanCurrents && dataset?.oceanCurrentsMetaUrl && dataset?.oceanCurrentsBinUrl
       );
       setToggleAvailability(controlsUI.showVelocity, capabilities.velocity);
       setToggleAvailability(controlsUI.showFlowline, capabilities.velocity && capabilities.flowline);
+      setToggleAvailability(controlsUI.showBasalMelt, riseAvailable);
+      setToggleAvailability(controlsUI.showThermalDriving, riseAvailable);
       setToggleAvailability(controlsUI.showOceanCurrents, oceanCurrentAvailable);
       setToggleAvailability(controlsUI.showRefinedBasins, basinAvailable);
       setToggleAvailability(controlsUI.showEffectivePressure, capabilities.hydrology);
       setToggleAvailability(controlsUI.showSubglacialChannels, capabilities.hydrology);
+      if (controlsUI.basalMeltLegendSection) {
+        controlsUI.basalMeltLegendSection.hidden = !capabilities.rise || isShowcaseMode;
+      }
+      if (controlsUI.thermalDrivingLegendSection) {
+        controlsUI.thermalDrivingLegendSection.hidden = !capabilities.rise || isShowcaseMode;
+      }
       if (controlsUI.effectivePressureLegendSection) {
         controlsUI.effectivePressureLegendSection.hidden = !capabilities.hydrology;
       }
@@ -1250,6 +1365,8 @@
       controlsUI.showIceBottom.checked = true;
       controlsUI.showVelocity.checked = false;
       controlsUI.showFlowline.checked = false;
+      controlsUI.showBasalMelt.checked = false;
+      controlsUI.showThermalDriving.checked = false;
       controlsUI.showOceanCurrents.checked = false;
       controlsUI.showRefinedBasins.checked = false;
       controlsUI.showEffectivePressure.checked = false;
@@ -1257,6 +1374,8 @@
       controlsUI.showSea.checked = false;
       controlsUI.showVelocity.disabled = true;
       controlsUI.showFlowline.disabled = true;
+      controlsUI.showBasalMelt.disabled = true;
+      controlsUI.showThermalDriving.disabled = true;
       controlsUI.showOceanCurrents.disabled = true;
       controlsUI.showRefinedBasins.disabled = true;
       controlsUI.showEffectivePressure.disabled = true;
@@ -1330,6 +1449,7 @@
     const CHANNEL_STRIP_WIDTH_M_MAX = 5000;
     const EFFECTIVE_PRESSURE_SURFACE_OFFSET_M = 10;
     const SUBGLACIAL_CHANNEL_SURFACE_OFFSET_M = 14;
+    const RISE_SURFACE_OFFSET_M = 14;
     const REFINED_BASIN_BED_OFFSET_M = 90;
     const REFINED_BASIN_SURFACE_OFFSET_M = 24;
     const REFINED_BASIN_BED_LINE_WIDTH_M = 5000;
@@ -1342,6 +1462,26 @@
     const OCEAN_CURRENT_ARROW_HEAD_MIN_UNITS = 0.16;
     const OCEAN_CURRENT_ARROW_HEAD_MAX_UNITS = 1.0;
     const OCEAN_CURRENT_ARROW_HEAD_WIDTH_RATIO = 0.65;
+    const RISE_BASAL_MELT_COLOR_STOPS = [
+      [0.0, [0.082, 0.216, 0.376]],
+      [0.22, [0.31, 0.655, 0.847]],
+      [0.5, [0.965, 0.969, 0.984]],
+      [0.78, [0.969, 0.639, 0.357]],
+      [1.0, [0.541, 0.067, 0.09]],
+    ];
+    const RISE_BASAL_MELT_VISUALIZATION = Object.freeze({
+      range: [-1, 15],
+      linthresh: 0.05,
+      ticks: [-1, -0.3, -0.1, 0, 0.3, 1, 3, 15],
+      note: "symlog scale clipped to -1 to 15 m/yr",
+    });
+    const RISE_THERMAL_DRIVING_COLOR_STOPS = [
+      [0.0, [0.031, 0.114, 0.345]],
+      [0.22, [0.133, 0.369, 0.659]],
+      [0.52, [0.114, 0.569, 0.753]],
+      [0.78, [0.498, 0.804, 0.733]],
+      [1.0, [1.0, 0.953, 0.639]],
+    ];
     // Keep HD velocity responsive with a decimated mesh.
     const HD_VELOCITY_MESH_STRIDE = 2;
     // Effective-pressure overlay should stay conformal to bed to avoid local intersections.
@@ -1635,6 +1775,47 @@
       targetEl.style.background = `linear-gradient(90deg, ${stops.join(", ")})`;
     }
 
+    function formatBasalMeltTick(value) {
+      if (value === 0) return "0";
+      if (Math.abs(value) >= 10) return formatCoord(value, 0);
+      if (Math.abs(value) >= 1) return formatCoord(value, 0);
+      return formatCoord(value, 1);
+    }
+
+    function getBasalMeltVisualizationConfig() {
+      return RISE_BASAL_MELT_VISUALIZATION;
+    }
+
+    function basalMeltScaleT(meltMetersPerYear) {
+      const { range, linthresh } = getBasalMeltVisualizationConfig();
+      const minValue = Number(range[0]);
+      const maxValue = Number(range[1]);
+      const melt = Math.max(minValue, Math.min(maxValue, Number(meltMetersPerYear)));
+      if (melt <= 0) {
+        const magnitude = Math.abs(melt);
+        const negativeMax = Math.max(linthresh, Math.abs(minValue));
+        const scaled = Math.log1p(magnitude / linthresh) / Math.log1p(negativeMax / linthresh);
+        return 0.5 * (1 - clamp01(scaled));
+      }
+      const positiveMax = Math.max(linthresh, maxValue);
+      const scaled = Math.log1p(melt / linthresh) / Math.log1p(positiveMax / linthresh);
+      return 0.5 + 0.5 * clamp01(scaled);
+    }
+
+    function renderBasalMeltLegendTicks() {
+      if (!controlsUI.basalMeltLegendLabels) return;
+      const { ticks } = getBasalMeltVisualizationConfig();
+      controlsUI.basalMeltLegendLabels.classList.add("legend-labels--ticks");
+      controlsUI.basalMeltLegendLabels.innerHTML = ticks
+        .map((value) => {
+          const left = basalMeltScaleT(value) * 100;
+          const translate =
+            left <= 4 ? "translateX(0)" : left >= 94 ? "translateX(-100%)" : "translateX(-50%)";
+          return `<span style="left:${left.toFixed(2)}%;transform:${translate};">${formatBasalMeltTick(value)}</span>`;
+        })
+        .join("");
+    }
+
     function updateBedLegend() {
       if (!controlsUI.legendBar) return;
       if (!gmtReliefOceanLut.length || !gmtReliefLandLut.length) return;
@@ -1663,6 +1844,27 @@
         const speed = Math.expm1(t * Math.log1p(VELOCITY_REFERENCE_SPEED));
         return velocityColor(speed);
       });
+    }
+
+    function updateBasalMeltLegend() {
+      if (!controlsUI.basalMeltLegendBar || !controlsUI.basalMeltLegendLabels) return;
+      updateContinuousLegend(controlsUI.basalMeltLegendBar, (t) => sampleColorStops(RISE_BASAL_MELT_COLOR_STOPS, t));
+      renderBasalMeltLegendTicks();
+      if (controlsUI.basalMeltLegendNote) {
+        controlsUI.basalMeltLegendNote.textContent = getBasalMeltVisualizationConfig().note;
+      }
+    }
+
+    function updateThermalDrivingLegend() {
+      if (!controlsUI.thermalDrivingLegendBar || !controlsUI.thermalDrivingLegendLabels) return;
+      const range = getRiseVisualizationRange("thermal_driving");
+      updateContinuousLegend(controlsUI.thermalDrivingLegendBar, (t) => thermalDrivingColor(lerp(range[0], range[1], t)));
+      const mid = (range[0] + range[1]) * 0.5;
+      controlsUI.thermalDrivingLegendLabels.innerHTML = `
+        <span>${formatCoord(range[0], 2)} °C</span>
+        <span>${formatCoord(mid, 2)}</span>
+        <span>${formatCoord(range[1], 2)} °C</span>
+      `;
     }
 
     function updateEffectivePressureLegend() {
@@ -1793,6 +1995,30 @@
         ],
         scaled
       );
+    }
+
+    function getRiseVisualizationRange(key) {
+      const visualization = currentRiseMeta?.visualization?.[key];
+      if (key === "basal_melt") {
+        const { range } = getBasalMeltVisualizationConfig();
+        return [Number(range[0]), Number(range[1])];
+      }
+      if (key === "thermal_driving") {
+        const range = Array.isArray(visualization?.display_range_c) ? visualization.display_range_c : [0, 0.8];
+        return [Number(range[0]), Number(range[1])];
+      }
+      return [0, 1];
+    }
+
+    function basalMeltColor(meltMetersPerYear) {
+      const t = basalMeltScaleT(meltMetersPerYear);
+      return sampleColorStops(RISE_BASAL_MELT_COLOR_STOPS, t);
+    }
+
+    function thermalDrivingColor(thermalDrivingC) {
+      const [minValue, maxValue] = getRiseVisualizationRange("thermal_driving");
+      const t = clamp01((Number(thermalDrivingC) - minValue) / Math.max(1e-6, maxValue - minValue));
+      return sampleColorStops(RISE_THERMAL_DRIVING_COLOR_STOPS, t);
     }
 
     function oceanCurrentColor(thetaC, salinityPsu, oceanMeta) {
@@ -2047,23 +2273,55 @@
       return geometry;
     }
 
-    function parseField(meta, arrayBuffer, name) {
+    function getFieldDefinition(meta, name) {
       const field = meta.fields.find((item) => item.name === name);
       if (!field) {
         throw new Error(`Missing field: ${name}`);
       }
+      return field;
+    }
+
+    function parseField(meta, arrayBuffer, name) {
+      const field = getFieldDefinition(meta, name);
 
       if (field.dtype === "int16") {
-        return new Int16Array(arrayBuffer, field.byte_offset, field.byte_length / 2);
+        if (field.byte_offset % 2 === 0) {
+          return new Int16Array(arrayBuffer, field.byte_offset, field.byte_length / 2);
+        }
+        const count = field.byte_length / 2;
+        const view = new DataView(arrayBuffer, field.byte_offset, field.byte_length);
+        const out = new Int16Array(count);
+        for (let i = 0; i < count; i += 1) {
+          out[i] = view.getInt16(i * 2, true);
+        }
+        return out;
       }
       if (field.dtype === "uint8") {
         return new Uint8Array(arrayBuffer, field.byte_offset, field.byte_length);
       }
       if (field.dtype === "uint16") {
-        return new Uint16Array(arrayBuffer, field.byte_offset, field.byte_length / 2);
+        if (field.byte_offset % 2 === 0) {
+          return new Uint16Array(arrayBuffer, field.byte_offset, field.byte_length / 2);
+        }
+        const count = field.byte_length / 2;
+        const view = new DataView(arrayBuffer, field.byte_offset, field.byte_length);
+        const out = new Uint16Array(count);
+        for (let i = 0; i < count; i += 1) {
+          out[i] = view.getUint16(i * 2, true);
+        }
+        return out;
       }
       if (field.dtype === "int32") {
-        return new Int32Array(arrayBuffer, field.byte_offset, field.byte_length / 4);
+        if (field.byte_offset % 4 === 0) {
+          return new Int32Array(arrayBuffer, field.byte_offset, field.byte_length / 4);
+        }
+        const count = field.byte_length / 4;
+        const view = new DataView(arrayBuffer, field.byte_offset, field.byte_length);
+        const out = new Int32Array(count);
+        for (let i = 0; i < count; i += 1) {
+          out[i] = view.getInt32(i * 4, true);
+        }
+        return out;
       }
       if (field.dtype === "float32") {
         if (field.byte_offset % 4 === 0) {
@@ -2089,6 +2347,21 @@
         out[i] = intArray[i] === fillValue ? Number.NaN : intArray[i] * scale + offset;
       }
       return out;
+    }
+
+    function decodeFieldToFloat32(meta, arrayBuffer, name) {
+      const field = getFieldDefinition(meta, name);
+      if (field.dtype === "float32") {
+        return parseField(meta, arrayBuffer, name);
+      }
+      if (field.dtype === "int16") {
+        return decodeQuantizedInt16(parseField(meta, arrayBuffer, name), {
+          fillValue: Number(field.fill_value ?? meta.quantization?.int16_fill_value ?? -32768),
+          scale: Number(field.scale ?? meta.quantization?.scale ?? 1),
+          offset: Number(field.offset ?? meta.quantization?.offset ?? 0),
+        });
+      }
+      throw new Error(`Field ${name} is not a decodable float field.`);
     }
 
     function quickselectInPlace(values, k) {
@@ -2536,15 +2809,175 @@
     function resetCameraToDefaultPose() {
       if (!camera || !orbit) return;
       const pose = getDefaultCameraPose();
+      applyCameraPose(pose);
+    }
+
+    function waitForAnimationFrames(frameCount = 2) {
+      const total = Math.max(1, Math.round(Number(frameCount) || 1));
+      return new Promise((resolve) => {
+        let remaining = total;
+        const tick = () => {
+          remaining -= 1;
+          if (remaining <= 0) {
+            resolve();
+            return;
+          }
+          window.requestAnimationFrame(tick);
+        };
+        window.requestAnimationFrame(tick);
+      });
+    }
+
+    function waitUntilCondition(predicate, timeoutMs = 30000, errorMessage = "Timed out waiting for condition.") {
+      return new Promise((resolve, reject) => {
+        const start = performance.now();
+        const tick = () => {
+          try {
+            if (predicate()) {
+              resolve();
+              return;
+            }
+          } catch (error) {
+            reject(error);
+            return;
+          }
+          if (performance.now() - start >= timeoutMs) {
+            reject(new Error(errorMessage));
+            return;
+          }
+          window.setTimeout(tick, 50);
+        };
+        tick();
+      });
+    }
+
+    function coerceVec3(value, fallback) {
+      if (Array.isArray(value) && value.length >= 3) {
+        const nums = value.slice(0, 3).map((entry) => Number(entry));
+        if (nums.every((entry) => Number.isFinite(entry))) return nums;
+      }
+      if (value && typeof value === "object") {
+        const x = Number(value.x);
+        const y = Number(value.y);
+        const z = Number(value.z);
+        if (Number.isFinite(x) && Number.isFinite(y) && Number.isFinite(z)) {
+          return [x, y, z];
+        }
+      }
+      return Array.isArray(fallback) ? [...fallback] : [0, 0, 0];
+    }
+
+    function getCurrentCameraPose() {
+      if (!camera || !orbit) return null;
+      return {
+        position: [Number(camera.position.x), Number(camera.position.y), Number(camera.position.z)],
+        target: [Number(orbit.target.x), Number(orbit.target.y), Number(orbit.target.z)],
+        fov: Number(camera.fov),
+      };
+    }
+
+    function applyCameraPose(pose = null) {
+      if (!camera || !orbit) return null;
+      const fallbackPose = getCurrentCameraPose() || getDefaultCameraPose();
+      const nextPose = pose || fallbackPose;
+      const position = coerceVec3(nextPose.position, fallbackPose.position);
+      const target = coerceVec3(nextPose.target, fallbackPose.target);
+      const fovValue = Number(nextPose.fov);
+      const fov = Number.isFinite(fovValue) ? fovValue : Number(fallbackPose.fov);
       const previousDamping = orbit.enableDamping;
       orbit.enableDamping = false;
       orbit.update();
-      camera.position.set(...pose.position);
-      camera.fov = pose.fov;
+      camera.position.set(...position);
+      camera.fov = fov;
       camera.updateProjectionMatrix();
-      orbit.target.set(...pose.target);
+      orbit.target.set(...target);
       orbit.update();
       orbit.enableDamping = previousDamping;
+      return getCurrentCameraPose();
+    }
+
+    function hasPendingLayerLoads() {
+      return Boolean(riseLoadPromise || velocityLoadPromise || hydrologyLoadPromise || oceanCurrentLoadPromise || refinedBasinLoadPromise);
+    }
+
+    function isLoadingOverlayVisible() {
+      return Boolean(loadingOverlayEl && !loadingOverlayEl.classList.contains("hidden"));
+    }
+
+    function isExplorerReady() {
+      return Boolean(camera && orbit && currentCoreContext) && !isLoadingOverlayVisible() && !hasPendingLayerLoads();
+    }
+
+    function collectExplorerState() {
+      const toggles = {
+        showBed: Boolean(controlsUI.showBed?.checked),
+        showIce: Boolean(controlsUI.showIce?.checked),
+        showIceBottom: Boolean(controlsUI.showIceBottom?.checked),
+        showVelocity: Boolean(controlsUI.showVelocity?.checked),
+        showFlowline: Boolean(controlsUI.showFlowline?.checked),
+        showBasalMelt: Boolean(controlsUI.showBasalMelt?.checked),
+        showThermalDriving: Boolean(controlsUI.showThermalDriving?.checked),
+        showOceanCurrents: Boolean(controlsUI.showOceanCurrents?.checked),
+        showRefinedBasins: Boolean(controlsUI.showRefinedBasins?.checked),
+        showEffectivePressure: Boolean(controlsUI.showEffectivePressure?.checked),
+        showSubglacialChannels: Boolean(controlsUI.showSubglacialChannels?.checked),
+        showSea: Boolean(controlsUI.showSea?.checked),
+        wireframe: Boolean(controlsUI.wireframe?.checked),
+      };
+      return {
+        ready: isExplorerReady(),
+        mode: isShowcaseMode ? "showcase" : "interactive",
+        region: currentRegionKey,
+        dataset: currentDatasetKey,
+        status: statusEl?.textContent || "",
+        toggles,
+        controls: { ...toggles },
+        camera:
+          camera && orbit
+            ? {
+                position: {
+                  x: Number(camera.position.x.toFixed(2)),
+                  y: Number(camera.position.y.toFixed(2)),
+                  z: Number(camera.position.z.toFixed(2)),
+                },
+                target: {
+                  x: Number(orbit.target.x.toFixed(2)),
+                  y: Number(orbit.target.y.toFixed(2)),
+                  z: Number(orbit.target.z.toFixed(2)),
+                },
+                fov: Number(camera.fov.toFixed(2)),
+              }
+            : null,
+        grid: currentCoreContext
+          ? {
+              nx: currentCoreContext.nx,
+              ny: currentCoreContext.ny,
+              dx_m: currentCoreContext.meta.grid.dx_m,
+              dy_m: currentCoreContext.meta.grid.dy_m,
+              origin: "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row.",
+            }
+          : null,
+        meshes: {
+          bed: Boolean(bedMesh && bedMesh.visible),
+          ice: Boolean(iceMesh && iceMesh.visible),
+          iceBottom: Boolean(iceBottomMesh && iceBottomMesh.visible),
+          velocity: Boolean(velocitySurfaceMesh && velocitySurfaceMesh.visible),
+          flowline: Boolean(flowlineMesh && flowlineMesh.visible),
+          basalMelt: Boolean(basalMeltMesh && basalMeltMesh.visible),
+          thermalDriving: Boolean(thermalDrivingMesh && thermalDrivingMesh.visible),
+          oceanCurrents: Boolean(oceanCurrentMesh && oceanCurrentMesh.visible),
+          basins: Boolean(
+            (refinedBasinBedLines && refinedBasinBedLines.visible) ||
+              (refinedBasinSurfaceLines && refinedBasinSurfaceLines.visible) ||
+              (refinedBasinBedLabels && refinedBasinBedLabels.visible) ||
+              (refinedBasinSurfaceLabels && refinedBasinSurfaceLabels.visible)
+          ),
+          hydrology: Boolean(
+            (effectivePressureMesh && effectivePressureMesh.visible) ||
+              (subglacialChannelMesh && subglacialChannelMesh.visible)
+          ),
+        },
+      };
     }
 
     function renderLoop() {
@@ -2595,6 +3028,8 @@
       iceBottomMesh = disposeMesh(iceBottomMesh);
       iceSideMesh = disposeMesh(iceSideMesh);
       velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
+      basalMeltMesh = disposeMesh(basalMeltMesh);
+      thermalDrivingMesh = disposeMesh(thermalDrivingMesh);
       effectivePressureMesh = disposeMesh(effectivePressureMesh);
       subglacialChannelMesh = disposeMesh(subglacialChannelMesh);
       flowlineMesh = disposeMesh(flowlineMesh);
@@ -3010,6 +3445,34 @@
       iceSideMesh.visible = controlsUI.showIce.checked && controlsUI.showIceBottom.checked;
     }
 
+    function syncIceSurfaceVisibilityFromControls() {
+      if (iceMesh) iceMesh.visible = controlsUI.showIce.checked;
+      if (iceBottomMesh) iceBottomMesh.visible = controlsUI.showIceBottom.checked;
+      updateIceSideVisibility();
+      updateRefinedBasinVisibility();
+    }
+
+    function hideIceSurfaceForRiseOverlay() {
+      if (!controlsUI.showIce.checked) return;
+      controlsUI.showIce.checked = false;
+      syncIceSurfaceVisibilityFromControls();
+    }
+
+    function hideIceAndIceBottomSurfacesForBedOverlay() {
+      let changed = false;
+      if (controlsUI.showIce.checked) {
+        controlsUI.showIce.checked = false;
+        changed = true;
+      }
+      if (controlsUI.showIceBottom.checked) {
+        controlsUI.showIceBottom.checked = false;
+        changed = true;
+      }
+      if (changed) {
+        syncIceSurfaceVisibilityFromControls();
+      }
+    }
+
     function updateFlowlineVisibility() {
       if (!controlsUI.showFlowline.checked) {
         if (flowlineMesh) flowlineMesh.visible = false;
@@ -3064,7 +3527,30 @@
 
     function formatCoord(value, digits = 2) {
       const text = Number(value).toFixed(digits);
+      if (digits <= 0) return text;
       return text.replace(/\.?0+$/, "");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function renderSourceValue(source) {
+      if (!source) return "";
+      if (typeof source === "string") return escapeHtml(source);
+      const text = escapeHtml(source.text || "");
+      const url = escapeHtml(source.url || "");
+      if (!url) return text;
+      return `<a class="meta-link" href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    }
+
+    function renderSourceLine(label, source, suffix = "") {
+      return `<li class="meta-compact"><strong>${escapeHtml(label)}:</strong> ${renderSourceValue(source)}${suffix}</li>`;
     }
 
     async function exportCurrentViewPose() {
@@ -3565,6 +4051,8 @@
         if (iceBottomMesh) iceBottomMesh.scale.y = value;
         if (iceSideMesh) iceSideMesh.scale.y = value;
         if (velocitySurfaceMesh) velocitySurfaceMesh.scale.y = value;
+        if (basalMeltMesh) basalMeltMesh.scale.y = value;
+        if (thermalDrivingMesh) thermalDrivingMesh.scale.y = value;
         if (effectivePressureMesh) effectivePressureMesh.scale.y = value;
         if (subglacialChannelMesh) subglacialChannelMesh.scale.y = value;
         if (flowlineMesh) flowlineMesh.scale.y = value;
@@ -3587,13 +4075,10 @@
         updateRefinedBasinVisibility();
       });
       controlsUI.showIce.addEventListener("change", () => {
-        if (iceMesh) iceMesh.visible = controlsUI.showIce.checked;
-        updateIceSideVisibility();
-        updateRefinedBasinVisibility();
+        syncIceSurfaceVisibilityFromControls();
       });
       controlsUI.showIceBottom.addEventListener("change", () => {
-        if (iceBottomMesh) iceBottomMesh.visible = controlsUI.showIceBottom.checked;
-        updateIceSideVisibility();
+        syncIceSurfaceVisibilityFromControls();
       });
       controlsUI.showVelocity.addEventListener("change", () => {
         if (controlsUI.showVelocity.checked && !velocitySurfaceMesh) {
@@ -3608,6 +4093,36 @@
           return;
         }
         updateFlowlineVisibility();
+      });
+      controlsUI.showBasalMelt.addEventListener("change", () => {
+        if (controlsUI.showBasalMelt.checked && controlsUI.showThermalDriving.checked) {
+          controlsUI.showThermalDriving.checked = false;
+        }
+        if (controlsUI.showBasalMelt.checked) {
+          hideIceSurfaceForRiseOverlay();
+        }
+        if (controlsUI.showBasalMelt.checked && !basalMeltMesh) {
+          ensureRiseLoaded({ trigger: "toggle" });
+          updateMetaFromCurrentState();
+          return;
+        }
+        updateRiseOverlayVisibility();
+        updateMetaFromCurrentState();
+      });
+      controlsUI.showThermalDriving.addEventListener("change", () => {
+        if (controlsUI.showThermalDriving.checked && controlsUI.showBasalMelt.checked) {
+          controlsUI.showBasalMelt.checked = false;
+        }
+        if (controlsUI.showThermalDriving.checked) {
+          hideIceSurfaceForRiseOverlay();
+        }
+        if (controlsUI.showThermalDriving.checked && !thermalDrivingMesh) {
+          ensureRiseLoaded({ trigger: "toggle" });
+          updateMetaFromCurrentState();
+          return;
+        }
+        updateRiseOverlayVisibility();
+        updateMetaFromCurrentState();
       });
       controlsUI.showOceanCurrents.addEventListener("change", () => {
         if (controlsUI.showOceanCurrents.checked && !oceanCurrentMesh) {
@@ -3629,6 +4144,9 @@
         updateRefinedBasinVisibility();
       });
       controlsUI.showEffectivePressure.addEventListener("change", () => {
+        if (controlsUI.showEffectivePressure.checked) {
+          hideIceAndIceBottomSurfacesForBedOverlay();
+        }
         if (controlsUI.showEffectivePressure.checked && !effectivePressureMesh) {
           ensureHydrologyLoaded({ trigger: "toggle" });
           return;
@@ -3636,6 +4154,9 @@
         if (effectivePressureMesh) effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
       });
       controlsUI.showSubglacialChannels.addEventListener("change", () => {
+        if (controlsUI.showSubglacialChannels.checked) {
+          hideIceAndIceBottomSurfacesForBedOverlay();
+        }
         if (controlsUI.showSubglacialChannels.checked && !subglacialChannelMesh) {
           ensureHydrologyLoaded({ trigger: "toggle" });
           return;
@@ -3653,6 +4174,8 @@
         if (iceBottomMesh) iceBottomMesh.material.wireframe = enable;
         if (iceSideMesh) iceSideMesh.material.wireframe = enable;
         if (velocitySurfaceMesh) velocitySurfaceMesh.material.wireframe = enable;
+        if (basalMeltMesh) basalMeltMesh.material.wireframe = enable;
+        if (thermalDrivingMesh) thermalDrivingMesh.material.wireframe = enable;
         if (effectivePressureMesh) effectivePressureMesh.material.wireframe = enable;
       });
 
@@ -3685,13 +4208,17 @@
       updateFullscreenControls();
     }
 
-    function updateMeta(meta, dataset, velocityMeta, hydrologyMeta, oceanCurrentMeta, velocityMedianSpeed) {
+    function updateMeta(meta, dataset, velocityMeta, riseMeta, hydrologyMeta, oceanCurrentMeta, velocityMedianSpeed) {
       const region = getRegionConfig(dataset.regionKey);
       const capabilities = dataset.capabilities || region.capabilities;
       const grid = meta.grid;
       const bedStats = meta.fields.find((f) => f.name === "bed").stats_m;
       const thickStats = meta.fields.find((f) => f.name === "thickness").stats_m;
       const speedStats = velocityMeta?.fields?.find((f) => f.name === "speed")?.stats_m_per_year;
+      const riseBasalStats = riseMeta?.fields?.find((f) => f.name === "ismr")?.stats_m_per_year;
+      const riseThermalStats = riseMeta?.fields?.find((f) => f.name === "tstar_zice")?.stats_c;
+      const riseDraftStats = riseMeta?.fields?.find((f) => f.name === "zice")?.stats_m;
+      const riseCoverage = riseMeta?.coverage;
       const pressureStats = hydrologyMeta?.fields?.find((f) => f.name === "effective_pressure")?.stats_pa;
       const channelStats = hydrologyMeta?.fields?.find((f) => f.name === "channel_discharge")?.stats_m3_per_s;
       const channelCoverage = hydrologyMeta?.coverage;
@@ -3765,6 +4292,24 @@
         <li><strong>Status:</strong> Not yet added for ${region.label}</li>
       `;
 
+      const riseSection = capabilities.rise
+        ? `
+        <li class="meta-group">Ice-Shelf Basal Melt</li>
+        <li><strong>Basal Melt:</strong> ${
+          riseBasalStats ? `${fmtShort(riseBasalStats.min)} to ${fmtShort(riseBasalStats.max)} m/yr` : "Available on demand"
+        }</li>
+        <li><strong>Thermal Driving:</strong> ${
+          riseThermalStats ? `${fmtShort(riseThermalStats.min, 2)} to ${fmtShort(riseThermalStats.max, 2)} °C` : "Available on demand"
+        }</li>
+        <li><strong>Ice Draft:</strong> ${
+          riseDraftStats ? `${fmtShort(riseDraftStats.min, 0)} to ${fmtShort(riseDraftStats.max, 0)} m` : "Available on demand"
+        }</li>
+        <li><strong>Ice-Shelf Cells:</strong> ${
+          riseCoverage ? fmtInt(riseCoverage.iceshelf_cell_count) : "Available on demand"
+        }</li>
+      `
+        : "";
+
       const oceanCurrentSection = capabilities.oceanCurrents
         ? `
         <li class="meta-group">Ocean Circulation</li>
@@ -3814,24 +4359,9 @@
       `
         : "";
 
-      const basinSection = `
-        <li class="meta-group">Basin Boundaries</li>
-        ${basinStatus === "Available" ? "" : `<li><strong>Status:</strong> ${basinStatus}</li>`}
-        ${
-          Number.isFinite(refinedBasinCount) && refinedBasinCount > 0
-            ? `<li><strong>Basin Count:</strong> ${fmtInt(refinedBasinCount)}</li>`
-            : ""
-        }
-      `;
-
       const hydrologySection = capabilities.hydrology
         ? `
         <li class="meta-group">Subglacial Hydrology</li>
-        <li><strong>Pressure Coverage:</strong> ${
-          channelCoverage
-            ? `${fmtPercent(channelCoverage.effective_pressure_valid_fraction)} pressure coverage`
-            : "Available on demand"
-        }</li>
         <li><strong>Effective Pressure:</strong> ${pressureStats ? `${fmtMpa(pressureStats.min)} to ${fmtMpa(pressureStats.max)} MPa` : "n/a"}</li>
         <li><strong>Channel Discharge:</strong> ${channelStats ? `${fmtQ(channelStats.min)} to ${fmtQ(channelStats.max)} m3/s` : "n/a"}</li>
         <li><strong>Rendered Channels:</strong> ${channelCoverage ? fmtInt(channelCoverage.channel_segment_count_unique) : "n/a"}</li>
@@ -3841,28 +4371,25 @@
         <li><strong>Status:</strong> Not yet added for ${region.label}</li>
       `;
 
-      const sourceLines = [`<li class="meta-compact"><strong>Bed/Ice Geometry:</strong> ${dataset.sources.geometry}</li>`];
+      const sourceLines = [renderSourceLine("Bed/Ice Geometry", dataset.sources.geometry)];
       if (capabilities.velocity && dataset.sources.velocity) {
-        sourceLines.push(`<li class="meta-compact"><strong>Surface Velocity:</strong> ${dataset.sources.velocity}</li>`);
+        sourceLines.push(renderSourceLine("Surface Velocity", dataset.sources.velocity));
       }
       if (capabilities.oceanCurrents && dataset.sources.oceanCurrents) {
-        sourceLines.push(
-          `<li class="meta-compact"><strong>Ocean Circulation:</strong> ${dataset.sources.oceanCurrents}${
-            oceanCurrentCoverage?.streamlines_by_seed_depth || oceanCurrentCoverage?.segments_by_seed_depth || oceanCurrentCoverage?.counts_by_depth
-              ? ` (${fmtInt(oceanStreamlineCount)} 3D streamlines)`
-              : ""
-          }</li>`
-        );
+        const oceanSuffix =
+          oceanCurrentCoverage?.streamlines_by_seed_depth || oceanCurrentCoverage?.segments_by_seed_depth || oceanCurrentCoverage?.counts_by_depth
+            ? ` (${fmtInt(oceanStreamlineCount)} 3D streamlines)`
+            : "";
+        sourceLines.push(renderSourceLine("Ocean Circulation", dataset.sources.oceanCurrents, oceanSuffix));
       }
-      if (capabilities.refinedBasins && dataset.sources.basins) {
-        sourceLines.push(
-          `<li class="meta-compact"><strong>Basin Boundaries:</strong> ${dataset.sources.basins}${
-            Number.isFinite(refinedBasinCount) && refinedBasinCount > 0 ? ` (${fmtInt(refinedBasinCount)} basins)` : ""
-          }</li>`
-        );
+      if (capabilities.rise && dataset.sources.rise) {
+        sourceLines.push(renderSourceLine("Melt Drivers", dataset.sources.rise, " (15,269 ice-shelf cells)"));
+      }
+      if (dataset.regionKey === "antarctica" && dataset.sources.basins) {
+        sourceLines.push(renderSourceLine("Basin Boundaries", dataset.sources.basins));
       }
       if (capabilities.hydrology && dataset.sources.hydrology) {
-        sourceLines.push(`<li class="meta-compact"><strong>Subglacial Hydrology:</strong> ${dataset.sources.hydrology}</li>`);
+        sourceLines.push(renderSourceLine("Subglacial Hydrology", dataset.sources.hydrology));
       }
       if (!capabilities.velocity && !capabilities.hydrology && !capabilities.refinedBasins) {
         sourceLines.push(
@@ -3880,8 +4407,8 @@
         <li><strong>Mean Ice Thickness:</strong> ${Number.isFinite(thickStats.mean) ? `${fmtInt(thickStats.mean)} m` : "n/a"}</li>
 
         ${velocitySection}
+        ${riseSection}
         ${oceanCurrentSection}
-        ${basinSection}
         ${hydrologySection}
 
         <li class="meta-group">Sources</li>
@@ -3898,6 +4425,12 @@
         if (capabilities.oceanCurrents && oceanStreamlineCount > 0) {
           fieldParts.push(`Ocean flowlines: ${fmtInt(oceanStreamlineCount)}`);
         }
+        if (capabilities.rise && controlsUI.showBasalMelt.checked && riseBasalStats) {
+          fieldParts.push(`Basal melt: ${fmtShort(riseBasalStats.max, 1)} m/yr max`);
+        }
+        if (capabilities.rise && controlsUI.showThermalDriving.checked && riseThermalStats) {
+          fieldParts.push(`Thermal driving: ${fmtShort(riseThermalStats.max, 2)} °C max`);
+        }
         if (capabilities.refinedBasins && Number.isFinite(refinedBasinCount) && refinedBasinCount > 0) {
           fieldParts.push(`Basins: ${fmtInt(refinedBasinCount)}`);
         }
@@ -3906,6 +4439,8 @@
     }
 
     function updateMetaFromCurrentState() {
+      updateBasalMeltLegend();
+      updateThermalDrivingLegend();
       if (!currentCoreContext) {
         updateOceanCurrentLegend();
         return;
@@ -3914,6 +4449,7 @@
         currentCoreContext.meta,
         currentCoreContext.dataset,
         currentVelocityMeta,
+        currentRiseMeta,
         currentHydrologyMeta,
         currentOceanCurrentMeta,
         currentVelocityMedianSpeed
@@ -4027,6 +4563,53 @@
       scene.add(seaLevelMesh);
     }
 
+    function buildRiseOverlayMesh(context, values, colorFn) {
+      if (!context || !values) return null;
+
+      const overlayHeights = new Float32Array(context.cellCount);
+      const overlayValid = new Uint8Array(context.cellCount);
+      for (let i = 0; i < context.cellCount; i += 1) {
+        const isShelf = context.iceBottomValid[i] && context.mask[i] === 3 && context.riseMask?.[i] === 2;
+        const value = values[i];
+        if (isShelf && Number.isFinite(value)) {
+          overlayHeights[i] = context.iceBottomHeights[i] + RISE_SURFACE_OFFSET_M;
+          overlayValid[i] = 1;
+        } else {
+          overlayHeights[i] = Number.NaN;
+          overlayValid[i] = 0;
+        }
+      }
+
+      const geometry = buildSurfaceGeometry({
+        ...context.baseConfig,
+        heights: overlayHeights,
+        valid: overlayValid,
+        extraField: values,
+        mask: context.riseMask,
+        colorFn: (_height, fieldValue) => colorFn(fieldValue),
+      });
+      const material = new THREE.MeshBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.98,
+        side: THREE.DoubleSide,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+        polygonOffsetUnits: -1,
+        depthWrite: false,
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.scale.y = Number(controlsUI.exaggeration.value);
+      mesh.material.wireframe = controlsUI.wireframe.checked;
+      mesh.renderOrder = 18;
+      return mesh;
+    }
+
+    function updateRiseOverlayVisibility() {
+      if (basalMeltMesh) basalMeltMesh.visible = controlsUI.showBasalMelt.checked;
+      if (thermalDrivingMesh) thermalDrivingMesh.visible = controlsUI.showThermalDriving.checked;
+    }
+
     async function ensureHydrologyColorTables() {
       if (effectivePressureLut.length && channelDischargeLut.length) return;
       try {
@@ -4071,6 +4654,15 @@
             return null;
           });
 
+      const riseMetaPromise = !context.dataset.riseMetaUrl
+        ? Promise.resolve(null)
+        : context.risePrefetchMeta
+        ? Promise.resolve(context.risePrefetchMeta)
+        : fetchJsonStrict(context.dataset.riseMetaUrl, "Failed to load RISE metadata").catch((error) => {
+            console.warn("RISE metadata prefetch failed:", error);
+            return null;
+          });
+
       const oceanCurrentMetaPromise = !context.dataset.oceanCurrentsMetaUrl
         ? Promise.resolve(null)
         : context.oceanCurrentPrefetchMeta
@@ -4090,14 +4682,19 @@
               return null;
             });
 
-      Promise.all([velocityMetaPromise, hydrologyMetaPromise, oceanCurrentMetaPromise, basinMetaPromise]).then(
-        ([velocityMeta, hydrologyMeta, oceanCurrentMeta, basinData]) => {
+      Promise.all([velocityMetaPromise, riseMetaPromise, hydrologyMetaPromise, oceanCurrentMetaPromise, basinMetaPromise]).then(
+        ([velocityMeta, riseMeta, hydrologyMeta, oceanCurrentMeta, basinData]) => {
         if (context !== currentCoreContext || context.generation !== loadGeneration) return;
 
         let hasUpdate = false;
         if (velocityMeta) {
           context.velocityPrefetchMeta = velocityMeta;
           currentVelocityMeta = velocityMeta;
+          hasUpdate = true;
+        }
+        if (riseMeta) {
+          context.risePrefetchMeta = riseMeta;
+          currentRiseMeta = riseMeta;
           hasUpdate = true;
         }
         if (hydrologyMeta) {
@@ -4232,6 +4829,122 @@
         setLoadingOverlayVisible(false);
       }
       return true;
+    }
+
+    async function ensureRiseLoaded({ trigger = "prefetch" } = {}) {
+      const context = currentCoreContext;
+      if (!context || context.generation !== loadGeneration) return false;
+      if (!context.dataset.capabilities.rise || !context.dataset.riseMetaUrl || !context.dataset.riseBinUrl) {
+        context.riseUnavailable = true;
+        return false;
+      }
+      if (context.riseLoaded) {
+        updateRiseOverlayVisibility();
+        return true;
+      }
+      if (context.riseUnavailable) return false;
+
+      const showOverlay = trigger === "toggle";
+
+      if (riseLoadPromise) {
+        const settled = await riseLoadPromise;
+        if (trigger === "toggle" && context === currentCoreContext && context.generation === loadGeneration) {
+          updateRiseOverlayVisibility();
+        }
+        return settled;
+      }
+
+      riseLoadPromise = (async () => {
+        try {
+          if (showOverlay) {
+            updateLoadingProgress(0.56, "Loading RISE metadata...");
+            setLoadingOverlayVisible(true);
+          }
+
+          const riseMeta = context.risePrefetchMeta || (await fetchJsonStrict(context.dataset.riseMetaUrl, "Failed to load RISE metadata"));
+          if (showOverlay) {
+            updateLoadingProgress(0.68, "Downloading RISE overlay package...");
+          }
+          const riseBuffer =
+            context.risePrefetchBuffer ||
+            (showOverlay
+              ? await fetchArrayBufferWithProgress(context.dataset.riseBinUrl, 0.68, 0.9, "Downloading RISE overlay package")
+              : await fetchArrayBufferStrict(context.dataset.riseBinUrl, "Failed to load RISE overlay package"));
+
+          if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+          if (riseMeta.grid.nx !== context.nx || riseMeta.grid.ny !== context.ny) {
+            throw new Error("RISE grid is not aligned to the active BedMachine grid.");
+          }
+
+          const riseMask = parseField(riseMeta, riseBuffer, "mask");
+          const riseIceshelfId = parseField(riseMeta, riseBuffer, "iceshelf_id");
+          const riseIceDraft = decodeFieldToFloat32(riseMeta, riseBuffer, "zice");
+          const riseBasalMelt = decodeFieldToFloat32(riseMeta, riseBuffer, "ismr");
+          const riseThermalDriving = decodeFieldToFloat32(riseMeta, riseBuffer, "tstar_zice");
+
+          if (
+            riseMask.length !== context.cellCount ||
+            riseIceshelfId.length !== context.cellCount ||
+            riseIceDraft.length !== context.cellCount ||
+            riseBasalMelt.length !== context.cellCount ||
+            riseThermalDriving.length !== context.cellCount
+          ) {
+            throw new Error("Unexpected field length in the RISE package.");
+          }
+
+          context.riseMask = riseMask;
+          context.riseIceshelfId = riseIceshelfId;
+          context.riseIceDraft = riseIceDraft;
+          context.riseBasalMelt = riseBasalMelt;
+          context.riseThermalDriving = riseThermalDriving;
+
+          basalMeltMesh = disposeMesh(basalMeltMesh);
+          thermalDrivingMesh = disposeMesh(thermalDrivingMesh);
+
+          if (showOverlay) {
+            updateLoadingProgress(0.93, "Building RISE overlay meshes...");
+          }
+
+          basalMeltMesh = buildRiseOverlayMesh(context, riseBasalMelt, basalMeltColor);
+          thermalDrivingMesh = buildRiseOverlayMesh(context, riseThermalDriving, thermalDrivingColor);
+
+          if (basalMeltMesh) scene.add(basalMeltMesh);
+          if (thermalDrivingMesh) scene.add(thermalDrivingMesh);
+
+          context.riseLoaded = true;
+          context.risePrefetchMeta = null;
+          context.risePrefetchBuffer = null;
+          currentRiseMeta = riseMeta;
+          updateRiseOverlayVisibility();
+          updateMetaFromCurrentState();
+          statusEl.textContent = getReadyStatusText(context);
+          if (showOverlay) {
+            updateLoadingProgress(1, "RISE overlays ready");
+            setLoadingOverlayVisible(false);
+          }
+          return true;
+        } catch (error) {
+          if (context === currentCoreContext && context.generation === loadGeneration) {
+            context.riseUnavailable = true;
+            controlsUI.showBasalMelt.checked = false;
+            controlsUI.showThermalDriving.checked = false;
+            basalMeltMesh = disposeMesh(basalMeltMesh);
+            thermalDrivingMesh = disposeMesh(thermalDrivingMesh);
+            updateMetaFromCurrentState();
+          }
+          if (showOverlay) {
+            reportLoadError(error);
+          } else {
+            console.warn("RISE overlay load failed:", error);
+          }
+          return false;
+        } finally {
+          if (context === currentCoreContext && context.generation === loadGeneration) {
+            riseLoadPromise = null;
+          }
+        }
+      })();
+      return riseLoadPromise;
     }
 
     async function ensureOceanCurrentsLoaded({ trigger = "prefetch" } = {}) {
@@ -4746,11 +5459,13 @@
       datasetSelectionByRegion[currentRegionKey] = currentDatasetKey;
       currentCoreContext = null;
       currentVelocityMeta = null;
+      currentRiseMeta = null;
       currentHydrologyMeta = null;
       currentOceanCurrentMeta = null;
       currentVelocityMedianSpeed = Number.NaN;
       currentRefinedBasinData = null;
       velocityLoadPromise = null;
+      riseLoadPromise = null;
       hydrologyLoadPromise = null;
       oceanCurrentLoadPromise = null;
       refinedBasinLoadPromise = null;
@@ -4854,6 +5569,15 @@
           velocityUnavailable: false,
           velocityPrefetchMeta: null,
           velocityPrefetchBuffer: null,
+          riseLoaded: false,
+          riseUnavailable: false,
+          risePrefetchMeta: null,
+          risePrefetchBuffer: null,
+          riseMask: null,
+          riseIceshelfId: null,
+          riseIceDraft: null,
+          riseBasalMelt: null,
+          riseThermalDriving: null,
           hydrologyLoaded: false,
           hydrologyUnavailable: false,
           hydrologyPrefetchMeta: null,
@@ -4884,6 +5608,13 @@
 
         if (controlsUI.showVelocity.checked || controlsUI.showFlowline.checked) {
           ensureVelocityLoaded({ trigger: "toggle" });
+        }
+        if (
+          (controlsUI.showBasalMelt.checked || controlsUI.showThermalDriving.checked) &&
+          !controlsUI.showBasalMelt.disabled &&
+          !controlsUI.showThermalDriving.disabled
+        ) {
+          ensureRiseLoaded({ trigger: "toggle" });
         }
         if (controlsUI.showEffectivePressure.checked || controlsUI.showSubglacialChannels.checked) {
           ensureHydrologyLoaded({ trigger: "toggle" });
@@ -4925,6 +5656,8 @@
         await Promise.all([loadBedColorTable(), ensureHydrologyColorTables()]);
         updateBedLegend();
         updateVelocityLegend();
+        updateBasalMeltLegend();
+        updateThermalDrivingLegend();
         updateOceanCurrentLegend();
         updateEffectivePressureLegend();
         updateChannelLegend();
@@ -4935,68 +5668,7 @@
       }
     }
 
-    window.render_game_to_text = () => {
-      const payload = {
-        mode: isShowcaseMode ? "showcase" : "interactive",
-        region: currentRegionKey,
-        dataset: currentDatasetKey,
-        status: statusEl?.textContent || "",
-        controls: {
-          showBed: controlsUI.showBed.checked,
-          showIce: controlsUI.showIce.checked,
-          showIceBottom: controlsUI.showIceBottom.checked,
-          showVelocity: controlsUI.showVelocity.checked,
-          showFlowline: controlsUI.showFlowline.checked,
-          showOceanCurrents: controlsUI.showOceanCurrents.checked,
-          showRefinedBasins: controlsUI.showRefinedBasins.checked,
-          showEffectivePressure: controlsUI.showEffectivePressure.checked,
-          showSubglacialChannels: controlsUI.showSubglacialChannels.checked,
-        },
-        grid: currentCoreContext
-          ? {
-              nx: currentCoreContext.nx,
-              ny: currentCoreContext.ny,
-              dx_m: currentCoreContext.meta.grid.dx_m,
-              dy_m: currentCoreContext.meta.grid.dy_m,
-              origin: "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row.",
-            }
-          : null,
-        meshes: {
-          bed: Boolean(bedMesh && bedMesh.visible),
-          ice: Boolean(iceMesh && iceMesh.visible),
-          iceBottom: Boolean(iceBottomMesh && iceBottomMesh.visible),
-          velocity: Boolean(velocitySurfaceMesh && velocitySurfaceMesh.visible),
-          flowline: Boolean(flowlineMesh && flowlineMesh.visible),
-          oceanCurrents: Boolean(oceanCurrentMesh && oceanCurrentMesh.visible),
-          basins: Boolean(
-            (refinedBasinBedLines && refinedBasinBedLines.visible) ||
-              (refinedBasinSurfaceLines && refinedBasinSurfaceLines.visible) ||
-              (refinedBasinBedLabels && refinedBasinBedLabels.visible) ||
-              (refinedBasinSurfaceLabels && refinedBasinSurfaceLabels.visible)
-          ),
-          hydrology: Boolean(
-            (effectivePressureMesh && effectivePressureMesh.visible) ||
-              (subglacialChannelMesh && subglacialChannelMesh.visible)
-          ),
-        },
-        camera:
-          camera && orbit
-            ? {
-                position: {
-                  x: Number(camera.position.x.toFixed(2)),
-                  y: Number(camera.position.y.toFixed(2)),
-                  z: Number(camera.position.z.toFixed(2)),
-                },
-                target: {
-                  x: Number(orbit.target.x.toFixed(2)),
-                  y: Number(orbit.target.y.toFixed(2)),
-                  z: Number(orbit.target.z.toFixed(2)),
-                },
-              }
-            : null,
-      };
-      return JSON.stringify(payload);
-    };
+    window.render_game_to_text = () => JSON.stringify(collectExplorerState());
 
     window.advanceTime = (ms = 16) => {
       const steps = Math.max(1, Math.round(Number(ms) / (1000 / 60)));

@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:05,000
+Explore Antarctica and Greenland in a shared three-dimensional scientific viewer.
+
+2
+00:00:05,000 --> 00:00:12,000
+Across Antarctica, bed topography, ice geometry, and fast surface flow appear in one coherent scene.
+
+3
+00:00:12,000 --> 00:00:19,000
+Hydrology layers add effective pressure and channelized drainage beneath marine-based ice.
+
+4
+00:00:19,000 --> 00:00:24,000
+The same visual framework extends to Greenland on a consistent polar grid.
+
+5
+00:00:24,000 --> 00:00:31,000
+Basin boundaries and velocity patterns reveal how regional flow reorganizes across the ice sheet.
+
+6
+00:00:31,000 --> 00:00:39,000
+Three-dimensional ocean streamlines connect Greenland's margin to the surrounding Arctic circulation.
+
+7
+00:00:39,000 --> 00:00:45,000
+Interactive controls switch region, resolution, and layer combinations while the scientific snapshot updates live.
+
+8
+00:00:45,000 --> 00:00:49,000
+Built for research communication, teaching, and collaboration, the explorer turns polar datasets into an explorable narrative.

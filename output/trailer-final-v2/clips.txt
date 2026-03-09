@@ -1,0 +1,8 @@
+file '/Users/eddie/Documents/yuwang115.github.io/output/trailer-final-v2/clips/antarctica-hero.mp4'
+file '/Users/eddie/Documents/yuwang115.github.io/output/trailer-final-v2/clips/antarctica-velocity.mp4'
+file '/Users/eddie/Documents/yuwang115.github.io/output/trailer-final-v2/clips/antarctica-hydrology.mp4'
+file '/Users/eddie/Documents/yuwang115.github.io/output/trailer-final-v2/clips/greenland-hero.mp4'
+file '/Users/eddie/Documents/yuwang115.github.io/output/trailer-final-v2/clips/greenland-basins-velocity.mp4'
+file '/Users/eddie/Documents/yuwang115.github.io/output/trailer-final-v2/clips/greenland-ocean.mp4'
+file '/Users/eddie/Documents/yuwang115.github.io/output/trailer-final-v2/clips/ui-proof.mp4'
+file '/Users/eddie/Documents/yuwang115.github.io/output/trailer-final-v2/clips/end-card.mp4'

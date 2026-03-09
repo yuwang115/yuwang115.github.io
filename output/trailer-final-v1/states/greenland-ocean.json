@@ -1,0 +1,162 @@
+{
+  "id": "greenland-ocean",
+  "mode": "trailer",
+  "url": "http://127.0.0.1:1313/tools/antarctica-bedmachine-3d.html?mode=trailer&region=greenland&preset=balanced",
+  "durationMs": 8000,
+  "captureMode": "realtime-video",
+  "checkpoints": [
+    {
+      "atMs": 0,
+      "state": {
+        "ready": true,
+        "mode": "trailer",
+        "region": "greenland",
+        "preset": "3km",
+        "dataset": "3km",
+        "status": "Ready (Greenland Balanced)",
+        "toggles": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": true,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": true,
+          "wireframe": false
+        },
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": true,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": true,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": true,
+          "variant": "label",
+          "align": "left",
+          "kicker": "Greenland",
+          "title": "3D Ocean Streamlines",
+          "body": "Offshore circulation is traced in three dimensions around the ice margin.",
+          "cta": ""
+        },
+        "camera": {
+          "position": {
+            "x": 20,
+            "y": 18,
+            "z": 45
+          },
+          "target": {
+            "x": 4,
+            "y": -8,
+            "z": 10
+          },
+          "fov": 55
+        },
+        "grid": {
+          "nx": 511,
+          "ny": 918,
+          "dx_m": 3000,
+          "dy_m": -3000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": false,
+          "velocity": false,
+          "flowline": false,
+          "oceanCurrents": true,
+          "basins": false,
+          "hydrology": false
+        }
+      }
+    },
+    {
+      "atMs": 8000,
+      "state": {
+        "ready": true,
+        "mode": "trailer",
+        "region": "greenland",
+        "preset": "3km",
+        "dataset": "3km",
+        "status": "Ready (Greenland Balanced)",
+        "toggles": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": true,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": true,
+          "wireframe": false
+        },
+        "controls": {
+          "showBed": true,
+          "showIce": true,
+          "showIceBottom": false,
+          "showVelocity": false,
+          "showFlowline": false,
+          "showOceanCurrents": true,
+          "showRefinedBasins": false,
+          "showEffectivePressure": false,
+          "showSubglacialChannels": false,
+          "showSea": true,
+          "wireframe": false
+        },
+        "overlay": {
+          "visible": true,
+          "variant": "label",
+          "align": "left",
+          "kicker": "Greenland",
+          "title": "3D Ocean Streamlines",
+          "body": "Offshore circulation is traced in three dimensions around the ice margin.",
+          "cta": ""
+        },
+        "camera": {
+          "position": {
+            "x": 24,
+            "y": 20,
+            "z": 40
+          },
+          "target": {
+            "x": 2,
+            "y": -8,
+            "z": 12
+          },
+          "fov": 52
+        },
+        "grid": {
+          "nx": 511,
+          "ny": 918,
+          "dx_m": 3000,
+          "dy_m": -3000,
+          "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+        },
+        "meshes": {
+          "bed": true,
+          "ice": true,
+          "iceBottom": false,
+          "velocity": false,
+          "flowline": false,
+          "oceanCurrents": true,
+          "basins": false,
+          "hydrology": false
+        }
+      }
+    }
+  ],
+  "trimStartMs": 18754
+}

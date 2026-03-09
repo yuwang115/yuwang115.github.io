@@ -1,0 +1,86 @@
+{
+  "antarctica": {
+    "links": [
+      {
+        "text": "MEaSUREs BedMachine Antarctica, Version 4",
+        "href": "https://nsidc.org/data/NSIDC-0756/versions/4",
+        "target": "_blank",
+        "rel": "noopener noreferrer"
+      },
+      {
+        "text": "MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1",
+        "href": "https://nsidc.org/data/NSIDC-0754/versions/1",
+        "target": "_blank",
+        "rel": "noopener noreferrer"
+      },
+      {
+        "text": "Galton-Fenzi et al. (2025) Multi-model estimate of Antarctic ice-shelf basal melting and ocean drivers, V1",
+        "href": "https://data.aad.gov.au/metadata/RISE",
+        "target": "_blank",
+        "rel": "noopener noreferrer"
+      },
+      {
+        "text": "Ehrenfeucht et al. (2025) Antarctic Wide Subglacial Hydrology Modeling",
+        "href": "https://zenodo.org/records/12738170",
+        "target": "_blank",
+        "rel": "noopener noreferrer"
+      }
+    ],
+    "popups": [
+      {
+        "label": "MEaSUREs BedMachine Antarctica, Version 4",
+        "url": "https://nsidc.org/data/nsidc-0756/versions/4"
+      },
+      {
+        "label": "MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1",
+        "url": "https://nsidc.org/data/nsidc-0754/versions/1"
+      },
+      {
+        "label": "Galton-Fenzi et al. (2025) Multi-model estimate of Antarctic ice-shelf basal melting and ocean drivers, V1",
+        "url": "https://data.aad.gov.au/metadata/RISE"
+      },
+      {
+        "label": "Ehrenfeucht et al. (2025) Antarctic Wide Subglacial Hydrology Modeling",
+        "url": "https://zenodo.org/records/12738170"
+      }
+    ],
+    "errors": []
+  },
+  "greenland": {
+    "links": [
+      {
+        "text": "BedMachine Greenland, Version 6",
+        "href": "https://nsidc.org/data/idbmg4/versions/6",
+        "target": "_blank",
+        "rel": "noopener noreferrer"
+      },
+      {
+        "text": "ITS_LIVE Greenland ice surface velocity mosaic (120 m, V02.1)",
+        "href": "https://nsidc.org/data/NSIDC-0776/versions/2",
+        "target": "_blank",
+        "rel": "noopener noreferrer"
+      },
+      {
+        "text": "Copernicus Marine Arctic Ocean Physics Analysis and Forecast (monthly mean ocean velocity, temperature, and salinity)",
+        "href": "https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description",
+        "target": "_blank",
+        "rel": "noopener noreferrer"
+      }
+    ],
+    "popups": [
+      {
+        "label": "BedMachine Greenland, Version 6",
+        "url": "https://nsidc.org/data/idbmg4/versions/6"
+      },
+      {
+        "label": "ITS_LIVE Greenland ice surface velocity mosaic (120 m, V02.1)",
+        "url": "https://nsidc.org/data/nsidc-0776/versions/2"
+      },
+      {
+        "label": "Copernicus Marine Arctic Ocean Physics Analysis and Forecast (monthly mean ocean velocity, temperature, and salinity)",
+        "url": "https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description"
+      }
+    ],
+    "errors": []
+  }
+}

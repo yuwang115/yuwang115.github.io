@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RISE Antarctica 2D Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f3f8fb;
+      --ink: #0e2230;
+      --muted: #4d6678;
+      --panel: rgba(255, 255, 255, 0.88);
+      --panel-border: rgba(154, 188, 206, 0.9);
+      --shadow: 0 20px 48px rgba(7, 31, 47, 0.14);
+      --accent: #0f6d8c;
+      --accent-strong: #08394b;
+      --canvas-bg: #071523;
+      --canvas-frame: #9bb6c7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(109, 194, 233, 0.18), transparent 34%),
+        radial-gradient(circle at 86% 12%, rgba(42, 122, 165, 0.12), transparent 28%),
+        radial-gradient(circle at 76% 80%, rgba(127, 205, 187, 0.16), transparent 34%),
+        linear-gradient(145deg, #f9fcfe 0%, #edf5fa 45%, #e7f2f8 100%);
+    }
+
+    body {
+      padding: 16px;
+    }
+
+    .shell {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel,
+    .viewer-panel {
+      border: 1px solid var(--panel-border);
+      border-radius: 20px;
+      background: var(--panel);
+      backdrop-filter: blur(7px);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 20px 20px 18px;
+      position: sticky;
+      top: 16px;
+    }
+
+    .viewer-panel {
+      padding: 16px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 2.5vw, 2.1rem);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      margin: 10px 0 18px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.96rem;
+    }
+
+    .section {
+      padding-top: 14px;
+      margin-top: 14px;
+      border-top: 1px solid rgba(170, 195, 210, 0.72);
+    }
+
+    .section:first-of-type {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 0.78rem;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .button-row,
+    .clip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      appearance: none;
+      border: 1px solid #b7d4e4;
+      background: #f5fbfe;
+      color: #17465f;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 150ms ease, border-color 150ms ease, background 150ms ease, color 150ms ease;
+    }
+
+    .pill:hover {
+      transform: translateY(-1px);
+      border-color: #82b7d2;
+    }
+
+    .pill.is-active {
+      border-color: #0f6d8c;
+      background: linear-gradient(135deg, #0f6d8c 0%, #1898b1 100%);
+      color: #ffffff;
+    }
+
+    .legend-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .legend-bar {
+      height: 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(65, 103, 124, 0.28);
+      background: linear-gradient(90deg, #dce7ef 0%, #eff4f8 100%);
+    }
+
+    .legend-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .legend-categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+      gap: 8px;
+    }
+
+    .legend-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(234, 244, 250, 0.88);
+      border: 1px solid rgba(171, 198, 214, 0.82);
+      color: #21465e;
+      font-size: 0.84rem;
+    }
+
+    .legend-chip-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(8, 33, 53, 0.18);
+      flex: 0 0 auto;
+    }
+
+    .mono {
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .meta-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .meta-list li {
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(238, 246, 251, 0.78);
+      border: 1px solid rgba(182, 205, 218, 0.72);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .meta-list strong {
+      color: #13384f;
+    }
+
+    .viewer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .viewer-head h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 0.83rem;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .canvas-frame {
+      position: relative;
+      width: 100%;
+      min-height: 540px;
+      border-radius: 18px;
+      border: 1px solid var(--canvas-frame);
+      background:
+        radial-gradient(circle at 18% 22%, rgba(53, 132, 169, 0.24), transparent 30%),
+        radial-gradient(circle at 82% 78%, rgba(44, 92, 126, 0.28), transparent 24%),
+        linear-gradient(155deg, #092034 0%, #0b2439 42%, #102a42 100%);
+      overflow: hidden;
+    }
+
+    .canvas-wrap {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 14px;
+    }
+
+    #previewCanvas {
+      width: 100%;
+      height: auto;
+      max-height: calc(100vh - 120px);
+      border-radius: 14px;
+      box-shadow: inset 0 0 0 1px rgba(187, 210, 223, 0.65);
+      background: var(--canvas-bg);
+    }
+
+    .loading,
+    .error {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      text-align: center;
+      color: #28485f;
+      background: linear-gradient(160deg, rgba(244, 249, 252, 0.9) 0%, rgba(230, 239, 245, 0.85) 100%);
+    }
+
+    .loading[hidden],
+    .error[hidden] {
+      display: none;
+    }
+
+    .error {
+      color: #7b2020;
+    }
+
+    .caption {
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    a {
+      color: #0d6f90;
+    }
+
+    @media (max-width: 980px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        position: static;
+      }
+
+      .canvas-frame {
+        min-height: 420px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="panel">
+      <p class="eyebrow">RISE / Antarctica / EPSG:3031</p>
+      <h1>2D Preview of Basal Melt and Drivers</h1>
+      <p class="subtitle">
+        This view uses pre-rendered RISE rasters for a quick scientific look at basal melt, thermal driving,
+        ice draft depth, and the native RISE mask before bringing the same fields into the 3D Antarctica explorer.
+      </p>
+
+      <section class="section">
+        <h2 class="section-title">Variables</h2>
+        <div id="variableButtons" class="button-row"></div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Clip Mode</h2>
+        <div id="clipButtons" class="clip-row"></div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Legend</h2>
+        <div id="legendWrap" class="legend-wrap">
+          <div id="legendBar" class="legend-bar" hidden></div>
+          <div id="legendLabels" class="legend-labels" hidden></div>
+          <div id="legendCategories" class="legend-categories" hidden></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Current Layer</h2>
+        <ul id="metaList" class="meta-list">
+          <li>Loading preview metadata...</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Source</h2>
+        <ul id="sourceList" class="meta-list">
+          <li>Loading source information...</li>
+        </ul>
+      </section>
+    </aside>
+
+    <section class="viewer-panel">
+      <div class="viewer-head">
+        <h2 id="viewerTitle">RISE Antarctica 2D Preview</h2>
+        <div id="viewerStatus" class="status">Loading...</div>
+      </div>
+      <div class="canvas-frame">
+        <div id="loadingState" class="loading">Loading preview rasters...</div>
+        <div id="errorState" class="error" hidden></div>
+        <div class="canvas-wrap">
+          <canvas id="previewCanvas" width="2801" height="2557" aria-label="RISE Antarctica preview canvas"></canvas>
+        </div>
+      </div>
+      <div class="caption">
+        <span id="captionText">Preparing preview...</span>
+        <span id="extentText" class="mono"></span>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const PREVIEW_INDEX_URL = "/tools/data/rise_antarctica_preview_index.json";
+
+    const VARIABLE_ORDER = ["ismr", "tstar_zice", "zice", "mask"];
+    const CLIP_MODES = [
+      { key: "all", label: "All", description: "Full Antarctic context" },
+      { key: "shelf_only", label: "Ice shelf only", description: "Only native ice-shelf cells" },
+      { key: "shelf_ocean", label: "Ice shelf + ocean context", description: "Shelf signal with nearby ocean backdrop" },
+    ];
+
+    const state = {
+      data: null,
+      variable: "ismr",
+      clip: "shelf_ocean",
+      images: new Map(),
+      renderCache: new Map(),
+      maskIndexData: null,
+    };
+
+    const variableButtonsEl = document.getElementById("variableButtons");
+    const clipButtonsEl = document.getElementById("clipButtons");
+    const legendBarEl = document.getElementById("legendBar");
+    const legendLabelsEl = document.getElementById("legendLabels");
+    const legendCategoriesEl = document.getElementById("legendCategories");
+    const metaListEl = document.getElementById("metaList");
+    const sourceListEl = document.getElementById("sourceList");
+    const canvasEl = document.getElementById("previewCanvas");
+    const canvasCtx = canvasEl.getContext("2d");
+    const loadingStateEl = document.getElementById("loadingState");
+    const errorStateEl = document.getElementById("errorState");
+    const viewerTitleEl = document.getElementById("viewerTitle");
+    const viewerStatusEl = document.getElementById("viewerStatus");
+    const captionTextEl = document.getElementById("captionText");
+    const extentTextEl = document.getElementById("extentText");
+
+    function formatNumber(value, digits = 2) {
+      if (!Number.isFinite(value)) return "n/a";
+      return Number(value).toLocaleString("en-US", {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits,
+      });
+    }
+
+    function formatRange(range, unit, digits = 2) {
+      if (!Array.isArray(range) || range.length < 2) return "n/a";
+      return `${formatNumber(range[0], digits)} to ${formatNumber(range[1], digits)} ${unit}`;
+    }
+
+    function createButtonRow(targetEl, items, activeKey, onClick) {
+      targetEl.innerHTML = "";
+      for (const item of items) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `pill${item.key === activeKey ? " is-active" : ""}`;
+        button.textContent = item.label;
+        button.title = item.description || item.label;
+        button.addEventListener("click", () => onClick(item.key));
+        targetEl.appendChild(button);
+      }
+    }
+
+    function loadImage(url) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.decoding = "async";
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error(`Failed to load ${url}`));
+        image.src = url;
+      });
+    }
+
+    function getMaskValueAt(imageData, index) {
+      return imageData.data[index * 4];
+    }
+
+    function buildClippedCanvas(image, allowedMaskValues, opacity = 1) {
+      const key = `${image.src}|${Array.from(allowedMaskValues).sort().join(",")}|${opacity}`;
+      if (state.renderCache.has(key)) {
+        return state.renderCache.get(key);
+      }
+
+      const offscreen = document.createElement("canvas");
+      offscreen.width = image.naturalWidth;
+      offscreen.height = image.naturalHeight;
+      const ctx = offscreen.getContext("2d");
+      ctx.drawImage(image, 0, 0);
+      const imageData = ctx.getImageData(0, 0, offscreen.width, offscreen.height);
+      const data = imageData.data;
+      for (let index = 0; index < offscreen.width * offscreen.height; index += 1) {
+        const maskValue = getMaskValueAt(state.maskIndexData, index);
+        if (!allowedMaskValues.has(maskValue)) {
+          data[index * 4 + 3] = 0;
+          continue;
+        }
+        if (opacity < 0.999) {
+          data[index * 4 + 3] = Math.round(data[index * 4 + 3] * opacity);
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+      state.renderCache.set(key, offscreen);
+      return offscreen;
+    }
+
+    function updateLegend() {
+      const variable = state.data.variables[state.variable];
+      legendBarEl.hidden = true;
+      legendLabelsEl.hidden = true;
+      legendCategoriesEl.hidden = true;
+      legendLabelsEl.innerHTML = "";
+      legendCategoriesEl.innerHTML = "";
+
+      if (variable.type === "categorical") {
+        legendCategoriesEl.hidden = false;
+        const categories = variable.categories || state.data.mask.categories;
+        Object.entries(categories).forEach(([, entry]) => {
+          const chip = document.createElement("div");
+          chip.className = "legend-chip";
+          chip.innerHTML = `<span class="legend-chip-swatch" style="background:${entry.color}"></span><span>${entry.label}</span>`;
+          legendCategoriesEl.appendChild(chip);
+        });
+        return;
+      }
+
+      const stops = (variable.palette_stops || [])
+        .map((stop) => `${stop.color} ${(Number(stop.t) * 100).toFixed(3)}%`)
+        .join(", ");
+      legendBarEl.style.background = `linear-gradient(90deg, ${stops})`;
+      legendBarEl.hidden = false;
+      legendLabelsEl.hidden = false;
+
+      const range = variable.display_range || [0, 1];
+      const mid = state.variable === "ismr" ? 0 : (Number(range[0]) + Number(range[1])) / 2;
+      const labels = [
+        `${formatNumber(range[0], 2)} ${variable.unit}`,
+        `${formatNumber(mid, 2)} ${variable.unit}`,
+        `${formatNumber(range[1], 2)} ${variable.unit}`,
+      ];
+      legendLabelsEl.innerHTML = labels.map((label) => `<span>${label}</span>`).join("");
+    }
+
+    function updateMeta() {
+      const variable = state.data.variables[state.variable];
+      const stats = variable.stats || {};
+      const label = CLIP_MODES.find((mode) => mode.key === state.clip)?.label || state.clip;
+
+      viewerTitleEl.textContent = `${variable.title} (${state.variable})`;
+      viewerStatusEl.textContent = `${label} / ${state.data.projection}`;
+      captionTextEl.textContent =
+        state.variable === "mask"
+          ? "RISE categorical mask rendered from the native 2 km grid."
+          : `${variable.description} Colors use the recommended preview range instead of the full raw extrema.`;
+      extentTextEl.textContent = `x ${formatNumber(state.data.grid.x_min_m, 0)} .. ${formatNumber(state.data.grid.x_max_m, 0)} m | y ${formatNumber(state.data.grid.y_min_m, 0)} .. ${formatNumber(state.data.grid.y_max_m, 0)} m`;
+
+      const rows = [
+        `<li><strong>Variable:</strong> ${variable.title} <span class="mono">(${state.variable})</span></li>`,
+        `<li><strong>Unit:</strong> ${variable.unit}</li>`,
+        `<li><strong>Clip mode:</strong> ${label}</li>`,
+        `<li><strong>Grid:</strong> ${state.data.grid.width} x ${state.data.grid.height} at ${formatNumber(Math.abs(state.data.grid.dx_m), 0)} m spacing</li>`,
+      ];
+      if (variable.type === "continuous") {
+        rows.push(`<li><strong>Display range:</strong> ${formatRange(variable.display_range, variable.unit, 2)}</li>`);
+        rows.push(`<li><strong>Percentile range:</strong> ${formatRange(variable.percentile_range, variable.unit, 2)}</li>`);
+        rows.push(`<li><strong>Raw stats:</strong> min ${formatNumber(stats.min, 2)}, max ${formatNumber(stats.max, 2)}, mean ${formatNumber(stats.mean, 2)} ${variable.unit}</li>`);
+      } else {
+        rows.push(`<li><strong>Categories:</strong> grounded, ice shelf, continental shelf, ocean</li>`);
+        rows.push(`<li><strong>Mask counts:</strong> ${Object.entries(state.data.mask.counts).map(([key, count]) => `${state.data.mask.categories[key]?.label || key}: ${Number(count).toLocaleString("en-US")}`).join(" | ")}</li>`);
+      }
+      metaListEl.innerHTML = rows.join("");
+
+      sourceListEl.innerHTML = `
+        <li><strong>Dataset:</strong> ${state.data.dataset_title}</li>
+        <li><strong>Source:</strong> ${state.data.dataset_source}</li>
+        <li><strong>License:</strong> ${state.data.license}</li>
+        <li><strong>Metadata:</strong> <a href="${state.data.source_url}" target="_blank" rel="noreferrer">AADC RISE record</a></li>
+        <li><strong>Associated paper:</strong> <a href="${state.data.paper_url}" target="_blank" rel="noreferrer">EGUsphere preprint</a></li>
+      `;
+    }
+
+    function drawBackgroundMask(modeKey) {
+      const maskImage = state.images.get(state.data.mask.image_url);
+      if (!maskImage) return;
+
+      if (modeKey === "all") {
+        canvasCtx.save();
+        canvasCtx.globalAlpha = 0.5;
+        canvasCtx.drawImage(maskImage, 0, 0);
+        canvasCtx.restore();
+        return;
+      }
+
+      if (modeKey === "shelf_ocean") {
+        const clipped = buildClippedCanvas(maskImage, new Set([2, 4]), 0.58);
+        canvasCtx.drawImage(clipped, 0, 0);
+      }
+    }
+
+    function drawVariableLayer() {
+      const variable = state.data.variables[state.variable];
+      const image = state.images.get(variable.image_url);
+      if (!image) return;
+
+      if (state.variable === "mask") {
+        let allowed = new Set([1, 2, 3, 4]);
+        if (state.clip === "shelf_only") allowed = new Set([2]);
+        if (state.clip === "shelf_ocean") allowed = new Set([2, 4]);
+        const clipped = buildClippedCanvas(image, allowed, 1);
+        canvasCtx.drawImage(clipped, 0, 0);
+        return;
+      }
+
+      drawBackgroundMask(state.clip);
+      const clipped = buildClippedCanvas(image, new Set([2]), 1);
+      canvasCtx.drawImage(clipped, 0, 0);
+    }
+
+    function render() {
+      if (!state.data || !state.maskIndexData) return;
+      const { width, height } = state.data.grid;
+      if (canvasEl.width !== width) canvasEl.width = width;
+      if (canvasEl.height !== height) canvasEl.height = height;
+      canvasCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+      canvasCtx.fillStyle = "#071523";
+      canvasCtx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+      drawVariableLayer();
+      updateLegend();
+      updateMeta();
+      createButtonRow(
+        variableButtonsEl,
+        VARIABLE_ORDER.map((key) => ({
+          key,
+          label: state.data.variables[key].title,
+          description: state.data.variables[key].description,
+        })),
+        state.variable,
+        (nextKey) => {
+          state.variable = nextKey;
+          render();
+        }
+      );
+      createButtonRow(clipButtonsEl, CLIP_MODES, state.clip, (nextKey) => {
+        state.clip = nextKey;
+        render();
+      });
+    }
+
+    async function initialize() {
+      try {
+        const response = await fetch(PREVIEW_INDEX_URL, { cache: "force-cache" });
+        if (!response.ok) {
+          throw new Error(`Failed to load preview metadata (${response.status})`);
+        }
+        state.data = await response.json();
+
+        const imageUrls = new Set([
+          state.data.mask.image_url,
+          state.data.mask.index_image_url,
+          ...Object.values(state.data.variables).map((entry) => entry.image_url),
+        ]);
+
+        const loadedEntries = await Promise.all(
+          Array.from(imageUrls).map(async (url) => [url, await loadImage(url)])
+        );
+        loadedEntries.forEach(([url, image]) => state.images.set(url, image));
+
+        const maskIndexImage = state.images.get(state.data.mask.index_image_url);
+        const offscreen = document.createElement("canvas");
+        offscreen.width = maskIndexImage.naturalWidth;
+        offscreen.height = maskIndexImage.naturalHeight;
+        const offscreenCtx = offscreen.getContext("2d");
+        offscreenCtx.drawImage(maskIndexImage, 0, 0);
+        state.maskIndexData = offscreenCtx.getImageData(0, 0, offscreen.width, offscreen.height);
+
+        loadingStateEl.hidden = true;
+        render();
+      } catch (error) {
+        console.error(error);
+        loadingStateEl.hidden = true;
+        errorStateEl.hidden = false;
+        errorStateEl.textContent = error instanceof Error ? error.message : String(error);
+      }
+    }
+
+    initialize();
+  </script>
+</body>
+</html>
