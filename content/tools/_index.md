@@ -135,4 +135,12 @@ sections:
         </div>
     design:
       columns: "1"
+  - block: tools-feedback
+    id: tool-feedback
+    content:
+      title: "Tools feedback"
+      text: |
+        if one of these demos was helpful, confusing, or a little annoying, send me a quick note here. I use this inbox to collect bug reports, usability feedback, and ideas for what to improve next😉!
+    design:
+      columns: "1"
 ---

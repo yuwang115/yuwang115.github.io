@@ -62,3 +62,7 @@ features:
 
 custom_css:
   - css/white-text.css
+
+feedback:
+  tools_form_endpoint: 'https://usebasin.com/f/53e802e0991e'
+  fallback_email: 'yu.wang0@utas.edu.au'

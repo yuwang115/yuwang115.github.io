@@ -1,0 +1,472 @@
+{{/* Custom tools feedback form backed by Basin */}}
+
+{{ $page := .wcPage }}
+{{ $block := .wcBlock }}
+{{ $identifier := .wcIdentifier }}
+{{ $title := $block.content.title | emojify | $page.RenderString }}
+{{ $text := $block.content.text | emojify | $page.RenderString | safeHTML }}
+{{ $form_action := site.Params.feedback.tools_form_endpoint | default ($block.content.action | default "") }}
+{{ $email := site.Params.feedback.fallback_email | default "yu.wang0@utas.edu.au" }}
+{{ $placeholder_matches := findRE "YOUR[-_]FORM[-_]ID|YOUR_FORM_ID" $form_action }}
+{{ $is_configured := and (ne $form_action "") (eq (len $placeholder_matches) 0) }}
+{{ $success_id := printf "%s-success" $identifier }}
+{{ $error_id := printf "%s-error" $identifier }}
+{{ $form_id := printf "%s-form" $identifier }}
+{{ $status_id := printf "%s-status" $identifier }}
+
+<div class="mx-auto flex w-full flex-col gap-6 px-6">
+  <style>
+    .tool-feedback-secondary,
+    .tool-feedback-reset,
+    .tool-feedback-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 0.78rem 1.2rem;
+      font-size: 0.98rem;
+      font-weight: 600;
+      line-height: 1;
+      text-decoration: none;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+    }
+
+    .tool-feedback-submit {
+      border: 1px solid transparent;
+      background: #0f5b78;
+      box-shadow: 0 12px 24px rgba(15, 91, 120, 0.16);
+      color: #fff;
+    }
+
+    .tool-feedback-submit:hover {
+      transform: translateY(-1px);
+      background: #0b4860;
+      color: #fff;
+    }
+
+    .tool-feedback-secondary,
+    .tool-feedback-reset {
+      border: 1px solid #c4d9e4;
+      background: #fff;
+      color: #18445a;
+    }
+
+    .tool-feedback-secondary:hover,
+    .tool-feedback-reset:hover {
+      transform: translateY(-1px);
+      background: #f6fbfe;
+      color: #12384a;
+    }
+
+    .tool-feedback-card {
+      border-radius: 1.5rem;
+      border: 1px solid #dbe7ee;
+      background:
+        radial-gradient(circle at top right, rgba(20, 100, 130, 0.08), transparent 28%),
+        linear-gradient(180deg, rgba(248, 252, 255, 0.98) 0%, rgba(239, 246, 251, 0.98) 100%);
+      box-shadow: 0 22px 55px rgba(15, 23, 42, 0.09);
+      overflow: hidden;
+    }
+
+    .tool-feedback-card-inner {
+      display: grid;
+      gap: 1.5rem;
+      padding: 1.5rem;
+    }
+
+    .tool-feedback-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .tool-feedback-title {
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .tool-feedback-body {
+      width: 100%;
+      color: #385569;
+      font-size: 1.02rem;
+      line-height: 1.7;
+    }
+
+    .tool-feedback-body :first-child {
+      margin-top: 0;
+    }
+
+    .tool-feedback-body :last-child {
+      margin-bottom: 0;
+    }
+
+    .tool-feedback-note,
+    .tool-feedback-alert,
+    .tool-feedback-success {
+      border-radius: 1rem;
+      padding: 1rem 1.1rem;
+      font-size: 0.96rem;
+      line-height: 1.6;
+    }
+
+    .tool-feedback-note {
+      border: 1px solid #ecd7a3;
+      background: #fff8e4;
+      color: #744e00;
+    }
+
+    .tool-feedback-alert {
+      display: none;
+      border: 1px solid #efc0c0;
+      background: #fff3f3;
+      color: #8d1d1d;
+    }
+
+    .tool-feedback-success {
+      display: none;
+      border: 1px solid #b9decb;
+      background: #f2fcf5;
+      color: #165534;
+    }
+
+    .tool-feedback-success h3,
+    .tool-feedback-alert h3 {
+      margin: 0 0 0.35rem 0;
+      font-size: 1.08rem;
+      font-weight: 700;
+    }
+
+    .tool-feedback-form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .tool-feedback-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tool-feedback-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .tool-feedback-field--full {
+      grid-column: 1 / -1;
+    }
+
+    .tool-feedback-label {
+      color: #0f172a;
+      font-size: 0.94rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .tool-feedback-hint {
+      color: #4f6b7e;
+      font-weight: 400;
+    }
+
+    .tool-feedback-input,
+    .tool-feedback-select,
+    .tool-feedback-textarea {
+      width: 100%;
+      border: 1px solid #cad9e3;
+      border-radius: 0.95rem;
+      background: rgba(255, 255, 255, 0.96);
+      color: #0f172a;
+      font: inherit;
+      padding: 0.9rem 0.95rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .tool-feedback-input:focus,
+    .tool-feedback-select:focus,
+    .tool-feedback-textarea:focus {
+      outline: none;
+      border-color: #0f5b78;
+      box-shadow: 0 0 0 4px rgba(15, 91, 120, 0.12);
+    }
+
+    .tool-feedback-textarea {
+      min-height: 11rem;
+      resize: vertical;
+    }
+
+    .tool-feedback-honeypot {
+      position: absolute;
+      left: -10000px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .tool-feedback-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.85rem;
+      justify-content: space-between;
+    }
+
+    .tool-feedback-actions-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .tool-feedback-status {
+      color: #567181;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .tool-feedback-submit[disabled] {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .dark .tool-feedback-status,
+    .dark .tool-feedback-hint,
+    .dark .tool-feedback-body {
+      color: #b8d0dd;
+    }
+
+    .dark .tool-feedback-card {
+      border-color: #264658;
+      background:
+        radial-gradient(circle at top right, rgba(71, 163, 196, 0.11), transparent 30%),
+        linear-gradient(180deg, rgba(10, 23, 31, 0.97) 0%, rgba(15, 33, 44, 0.98) 100%);
+      box-shadow: 0 22px 55px rgba(2, 8, 23, 0.28);
+    }
+
+    .dark .tool-feedback-title,
+    .dark .tool-feedback-label {
+      color: #eff6fb;
+    }
+
+    .dark .tool-feedback-input,
+    .dark .tool-feedback-select,
+    .dark .tool-feedback-textarea {
+      border-color: #315264;
+      background: rgba(11, 24, 32, 0.95);
+      color: #eff6fb;
+      box-shadow: none;
+    }
+
+    .dark .tool-feedback-input::placeholder,
+    .dark .tool-feedback-textarea::placeholder {
+      color: #86a4b4;
+    }
+
+    .dark .tool-feedback-secondary,
+    .dark .tool-feedback-reset {
+      border-color: #406074;
+      background: rgba(11, 24, 32, 0.82);
+      color: #d8ebf4;
+    }
+
+    .dark .tool-feedback-secondary:hover,
+    .dark .tool-feedback-reset:hover {
+      background: rgba(15, 34, 46, 0.98);
+      color: #fff;
+    }
+
+    .dark .tool-feedback-note {
+      border-color: #6a5a24;
+      background: rgba(90, 71, 18, 0.18);
+      color: #f2dc97;
+    }
+
+    .dark .tool-feedback-alert {
+      border-color: #744040;
+      background: rgba(74, 24, 24, 0.3);
+      color: #f3c2c2;
+    }
+
+    .dark .tool-feedback-success {
+      border-color: #29553a;
+      background: rgba(15, 63, 35, 0.28);
+      color: #bcf0cf;
+    }
+
+    @media (max-width: 768px) {
+      .tool-feedback-card-inner {
+        padding: 1.15rem;
+      }
+
+      .tool-feedback-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tool-feedback-actions {
+        align-items: stretch;
+      }
+
+      .tool-feedback-actions-left,
+      .tool-feedback-secondary,
+      .tool-feedback-reset,
+      .tool-feedback-submit {
+        width: 100%;
+      }
+    }
+  </style>
+
+    <div class="tool-feedback-card">
+    <div class="tool-feedback-card-inner">
+      <div class="tool-feedback-heading">
+        <h2 class="tool-feedback-title">{{ $title }}</h2>
+        {{ with $text }}<div class="tool-feedback-body">{{ . }}</div>{{ end }}
+      </div>
+
+      {{ if not $is_configured }}
+      <div class="tool-feedback-note">
+        The structured feedback form will go live as soon as the Basin endpoint is configured. You can still email me directly below.
+      </div>
+      {{ end }}
+
+      <div id="{{ $success_id }}" class="tool-feedback-success" aria-live="polite">
+        <h3>Thanks for the note.</h3>
+        <p>Your feedback has been sent. I read these messages to improve the tools and fix rough edges.</p>
+        <button type="button" class="tool-feedback-reset" data-feedback-reset="{{ $form_id }}">Send another message</button>
+      </div>
+
+      <div id="{{ $error_id }}" class="tool-feedback-alert" aria-live="polite">
+        <h3>Submission failed.</h3>
+        <p>I could not send your message just now. Please try again, or email me directly if the issue persists.</p>
+      </div>
+
+      <form
+        id="{{ $form_id }}"
+        class="tool-feedback-form"
+        action="{{ if $is_configured }}{{ $form_action }}{{ else }}#{{ $identifier }}{{ end }}"
+        method="POST"
+        accept-charset="UTF-8"
+        {{ if $is_configured }}data-basin-form data-basin-success-action="render" data-basin-success-id="{{ $success_id }}" data-basin-error-id="{{ $error_id }}"{{ end }}
+      >
+        <input type="hidden" name="source_page" value="/tools/">
+        <input type="hidden" name="source_section" value="tool-feedback" data-feedback-source-section>
+        <input type="hidden" name="page_url" value="" data-feedback-page-url>
+        <input type="hidden" name="page_title" value="{{ $page.Title }}">
+        <input type="hidden" name="site_lang" value="{{ $page.Lang }}">
+
+        <div class="tool-feedback-honeypot" aria-hidden="true">
+          <label for="{{ $identifier }}-website">Leave this field empty</label>
+          <input id="{{ $identifier }}-website" type="text" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="tool-feedback-grid">
+          <div class="tool-feedback-field">
+            <label class="tool-feedback-label" for="{{ $identifier }}-tool">Tool</label>
+            <select id="{{ $identifier }}-tool" class="tool-feedback-select" name="tool" required data-feedback-tool-select>
+              <option value="" selected disabled>Select a tool</option>
+              <option value="3D Antarctica & Greenland Explorer">3D Antarctica & Greenland Explorer</option>
+              <option value="Regularised Coulomb Sliding Law demo">Regularised Coulomb Sliding Law demo</option>
+              <option value="Marine Ice Sheet Flowline Lab">Marine Ice Sheet Flowline Lab</option>
+              <option value="General tools/site feedback">General tools/site feedback</option>
+            </select>
+          </div>
+
+          <div class="tool-feedback-field">
+            <label class="tool-feedback-label" for="{{ $identifier }}-email">
+              Email
+              <span class="tool-feedback-hint">Optional, if you'd like a reply</span>
+            </label>
+            <input id="{{ $identifier }}-email" class="tool-feedback-input" type="email" name="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
+          </div>
+
+          <div class="tool-feedback-field tool-feedback-field--full">
+            <label class="tool-feedback-label" for="{{ $identifier }}-message">Message</label>
+            <textarea id="{{ $identifier }}-message" class="tool-feedback-textarea" name="message" required placeholder="Tell me what worked, what felt confusing, what broke, or what you'd like me to add." data-feedback-message></textarea>
+          </div>
+        </div>
+
+        <div class="tool-feedback-actions">
+          <div class="tool-feedback-actions-left">
+            <button type="submit" class="tool-feedback-submit" {{ if not $is_configured }}disabled aria-disabled="true"{{ end }}>Send feedback</button>
+            <a class="tool-feedback-secondary" href="mailto:{{ $email }}">Email instead</a>
+          </div>
+          <div id="{{ $status_id }}" class="tool-feedback-status">
+            English or Chinese is welcome.
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {{ if $is_configured }}
+  <script src="https://js.usebasin.com/v2.10.1.min.js" defer></script>
+  {{ end }}
+  <script>
+    (() => {
+      const form = document.getElementById({{ $form_id }});
+      if (!form) return;
+
+      const toolSelect = form.querySelector("[data-feedback-tool-select]");
+      const sourceSection = form.querySelector("[data-feedback-source-section]");
+      const pageUrl = form.querySelector("[data-feedback-page-url]");
+      const submitButton = form.querySelector(".tool-feedback-submit");
+      const status = document.getElementById({{ $status_id }});
+      const successPanel = document.getElementById({{ $success_id }});
+      const errorPanel = document.getElementById({{ $error_id }});
+      const resetButton = document.querySelector(`[data-feedback-reset="{{ $form_id }}"]`);
+      const isCurrentFormEvent = (event) => event.detail && event.detail.form === form;
+
+      const syncMetadata = () => {
+        pageUrl.value = window.location.href;
+        sourceSection.value = "tool-feedback";
+      };
+
+      const restoreForm = () => {
+        form.style.display = "";
+        successPanel.style.display = "none";
+        errorPanel.style.display = "none";
+        submitButton.disabled = false;
+        submitButton.textContent = "Send feedback";
+        status.textContent = "English or Chinese is welcome.";
+        form.reset();
+        syncMetadata();
+      };
+
+      syncMetadata();
+      toolSelect.addEventListener("change", syncMetadata);
+
+      if (resetButton) {
+        resetButton.addEventListener("click", restoreForm);
+      }
+
+      document.addEventListener("basinjsFormSubmitted", (event) => {
+        if (!isCurrentFormEvent(event)) return;
+        errorPanel.style.display = "none";
+        submitButton.disabled = true;
+        submitButton.textContent = "Sending...";
+        status.textContent = "Submitting your feedback...";
+      });
+
+      document.addEventListener("basinjsFormSuccess", (event) => {
+        if (!isCurrentFormEvent(event)) return;
+        form.reset();
+        syncMetadata();
+        submitButton.disabled = false;
+        submitButton.textContent = "Send feedback";
+        status.textContent = "Thanks. Your message has been sent.";
+      });
+
+      document.addEventListener("basinjsFormError", (event) => {
+        if (!isCurrentFormEvent(event)) return;
+        errorPanel.style.display = "block";
+        submitButton.disabled = false;
+        submitButton.textContent = "Send feedback";
+        status.textContent = "Submission failed. Please try again or email me directly.";
+      });
+    })();
+  </script>
+</div>

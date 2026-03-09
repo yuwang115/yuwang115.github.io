@@ -790,7 +790,7 @@
         <button id="fullscreenToggle" type="button">Enter Fullscreen</button>
       </section>
 
-      <section class="section">
+      <section id="bedLegendSection" class="section">
         <h2 class="section-title">Bed Elevation Color</h2>
         <div id="legendBar" class="legend" aria-hidden="true"></div>
         <div class="legend-labels">
@@ -800,7 +800,7 @@
         </div>
       </section>
 
-      <section class="section">
+      <section id="velocityLegendSection" class="section">
         <h2 class="section-title">Ice Surface Velocity Color</h2>
         <div id="velocityLegendBar" class="legend" aria-hidden="true"></div>
         <div class="legend-labels">
@@ -1141,7 +1141,9 @@
       fullscreenToggle: document.getElementById("fullscreenToggle"),
       interactionToggle: document.getElementById("interactionToggle"),
       viewerFullscreenToggle: document.getElementById("viewerFullscreenToggle"),
+      bedLegendSection: document.getElementById("bedLegendSection"),
       legendBar: document.getElementById("legendBar"),
+      velocityLegendSection: document.getElementById("velocityLegendSection"),
       velocityLegendBar: document.getElementById("velocityLegendBar"),
       basalMeltLegendSection: document.getElementById("basalMeltLegendSection"),
       basalMeltLegendBar: document.getElementById("basalMeltLegendBar"),
@@ -1300,17 +1302,42 @@
       setToggleAvailability(controlsUI.showRefinedBasins, basinAvailable);
       setToggleAvailability(controlsUI.showEffectivePressure, capabilities.hydrology);
       setToggleAvailability(controlsUI.showSubglacialChannels, capabilities.hydrology);
+      updateLegendVisibility();
+    }
+
+    function updateLegendVisibility() {
+      const region = getRegionConfig(currentRegionKey);
+      const datasetKey = region.datasets[currentDatasetKey]
+        ? currentDatasetKey
+        : datasetSelectionByRegion[region.key] || getDefaultDatasetKey(region.key);
+      const dataset = getDatasetConfig(region.key, datasetKey);
+      const capabilities = dataset?.capabilities || region.capabilities;
+      const riseAvailable = Boolean(!isShowcaseMode && capabilities.rise && dataset?.riseMetaUrl && dataset?.riseBinUrl);
+      const oceanCurrentAvailable = Boolean(
+        !isShowcaseMode && capabilities.oceanCurrents && dataset?.oceanCurrentsMetaUrl && dataset?.oceanCurrentsBinUrl
+      );
+      const hydrologyAvailable = Boolean(!isShowcaseMode && capabilities.hydrology);
+
+      if (controlsUI.bedLegendSection) {
+        controlsUI.bedLegendSection.hidden = !controlsUI.showBed.checked;
+      }
+      if (controlsUI.velocityLegendSection) {
+        controlsUI.velocityLegendSection.hidden = !(capabilities.velocity && (controlsUI.showVelocity.checked || controlsUI.showFlowline.checked));
+      }
       if (controlsUI.basalMeltLegendSection) {
-        controlsUI.basalMeltLegendSection.hidden = !capabilities.rise || isShowcaseMode;
+        controlsUI.basalMeltLegendSection.hidden = !(riseAvailable && controlsUI.showBasalMelt.checked);
       }
       if (controlsUI.thermalDrivingLegendSection) {
-        controlsUI.thermalDrivingLegendSection.hidden = !capabilities.rise || isShowcaseMode;
+        controlsUI.thermalDrivingLegendSection.hidden = !(riseAvailable && controlsUI.showThermalDriving.checked);
+      }
+      if (controlsUI.oceanLegendSection && !(oceanCurrentAvailable && controlsUI.showOceanCurrents.checked)) {
+        controlsUI.oceanLegendSection.hidden = true;
       }
       if (controlsUI.effectivePressureLegendSection) {
-        controlsUI.effectivePressureLegendSection.hidden = !capabilities.hydrology;
+        controlsUI.effectivePressureLegendSection.hidden = !(hydrologyAvailable && controlsUI.showEffectivePressure.checked);
       }
       if (controlsUI.channelLegendSection) {
-        controlsUI.channelLegendSection.hidden = !capabilities.hydrology;
+        controlsUI.channelLegendSection.hidden = !(hydrologyAvailable && controlsUI.showSubglacialChannels.checked);
       }
     }
 
@@ -1385,6 +1412,7 @@
       controlsUI.iceOpacity.value = "1";
       controlsUI.iceOpacityValue.textContent = "1.00";
     }
+    updateLegendVisibility();
 
     const DEFAULT_CAMERA_POSES = {
       antarctica: {
@@ -1917,7 +1945,7 @@
       const datasetKey = currentDatasetKey || datasetSelectionByRegion[region.key] || getDefaultDatasetKey(region.key);
       const dataset = getDatasetConfig(region.key, datasetKey);
       const oceanLegendVisible = Boolean(
-        !isShowcaseMode && region.capabilities?.oceanCurrents && dataset?.oceanCurrentsMetaUrl
+        !isShowcaseMode && region.capabilities?.oceanCurrents && dataset?.oceanCurrentsMetaUrl && controlsUI.showOceanCurrents?.checked
       );
       controlsUI.oceanLegendSection.hidden = !oceanLegendVisible;
       if (!oceanLegendVisible) return;
@@ -2932,6 +2960,15 @@
         status: statusEl?.textContent || "",
         toggles,
         controls: { ...toggles },
+        legends: {
+          bed: Boolean(controlsUI.bedLegendSection && !controlsUI.bedLegendSection.hidden),
+          velocity: Boolean(controlsUI.velocityLegendSection && !controlsUI.velocityLegendSection.hidden),
+          basalMelt: Boolean(controlsUI.basalMeltLegendSection && !controlsUI.basalMeltLegendSection.hidden),
+          thermalDriving: Boolean(controlsUI.thermalDrivingLegendSection && !controlsUI.thermalDrivingLegendSection.hidden),
+          oceanCurrents: Boolean(controlsUI.oceanLegendSection && !controlsUI.oceanLegendSection.hidden),
+          effectivePressure: Boolean(controlsUI.effectivePressureLegendSection && !controlsUI.effectivePressureLegendSection.hidden),
+          subglacialChannels: Boolean(controlsUI.channelLegendSection && !controlsUI.channelLegendSection.hidden),
+        },
         camera:
           camera && orbit
             ? {
@@ -4073,6 +4110,7 @@
       controlsUI.showBed.addEventListener("change", () => {
         if (bedMesh) bedMesh.visible = controlsUI.showBed.checked;
         updateRefinedBasinVisibility();
+        updateLegendVisibility();
       });
       controlsUI.showIce.addEventListener("change", () => {
         syncIceSurfaceVisibilityFromControls();
@@ -4081,6 +4119,7 @@
         syncIceSurfaceVisibilityFromControls();
       });
       controlsUI.showVelocity.addEventListener("change", () => {
+        updateLegendVisibility();
         if (controlsUI.showVelocity.checked && !velocitySurfaceMesh) {
           ensureVelocityLoaded({ trigger: "toggle" });
           return;
@@ -4088,6 +4127,7 @@
         if (velocitySurfaceMesh) velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
       });
       controlsUI.showFlowline.addEventListener("change", () => {
+        updateLegendVisibility();
         if (controlsUI.showFlowline.checked && !velocityField) {
           ensureVelocityLoaded({ trigger: "toggle" });
           return;
@@ -4101,6 +4141,7 @@
         if (controlsUI.showBasalMelt.checked) {
           hideIceSurfaceForRiseOverlay();
         }
+        updateLegendVisibility();
         if (controlsUI.showBasalMelt.checked && !basalMeltMesh) {
           ensureRiseLoaded({ trigger: "toggle" });
           updateMetaFromCurrentState();
@@ -4116,6 +4157,7 @@
         if (controlsUI.showThermalDriving.checked) {
           hideIceSurfaceForRiseOverlay();
         }
+        updateLegendVisibility();
         if (controlsUI.showThermalDriving.checked && !thermalDrivingMesh) {
           ensureRiseLoaded({ trigger: "toggle" });
           updateMetaFromCurrentState();
@@ -4125,6 +4167,7 @@
         updateMetaFromCurrentState();
       });
       controlsUI.showOceanCurrents.addEventListener("change", () => {
+        updateLegendVisibility();
         if (controlsUI.showOceanCurrents.checked && !oceanCurrentMesh) {
           ensureOceanCurrentsLoaded({ trigger: "toggle" });
           return;
@@ -4147,6 +4190,7 @@
         if (controlsUI.showEffectivePressure.checked) {
           hideIceAndIceBottomSurfacesForBedOverlay();
         }
+        updateLegendVisibility();
         if (controlsUI.showEffectivePressure.checked && !effectivePressureMesh) {
           ensureHydrologyLoaded({ trigger: "toggle" });
           return;
@@ -4157,6 +4201,7 @@
         if (controlsUI.showSubglacialChannels.checked) {
           hideIceAndIceBottomSurfacesForBedOverlay();
         }
+        updateLegendVisibility();
         if (controlsUI.showSubglacialChannels.checked && !subglacialChannelMesh) {
           ensureHydrologyLoaded({ trigger: "toggle" });
           return;
@@ -4271,7 +4316,7 @@
 
       const velocitySection = capabilities.velocity
         ? `
-        <li class="meta-group">Velocity</li>
+        <li class="meta-group">Ice Surface Velocity (observed)</li>
         <li><strong>Valid Coverage:</strong> ${
           velocityCoverage
             ? `${fmtPercent(velocityCoverage.valid_fraction)} of grid (${fmtInt(velocityCoverage.valid_count)} / ${fmtInt(
@@ -4288,13 +4333,13 @@
         }
       `
         : `
-        <li class="meta-group">Velocity</li>
+        <li class="meta-group">Ice Surface Velocity (observed)</li>
         <li><strong>Status:</strong> Not yet added for ${region.label}</li>
       `;
 
       const riseSection = capabilities.rise
         ? `
-        <li class="meta-group">Ice-Shelf Basal Melt</li>
+        <li class="meta-group">Ice-Shelf Basal Melt (simulated)</li>
         <li><strong>Basal Melt:</strong> ${
           riseBasalStats ? `${fmtShort(riseBasalStats.min)} to ${fmtShort(riseBasalStats.max)} m/yr` : "Available on demand"
         }</li>
@@ -4312,7 +4357,7 @@
 
       const oceanCurrentSection = capabilities.oceanCurrents
         ? `
-        <li class="meta-group">Ocean Circulation</li>
+        <li class="meta-group">Ocean Circulation (simulated)</li>
         <li><strong>Streamline Field:</strong> ${
           oceanCurrentMeta
             ? `${fmtInt(oceanStreamlineCount)} 3D streamlines (${fmtInt(oceanCurrentSegmentCount)} segments) seeded from ${fmtInt(
@@ -4361,13 +4406,13 @@
 
       const hydrologySection = capabilities.hydrology
         ? `
-        <li class="meta-group">Subglacial Hydrology</li>
+        <li class="meta-group">Subglacial Hydrology (simulated)</li>
         <li><strong>Effective Pressure:</strong> ${pressureStats ? `${fmtMpa(pressureStats.min)} to ${fmtMpa(pressureStats.max)} MPa` : "n/a"}</li>
         <li><strong>Channel Discharge:</strong> ${channelStats ? `${fmtQ(channelStats.min)} to ${fmtQ(channelStats.max)} m3/s` : "n/a"}</li>
         <li><strong>Rendered Channels:</strong> ${channelCoverage ? fmtInt(channelCoverage.channel_segment_count_unique) : "n/a"}</li>
       `
         : `
-        <li class="meta-group">Subglacial Hydrology</li>
+        <li class="meta-group">Subglacial Hydrology (simulated)</li>
         <li><strong>Status:</strong> Not yet added for ${region.label}</li>
       `;
 
@@ -4398,7 +4443,7 @@
       }
 
       metaListEl.innerHTML = `
-        <li class="meta-group">Grid & Topography</li>
+        <li class="meta-group">Geometry & Grid</li>
         <li><strong>Preset:</strong> ${region.label} ${dataset.label} (${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km grid)</li>
         <li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)}</li>
         <li><strong>Projection:</strong> ${projectionLabel}</li>
@@ -4439,6 +4484,7 @@
     }
 
     function updateMetaFromCurrentState() {
+      updateLegendVisibility();
       updateBasalMeltLegend();
       updateThermalDrivingLegend();
       if (!currentCoreContext) {
