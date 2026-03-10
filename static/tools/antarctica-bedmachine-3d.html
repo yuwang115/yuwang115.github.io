@@ -848,7 +848,7 @@
           <span id="oceanLegendFreshLabel"><strong>Fresh</strong>30.0 PSU</span>
           <span id="oceanLegendSaltyLabel"><strong>Salty</strong>35.0 PSU</span>
         </div>
-        <div class="ocean-legend-note">Bivariate temperature-salinity color key for Greenland ocean streamlines.</div>
+        <div class="ocean-legend-note">Bivariate temperature-salinity color key for ocean streamlines.</div>
       </section>
 
       <section id="effectivePressureLegendSection" class="section">
@@ -949,7 +949,7 @@
         key: "antarctica",
         label: "Antarctica",
         intro:
-          "Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, flowlines, subglacial environments, and RISE basal melt drivers.",
+          "Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, ocean streamlines, subglacial environments, and RISE basal melt drivers.",
         refinedBasinsUrl: "/tools/data/imbie_refined_basins_v2.json",
         basinToggleLabel: "Show refined basins",
         basinStatusLabel: "refined basins",
@@ -958,7 +958,7 @@
           velocity: true,
           flowline: true,
           rise: true,
-          oceanCurrents: false,
+          oceanCurrents: true,
           refinedBasins: true,
           hydrology: true,
         },
@@ -974,6 +974,10 @@
           rise: {
             text: "Galton-Fenzi et al. (2025) Multi-model estimate of Antarctic ice-shelf basal melting and ocean drivers, V1",
             url: "https://data.aad.gov.au/metadata/RISE",
+          },
+          oceanCurrents: {
+            text: "WAOM2 (Whole Antarctic Ocean Model) annual-mean ocean velocity, temperature, and salinity",
+            url: "https://gmd.copernicus.org/articles/15/723/2022/",
           },
           basins: {
             text: "MEaSUREs Antarctic Boundaries for IPY 2007-2009 (Version 2, IMBIE refined basins)",
@@ -995,6 +999,8 @@
             velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.bin",
             riseMetaUrl: "/tools/data/rise_antarctica_480.meta.json",
             riseBinUrl: "/tools/data/rise_antarctica_480.bin",
+            oceanCurrentsMetaUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual.meta.json?v=20260310-waom2-cavity-v2",
+            oceanCurrentsBinUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual.bin?v=20260310-waom2-cavity-v2",
             hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_480.meta.json",
             hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_480.bin",
           },
@@ -1008,6 +1014,8 @@
             velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.bin",
             riseMetaUrl: "/tools/data/rise_antarctica_741.meta.json",
             riseBinUrl: "/tools/data/rise_antarctica_741.bin",
+            oceanCurrentsMetaUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual.meta.json?v=20260310-waom2-cavity-v2",
+            oceanCurrentsBinUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual.bin?v=20260310-waom2-cavity-v2",
             hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_741.meta.json",
             hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_741.bin",
           },
@@ -3149,7 +3157,11 @@
         const row1Nearest = Math.min(context.ny - 1, Math.max(0, Math.round(row1)));
         const idx0 = row0Nearest * context.nx + col0Nearest;
         const idx1 = row1Nearest * context.nx + col1Nearest;
-        if (context.mask[idx0] !== 0 || context.mask[idx1] !== 0) continue;
+        const mask0 = Number(context.mask[idx0]);
+        const mask1 = Number(context.mask[idx1]);
+        const validOceanMask0 = mask0 === 0 || mask0 === 3;
+        const validOceanMask1 = mask1 === 0 || mask1 === 3;
+        if (!validOceanMask0 || !validOceanMask1) continue;
 
         const bedHeight0 = sampleGridHeightNearest(context, col0, row0, "bed");
         const bedHeight1 = sampleGridHeightNearest(context, col1, row1, "bed");
@@ -4646,13 +4658,15 @@
         updateRiseOverlayVisibility();
         updateMetaFromCurrentState();
       });
-      controlsUI.showOceanCurrents.addEventListener("change", () => {
+      controlsUI.showOceanCurrents.addEventListener("change", async () => {
         updateLegendVisibility();
         if (controlsUI.showOceanCurrents.checked && !oceanCurrentMesh) {
-          ensureOceanCurrentsLoaded({ trigger: "toggle" });
+          await ensureOceanCurrentsLoaded({ trigger: "toggle" });
+          updateMetaFromCurrentState();
           return;
         }
         if (oceanCurrentMesh) oceanCurrentMesh.visible = controlsUI.showOceanCurrents.checked;
+        updateMetaFromCurrentState();
       });
       controlsUI.showRefinedBasins.addEventListener("change", () => {
         if (!controlsUI.showRefinedBasins.checked) {
@@ -4754,6 +4768,11 @@
       const oceanCurrentSalinityStats = oceanCurrentMeta?.fields?.find((f) => f.name === "sal_psu_summary")?.stats;
       const oceanCurrentCoverage = oceanCurrentMeta?.coverage;
       const oceanCurrentDepths = oceanCurrentMeta?.sampling?.seed_depths_m || oceanCurrentMeta?.sampling?.depth_levels_m;
+      const oceanCurrentSeedStrategy = oceanCurrentMeta?.sampling?.seed_strategy || "";
+      const oceanCurrentSeedPlacement = oceanCurrentMeta?.sampling?.depth_sampling_summary || "";
+      const oceanCurrentSeedBucketLabels = oceanCurrentMeta?.sampling?.seed_bucket_labels || {};
+      const oceanCurrentSeedBuckets =
+        oceanCurrentCoverage?.streamlines_by_seed_bucket || oceanCurrentCoverage?.streamlines_by_seed_depth || {};
       const adaptiveDeepSampling = oceanCurrentMeta?.sampling?.adaptive_deep_seeding || oceanCurrentMeta?.sampling?.adaptive_bottom_seeding;
       const adaptiveDeepStreamlineCount = Object.entries(oceanCurrentCoverage?.streamlines_by_seed_depth || {}).reduce(
         (sum, [key, value]) => (key.startsWith("adaptive_") ? sum + Number(value || 0) : sum),
@@ -4761,7 +4780,11 @@
       );
       const oceanCurrentDepthMin = Number(oceanCurrentCoverage?.depth_min_m);
       const oceanCurrentDepthMax = Number(oceanCurrentCoverage?.depth_max_m);
-      const oceanCurrentMonth = oceanCurrentMeta?.source_time_utc
+      const oceanCurrentSeedDepthMin = Number(oceanCurrentCoverage?.seed_depth_min_m);
+      const oceanCurrentSeedDepthMax = Number(oceanCurrentCoverage?.seed_depth_max_m);
+      const oceanCurrentReference = oceanCurrentMeta?.source_time_label
+        ? String(oceanCurrentMeta.source_time_label)
+        : oceanCurrentMeta?.source_time_utc
         ? new Date(oceanCurrentMeta.source_time_utc).toLocaleDateString("en-US", {
             month: "long",
             year: "numeric",
@@ -4840,17 +4863,43 @@
         <li class="meta-group">Ocean Circulation (simulated)</li>
         <li><strong>Streamline Field:</strong> ${
           oceanCurrentMeta
-            ? `${fmtInt(oceanStreamlineCount)} 3D streamlines (${fmtInt(oceanCurrentSegmentCount)} segments) seeded from ${fmtInt(
-                Array.isArray(oceanCurrentDepths) ? oceanCurrentDepths.length : 0
-              )} depth levels`
+            ? oceanCurrentSeedStrategy === "random_spatial_scattered"
+              ? `${fmtInt(oceanStreamlineCount)} 3D streamlines (${fmtInt(
+                  oceanCurrentSegmentCount
+                )} segments) retained from randomized cavity/open-ocean seeding`
+              : `${fmtInt(oceanStreamlineCount)} 3D streamlines (${fmtInt(oceanCurrentSegmentCount)} segments) seeded from ${fmtInt(
+                  Array.isArray(oceanCurrentDepths) ? oceanCurrentDepths.length : 0
+                )} depth levels`
             : "Available on demand"
         }</li>
-        <li><strong>Reference Month:</strong> ${oceanCurrentMonth || "Monthly mean snapshot"}</li>
-        <li><strong>Seed Depths:</strong> ${
+        <li><strong>Reference:</strong> ${oceanCurrentReference || "Model average"}</li>
+        ${
           Array.isArray(oceanCurrentDepths) && oceanCurrentDepths.length
-            ? `${oceanCurrentDepths.map((value) => fmtInt(Math.abs(Number(value)) < 1e-6 ? 0 : value)).join(", ")} m`
-            : "n/a"
-        }</li>
+            ? `<li><strong>Seed Depths:</strong> ${oceanCurrentDepths
+                .map((value) => fmtInt(Math.abs(Number(value)) < 1e-6 ? 0 : value))
+                .join(", ")} m</li>`
+            : oceanCurrentSeedPlacement
+            ? `<li><strong>Seed Placement:</strong> ${oceanCurrentSeedPlacement}</li>`
+            : `<li><strong>Seed Placement:</strong> n/a</li>`
+        }
+        ${
+          oceanCurrentSeedStrategy === "random_spatial_scattered" &&
+          Number.isFinite(oceanCurrentSeedDepthMin) &&
+          Number.isFinite(oceanCurrentSeedDepthMax) &&
+          oceanCurrentSeedDepthMax > oceanCurrentSeedDepthMin
+            ? `<li><strong>Seed Depth Range:</strong> ${fmtShort(oceanCurrentSeedDepthMin, 0)} to ${fmtShort(
+                oceanCurrentSeedDepthMax,
+                0
+              )} m</li>`
+            : ""
+        }
+        ${
+          Object.keys(oceanCurrentSeedBuckets).length
+            ? `<li><strong>Seed Distribution:</strong> ${Object.entries(oceanCurrentSeedBuckets)
+                .map(([key, value]) => `${oceanCurrentSeedBucketLabels[key] || key}: ${fmtInt(value)}`)
+                .join("; ")}</li>`
+            : ""
+        }
         ${
           adaptiveDeepSampling?.enabled
             ? `<li><strong>Adaptive Deep Seeds:</strong> ${
@@ -4902,7 +4951,11 @@
       }
       if (capabilities.oceanCurrents && dataset.sources.oceanCurrents) {
         const oceanSuffix =
-          oceanCurrentCoverage?.streamlines_by_seed_depth || oceanCurrentCoverage?.segments_by_seed_depth || oceanCurrentCoverage?.counts_by_depth
+          oceanCurrentCoverage?.streamlines_by_seed_bucket ||
+          oceanCurrentCoverage?.segments_by_seed_bucket ||
+          oceanCurrentCoverage?.streamlines_by_seed_depth ||
+          oceanCurrentCoverage?.segments_by_seed_depth ||
+          oceanCurrentCoverage?.counts_by_depth
             ? ` (${fmtInt(oceanStreamlineCount)} 3D streamlines)`
             : "";
         sourceLines.push(renderSourceLine("Ocean Circulation", dataset.sources.oceanCurrents, oceanSuffix));
@@ -4948,7 +5001,7 @@
           `Velocity max: ${capabilities.velocity && speedStats ? `${Math.round(speedStats.max)} m/yr` : "n/a"}`,
         ];
         if (capabilities.oceanCurrents && oceanStreamlineCount > 0) {
-          fieldParts.push(`Ocean flowlines: ${fmtInt(oceanStreamlineCount)}`);
+          fieldParts.push(`Ocean streamlines: ${fmtInt(oceanStreamlineCount)}`);
         }
         if (capabilities.rise && controlsUI.showBasalMelt.checked && riseBasalStats) {
           fieldParts.push(`Basal melt: ${fmtShort(riseBasalStats.max, 1)} m/yr max`);
@@ -5021,6 +5074,7 @@
         vertexColors: true,
         transparent: true,
         opacity: Number(controlsUI.iceOpacity.value),
+        depthWrite: false,
         roughness: 0.38,
         metalness: 0.02,
         side: THREE.DoubleSide,
@@ -5043,6 +5097,7 @@
         vertexColors: true,
         transparent: true,
         opacity: Math.max(0.12, Number(controlsUI.iceOpacity.value) * 0.82),
+        depthWrite: false,
         roughness: 0.44,
         metalness: 0.02,
         side: THREE.DoubleSide,
@@ -5067,6 +5122,7 @@
       });
       const iceSideMaterial = iceMaterial.clone();
       iceSideMaterial.opacity = Number(controlsUI.iceOpacity.value);
+      iceSideMaterial.depthWrite = false;
       iceSideMesh = new THREE.Mesh(iceSideGeometry, iceSideMaterial);
       iceSideMesh.scale.y = exaggeration;
       iceSideMesh.material.wireframe = wireframe;
@@ -5623,7 +5679,7 @@
             hasPrefetchedPayload ? 0.34 : 0.12,
             hasPrefetchedPayload ? "Applying prefetched ocean-current data..." : "Loading ocean-current metadata..."
           );
-          statusEl.textContent = "Loading 3D ocean flowlines...";
+          statusEl.textContent = "Loading ocean streamlines...";
         }
 
         let oceanMeta = context.oceanCurrentPrefetchMeta;
@@ -5660,13 +5716,13 @@
         context.oceanCurrentPrefetchBuffer = null;
 
         if (showOverlay) {
-          updateLoadingProgress(0.86, "Building ocean flowlines...");
+          updateLoadingProgress(0.86, "Building ocean streamlines...");
         }
 
         const builtMesh = buildOceanCurrentMesh(context, oceanMeta, oceanBuffer);
         if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
         if (!builtMesh) {
-          throw new Error("Ocean-current dataset is empty after Greenland clipping.");
+          throw new Error("Ocean-current dataset is empty after regional clipping.");
         }
 
         oceanCurrentMesh = disposeObject3D(oceanCurrentMesh);
@@ -5677,7 +5733,7 @@
         updateMetaFromCurrentState();
         if (showOverlay) {
           statusEl.textContent = getReadyStatusText(context);
-          updateLoadingProgress(1, "Ocean flowlines ready");
+          updateLoadingProgress(1, "Ocean streamlines ready");
           setLoadingOverlayVisible(false);
         }
         return true;
@@ -5689,7 +5745,7 @@
             controlsUI.showOceanCurrents.checked = false;
             oceanCurrentMesh = disposeObject3D(oceanCurrentMesh);
             const readyText = getReadyStatusText(context);
-            const transientText = "3D ocean flowlines unavailable";
+            const transientText = "Ocean streamlines unavailable";
             statusEl.textContent = transientText;
             window.setTimeout(() => {
               if (statusEl.textContent === transientText) {
