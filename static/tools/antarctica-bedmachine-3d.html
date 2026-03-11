@@ -804,13 +804,11 @@
         <label class="toggle"><input id="showBed" type="checkbox" checked /> Show bed topography</label>
         <label class="toggle"><input id="showIce" type="checkbox" checked /> Show ice surface</label>
         <label class="toggle"><input id="showIceBottom" type="checkbox" checked /> Show ice bottom surface</label>
+        <label class="toggle"><input id="showRefinedBasins" type="checkbox" /> <span id="showRefinedBasinsLabel">Show refined basins</span></label>
         <label class="toggle"><input id="showVelocity" type="checkbox" /> Show ice surface velocity</label>
         <label class="toggle"><input id="showFlowline" type="checkbox" /> Show ice flowlines</label>
-        <label class="toggle"><input id="showRefinedBasins" type="checkbox" /> <span id="showRefinedBasinsLabel">Show refined basins</span></label>
         <label class="toggle"><input id="showEffectivePressure" type="checkbox" /> Show effective pressure</label>
         <label class="toggle"><input id="showSubglacialChannels" type="checkbox" /> Show subglacial channels</label>
-        <label class="toggle"><input id="showBasalMelt" type="checkbox" /> Show basal melt</label>
-        <label class="toggle"><input id="showThermalDriving" type="checkbox" /> Show thermal driving</label>
         <label class="toggle"><input id="showOceanCurrents" type="checkbox" /> Show ocean streamlines</label>
         <div id="oceanCurrentLayerControls" class="toggle-group toggle-group--grid" hidden>
           <label class="toggle toggle--sub"><input id="showOceanLayerSurface" type="checkbox" /> Surface</label>
@@ -818,6 +816,8 @@
           <label class="toggle toggle--sub"><input id="showOceanLayerMid" type="checkbox" /> Mid</label>
           <label class="toggle toggle--sub"><input id="showOceanLayerLower" type="checkbox" /> Lower</label>
         </div>
+        <label class="toggle"><input id="showBasalMelt" type="checkbox" /> Show basal melt</label>
+        <label class="toggle"><input id="showThermalDriving" type="checkbox" /> Show thermal driving</label>
         <label class="toggle"><input id="showSea" type="checkbox" /> Show sea level (0 m)</label>
         <label class="toggle"><input id="wireframe" type="checkbox" /> Wireframe mode</label>
         <button id="resetView" type="button">Reset Camera</button>
@@ -1304,13 +1304,36 @@
       mid: "showOceanLayerMid",
       lower: "showOceanLayerLower",
     };
-    const DEFAULT_OCEAN_CURRENT_LAYER_SELECTION = {
-      surface: true,
-      upper: true,
-      mid: true,
-      lower: true,
+    function getDefaultOceanCurrentLayerSelection(regionKey = currentRegionKey) {
+      if (regionKey === "antarctica") {
+        return {
+          surface: true,
+          upper: false,
+          mid: false,
+          lower: false,
+        };
+      }
+      return {
+        surface: true,
+        upper: true,
+        mid: true,
+        lower: true,
+      };
+    }
+
+    function cloneOceanCurrentLayerSelection(selection) {
+      return {
+        surface: Boolean(selection?.surface),
+        upper: Boolean(selection?.upper),
+        mid: Boolean(selection?.mid),
+        lower: Boolean(selection?.lower),
+      };
+    }
+
+    const rememberedOceanCurrentLayerSelectionByRegion = {
+      antarctica: getDefaultOceanCurrentLayerSelection("antarctica"),
+      greenland: getDefaultOceanCurrentLayerSelection("greenland"),
     };
-    let rememberedOceanCurrentLayerSelection = { ...DEFAULT_OCEAN_CURRENT_LAYER_SELECTION };
 
     function getReadyStatusText(context) {
       if (isShowcaseMode) return "Ready (Balanced Demo)";
@@ -1376,19 +1399,28 @@
       return controlsUI[OCEAN_CURRENT_LAYER_CONTROL_IDS[layer]] || null;
     }
 
-    function rememberOceanCurrentLayerSelection() {
+    function getRememberedOceanCurrentLayerSelection(regionKey = currentRegionKey) {
+      if (!rememberedOceanCurrentLayerSelectionByRegion[regionKey]) {
+        rememberedOceanCurrentLayerSelectionByRegion[regionKey] = getDefaultOceanCurrentLayerSelection(regionKey);
+      }
+      return rememberedOceanCurrentLayerSelectionByRegion[regionKey];
+    }
+
+    function rememberOceanCurrentLayerSelection(regionKey = currentRegionKey) {
+      const remembered = getRememberedOceanCurrentLayerSelection(regionKey);
       for (const layer of OCEAN_CURRENT_LAYER_ORDER) {
         const control = getOceanCurrentLayerControl(layer);
         if (!control) continue;
-        rememberedOceanCurrentLayerSelection[layer] = Boolean(control.checked);
+        remembered[layer] = Boolean(control.checked);
       }
     }
 
-    function restoreOceanCurrentLayerSelection() {
+    function restoreOceanCurrentLayerSelection(regionKey = currentRegionKey) {
+      const remembered = cloneOceanCurrentLayerSelection(getRememberedOceanCurrentLayerSelection(regionKey));
       for (const layer of OCEAN_CURRENT_LAYER_ORDER) {
         const control = getOceanCurrentLayerControl(layer);
         if (!control) continue;
-        control.checked = Boolean(rememberedOceanCurrentLayerSelection[layer]);
+        control.checked = Boolean(remembered[layer]);
       }
     }
 
@@ -4876,6 +4908,9 @@
           const nextRegionKey = getRegionConfig(controlsUI.regionPreset.value).key;
           const preferredDatasetKey = datasetSelectionByRegion[nextRegionKey] || getDefaultDatasetKey(nextRegionKey);
           currentRegionKey = nextRegionKey;
+          if (controlsUI.showOceanCurrents.checked) {
+            restoreOceanCurrentLayerSelection(currentRegionKey);
+          }
           currentDatasetKey = refreshRegionUi(currentRegionKey, preferredDatasetKey);
           pendingViewResetOnLoad = true;
           loadAndBuildMeshes(currentDatasetKey).catch(reportLoadError);
@@ -5295,9 +5330,9 @@
         <li><strong>Mean Ice Thickness:</strong> ${Number.isFinite(thickStats.mean) ? `${fmtInt(thickStats.mean)} m` : "n/a"}</li>
 
         ${velocitySection}
-        ${riseSection}
-        ${oceanCurrentSection}
         ${hydrologySection}
+        ${oceanCurrentSection}
+        ${riseSection}
 
         <li class="meta-group">Sources</li>
         ${sourceLines.join("")}
