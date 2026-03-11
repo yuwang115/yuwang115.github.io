@@ -290,6 +290,34 @@
       font-size: 0.9rem;
     }
 
+    .toggle-group {
+      margin: -2px 0 10px 25px;
+      padding-left: 11px;
+      border-left: 2px solid rgba(66, 132, 160, 0.2);
+    }
+
+    .toggle-group--grid {
+      display: grid;
+      grid-template-columns: repeat(2, max-content);
+      justify-content: start;
+      column-gap: 12px;
+      row-gap: 2px;
+    }
+
+    .toggle-group[hidden] {
+      display: none;
+    }
+
+    .toggle--sub {
+      margin-bottom: 6px;
+      font-size: 0.84rem;
+      color: #3a6173;
+    }
+
+    .toggle-group--grid .toggle--sub {
+      margin-bottom: 0;
+    }
+
     button {
       width: 100%;
       margin-top: 6px;
@@ -778,12 +806,18 @@
         <label class="toggle"><input id="showIceBottom" type="checkbox" checked /> Show ice bottom surface</label>
         <label class="toggle"><input id="showVelocity" type="checkbox" /> Show ice surface velocity</label>
         <label class="toggle"><input id="showFlowline" type="checkbox" /> Show ice flowlines</label>
-        <label class="toggle"><input id="showBasalMelt" type="checkbox" /> Show basal melt</label>
-        <label class="toggle"><input id="showThermalDriving" type="checkbox" /> Show thermal driving</label>
-        <label class="toggle"><input id="showOceanCurrents" type="checkbox" /> Show ocean streamlines</label>
         <label class="toggle"><input id="showRefinedBasins" type="checkbox" /> <span id="showRefinedBasinsLabel">Show refined basins</span></label>
         <label class="toggle"><input id="showEffectivePressure" type="checkbox" /> Show effective pressure</label>
         <label class="toggle"><input id="showSubglacialChannels" type="checkbox" /> Show subglacial channels</label>
+        <label class="toggle"><input id="showBasalMelt" type="checkbox" /> Show basal melt</label>
+        <label class="toggle"><input id="showThermalDriving" type="checkbox" /> Show thermal driving</label>
+        <label class="toggle"><input id="showOceanCurrents" type="checkbox" /> Show ocean streamlines</label>
+        <div id="oceanCurrentLayerControls" class="toggle-group toggle-group--grid" hidden>
+          <label class="toggle toggle--sub"><input id="showOceanLayerSurface" type="checkbox" /> Surface</label>
+          <label class="toggle toggle--sub"><input id="showOceanLayerUpper" type="checkbox" /> Upper</label>
+          <label class="toggle toggle--sub"><input id="showOceanLayerMid" type="checkbox" /> Mid</label>
+          <label class="toggle toggle--sub"><input id="showOceanLayerLower" type="checkbox" /> Lower</label>
+        </div>
         <label class="toggle"><input id="showSea" type="checkbox" /> Show sea level (0 m)</label>
         <label class="toggle"><input id="wireframe" type="checkbox" /> Wireframe mode</label>
         <button id="resetView" type="button">Reset Camera</button>
@@ -976,8 +1010,8 @@
             url: "https://data.aad.gov.au/metadata/RISE",
           },
           oceanCurrents: {
-            text: "WAOM2 (Whole Antarctic Ocean Model) annual-mean ocean velocity, temperature, and salinity",
-            url: "https://gmd.copernicus.org/articles/15/723/2022/",
+            text: "WAOM2 annual-mean ocean circulation streamlines combining the cavity + 80 km coastal band and the remote open ocean",
+            url: "https://gmd.copernicus.org/articles/15/617/2022/",
           },
           basins: {
             text: "MEaSUREs Antarctic Boundaries for IPY 2007-2009 (Version 2, IMBIE refined basins)",
@@ -999,8 +1033,8 @@
             velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.bin",
             riseMetaUrl: "/tools/data/rise_antarctica_480.meta.json",
             riseBinUrl: "/tools/data/rise_antarctica_480.bin",
-            oceanCurrentsMetaUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual.meta.json?v=20260310-waom2-cavity-v2",
-            oceanCurrentsBinUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual.bin?v=20260310-waom2-cavity-v2",
+            oceanCurrentsMetaUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual_combined_cavity80km_remote_open_ocean.meta.json?v=20260312-waom2-combined-v3",
+            oceanCurrentsBinUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual_combined_cavity80km_remote_open_ocean.bin?v=20260312-waom2-combined-v3",
             hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_480.meta.json",
             hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_480.bin",
           },
@@ -1014,8 +1048,8 @@
             velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.bin",
             riseMetaUrl: "/tools/data/rise_antarctica_741.meta.json",
             riseBinUrl: "/tools/data/rise_antarctica_741.bin",
-            oceanCurrentsMetaUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual.meta.json?v=20260310-waom2-cavity-v2",
-            oceanCurrentsBinUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual.bin?v=20260310-waom2-cavity-v2",
+            oceanCurrentsMetaUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual_combined_cavity80km_remote_open_ocean.meta.json?v=20260312-waom2-combined-v3",
+            oceanCurrentsBinUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual_combined_cavity80km_remote_open_ocean.bin?v=20260312-waom2-combined-v3",
             hydrologyMetaUrl: "/tools/data/antarctica_subglacial_hydrology_741.meta.json",
             hydrologyBinUrl: "/tools/data/antarctica_subglacial_hydrology_741.bin",
           },
@@ -1062,8 +1096,8 @@
             binUrl: "/tools/data/bedmachine_greenland_v6_3km.bin",
             velocityMetaUrl: "/tools/data/greenland_ice_velocity_3km.meta.json",
             velocityBinUrl: "/tools/data/greenland_ice_velocity_3km.bin",
-            oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260308-adaptive-seeds-v2",
-            oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260308-adaptive-seeds-v2",
+            oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260312-greenland-layered-v1",
+            oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260312-greenland-layered-v1",
           },
           "1km": {
             id: "1km",
@@ -1073,8 +1107,8 @@
             binUrl: "/tools/data/bedmachine_greenland_v6_1km.bin",
             velocityMetaUrl: "/tools/data/greenland_ice_velocity_1km.meta.json",
             velocityBinUrl: "/tools/data/greenland_ice_velocity_1km.bin",
-            oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260308-adaptive-seeds-v2",
-            oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260308-adaptive-seeds-v2",
+            oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260312-greenland-layered-v1",
+            oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260312-greenland-layered-v1",
             velocityMeshStride: 3,
             disableBackgroundWarmup: true,
           },
@@ -1142,6 +1176,11 @@
       showBasalMelt: document.getElementById("showBasalMelt"),
       showThermalDriving: document.getElementById("showThermalDriving"),
       showOceanCurrents: document.getElementById("showOceanCurrents"),
+      oceanCurrentLayerControls: document.getElementById("oceanCurrentLayerControls"),
+      showOceanLayerSurface: document.getElementById("showOceanLayerSurface"),
+      showOceanLayerUpper: document.getElementById("showOceanLayerUpper"),
+      showOceanLayerMid: document.getElementById("showOceanLayerMid"),
+      showOceanLayerLower: document.getElementById("showOceanLayerLower"),
       showRefinedBasins: document.getElementById("showRefinedBasins"),
       showRefinedBasinsLabel: document.getElementById("showRefinedBasinsLabel"),
       showEffectivePressure: document.getElementById("showEffectivePressure"),
@@ -1258,6 +1297,20 @@
     const MOBILE_PANEL_DRAG_FAST_SPEED_PX_PER_MS = 1.2;
     const MOBILE_PANEL_FLING_SPEED_PX_PER_MS = 0.55;
     const MOBILE_PANEL_FLING_MIN_TRAVEL_PX = 24;
+    const OCEAN_CURRENT_LAYER_ORDER = ["surface", "upper", "mid", "lower"];
+    const OCEAN_CURRENT_LAYER_CONTROL_IDS = {
+      surface: "showOceanLayerSurface",
+      upper: "showOceanLayerUpper",
+      mid: "showOceanLayerMid",
+      lower: "showOceanLayerLower",
+    };
+    const DEFAULT_OCEAN_CURRENT_LAYER_SELECTION = {
+      surface: true,
+      upper: true,
+      mid: true,
+      lower: true,
+    };
+    let rememberedOceanCurrentLayerSelection = { ...DEFAULT_OCEAN_CURRENT_LAYER_SELECTION };
 
     function getReadyStatusText(context) {
       if (isShowcaseMode) return "Ready (Balanced Demo)";
@@ -1275,6 +1328,119 @@
       if (!enabled) {
         control.checked = false;
       }
+    }
+
+    function getOceanCurrentSeedBucketKeys(oceanMeta) {
+      const samplingBuckets = Array.isArray(oceanMeta?.sampling?.seed_buckets) ? oceanMeta.sampling.seed_buckets : [];
+      const bucketKeys = samplingBuckets
+        .map((bucket) => (bucket && typeof bucket.key === "string" ? bucket.key : ""))
+        .filter((key) => key.length > 0);
+      if (bucketKeys.length) return bucketKeys;
+      const bucketCounts = oceanMeta?.coverage?.streamlines_by_seed_bucket;
+      return bucketCounts && typeof bucketCounts === "object" ? Object.keys(bucketCounts) : [];
+    }
+
+    function getOceanCurrentLayerFromBucketKey(bucketKey) {
+      if (typeof bucketKey !== "string") return "";
+      for (const layer of OCEAN_CURRENT_LAYER_ORDER) {
+        if (bucketKey.endsWith(`_${layer}`) || bucketKey === layer) return layer;
+      }
+      return "";
+    }
+
+    function getOceanCurrentLayerSplitInfo(oceanMeta) {
+      const availableByLayer = { surface: false, upper: false, mid: false, lower: false };
+      const bucketCounts = oceanMeta?.coverage?.streamlines_by_seed_bucket;
+      if (!bucketCounts || typeof bucketCounts !== "object") {
+        return { enabled: false, availableByLayer, orderedBuckets: [] };
+      }
+      const orderedBuckets = [];
+      for (const bucketKey of getOceanCurrentSeedBucketKeys(oceanMeta)) {
+        const bucketCount = Number(bucketCounts[bucketKey] || 0);
+        if (!(bucketCount > 0)) continue;
+        const layer = getOceanCurrentLayerFromBucketKey(bucketKey);
+        if (!layer) {
+          return { enabled: false, availableByLayer: { surface: false, upper: false, mid: false, lower: false }, orderedBuckets: [] };
+        }
+        availableByLayer[layer] = true;
+        orderedBuckets.push({ key: bucketKey, layer, count: bucketCount });
+      }
+      return {
+        enabled: orderedBuckets.length > 0,
+        availableByLayer,
+        orderedBuckets,
+      };
+    }
+
+    function getOceanCurrentLayerControl(layer) {
+      return controlsUI[OCEAN_CURRENT_LAYER_CONTROL_IDS[layer]] || null;
+    }
+
+    function rememberOceanCurrentLayerSelection() {
+      for (const layer of OCEAN_CURRENT_LAYER_ORDER) {
+        const control = getOceanCurrentLayerControl(layer);
+        if (!control) continue;
+        rememberedOceanCurrentLayerSelection[layer] = Boolean(control.checked);
+      }
+    }
+
+    function restoreOceanCurrentLayerSelection() {
+      for (const layer of OCEAN_CURRENT_LAYER_ORDER) {
+        const control = getOceanCurrentLayerControl(layer);
+        if (!control) continue;
+        control.checked = Boolean(rememberedOceanCurrentLayerSelection[layer]);
+      }
+    }
+
+    function hasActiveOceanCurrentLayerSelection(oceanMeta = currentOceanCurrentMeta) {
+      const splitInfo = getOceanCurrentLayerSplitInfo(oceanMeta);
+      if (!splitInfo.enabled) return true;
+      return OCEAN_CURRENT_LAYER_ORDER.some((layer) => splitInfo.availableByLayer[layer] && getOceanCurrentLayerControl(layer)?.checked);
+    }
+
+    function updateOceanCurrentLayerControls() {
+      const region = getRegionConfig(currentRegionKey);
+      const datasetKey = region.datasets[currentDatasetKey]
+        ? currentDatasetKey
+        : datasetSelectionByRegion[region.key] || getDefaultDatasetKey(region.key);
+      const dataset = getDatasetConfig(region.key, datasetKey);
+      const capabilities = dataset?.capabilities || region.capabilities;
+      const oceanCurrentAvailable = Boolean(
+        !isShowcaseMode && capabilities.oceanCurrents && dataset?.oceanCurrentsMetaUrl && dataset?.oceanCurrentsBinUrl
+      );
+      const splitInfo = getOceanCurrentLayerSplitInfo(currentOceanCurrentMeta);
+      const showControls = Boolean(oceanCurrentAvailable && splitInfo.enabled);
+      if (controlsUI.oceanCurrentLayerControls) {
+        controlsUI.oceanCurrentLayerControls.hidden = !showControls;
+      }
+      for (const layer of OCEAN_CURRENT_LAYER_ORDER) {
+        const control = getOceanCurrentLayerControl(layer);
+        if (!control) continue;
+        control.disabled = !(showControls && controlsUI.showOceanCurrents.checked && splitInfo.availableByLayer[layer]);
+      }
+    }
+
+    function updateOceanCurrentLayerVisibility(mesh = oceanCurrentMesh, oceanMeta = currentOceanCurrentMeta) {
+      if (!mesh) return;
+      const splitInfo = getOceanCurrentLayerSplitInfo(oceanMeta);
+      mesh.visible = Boolean(controlsUI.showOceanCurrents.checked && hasActiveOceanCurrentLayerSelection(oceanMeta));
+      const layerMeshes = mesh.userData?.layerMeshes;
+      if (!layerMeshes || !splitInfo.enabled) return;
+      for (const layer of OCEAN_CURRENT_LAYER_ORDER) {
+        const layerMesh = layerMeshes[layer];
+        if (!layerMesh) continue;
+        layerMesh.visible = Boolean(splitInfo.availableByLayer[layer] && getOceanCurrentLayerControl(layer)?.checked);
+      }
+    }
+
+    function canUseMainThreadOceanCurrentFallback(oceanMeta, oceanBuffer) {
+      const segmentCount = Number(oceanMeta?.segment_count || oceanMeta?.flowline_segment_count || 0);
+      const streamlineCount = Number(oceanMeta?.streamline_count || oceanMeta?.flowline_count || 0);
+      const bufferBytes = oceanBuffer instanceof ArrayBuffer ? oceanBuffer.byteLength : 0;
+      const segmentSafe = !(segmentCount > 0) || segmentCount <= OCEAN_CURRENT_MAIN_THREAD_FALLBACK_SEGMENT_LIMIT;
+      const streamlineSafe = !(streamlineCount > 0) || streamlineCount <= OCEAN_CURRENT_MAIN_THREAD_FALLBACK_SEGMENT_LIMIT;
+      const bufferSafe = !(bufferBytes > 0) || bufferBytes <= OCEAN_CURRENT_MAIN_THREAD_FALLBACK_BIN_BYTES_LIMIT;
+      return segmentSafe && streamlineSafe && bufferSafe;
     }
 
     function getDatasetBasinUnavailable(dataset) {
@@ -1320,6 +1486,7 @@
       setToggleAvailability(controlsUI.showRefinedBasins, basinAvailable);
       setToggleAvailability(controlsUI.showEffectivePressure, capabilities.hydrology);
       setToggleAvailability(controlsUI.showSubglacialChannels, capabilities.hydrology);
+      updateOceanCurrentLayerControls();
       updateLegendVisibility();
     }
 
@@ -1335,6 +1502,9 @@
         !isShowcaseMode && capabilities.oceanCurrents && dataset?.oceanCurrentsMetaUrl && dataset?.oceanCurrentsBinUrl
       );
       const hydrologyAvailable = Boolean(!isShowcaseMode && capabilities.hydrology);
+      const oceanCurrentVisible = Boolean(
+        oceanCurrentAvailable && controlsUI.showOceanCurrents.checked && hasActiveOceanCurrentLayerSelection(currentOceanCurrentMeta)
+      );
 
       if (controlsUI.bedLegendSection) {
         controlsUI.bedLegendSection.hidden = !controlsUI.showBed.checked;
@@ -1348,8 +1518,8 @@
       if (controlsUI.thermalDrivingLegendSection) {
         controlsUI.thermalDrivingLegendSection.hidden = !(riseAvailable && controlsUI.showThermalDriving.checked);
       }
-      if (controlsUI.oceanLegendSection && !(oceanCurrentAvailable && controlsUI.showOceanCurrents.checked)) {
-        controlsUI.oceanLegendSection.hidden = true;
+      if (controlsUI.oceanLegendSection) {
+        controlsUI.oceanLegendSection.hidden = !oceanCurrentVisible;
       }
       if (controlsUI.effectivePressureLegendSection) {
         controlsUI.effectivePressureLegendSection.hidden = !(hydrologyAvailable && controlsUI.showEffectivePressure.checked);
@@ -1494,6 +1664,9 @@
       note: "nonlinear scale clipped to 0 to 3000 m/yr",
     });
     const VELOCITY_BLOCKING_OVERLAY_ENABLED = false;
+    const OCEAN_CURRENT_BLOCKING_OVERLAY_ENABLED = true;
+    const OCEAN_CURRENT_MAIN_THREAD_FALLBACK_SEGMENT_LIMIT = 250000;
+    const OCEAN_CURRENT_MAIN_THREAD_FALLBACK_BIN_BYTES_LIMIT = 16 * 1024 * 1024;
     const VELOCITY_SURFACE_OPACITY = 0.82;
     const OCEAN_CURRENT_BED_CLEARANCE_M = 20;
     const EFFECTIVE_PRESSURE_REFERENCE_PA = 5_000_000;
@@ -3117,6 +3290,8 @@
       const sal1Psu = parseField(oceanMeta, oceanBuffer, "sal1_psu");
       const terminalFlag = parseField(oceanMeta, oceanBuffer, "terminal_flag");
       const count = x0Ps.length;
+      const layerSplitInfo = getOceanCurrentLayerSplitInfo(oceanMeta);
+      const useLayerSplit = layerSplitInfo.enabled;
 
       if (
         y0Ps.length !== count ||
@@ -3133,14 +3308,116 @@
         throw new Error("Ocean-current package fields are misaligned.");
       }
 
-      const positions = [];
-      const colors = [];
-      let segmentCount = 0;
+      const layerBuffers = useLayerSplit
+        ? Object.fromEntries(
+            OCEAN_CURRENT_LAYER_ORDER.map((layer) => [layer, { positions: [], colors: [], segmentCount: 0 }])
+          )
+        : { all: { positions: [], colors: [], segmentCount: 0 } };
+      const bucketBoundaries = [];
+      if (useLayerSplit) {
+        let cumulative = 0;
+        for (const bucket of layerSplitInfo.orderedBuckets) {
+          cumulative += bucket.count;
+          bucketBoundaries.push({ layer: bucket.layer, endExclusive: cumulative });
+        }
+      }
+      let bucketBoundaryIndex = 0;
+      let streamlineIndex = 0;
+
+      function getCurrentLayerBuffer() {
+        if (!useLayerSplit) return layerBuffers.all;
+        while (
+          bucketBoundaryIndex < bucketBoundaries.length - 1 &&
+          streamlineIndex >= bucketBoundaries[bucketBoundaryIndex].endExclusive
+        ) {
+          bucketBoundaryIndex += 1;
+        }
+        const currentLayer = bucketBoundaries[bucketBoundaryIndex]?.layer || "mid";
+        return layerBuffers[currentLayer] || layerBuffers.mid;
+      }
+
+      function finalizeStreamlineIfNeeded(i) {
+        if (terminalFlag[i]) {
+          streamlineIndex += 1;
+        }
+      }
+
+      function appendOceanCurrentArrow(buffer, scenePoint1, y1, dx, dy, dz, color1) {
+        const length = Math.hypot(dx, dy, dz);
+        if (!(Number.isFinite(length) && length > 1e-5)) return;
+        const headLength = clamp(
+          length * OCEAN_CURRENT_ARROW_HEAD_RATIO,
+          OCEAN_CURRENT_ARROW_HEAD_MIN_UNITS,
+          OCEAN_CURRENT_ARROW_HEAD_MAX_UNITS
+        );
+        const headWidth = headLength * OCEAN_CURRENT_ARROW_HEAD_WIDTH_RATIO;
+        const direction = new THREE.Vector3(dx, dy, dz).normalize();
+        let side = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0));
+        if (side.lengthSq() < 1e-6) {
+          side = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(1, 0, 0));
+        }
+        side.normalize().multiplyScalar(headWidth);
+        const tip = new THREE.Vector3(scenePoint1.x, y1, scenePoint1.z);
+        const headBase = tip.clone().addScaledVector(direction, -headLength);
+        const headA = headBase.clone().add(side);
+        const headB = headBase.clone().sub(side);
+        const arrowColor = lerpColor(color1, [1, 1, 1], 0.35);
+        buffer.positions.push(
+          tip.x,
+          tip.y,
+          tip.z,
+          headA.x,
+          headA.y,
+          headA.z,
+          tip.x,
+          tip.y,
+          tip.z,
+          headB.x,
+          headB.y,
+          headB.z
+        );
+        buffer.colors.push(
+          arrowColor[0],
+          arrowColor[1],
+          arrowColor[2],
+          arrowColor[0],
+          arrowColor[1],
+          arrowColor[2],
+          arrowColor[0],
+          arrowColor[1],
+          arrowColor[2],
+          arrowColor[0],
+          arrowColor[1],
+          arrowColor[2]
+        );
+      }
+
+      function createOceanCurrentLines(buffer) {
+        if (!buffer.positions.length) return null;
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(buffer.positions), 3));
+        geometry.setAttribute("color", new THREE.BufferAttribute(new Float32Array(buffer.colors), 3));
+        geometry.computeBoundingSphere();
+        const material = new THREE.LineBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.98,
+          depthWrite: false,
+          depthTest: true,
+        });
+        const lines = new THREE.LineSegments(geometry, material);
+        lines.renderOrder = 28;
+        return lines;
+      }
 
       for (let i = 0; i < count; i += 1) {
+        const buffer = getCurrentLayerBuffer();
         const projected0 = projectPs71PointToGrid(context, x0Ps[i], y0Ps[i]);
         const projected1 = projectPs71PointToGrid(context, x1Ps[i], y1Ps[i]);
-        if (!projected0 || !projected1) continue;
+        if (!projected0 || !projected1) {
+          finalizeStreamlineIfNeeded(i);
+          continue;
+        }
 
         const depth0 = Math.max(0, Number(depth0M[i]));
         const depth1 = Math.max(0, Number(depth1M[i]));
@@ -3148,8 +3425,14 @@
         const row0 = projected0.row;
         const col1 = projected1.col;
         const row1 = projected1.row;
-        if (col0 < 0 || row0 < 0 || col0 >= context.nx || row0 >= context.ny) continue;
-        if (col1 < 0 || row1 < 0 || col1 >= context.nx || row1 >= context.ny) continue;
+        if (col0 < 0 || row0 < 0 || col0 >= context.nx || row0 >= context.ny) {
+          finalizeStreamlineIfNeeded(i);
+          continue;
+        }
+        if (col1 < 0 || row1 < 0 || col1 >= context.nx || row1 >= context.ny) {
+          finalizeStreamlineIfNeeded(i);
+          continue;
+        }
 
         const col0Nearest = Math.min(context.nx - 1, Math.max(0, Math.round(col0)));
         const row0Nearest = Math.min(context.ny - 1, Math.max(0, Math.round(row0)));
@@ -3161,13 +3444,25 @@
         const mask1 = Number(context.mask[idx1]);
         const validOceanMask0 = mask0 === 0 || mask0 === 3;
         const validOceanMask1 = mask1 === 0 || mask1 === 3;
-        if (!validOceanMask0 || !validOceanMask1) continue;
+        if (!validOceanMask0 || !validOceanMask1) {
+          finalizeStreamlineIfNeeded(i);
+          continue;
+        }
 
         const bedHeight0 = sampleGridHeightNearest(context, col0, row0, "bed");
         const bedHeight1 = sampleGridHeightNearest(context, col1, row1, "bed");
-        if (!Number.isFinite(bedHeight0) || !Number.isFinite(bedHeight1)) continue;
-        if (-bedHeight0 < depth0 + OCEAN_CURRENT_BED_CLEARANCE_M) continue;
-        if (-bedHeight1 < depth1 + OCEAN_CURRENT_BED_CLEARANCE_M) continue;
+        if (!Number.isFinite(bedHeight0) || !Number.isFinite(bedHeight1)) {
+          finalizeStreamlineIfNeeded(i);
+          continue;
+        }
+        if (-bedHeight0 < depth0 + OCEAN_CURRENT_BED_CLEARANCE_M) {
+          finalizeStreamlineIfNeeded(i);
+          continue;
+        }
+        if (-bedHeight1 < depth1 + OCEAN_CURRENT_BED_CLEARANCE_M) {
+          finalizeStreamlineIfNeeded(i);
+          continue;
+        }
 
         const scenePoint0 = gridToSceneXZ(context, col0, row0);
         const scenePoint1 = gridToSceneXZ(context, col1, row1);
@@ -3176,85 +3471,104 @@
         const color0 = oceanCurrentColor(theta0C[i], sal0Psu[i], oceanMeta);
         const color1 = oceanCurrentColor(theta1C[i], sal1Psu[i], oceanMeta);
 
-        positions.push(scenePoint0.x, y0, scenePoint0.z, scenePoint1.x, y1, scenePoint1.z);
-        colors.push(color0[0], color0[1], color0[2], color1[0], color1[1], color1[2]);
+        buffer.positions.push(scenePoint0.x, y0, scenePoint0.z, scenePoint1.x, y1, scenePoint1.z);
+        buffer.colors.push(color0[0], color0[1], color0[2], color1[0], color1[1], color1[2]);
 
         if (terminalFlag[i]) {
           const dx = scenePoint1.x - scenePoint0.x;
           const dy = y1 - y0;
           const dz = scenePoint1.z - scenePoint0.z;
-          const length = Math.hypot(dx, dy, dz);
-          if (Number.isFinite(length) && length > 1e-5) {
-            const headLength = clamp(
-              length * OCEAN_CURRENT_ARROW_HEAD_RATIO,
-              OCEAN_CURRENT_ARROW_HEAD_MIN_UNITS,
-              OCEAN_CURRENT_ARROW_HEAD_MAX_UNITS
-            );
-            const headWidth = headLength * OCEAN_CURRENT_ARROW_HEAD_WIDTH_RATIO;
-            const direction = new THREE.Vector3(dx, dy, dz).normalize();
-            let side = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0));
-            if (side.lengthSq() < 1e-6) {
-              side = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(1, 0, 0));
-            }
-            side.normalize().multiplyScalar(headWidth);
-            const tip = new THREE.Vector3(scenePoint1.x, y1, scenePoint1.z);
-            const headBase = tip.clone().addScaledVector(direction, -headLength);
-            const headA = headBase.clone().add(side);
-            const headB = headBase.clone().sub(side);
-            const arrowColor = lerpColor(color1, [1, 1, 1], 0.35);
-            positions.push(
-              tip.x,
-              tip.y,
-              tip.z,
-              headA.x,
-              headA.y,
-              headA.z,
-              tip.x,
-              tip.y,
-              tip.z,
-              headB.x,
-              headB.y,
-              headB.z
-            );
-            colors.push(
-              arrowColor[0],
-              arrowColor[1],
-              arrowColor[2],
-              arrowColor[0],
-              arrowColor[1],
-              arrowColor[2],
-              arrowColor[0],
-              arrowColor[1],
-              arrowColor[2],
-              arrowColor[0],
-              arrowColor[1],
-              arrowColor[2]
-            );
-          }
+          appendOceanCurrentArrow(buffer, scenePoint1, y1, dx, dy, dz, color1);
+          streamlineIndex += 1;
         }
-        segmentCount += 1;
+        buffer.segmentCount += 1;
       }
 
-      if (!positions.length) return null;
+      if (!useLayerSplit) {
+        const lines = createOceanCurrentLines(layerBuffers.all);
+        if (!lines) return null;
+        lines.scale.y = Number(controlsUI.exaggeration.value);
+        lines.visible = controlsUI.showOceanCurrents.checked;
+        lines.userData.flowlineCount = Number(oceanMeta.streamline_count || oceanMeta.flowline_count || 0);
+        lines.userData.segmentCount = layerBuffers.all.segmentCount;
+        return lines;
+      }
 
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(positions), 3));
-      geometry.setAttribute("color", new THREE.BufferAttribute(new Float32Array(colors), 3));
-      geometry.computeBoundingSphere();
-      const material = new THREE.LineBasicMaterial({
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.98,
-        depthWrite: false,
-        depthTest: true,
-      });
-      const lines = new THREE.LineSegments(geometry, material);
-      lines.scale.y = Number(controlsUI.exaggeration.value);
-      lines.visible = controlsUI.showOceanCurrents.checked;
-      lines.renderOrder = 28;
-      lines.userData.flowlineCount = Number(oceanMeta.streamline_count || oceanMeta.flowline_count || 0);
-      lines.userData.segmentCount = segmentCount;
-      return lines;
+      const group = new THREE.Group();
+      const layerMeshes = {};
+      let totalVisibleSegments = 0;
+      for (const layer of OCEAN_CURRENT_LAYER_ORDER) {
+        const lines = createOceanCurrentLines(layerBuffers[layer]);
+        if (!lines) continue;
+        group.add(lines);
+        layerMeshes[layer] = lines;
+        totalVisibleSegments += layerBuffers[layer].segmentCount;
+      }
+      if (!Object.keys(layerMeshes).length) return null;
+      group.scale.y = Number(controlsUI.exaggeration.value);
+      group.renderOrder = 28;
+      group.userData.layerMeshes = layerMeshes;
+      group.userData.flowlineCount = Number(oceanMeta.streamline_count || oceanMeta.flowline_count || 0);
+      group.userData.segmentCount = totalVisibleSegments;
+      updateOceanCurrentLayerVisibility(group, oceanMeta);
+      return group;
+    }
+
+    function buildOceanCurrentMeshFromWorkerResult(oceanMeta, workerResult) {
+      if (!workerResult || typeof workerResult !== "object") return null;
+
+      function createOceanCurrentLinesFromArrays(positionsArray, colorsArray) {
+        if (!(positionsArray instanceof Float32Array) || !(colorsArray instanceof Float32Array) || !positionsArray.length) {
+          return null;
+        }
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute("position", new THREE.BufferAttribute(positionsArray, 3));
+        geometry.setAttribute("color", new THREE.BufferAttribute(colorsArray, 3));
+        geometry.computeBoundingSphere();
+        const material = new THREE.LineBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.98,
+          depthWrite: false,
+          depthTest: true,
+        });
+        const lines = new THREE.LineSegments(geometry, material);
+        lines.renderOrder = 28;
+        return lines;
+      }
+
+      const useLayerSplit = Boolean(workerResult.useLayerSplit);
+      const flowlineCount = Number(workerResult.flowlineCount || oceanMeta?.streamline_count || oceanMeta?.flowline_count || 0);
+      const segmentCount = Number(workerResult.segmentCount || 0);
+
+      if (!useLayerSplit) {
+        const layer = workerResult.layers?.all;
+        const lines = createOceanCurrentLinesFromArrays(layer?.positions, layer?.colors);
+        if (!lines) return null;
+        lines.scale.y = Number(controlsUI.exaggeration.value);
+        lines.visible = controlsUI.showOceanCurrents.checked;
+        lines.userData.flowlineCount = flowlineCount;
+        lines.userData.segmentCount = segmentCount;
+        return lines;
+      }
+
+      const group = new THREE.Group();
+      const layerMeshes = {};
+      for (const layerName of OCEAN_CURRENT_LAYER_ORDER) {
+        const layer = workerResult.layers?.[layerName];
+        const lines = createOceanCurrentLinesFromArrays(layer?.positions, layer?.colors);
+        if (!lines) continue;
+        group.add(lines);
+        layerMeshes[layerName] = lines;
+      }
+      if (!Object.keys(layerMeshes).length) return null;
+      group.scale.y = Number(controlsUI.exaggeration.value);
+      group.renderOrder = 28;
+      group.userData.layerMeshes = layerMeshes;
+      group.userData.flowlineCount = flowlineCount;
+      group.userData.segmentCount = segmentCount;
+      updateOceanCurrentLayerVisibility(group, oceanMeta);
+      return group;
     }
 
     function resizeRendererToViewer() {
@@ -3432,6 +3746,10 @@
         showBasalMelt: Boolean(controlsUI.showBasalMelt?.checked),
         showThermalDriving: Boolean(controlsUI.showThermalDriving?.checked),
         showOceanCurrents: Boolean(controlsUI.showOceanCurrents?.checked),
+        showOceanLayerSurface: Boolean(controlsUI.showOceanLayerSurface?.checked),
+        showOceanLayerUpper: Boolean(controlsUI.showOceanLayerUpper?.checked),
+        showOceanLayerMid: Boolean(controlsUI.showOceanLayerMid?.checked),
+        showOceanLayerLower: Boolean(controlsUI.showOceanLayerLower?.checked),
         showRefinedBasins: Boolean(controlsUI.showRefinedBasins?.checked),
         showEffectivePressure: Boolean(controlsUI.showEffectivePressure?.checked),
         showSubglacialChannels: Boolean(controlsUI.showSubglacialChannels?.checked),
@@ -4659,15 +4977,34 @@
         updateMetaFromCurrentState();
       });
       controlsUI.showOceanCurrents.addEventListener("change", async () => {
+        if (controlsUI.showOceanCurrents.checked) {
+          restoreOceanCurrentLayerSelection();
+        } else {
+          rememberOceanCurrentLayerSelection();
+          for (const layer of OCEAN_CURRENT_LAYER_ORDER) {
+            const control = getOceanCurrentLayerControl(layer);
+            if (control) control.checked = false;
+          }
+        }
+        updateOceanCurrentLayerControls();
         updateLegendVisibility();
         if (controlsUI.showOceanCurrents.checked && !oceanCurrentMesh) {
           await ensureOceanCurrentsLoaded({ trigger: "toggle" });
           updateMetaFromCurrentState();
           return;
         }
-        if (oceanCurrentMesh) oceanCurrentMesh.visible = controlsUI.showOceanCurrents.checked;
+        updateOceanCurrentLayerVisibility();
         updateMetaFromCurrentState();
       });
+      for (const layer of OCEAN_CURRENT_LAYER_ORDER) {
+        const control = getOceanCurrentLayerControl(layer);
+        if (!control) continue;
+        control.addEventListener("change", () => {
+          rememberOceanCurrentLayerSelection();
+          updateOceanCurrentLayerVisibility();
+          updateMetaFromCurrentState();
+        });
+      }
       controlsUI.showRefinedBasins.addEventListener("change", () => {
         if (!controlsUI.showRefinedBasins.checked) {
           updateRefinedBasinVisibility();
@@ -4767,21 +5104,23 @@
       const oceanCurrentThetaStats = oceanCurrentMeta?.fields?.find((f) => f.name === "theta_c_summary")?.stats;
       const oceanCurrentSalinityStats = oceanCurrentMeta?.fields?.find((f) => f.name === "sal_psu_summary")?.stats;
       const oceanCurrentCoverage = oceanCurrentMeta?.coverage;
-      const oceanCurrentDepths = oceanCurrentMeta?.sampling?.seed_depths_m || oceanCurrentMeta?.sampling?.depth_levels_m;
       const oceanCurrentSeedStrategy = oceanCurrentMeta?.sampling?.seed_strategy || "";
-      const oceanCurrentSeedPlacement = oceanCurrentMeta?.sampling?.depth_sampling_summary || "";
-      const oceanCurrentSeedBucketLabels = oceanCurrentMeta?.sampling?.seed_bucket_labels || {};
       const oceanCurrentSeedBuckets =
         oceanCurrentCoverage?.streamlines_by_seed_bucket || oceanCurrentCoverage?.streamlines_by_seed_depth || {};
-      const adaptiveDeepSampling = oceanCurrentMeta?.sampling?.adaptive_deep_seeding || oceanCurrentMeta?.sampling?.adaptive_bottom_seeding;
-      const adaptiveDeepStreamlineCount = Object.entries(oceanCurrentCoverage?.streamlines_by_seed_depth || {}).reduce(
-        (sum, [key, value]) => (key.startsWith("adaptive_") ? sum + Number(value || 0) : sum),
+      const oceanCurrentBucketEntries = Object.entries(oceanCurrentSeedBuckets);
+      const oceanCurrentLayerCount = new Set(
+        oceanCurrentBucketEntries.map(([key]) => getOceanCurrentLayerFromBucketKey(key)).filter((value) => value.length > 0)
+      ).size;
+      const cavityMargin80kmStreamlineCount = oceanCurrentBucketEntries.reduce(
+        (sum, [key, value]) => (key.startsWith("cavity_margin_80km_") ? sum + Number(value || 0) : sum),
+        0
+      );
+      const remoteOpenOceanStreamlineCount = oceanCurrentBucketEntries.reduce(
+        (sum, [key, value]) => (key.startsWith("remote_") ? sum + Number(value || 0) : sum),
         0
       );
       const oceanCurrentDepthMin = Number(oceanCurrentCoverage?.depth_min_m);
       const oceanCurrentDepthMax = Number(oceanCurrentCoverage?.depth_max_m);
-      const oceanCurrentSeedDepthMin = Number(oceanCurrentCoverage?.seed_depth_min_m);
-      const oceanCurrentSeedDepthMax = Number(oceanCurrentCoverage?.seed_depth_max_m);
       const oceanCurrentReference = oceanCurrentMeta?.source_time_label
         ? String(oceanCurrentMeta.source_time_label)
         : oceanCurrentMeta?.source_time_utc
@@ -4816,6 +5155,26 @@
         : dataset.refinedBasinsUrl
         ? "Available on demand"
         : "n/a";
+      const oceanCurrentReferenceText = oceanCurrentReference ? `${oceanCurrentReference} model field` : "model field";
+      const oceanCurrentSummary = !oceanCurrentMeta
+        ? "Available on demand"
+        : oceanCurrentSeedStrategy === "merged_streamline_sets" &&
+          cavityMargin80kmStreamlineCount > 0 &&
+          remoteOpenOceanStreamlineCount > 0
+        ? `Merged precomputed streamline sets: ice-shelf cavity + 80 km coastal ocean (${fmtInt(
+            cavityMargin80kmStreamlineCount
+          )} lines) and remote open ocean (${fmtInt(remoteOpenOceanStreamlineCount)} lines), ${fmtInt(
+            oceanCurrentSegmentCount
+          )} segments in total, plotted from the ${oceanCurrentReferenceText}.`
+        : dataset.regionKey === "greenland" && oceanCurrentLayerCount >= 4
+        ? `Precomputed Greenland ocean streamline set: ${fmtInt(
+            oceanStreamlineCount
+          )} lines across four vertically stratified layers (surface, upper, mid, lower), ${fmtInt(
+            oceanCurrentSegmentCount
+          )} segments in total, plotted from the ${oceanCurrentReferenceText}.`
+        : `${fmtInt(oceanStreamlineCount)} streamlines${
+            oceanCurrentLayerCount > 1 ? ` across ${fmtInt(oceanCurrentLayerCount)} depth layers` : ""
+          } (${fmtInt(oceanCurrentSegmentCount)} segments), plotted from the ${oceanCurrentReferenceText}.`;
 
       const velocitySection = capabilities.velocity
         ? `
@@ -4861,56 +5220,7 @@
       const oceanCurrentSection = capabilities.oceanCurrents
         ? `
         <li class="meta-group">Ocean Circulation (simulated)</li>
-        <li><strong>Streamline Field:</strong> ${
-          oceanCurrentMeta
-            ? oceanCurrentSeedStrategy === "random_spatial_scattered"
-              ? `${fmtInt(oceanStreamlineCount)} 3D streamlines (${fmtInt(
-                  oceanCurrentSegmentCount
-                )} segments) retained from randomized cavity/open-ocean seeding`
-              : `${fmtInt(oceanStreamlineCount)} 3D streamlines (${fmtInt(oceanCurrentSegmentCount)} segments) seeded from ${fmtInt(
-                  Array.isArray(oceanCurrentDepths) ? oceanCurrentDepths.length : 0
-                )} depth levels`
-            : "Available on demand"
-        }</li>
-        <li><strong>Reference:</strong> ${oceanCurrentReference || "Model average"}</li>
-        ${
-          Array.isArray(oceanCurrentDepths) && oceanCurrentDepths.length
-            ? `<li><strong>Seed Depths:</strong> ${oceanCurrentDepths
-                .map((value) => fmtInt(Math.abs(Number(value)) < 1e-6 ? 0 : value))
-                .join(", ")} m</li>`
-            : oceanCurrentSeedPlacement
-            ? `<li><strong>Seed Placement:</strong> ${oceanCurrentSeedPlacement}</li>`
-            : `<li><strong>Seed Placement:</strong> n/a</li>`
-        }
-        ${
-          oceanCurrentSeedStrategy === "random_spatial_scattered" &&
-          Number.isFinite(oceanCurrentSeedDepthMin) &&
-          Number.isFinite(oceanCurrentSeedDepthMax) &&
-          oceanCurrentSeedDepthMax > oceanCurrentSeedDepthMin
-            ? `<li><strong>Seed Depth Range:</strong> ${fmtShort(oceanCurrentSeedDepthMin, 0)} to ${fmtShort(
-                oceanCurrentSeedDepthMax,
-                0
-              )} m</li>`
-            : ""
-        }
-        ${
-          Object.keys(oceanCurrentSeedBuckets).length
-            ? `<li><strong>Seed Distribution:</strong> ${Object.entries(oceanCurrentSeedBuckets)
-                .map(([key, value]) => `${oceanCurrentSeedBucketLabels[key] || key}: ${fmtInt(value)}`)
-                .join("; ")}</li>`
-            : ""
-        }
-        ${
-          adaptiveDeepSampling?.enabled
-            ? `<li><strong>Adaptive Deep Seeds:</strong> ${
-                oceanCurrentMeta
-                  ? `${fmtInt(adaptiveDeepStreamlineCount)} streamlines in water columns deeper than ${fmtInt(
-                      adaptiveDeepSampling.min_model_depth_m
-                    )} m`
-                  : "Enabled for deep-basin water columns"
-              }</li>`
-            : ""
-        }
+        <li><strong>Ocean streamlines:</strong> ${oceanCurrentSummary}</li>
         <li><strong>3D Depth Span:</strong> ${
           Number.isFinite(oceanCurrentDepthMin) && Number.isFinite(oceanCurrentDepthMax)
             ? `${fmtShort(oceanCurrentDepthMin, 0)} to ${fmtShort(oceanCurrentDepthMax, 0)} m`
@@ -5017,6 +5327,7 @@
     }
 
     function updateMetaFromCurrentState() {
+      updateOceanCurrentLayerControls();
       updateLegendVisibility();
       updateBasalMeltLegend();
       updateThermalDrivingLegend();
@@ -5138,9 +5449,12 @@
         transparent: true,
         opacity: 0.13,
         side: THREE.DoubleSide,
+        depthWrite: false,
+        depthTest: true,
       });
       seaLevelMesh = new THREE.Mesh(seaGeometry, seaMaterial);
       seaLevelMesh.position.y = 0;
+      seaLevelMesh.renderOrder = 24;
       seaLevelMesh.visible = controlsUI.showSea.checked;
       scene.add(seaLevelMesh);
     }
@@ -5647,13 +5961,13 @@
         return false;
       }
       if (context.oceanCurrentLoaded) {
-        if (oceanCurrentMesh) oceanCurrentMesh.visible = controlsUI.showOceanCurrents.checked;
+        updateOceanCurrentLayerVisibility();
         return true;
       }
       if (context.oceanCurrentUnavailable) return false;
 
       const updateStatus = trigger === "toggle";
-      const showOverlay = updateStatus && VELOCITY_BLOCKING_OVERLAY_ENABLED;
+      const showOverlay = updateStatus && OCEAN_CURRENT_BLOCKING_OVERLAY_ENABLED;
       const buildLayer = trigger === "toggle" || trigger === "warmup";
 
       if (oceanCurrentLoadPromise) {
@@ -5719,7 +6033,43 @@
           updateLoadingProgress(0.86, "Building ocean streamlines...");
         }
 
-        const builtMesh = buildOceanCurrentMesh(context, oceanMeta, oceanBuffer);
+        let builtMesh = null;
+        const allowMainThreadFallback = canUseMainThreadOceanCurrentFallback(oceanMeta, oceanBuffer);
+        try {
+          const workerResult = await runGeometryWorkerTask(
+            "buildOceanCurrents",
+            {
+              oceanMeta,
+              oceanBuffer,
+              mask: context.mask,
+              bedHeights: context.bedHeights,
+              bedValid: context.bedValid,
+              nx: context.nx,
+              ny: context.ny,
+              grid: context.meta.grid,
+              baseConfig: context.baseConfig,
+              reportProgress: showOverlay,
+            },
+            {
+              transfer: allowMainThreadFallback ? [] : [oceanBuffer],
+              onProgress: showOverlay
+                ? (progress, stage) => {
+                    const p = 0.86 + clamp01(progress) * 0.12;
+                    updateLoadingProgress(p, stage || "Building ocean streamlines...");
+                  }
+                : null,
+            }
+          );
+          if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+          builtMesh = buildOceanCurrentMeshFromWorkerResult(oceanMeta, workerResult);
+        } catch (workerError) {
+          if (!allowMainThreadFallback) {
+            console.error("Ocean-current worker build failed for a large dataset; skipping main-thread fallback.", workerError);
+            throw workerError;
+          }
+          console.warn("Ocean-current worker build failed, falling back to main-thread build:", workerError);
+          builtMesh = buildOceanCurrentMesh(context, oceanMeta, oceanBuffer);
+        }
         if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
         if (!builtMesh) {
           throw new Error("Ocean-current dataset is empty after regional clipping.");
@@ -5730,6 +6080,7 @@
         currentOceanCurrentMeta = oceanMeta;
         context.oceanCurrentLoaded = true;
         scene.add(oceanCurrentMesh);
+        updateOceanCurrentLayerVisibility();
         updateMetaFromCurrentState();
         if (showOverlay) {
           statusEl.textContent = getReadyStatusText(context);

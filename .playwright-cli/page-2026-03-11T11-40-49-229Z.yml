@@ -1,0 +1,188 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - paragraph [ref=e4]: Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, ocean streamlines, subglacial environments, and RISE basal melt drivers.
+    - generic [ref=e5]:
+      - heading "View Controls" [level=2] [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]: Region
+        - combobox "Region" [ref=e9]:
+          - option "Antarctica" [selected]
+          - option "Greenland"
+      - generic [ref=e10]:
+        - generic [ref=e11]: Resolution preset
+        - combobox "Resolution preset" [ref=e12]:
+          - option "Balanced (10 km grid; ~5.8 MB)" [selected]
+          - option "HD (4 km grid; ~35.4 MB)"
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - text: Vertical exaggeration
+          - generic [ref=e15]: 4.0x
+        - slider "Vertical exaggeration 4.0x" [ref=e16]: "4"
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - text: Ice opacity
+          - generic [ref=e19]: "0.65"
+        - slider "Ice opacity 0.65" [ref=e20]: "0.65"
+      - generic [ref=e21]:
+        - checkbox "Show bed topography" [checked] [ref=e22]
+        - text: Show bed topography
+      - generic [ref=e23]:
+        - checkbox "Show ice surface" [checked] [ref=e24]
+        - text: Show ice surface
+      - generic [ref=e25]:
+        - checkbox "Show ice bottom surface" [checked] [ref=e26]
+        - text: Show ice bottom surface
+      - generic [ref=e27]:
+        - checkbox "Show ice surface velocity" [ref=e28]
+        - text: Show ice surface velocity
+      - generic [ref=e29]:
+        - checkbox "Show ice flowlines" [ref=e30]
+        - text: Show ice flowlines
+      - generic [ref=e31]:
+        - checkbox "Show basal melt" [ref=e32]
+        - text: Show basal melt
+      - generic [ref=e33]:
+        - checkbox "Show thermal driving" [ref=e34]
+        - text: Show thermal driving
+      - generic [ref=e35]:
+        - checkbox "Show ocean streamlines" [ref=e36]
+        - text: Show ocean streamlines
+      - generic [ref=e37]:
+        - checkbox "Show refined basins" [ref=e38]
+        - generic [ref=e39]: Show refined basins
+      - generic [ref=e40]:
+        - checkbox "Show effective pressure" [ref=e41]
+        - text: Show effective pressure
+      - generic [ref=e42]:
+        - checkbox "Show subglacial channels" [ref=e43]
+        - text: Show subglacial channels
+      - generic [ref=e44]:
+        - checkbox "Show sea level (0 m)" [ref=e45]
+        - text: Show sea level (0 m)
+      - generic [ref=e46]:
+        - checkbox "Wireframe mode" [ref=e47]
+        - text: Wireframe mode
+      - button "Reset Camera" [ref=e48] [cursor=pointer]
+      - button "Enter Fullscreen" [ref=e49] [cursor=pointer]
+    - generic [ref=e50]:
+      - heading "Bed Elevation Color" [level=2] [ref=e51]
+      - generic [ref=e53]:
+        - generic [ref=e54]: "-7000 m"
+        - generic [ref=e55]: "0"
+        - generic [ref=e56]: +3500 m
+    - generic [ref=e57]:
+      - heading "Data Snapshot" [level=2] [ref=e58]
+      - list [ref=e59]:
+        - listitem [ref=e136]: Geometry & Grid
+        - listitem [ref=e137]:
+          - strong [ref=e138]: "Preset:"
+          - text: Antarctica Balanced (10 km grid)
+        - listitem [ref=e139]:
+          - strong [ref=e140]: "Grid:"
+          - text: 667 x 667
+        - listitem [ref=e141]:
+          - strong [ref=e142]: "Projection:"
+          - text: EPSG:3031 polar stereographic
+        - listitem [ref=e143]:
+          - strong [ref=e144]: "Bed Elevation:"
+          - text: "-7,970 to 3,950 m"
+        - listitem [ref=e145]:
+          - strong [ref=e146]: "Max Ice Thickness:"
+          - text: 4,539 m
+        - listitem [ref=e147]:
+          - strong [ref=e148]: "Mean Ice Thickness:"
+          - text: 590 m
+        - listitem [ref=e149]: Ice Surface Velocity (observed)
+        - listitem [ref=e150]:
+          - strong [ref=e151]: "Valid Coverage:"
+          - text: 70.5% of grid (313,600 / 444,889 cells)
+        - listitem [ref=e152]:
+          - strong [ref=e153]: "Surface Speed:"
+          - text: 0 to 4,306 m/yr
+        - listitem [ref=e154]:
+          - strong [ref=e155]: "Mean Speed:"
+          - text: 31 m/yr
+        - listitem [ref=e156]: Ice-Shelf Basal Melt (simulated)
+        - listitem [ref=e157]:
+          - strong [ref=e158]: "Basal Melt:"
+          - text: "-10.57 to 12.70 m/yr"
+        - listitem [ref=e159]:
+          - strong [ref=e160]: "Thermal Driving:"
+          - text: "-0.09 to 1.70 °C"
+        - listitem [ref=e161]:
+          - strong [ref=e162]: "Ice Draft:"
+          - text: "-1,701 to -18 m"
+        - listitem [ref=e163]:
+          - strong [ref=e164]: "Ice-Shelf Cells:"
+          - text: 15,269
+        - listitem [ref=e165]: Ocean Circulation (simulated)
+        - listitem [ref=e166]:
+          - strong [ref=e167]: "Streamline Field:"
+          - text: 5,000 3D streamlines (180,990 segments) uniformly seeded across the selected cavity-margin domain
+        - listitem [ref=e168]:
+          - strong [ref=e169]: "Reference:"
+          - text: Year 5 annual mean
+        - listitem [ref=e170]:
+          - strong [ref=e171]: "Domain:"
+          - text: Ice-shelf cavities and surrounding 50 km ocean
+        - listitem [ref=e172]:
+          - strong [ref=e173]: "Seed Placement:"
+          - text: Uniform random spatial seeding across ice-shelf cavities and the surrounding 50 km open-ocean band, with broad water-column sampling, XY-bin balancing, and vertical seed separation.
+        - listitem [ref=e174]:
+          - strong [ref=e175]: "Seed Distribution:"
+          - text: "Ice-shelf cavity and surrounding 50 km ocean: 5,000"
+        - listitem [ref=e176]:
+          - strong [ref=e177]: "3D Depth Span:"
+          - text: 22 to 2,691 m
+        - listitem [ref=e178]:
+          - strong [ref=e179]: "Horizontal Speed:"
+          - text: 0.01 to 0.40 m/s
+        - listitem [ref=e180]:
+          - strong [ref=e181]: "Water-Mass Color:"
+          - text: Cold-fresh cyan, cold-salty indigo, warm-fresh green, warm-salty orange-red (-2.6 to 2.1 °C; 33.9 to 34.8 PSU)
+        - listitem [ref=e182]: Subglacial Hydrology (simulated)
+        - listitem [ref=e183]:
+          - strong [ref=e184]: "Effective Pressure:"
+          - text: 0.00 to 12.45 MPa
+        - listitem [ref=e185]:
+          - strong [ref=e186]: "Channel Discharge:"
+          - text: 0.001 to 206.342 m3/s
+        - listitem [ref=e187]:
+          - strong [ref=e188]: "Rendered Channels:"
+          - text: 5,898
+        - listitem [ref=e189]: Sources
+        - listitem [ref=e190]:
+          - strong [ref=e191]: "Bed/Ice Geometry:"
+          - link "MEaSUREs BedMachine Antarctica, Version 4" [ref=e192] [cursor=pointer]:
+            - /url: https://nsidc.org/data/NSIDC-0756/versions/4
+        - listitem [ref=e193]:
+          - strong [ref=e194]: "Surface Velocity:"
+          - link "MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1" [ref=e195] [cursor=pointer]:
+            - /url: https://nsidc.org/data/NSIDC-0754/versions/1
+        - listitem [ref=e196]:
+          - strong [ref=e197]: "Ocean Circulation:"
+          - link "WAOM2 annual-mean ocean circulation streamlines for ice-shelf cavities and the surrounding 50 km ocean band" [ref=e198] [cursor=pointer]:
+            - /url: https://gmd.copernicus.org/articles/15/723/2022/
+          - text: (5,000 3D streamlines)
+        - listitem [ref=e199]:
+          - strong [ref=e200]: "Melt Drivers:"
+          - link "Galton-Fenzi et al. (2025) Multi-model estimate of Antarctic ice-shelf basal melting and ocean drivers, V1" [ref=e201] [cursor=pointer]:
+            - /url: https://data.aad.gov.au/metadata/RISE
+          - text: (15,269 ice-shelf cells)
+        - listitem [ref=e202]:
+          - strong [ref=e203]: "Basin Boundaries:"
+          - link "MEaSUREs Antarctic Boundaries for IPY 2007-2009 (Version 2, IMBIE refined basins)" [ref=e204] [cursor=pointer]:
+            - /url: https://nsidc.org/data/NSIDC-0709/versions/2
+        - listitem [ref=e205]:
+          - strong [ref=e206]: "Subglacial Hydrology:"
+          - link "Ehrenfeucht et al. (2025) Antarctic Wide Subglacial Hydrology Modeling" [ref=e207] [cursor=pointer]:
+            - /url: https://zenodo.org/records/12738170
+  - generic [ref=e132]:
+    - generic: Ready (Antarctica Balanced)
+    - button "Enter Fullscreen" [ref=e135] [cursor=pointer]
+    - generic:
+      - generic:
+        - strong: "Mouse:"
+        - text: drag to orbit, wheel to zoom, right-drag to pan.
+        - strong: "Touch:"
+        - text: one finger orbit, pinch zoom.
