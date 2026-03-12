@@ -1010,8 +1010,8 @@
             url: "https://data.aad.gov.au/metadata/RISE",
           },
           oceanCurrents: {
-            text: "WAOM2 annual-mean ocean circulation streamlines combining the cavity + 80 km coastal band and the remote open ocean",
-            url: "https://gmd.copernicus.org/articles/15/617/2022/",
+            text: "Whole Antarctica Ocean Model 2-km (WAOM2) simulated annual-mean ocean circulation, temperature and salinity",
+            url: "https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2023.1027704/full",
           },
           basins: {
             text: "MEaSUREs Antarctic Boundaries for IPY 2007-2009 (Version 2, IMBIE refined basins)",
@@ -5291,8 +5291,14 @@
       `;
 
       const sourceLines = [renderSourceLine("Bed/Ice Geometry", dataset.sources.geometry)];
+      if (dataset.regionKey === "antarctica" && dataset.sources.basins) {
+        sourceLines.push(renderSourceLine("Basin Boundaries", dataset.sources.basins));
+      }
       if (capabilities.velocity && dataset.sources.velocity) {
         sourceLines.push(renderSourceLine("Surface Velocity", dataset.sources.velocity));
+      }
+      if (capabilities.hydrology && dataset.sources.hydrology) {
+        sourceLines.push(renderSourceLine("Subglacial Hydrology", dataset.sources.hydrology));
       }
       if (capabilities.oceanCurrents && dataset.sources.oceanCurrents) {
         const oceanSuffix =
@@ -5307,12 +5313,6 @@
       }
       if (capabilities.rise && dataset.sources.rise) {
         sourceLines.push(renderSourceLine("Melt Drivers", dataset.sources.rise, " (15,269 ice-shelf cells)"));
-      }
-      if (dataset.regionKey === "antarctica" && dataset.sources.basins) {
-        sourceLines.push(renderSourceLine("Basin Boundaries", dataset.sources.basins));
-      }
-      if (capabilities.hydrology && dataset.sources.hydrology) {
-        sourceLines.push(renderSourceLine("Subglacial Hydrology", dataset.sources.hydrology));
       }
       if (!capabilities.velocity && !capabilities.hydrology && !capabilities.refinedBasins) {
         sourceLines.push(
