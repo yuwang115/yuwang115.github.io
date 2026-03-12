@@ -1,0 +1,164 @@
+{
+  "metrics": {
+    "title": "3D Antarctica & Greenland Explorer 🇦🇶",
+    "viewport": {
+      "width": 390,
+      "height": 664
+    },
+    "bodyClass": "mobile-drawer",
+    "sidebar": {
+      "x": 8,
+      "y": 600,
+      "width": 374,
+      "height": 491.359375
+    },
+    "main": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 664
+    },
+    "tabs": null,
+    "cards": [
+      {
+        "text": "View Controls",
+        "rect": {
+          "x": 23,
+          "y": 792.640625,
+          "width": 344,
+          "height": 729,
+          "top": 792.640625,
+          "right": 367,
+          "bottom": 1521.640625,
+          "left": 23
+        }
+      },
+      {
+        "text": "Bed Elevation Color",
+        "rect": {
+          "x": 23,
+          "y": 1533.640625,
+          "width": 344,
+          "height": 71,
+          "top": 1533.640625,
+          "right": 367,
+          "bottom": 1604.640625,
+          "left": 23
+        }
+      },
+      {
+        "text": "Ice Surface Velocity Color",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      {
+        "text": "Basal Melt Color",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      {
+        "text": "Thermal Driving Color",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      {
+        "text": "Ocean Streamline Color",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      {
+        "text": "Effective Pressure Color",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      {
+        "text": "Channel Discharge Color",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      }
+    ],
+    "textSample": "Done Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, ocean streamlines, subglacial environments, and RISE basal melt drivers. VIEW CONTROLS Region Antarctica Greenland Resolution preset Balanced (10 km grid; ~5.8 MB) HD (4 km grid; ~35.4 MB) Vertical exaggeration 4.0x Ice opacity 1.00 Show bed topography Show ice surface Show ice bottom surface Show refined basins Show ice surface velocity Show ice flowlines Show effective pressure Show subglacial channels Show ocean streamlines Show basal melt Show thermal driving Show sea level (0 m) Wireframe mode Reset Camera Enter Fullscreen BED ELEVATION COLOR -7000 m 0 +3500 m DATA SNAPSHOT Error: Error creating WebGL context. Enter Fullscreen Mouse: drag to orbit, wheel to zoom, right-dra"
+  },
+  "consoleMessages": [
+    {
+      "type": "error",
+      "text": "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Google Inc. (Google), GL_RENDERER = ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver-5.0.0), GL_VERSION = 5.0.0, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x8252, ErrorMessage = BindToCurrentSequence failed: ."
+    },
+    {
+      "type": "error",
+      "text": "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Google Inc. (Google), GL_RENDERER = ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver-5.0.0), GL_VERSION = 5.0.0, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x8252, ErrorMessage = BindToCurrentSequence failed: ."
+    },
+    {
+      "type": "error",
+      "text": "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Google Inc. (Google), GL_RENDERER = ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver-5.0.0), GL_VERSION = 5.0.0, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x8252, ErrorMessage = BindToCurrentSequence failed: ."
+    },
+    {
+      "type": "error",
+      "text": "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Google Inc. (Google), GL_RENDERER = ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver-5.0.0), GL_VERSION = 5.0.0, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x8252, ErrorMessage = BindToCurrentSequence failed: ."
+    },
+    {
+      "type": "error",
+      "text": "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Google Inc. (Google), GL_RENDERER = ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver-5.0.0), GL_VERSION = 5.0.0, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x8252, ErrorMessage = BindToCurrentSequence failed: ."
+    },
+    {
+      "type": "error",
+      "text": "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Google Inc. (Google), GL_RENDERER = ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver-5.0.0), GL_VERSION = 5.0.0, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x8252, ErrorMessage = BindToCurrentSequence failed: ."
+    },
+    {
+      "type": "error",
+      "text": "THREE.WebGLRenderer: Error creating WebGL context."
+    },
+    {
+      "type": "error",
+      "text": "Error: Error creating WebGL context.\n    at new $l (http://127.0.0.1:1314/tools/vendor/three/three.module.min.js:6:436223)\n    at initScene (http://127.0.0.1:1314/tools/antarctica-bedmachine-3d.html:3640:18)\n    at main (http://127.0.0.1:1314/tools/antarctica-bedmachine-3d.html:6727:9)"
+    }
+  ]
+}
