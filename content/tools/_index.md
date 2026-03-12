@@ -55,8 +55,8 @@ sections:
           }
           #tools-demo .tools-embed {
             width: 100%;
-            height: min(88dvh, 980px);
-            min-height: 560px;
+            height: clamp(780px, 104dvh, 1120px);
+            min-height: 780px;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
             overflow: hidden;
@@ -85,6 +85,8 @@ sections:
             loading="eager"
             fetchpriority="high"
             referrerpolicy="no-referrer"
+            allow="fullscreen"
+            allowfullscreen
           ></iframe>
         </div>
     design:
