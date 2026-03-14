@@ -50,7 +50,7 @@ sections:
   - block: markdown
     id: antarctica-showcase-home
     content:
-      title: "3D Antarctica & Greenland Explorer 🇦🇶"
+      title: "Hold Antarctica in your hands with 3D ICE ❄️"
       text: |
         <style>
           #antarctica-showcase-home .max-w-prose {
@@ -108,7 +108,7 @@ sections:
         <div class="showcase-wrap">
           <div class="showcase-embed">
             <iframe
-              title="3D Antarctica & Greenland Explorer 🇦🇶"
+              title="Hold Antarctica in your hands with 3D ICE ❄️"
               src="/tools/antarctica-bedmachine-3d.html?mode=showcase"
               loading="eager"
               fetchpriority="high"

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3D Antarctica &amp; Greenland Explorer 🇦🇶</title>
+  <title>Hold Antarctica and Greenland in your hands with 3D ICE (Interactive Cryosphere Explorer).</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -204,15 +204,22 @@
       }
     }
 
-    h1 {
-      margin: 0;
-      font-size: 1.25rem;
-      line-height: 1.25;
-      letter-spacing: 0.01em;
+    .panel-brand {
+      margin: 0 0 10px;
+    }
+
+    .panel-brand-logo {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(116, 163, 190, 0.28);
+      box-shadow: 0 10px 24px rgba(9, 30, 46, 0.16);
     }
 
     .subtitle {
-      margin: 8px 0 18px;
+      margin: 0 0 18px;
       color: var(--muted);
       font-size: 0.92rem;
       line-height: 1.45;
@@ -990,9 +997,16 @@
         <div class="panel-grab" aria-hidden="true"></div>
         <button id="panelCloseButton" class="panel-close-btn" type="button">Done</button>
       </div>
+      <div class="panel-brand">
+        <img
+          class="panel-brand-logo"
+          src="/tools/3d-ice-logo.png"
+          alt="3D ICE Interactive Cryosphere Explorer"
+        />
+      </div>
       <p id="panelSubtitle" class="subtitle">
-        Rotate, zoom, and explore Antarctica with interactive layers
-        for bed topography, ice surface/base, velocity, basal friction, flowlines, subglacial environments, and ice-shelf melt drivers.
+        Explore Antarctica from every angle. Rotate, zoom, and peel back
+        the ice to uncover a hidden world in interactive 3D.
       </p>
 
       <section class="section">
@@ -1267,7 +1281,7 @@
         key: "antarctica",
         label: "Antarctica",
         intro:
-          "Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, basal friction, ocean streamlines, subglacial environments, and RISE basal melt drivers.",
+          "Explore Antarctica from every angle. Rotate, zoom, and peel back the ice to uncover a hidden world in interactive 3D.",
         refinedBasinsUrl: "/tools/data/imbie_refined_basins_v2.json",
         basinToggleLabel: "Show refined basins",
         basinStatusLabel: "refined basins",
@@ -1352,7 +1366,7 @@
         key: "greenland",
         label: "Greenland",
         intro:
-          "Rotate, zoom, and explore Greenland in 3D with BedMachine terrain, ice-sheet structure, basal friction, and ocean-circulation overlays on a shared polar grid.",
+          "Explore Greenland from every angle. Rotate, zoom, and peel back the ice to uncover a hidden world in interactive 3D.",
         refinedBasinsUrl: "/tools/data/greenland_basins_ps_v1_4_2.json",
         basinToggleLabel: "Show basins",
         basinStatusLabel: "basins",
