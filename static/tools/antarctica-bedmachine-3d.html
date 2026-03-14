@@ -789,8 +789,8 @@
         <div class="control">
           <label for="resolutionPreset">Resolution preset</label>
           <select id="resolutionPreset">
-            <option value="balanced" selected>Balanced (10 km, ~5.8 MB)</option>
-            <option value="hd">HD (4 km, ~35.4 MB, desktop recommended)</option>
+            <option value="balanced" selected>Balanced (10 km, ~3.0 MB)</option>
+            <option value="hd">HD (4 km, ~18.6 MB, desktop recommended)</option>
           </select>
         </div>
         <div class="control">
@@ -840,9 +840,9 @@
         <div id="velocityLegendBar" class="legend" aria-hidden="true"></div>
         <div id="velocityLegendLabels" class="legend-labels">
           <span>0 m/yr</span>
-          <span>30</span>
-          <span>100</span>
-          <span>300</span>
+          <span>50</span>
+          <span>200</span>
+          <span>500</span>
           <span>1000</span>
           <span>3000</span>
         </div>
@@ -867,11 +867,11 @@
         <h2 class="section-title">Basal Melt Color</h2>
         <div id="basalMeltLegendBar" class="legend" aria-hidden="true"></div>
         <div id="basalMeltLegendLabels" class="legend-labels">
-          <span>-4 m/yr</span>
+          <span>-1 m/yr</span>
           <span>0</span>
-          <span>+4 m/yr</span>
+          <span>15</span>
         </div>
-        <div id="basalMeltLegendNote" class="legend-note">symlog scale clipped to -1 to 15 m/yr</div>
+        <div id="basalMeltLegendNote" class="legend-note" hidden></div>
       </section>
 
       <section id="thermalDrivingLegendSection" class="section">
@@ -897,7 +897,7 @@
           <span id="oceanLegendFreshLabel"><strong>Fresh</strong>30.0 PSU</span>
           <span id="oceanLegendSaltyLabel"><strong>Salty</strong>35.0 PSU</span>
         </div>
-        <div class="ocean-legend-note">Bivariate temperature-salinity color key for ocean streamlines.</div>
+        <div class="ocean-legend-note" hidden></div>
       </section>
 
       <section id="effectivePressureLegendSection" class="section">
@@ -1046,7 +1046,7 @@
           balanced: {
             id: "balanced",
             label: "Balanced",
-            summary: "10 km grid; ~5.8 MB",
+            summary: "10 km grid; ~3.0 MB",
             metaUrl: "/tools/data/bedmachine_antarctica_v4_480.meta.json",
             binUrl: "/tools/data/bedmachine_antarctica_v4_480.bin",
             velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.meta.json",
@@ -1063,7 +1063,7 @@
           hd: {
             id: "hd",
             label: "HD",
-            summary: "4 km grid; ~35.4 MB",
+            summary: "4 km grid; ~18.6 MB",
             metaUrl: "/tools/data/bedmachine_antarctica_v4_741.meta.json",
             binUrl: "/tools/data/bedmachine_antarctica_v4_741.bin",
             velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.meta.json",
@@ -1745,7 +1745,7 @@
     const VELOCITY_VISUALIZATION = Object.freeze({
       range: [0, 3000],
       knee: 20,
-      ticks: [0, 30, 100, 300, 1000, 3000],
+      ticks: [0, 50, 200, 500, 1000, 3000],
       note: "",
     });
     const BASAL_FRICTION_COLOR_STOPS = [
@@ -1798,7 +1798,7 @@
       range: [-1, 15],
       linthresh: 0.05,
       ticks: [-1, -0.3, -0.1, 0, 0.3, 1, 3, 15],
-      note: "symlog scale clipped to -1 to 15 m/yr",
+      note: "",
     });
     const RISE_THERMAL_DRIVING_COLOR_STOPS = [
       [0.0, [0.031, 0.114, 0.345]],
@@ -2254,6 +2254,7 @@
     }
 
     function formatBasalMeltTick(value) {
+      if (value === getBasalMeltVisualizationConfig().ticks[0]) return `${formatCoord(value, 0)} m/yr`;
       if (value === 0) return "0";
       if (Math.abs(value) >= 10) return formatCoord(value, 0);
       if (Math.abs(value) >= 1) return formatCoord(value, 0);
@@ -2347,7 +2348,9 @@
       updateContinuousLegend(controlsUI.basalMeltLegendBar, (t) => sampleColorStops(RISE_BASAL_MELT_COLOR_STOPS, t));
       renderBasalMeltLegendTicks();
       if (controlsUI.basalMeltLegendNote) {
-        controlsUI.basalMeltLegendNote.textContent = getBasalMeltVisualizationConfig().note;
+        const note = getBasalMeltVisualizationConfig().note || "";
+        controlsUI.basalMeltLegendNote.textContent = note;
+        controlsUI.basalMeltLegendNote.hidden = !note;
       }
     }
 
@@ -5516,6 +5519,7 @@
       const basalFrictionSection = capabilities.basalFriction
         ? `
         <li class="meta-group">Basal Friction (inverted)</li>
+        <li><strong>Inverted Friction:</strong> Median of ensemble inversions using Elmer/Ice, based on the Shallow Shelf Approximation</li>
         <li><strong>Grounded Coverage:</strong> ${
           basalFrictionCoverage
             ? `${fmtPercent(basalFrictionCoverage.valid_fraction)} of grid (${fmtInt(basalFrictionCoverage.valid_count)} / ${fmtInt(
