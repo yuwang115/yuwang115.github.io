@@ -296,6 +296,12 @@
       border-left: 2px solid rgba(66, 132, 160, 0.2);
     }
 
+    .toggle-divider {
+      height: 1px;
+      margin: 8px 0 6px;
+      background: linear-gradient(90deg, rgba(109, 145, 161, 0.1) 0%, rgba(109, 145, 161, 0.4) 18%, rgba(109, 145, 161, 0.4) 82%, rgba(109, 145, 161, 0.1) 100%);
+    }
+
     .toggle-group--grid {
       display: grid;
       grid-template-columns: repeat(2, max-content);
@@ -810,6 +816,7 @@
         <label class="toggle"><input id="showBasalFriction" type="checkbox" /> Show basal friction</label>
         <label class="toggle"><input id="showEffectivePressure" type="checkbox" /> Show effective pressure</label>
         <label class="toggle"><input id="showSubglacialChannels" type="checkbox" /> Show subglacial channels</label>
+        <div class="toggle-divider" aria-hidden="true"></div>
         <label class="toggle"><input id="showOceanCurrents" type="checkbox" /> Show ocean streamlines</label>
         <div id="oceanCurrentLayerControls" class="toggle-group toggle-group--grid" hidden>
           <label class="toggle toggle--sub"><input id="showOceanLayerSurface" type="checkbox" /> Surface</label>
@@ -817,8 +824,8 @@
           <label class="toggle toggle--sub"><input id="showOceanLayerMid" type="checkbox" /> Mid</label>
           <label class="toggle toggle--sub"><input id="showOceanLayerLower" type="checkbox" /> Lower</label>
         </div>
-        <label class="toggle"><input id="showBasalMelt" type="checkbox" /> Show basal melt</label>
-        <label class="toggle"><input id="showThermalDriving" type="checkbox" /> Show thermal driving</label>
+        <label id="showBasalMeltRow" class="toggle"><input id="showBasalMelt" type="checkbox" /> Show ice-shelf basal melt</label>
+        <label id="showThermalDrivingRow" class="toggle"><input id="showThermalDriving" type="checkbox" /> Show ice-shelf thermal driving</label>
         <label class="toggle"><input id="showSea" type="checkbox" /> Show sea level (0 m)</label>
         <label class="toggle"><input id="wireframe" type="checkbox" /> Wireframe mode</label>
         <button id="resetView" type="button">Reset Camera</button>
@@ -1207,7 +1214,9 @@
       showVelocity: document.getElementById("showVelocity"),
       showFlowline: document.getElementById("showFlowline"),
       showBasalFriction: document.getElementById("showBasalFriction"),
+      showBasalMeltRow: document.getElementById("showBasalMeltRow"),
       showBasalMelt: document.getElementById("showBasalMelt"),
+      showThermalDrivingRow: document.getElementById("showThermalDrivingRow"),
       showThermalDriving: document.getElementById("showThermalDriving"),
       showOceanCurrents: document.getElementById("showOceanCurrents"),
       oceanCurrentLayerControls: document.getElementById("oceanCurrentLayerControls"),
@@ -1554,6 +1563,12 @@
       const oceanCurrentAvailable = Boolean(
         !isShowcaseMode && capabilities.oceanCurrents && dataset?.oceanCurrentsMetaUrl && dataset?.oceanCurrentsBinUrl
       );
+      if (controlsUI.showBasalMeltRow) {
+        controlsUI.showBasalMeltRow.hidden = !capabilities.rise;
+      }
+      if (controlsUI.showThermalDrivingRow) {
+        controlsUI.showThermalDrivingRow.hidden = !capabilities.rise;
+      }
       setToggleAvailability(controlsUI.showVelocity, capabilities.velocity);
       setToggleAvailability(controlsUI.showFlowline, capabilities.velocity && capabilities.flowline);
       setToggleAvailability(controlsUI.showBasalFriction, basalFrictionAvailable);
@@ -4566,32 +4581,6 @@
       return changed;
     }
 
-    function hideSurfaceAndVelocityOverlaysForBedOverlay() {
-      let changed = false;
-      if (controlsUI.showIce.checked) {
-        controlsUI.showIce.checked = false;
-        changed = true;
-      }
-      if (controlsUI.showIceBottom.checked) {
-        controlsUI.showIceBottom.checked = false;
-        changed = true;
-      }
-      if (controlsUI.showVelocity.checked) {
-        controlsUI.showVelocity.checked = false;
-        changed = true;
-      }
-      if (controlsUI.showFlowline.checked) {
-        controlsUI.showFlowline.checked = false;
-        changed = true;
-      }
-      if (changed) {
-        syncIceSurfaceVisibilityFromControls();
-        if (velocitySurfaceMesh) velocitySurfaceMesh.visible = false;
-        updateFlowlineVisibility();
-      }
-      return changed;
-    }
-
     function updateFlowlineVisibility() {
       if (!controlsUI.showFlowline.checked) {
         if (flowlineMesh) flowlineMesh.visible = false;
@@ -5202,23 +5191,14 @@
         updateLegendVisibility();
       });
       controlsUI.showIce.addEventListener("change", () => {
-        if (controlsUI.showIce.checked) {
-          hideBedStressOverlaysExcept();
-        }
         syncIceSurfaceVisibilityFromControls();
         updateMetaFromCurrentState();
       });
       controlsUI.showIceBottom.addEventListener("change", () => {
-        if (controlsUI.showIceBottom.checked) {
-          hideBedStressOverlaysExcept();
-        }
         syncIceSurfaceVisibilityFromControls();
         updateMetaFromCurrentState();
       });
       controlsUI.showVelocity.addEventListener("change", () => {
-        if (controlsUI.showVelocity.checked) {
-          hideBedStressOverlaysExcept();
-        }
         updateLegendVisibility();
         if (controlsUI.showVelocity.checked && !velocitySurfaceMesh) {
           ensureVelocityLoaded({ trigger: "toggle" });
@@ -5228,9 +5208,6 @@
         updateMetaFromCurrentState();
       });
       controlsUI.showFlowline.addEventListener("change", () => {
-        if (controlsUI.showFlowline.checked) {
-          hideBedStressOverlaysExcept();
-        }
         updateLegendVisibility();
         if (controlsUI.showFlowline.checked && !velocityField) {
           ensureVelocityLoaded({ trigger: "toggle" });
@@ -5242,7 +5219,6 @@
       controlsUI.showBasalFriction.addEventListener("change", () => {
         if (controlsUI.showBasalFriction.checked) {
           hideBedStressOverlaysExcept("basalFriction");
-          hideSurfaceAndVelocityOverlaysForBedOverlay();
         }
         updateLegendVisibility();
         if (controlsUI.showBasalFriction.checked && !basalFrictionMesh) {
@@ -5329,7 +5305,6 @@
       controlsUI.showEffectivePressure.addEventListener("change", () => {
         if (controlsUI.showEffectivePressure.checked) {
           hideBedStressOverlaysExcept("effectivePressure");
-          hideSurfaceAndVelocityOverlaysForBedOverlay();
         }
         updateLegendVisibility();
         if (controlsUI.showEffectivePressure.checked && !effectivePressureMesh) {
@@ -5340,9 +5315,6 @@
         updateMetaFromCurrentState();
       });
       controlsUI.showSubglacialChannels.addEventListener("change", () => {
-        if (controlsUI.showSubglacialChannels.checked) {
-          hideSurfaceAndVelocityOverlaysForBedOverlay();
-        }
         updateLegendVisibility();
         if (controlsUI.showSubglacialChannels.checked && !subglacialChannelMesh) {
           ensureHydrologyLoaded({ trigger: "toggle" });
@@ -5403,17 +5375,28 @@
       const grid = meta.grid;
       const bedStats = meta.fields.find((f) => f.name === "bed").stats_m;
       const thickStats = meta.fields.find((f) => f.name === "thickness").stats_m;
-      const speedStats = velocityMeta?.fields?.find((f) => f.name === "speed")?.stats_m_per_year;
+      const speedField = velocityMeta?.fields?.find((f) => f.name === "speed");
+      const speedStats = speedField?.stats_m_per_year;
+      const speedQuantiles = speedField?.quantiles_m_per_year;
       const basalFrictionField = basalFrictionMeta?.fields?.find((f) => f.name === "basal_friction");
       const basalFrictionStats = basalFrictionField?.stats_mpa;
       const basalFrictionQuantiles = basalFrictionField?.quantiles_mpa;
-      const basalFrictionCoverage = basalFrictionMeta?.coverage;
-      const riseBasalStats = riseMeta?.fields?.find((f) => f.name === "ismr")?.stats_m_per_year;
-      const riseThermalStats = riseMeta?.fields?.find((f) => f.name === "tstar_zice")?.stats_c;
-      const riseDraftStats = riseMeta?.fields?.find((f) => f.name === "zice")?.stats_m;
+      const riseBasalField = riseMeta?.fields?.find((f) => f.name === "ismr");
+      const riseBasalStats = riseBasalField?.stats_m_per_year;
+      const riseBasalQuantiles = riseBasalField?.quantiles_m_per_year;
+      const riseThermalField = riseMeta?.fields?.find((f) => f.name === "tstar_zice");
+      const riseThermalStats = riseThermalField?.stats_c;
+      const riseThermalQuantiles = riseThermalField?.quantiles_c;
+      const riseDraftField = riseMeta?.fields?.find((f) => f.name === "zice");
+      const riseDraftStats = riseDraftField?.stats_m;
+      const riseDraftQuantiles = riseDraftField?.quantiles_m;
       const riseCoverage = riseMeta?.coverage;
-      const pressureStats = hydrologyMeta?.fields?.find((f) => f.name === "effective_pressure")?.stats_pa;
-      const channelStats = hydrologyMeta?.fields?.find((f) => f.name === "channel_discharge")?.stats_m3_per_s;
+      const pressureField = hydrologyMeta?.fields?.find((f) => f.name === "effective_pressure");
+      const pressureStats = pressureField?.stats_pa;
+      const pressureQuantiles = pressureField?.quantiles_pa;
+      const channelField = hydrologyMeta?.fields?.find((f) => f.name === "channel_discharge");
+      const channelStats = channelField?.stats_m3_per_s;
+      const channelQuantiles = channelField?.quantiles_m3_per_s;
       const channelCoverage = hydrologyMeta?.coverage;
       const oceanStreamlineCount = Number(oceanCurrentMeta?.streamline_count || oceanCurrentMeta?.flowline_count || 0);
       const oceanCurrentSegmentCount = Number(oceanCurrentMeta?.segment_count || 0);
@@ -5450,45 +5433,38 @@
       const refinedBasinCount = Number(currentRefinedBasinData?.basin_count);
       const stepKm = Math.abs(grid.dx_m) / 1000;
       const fmtInt = (value) => Math.round(Number(value)).toLocaleString("en-US");
-      const fmtPercent = (value) =>
-        Number(value).toLocaleString("en-US", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
       const fmtMpa = (value) =>
         (Number(value) / 1e6).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const fmtQ = (value) =>
         Number(value).toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
       const fmtShort = (value, digits = 2) =>
         Number(value).toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+      const quantileEntry = (label, value, formatter, suffix = "") =>
+        Number.isFinite(Number(value)) ? `${label} ${formatter(Number(value))}${suffix}` : "";
+      const quantileSummary = (entries) => entries.filter(Boolean).join("; ");
       const projectionLabel =
         dataset.regionKey === "greenland"
           ? "EPSG:3413 polar stereographic"
           : dataset.regionKey === "antarctica"
           ? "EPSG:3031 polar stereographic"
           : "Polar stereographic";
-      const velocityCoverage = velocityMeta?.coverage;
-      const basinStatus = !capabilities.refinedBasins
-        ? `Not yet added for ${region.label}`
-        : Number.isFinite(refinedBasinCount) && refinedBasinCount > 0
-        ? "Available"
-        : dataset.refinedBasinsUrl
-        ? "Available on demand"
-        : "n/a";
       const oceanCurrentReferenceText = oceanCurrentReference ? `${oceanCurrentReference} model field` : "model field";
       const oceanCurrentSummary = !oceanCurrentMeta
         ? "Available on demand"
         : oceanCurrentSeedStrategy === "merged_streamline_sets" &&
           cavityMargin80kmStreamlineCount > 0 &&
           remoteOpenOceanStreamlineCount > 0
-        ? `Merged precomputed streamline sets: ice-shelf cavity + 80 km coastal ocean (${fmtInt(
-            cavityMargin80kmStreamlineCount
-          )} lines) and remote open ocean (${fmtInt(remoteOpenOceanStreamlineCount)} lines), ${fmtInt(
-            oceanCurrentSegmentCount
-          )} segments in total, plotted from the ${oceanCurrentReferenceText}.`
-        : dataset.regionKey === "greenland" && oceanCurrentLayerCount >= 4
-        ? `Precomputed Greenland ocean streamline set: ${fmtInt(
+        ? `Precomputed ${fmtInt(
             oceanStreamlineCount
-          )} lines across four vertically stratified layers (surface, upper, mid, lower), ${fmtInt(
-            oceanCurrentSegmentCount
-          )} segments in total, plotted from the ${oceanCurrentReferenceText}.`
+          )} ocean streamlines from annual mean model fields across four vertical layers (surface, upper, mid, lower), including ${fmtInt(
+            cavityMargin80kmStreamlineCount
+          )} in the ice-shelf cavity and 80-km coastal zone, and ${fmtInt(
+            remoteOpenOceanStreamlineCount
+          )} in the open ocean.`
+        : dataset.regionKey === "greenland" && oceanCurrentLayerCount >= 4
+        ? `Precomputed ${fmtInt(
+            oceanStreamlineCount
+          )} ocean streamlines from August 2025 model fields across four vertical layers (surface, upper, mid, lower).`
         : `${fmtInt(oceanStreamlineCount)} streamlines${
             oceanCurrentLayerCount > 1 ? ` across ${fmtInt(oceanCurrentLayerCount)} depth layers` : ""
           } (${fmtInt(oceanCurrentSegmentCount)} segments), plotted from the ${oceanCurrentReferenceText}.`;
@@ -5496,20 +5472,20 @@
       const velocitySection = capabilities.velocity
         ? `
         <li class="meta-group">Ice Surface Velocity (observed)</li>
-        <li><strong>Valid Coverage:</strong> ${
-          velocityCoverage
-            ? `${fmtPercent(velocityCoverage.valid_fraction)} of grid (${fmtInt(velocityCoverage.valid_count)} / ${fmtInt(
-                velocityCoverage.cell_count
-              )} cells)`
-            : "Available on demand"
+        <li><strong>Surface Speed Range:</strong> ${speedStats ? `${fmtInt(speedStats.min)} to ${fmtInt(speedStats.max)} m/yr` : "n/a"}</li>
+        <li><strong>Speed Quantiles:</strong> ${
+          quantileSummary([
+            quantileEntry(
+              "median",
+              Number.isFinite(Number(speedQuantiles?.median)) ? speedQuantiles.median : velocityMedianSpeed,
+              fmtInt,
+              " m/yr"
+            ),
+            quantileEntry("P90", speedQuantiles?.q90, fmtInt, " m/yr"),
+            quantileEntry("P95", speedQuantiles?.q95, fmtInt, " m/yr"),
+            quantileEntry("P99", speedQuantiles?.q99, fmtInt, " m/yr"),
+          ]) || "Available on demand"
         }</li>
-        <li><strong>Surface Speed:</strong> ${speedStats ? `${fmtInt(speedStats.min)} to ${fmtInt(speedStats.max)} m/yr` : "n/a"}</li>
-        <li><strong>Mean Speed:</strong> ${speedStats ? `${fmtInt(speedStats.mean)} m/yr` : "n/a"}</li>
-        ${
-          Number.isFinite(velocityMedianSpeed) && velocityMedianSpeed > 0
-            ? `<li><strong>Median Speed:</strong> ${fmtInt(velocityMedianSpeed)} m/yr</li>`
-            : ""
-        }
       `
         : `
         <li class="meta-group">Ice Surface Velocity (observed)</li>
@@ -5520,17 +5496,14 @@
         ? `
         <li class="meta-group">Basal Friction (inverted)</li>
         <li><strong>Inverted Friction:</strong> Median of ensemble inversions using Elmer/Ice, based on the Shallow Shelf Approximation</li>
-        <li><strong>Grounded Coverage:</strong> ${
-          basalFrictionCoverage
-            ? `${fmtPercent(basalFrictionCoverage.valid_fraction)} of grid (${fmtInt(basalFrictionCoverage.valid_count)} / ${fmtInt(
-                basalFrictionCoverage.cell_count
-              )} cells)`
-            : "Available on demand"
-        }</li>
-        <li><strong>Tau_b:</strong> ${basalFrictionStats ? `${fmtShort(basalFrictionStats.min, 3)} to ${fmtShort(basalFrictionStats.max, 2)} MPa` : "n/a"}</li>
-        <li><strong>Mean Tau_b:</strong> ${basalFrictionStats ? `${fmtShort(basalFrictionStats.mean, 3)} MPa` : "n/a"}</li>
-        <li><strong>Typical high Tau_b:</strong> ${
-          basalFrictionQuantiles ? `${fmtShort(basalFrictionQuantiles.q995, 2)} MPa (99.5th percentile)` : "n/a"
+        <li><strong>Friction Range:</strong> ${basalFrictionStats ? `${fmtShort(basalFrictionStats.min, 3)} to ${fmtShort(basalFrictionStats.max, 2)} MPa` : "n/a"}</li>
+        <li><strong>Friction Quantiles:</strong> ${
+          quantileSummary([
+            quantileEntry("median", basalFrictionQuantiles?.median, (value) => fmtShort(value, 3), " MPa"),
+            quantileEntry("P90", basalFrictionQuantiles?.q90, (value) => fmtShort(value, 3), " MPa"),
+            quantileEntry("P95", basalFrictionQuantiles?.q95, (value) => fmtShort(value, 3), " MPa"),
+            quantileEntry("P99", basalFrictionQuantiles?.q99, (value) => fmtShort(value, 3), " MPa"),
+          ]) || "n/a"
         }</li>
       `
         : `
@@ -5541,17 +5514,38 @@
       const riseSection = capabilities.rise
         ? `
         <li class="meta-group">Ice-Shelf Basal Melt (simulated)</li>
-        <li><strong>Basal Melt:</strong> ${
-          riseBasalStats ? `${fmtShort(riseBasalStats.min)} to ${fmtShort(riseBasalStats.max)} m/yr` : "Available on demand"
+        <li><strong>Basal Melt Rate:</strong> ${
+          riseBasalStats ? `${fmtShort(riseBasalStats.min, 3)} to ${fmtShort(riseBasalStats.max, 3)} m/yr` : "Available on demand"
+        }</li>
+        <li><strong>Melt Quantiles:</strong> ${
+          quantileSummary([
+            quantileEntry("median", riseBasalQuantiles?.median, (value) => fmtShort(value, 3), " m/yr"),
+            quantileEntry("P90", riseBasalQuantiles?.q90, (value) => fmtShort(value, 3), " m/yr"),
+            quantileEntry("P95", riseBasalQuantiles?.q95, (value) => fmtShort(value, 3), " m/yr"),
+            quantileEntry("P99", riseBasalQuantiles?.q99, (value) => fmtShort(value, 3), " m/yr"),
+          ]) || "Available on demand"
         }</li>
         <li><strong>Thermal Driving:</strong> ${
-          riseThermalStats ? `${fmtShort(riseThermalStats.min, 2)} to ${fmtShort(riseThermalStats.max, 2)} °C` : "Available on demand"
+          riseThermalStats ? `${fmtShort(riseThermalStats.min, 3)} to ${fmtShort(riseThermalStats.max, 3)} °C` : "Available on demand"
+        }</li>
+        <li><strong>Thermal Quantiles:</strong> ${
+          quantileSummary([
+            quantileEntry("median", riseThermalQuantiles?.median, (value) => fmtShort(value, 3), " °C"),
+            quantileEntry("P90", riseThermalQuantiles?.q90, (value) => fmtShort(value, 3), " °C"),
+            quantileEntry("P95", riseThermalQuantiles?.q95, (value) => fmtShort(value, 3), " °C"),
+            quantileEntry("P99", riseThermalQuantiles?.q99, (value) => fmtShort(value, 3), " °C"),
+          ]) || "Available on demand"
         }</li>
         <li><strong>Ice Draft:</strong> ${
           riseDraftStats ? `${fmtShort(riseDraftStats.min, 0)} to ${fmtShort(riseDraftStats.max, 0)} m` : "Available on demand"
         }</li>
-        <li><strong>Ice-Shelf Cells:</strong> ${
-          riseCoverage ? fmtInt(riseCoverage.iceshelf_cell_count) : "Available on demand"
+        <li><strong>Draft Quantiles:</strong> ${
+          quantileSummary([
+            quantileEntry("median", riseDraftQuantiles?.median, (value) => fmtShort(value, 0), " m"),
+            quantileEntry("P90", riseDraftQuantiles?.q90, (value) => fmtShort(value, 0), " m"),
+            quantileEntry("P95", riseDraftQuantiles?.q95, (value) => fmtShort(value, 0), " m"),
+            quantileEntry("P99", riseDraftQuantiles?.q99, (value) => fmtShort(value, 0), " m"),
+          ]) || "Available on demand"
         }</li>
       `
         : "";
@@ -5585,8 +5579,24 @@
       const hydrologySection = capabilities.hydrology
         ? `
         <li class="meta-group">Subglacial Hydrology (simulated)</li>
-        <li><strong>Effective Pressure:</strong> ${pressureStats ? `${fmtMpa(pressureStats.min)} to ${fmtMpa(pressureStats.max)} MPa` : "n/a"}</li>
-        <li><strong>Channel Discharge:</strong> ${channelStats ? `${fmtQ(channelStats.min)} to ${fmtQ(channelStats.max)} m3/s` : "n/a"}</li>
+        <li><strong>Effective Pressure Range:</strong> ${pressureStats ? `${fmtMpa(pressureStats.min)} to ${fmtMpa(pressureStats.max)} MPa` : "n/a"}</li>
+        <li><strong>Pressure Quantiles:</strong> ${
+          quantileSummary([
+            quantileEntry("median", pressureQuantiles?.median, fmtMpa, " MPa"),
+            quantileEntry("P90", pressureQuantiles?.q90, fmtMpa, " MPa"),
+            quantileEntry("P95", pressureQuantiles?.q95, fmtMpa, " MPa"),
+            quantileEntry("P99", pressureQuantiles?.q99, fmtMpa, " MPa"),
+          ]) || "n/a"
+        }</li>
+        <li><strong>Channel Discharge Range:</strong> ${channelStats ? `${fmtQ(channelStats.min)} to ${fmtQ(channelStats.max)} m3/s` : "n/a"}</li>
+        <li><strong>Discharge Quantiles:</strong> ${
+          quantileSummary([
+            quantileEntry("median", channelQuantiles?.median, fmtQ, " m3/s"),
+            quantileEntry("P90", channelQuantiles?.q90, fmtQ, " m3/s"),
+            quantileEntry("P95", channelQuantiles?.q95, fmtQ, " m3/s"),
+            quantileEntry("P99", channelQuantiles?.q99, fmtQ, " m3/s"),
+          ]) || "n/a"
+        }</li>
         <li><strong>Rendered Channels:</strong> ${channelCoverage ? fmtInt(channelCoverage.channel_segment_count_unique) : "n/a"}</li>
       `
         : `
@@ -5719,6 +5729,7 @@
       bedMesh.scale.y = exaggeration;
       bedMesh.visible = controlsUI.showBed.checked;
       bedMesh.material.wireframe = wireframe;
+      bedMesh.renderOrder = 1;
       scene.add(bedMesh);
 
       const iceGeometry = buildSurfaceGeometry({
@@ -5742,6 +5753,7 @@
       iceMesh.scale.y = exaggeration;
       iceMesh.visible = controlsUI.showIce.checked;
       iceMesh.material.wireframe = wireframe;
+      iceMesh.renderOrder = 11;
       scene.add(iceMesh);
 
       const iceBottomGeometry = buildSurfaceGeometry({
@@ -5768,6 +5780,7 @@
       iceBottomMesh.scale.y = exaggeration;
       iceBottomMesh.visible = controlsUI.showIceBottom.checked;
       iceBottomMesh.material.wireframe = wireframe;
+      iceBottomMesh.renderOrder = 10;
       scene.add(iceBottomMesh);
 
       const iceSideGeometry = buildIceSideGeometry({
@@ -5785,6 +5798,7 @@
       iceSideMesh = new THREE.Mesh(iceSideGeometry, iceSideMaterial);
       iceSideMesh.scale.y = exaggeration;
       iceSideMesh.material.wireframe = wireframe;
+      iceSideMesh.renderOrder = 11;
       updateIceSideVisibility();
       scene.add(iceSideMesh);
 
@@ -6310,7 +6324,7 @@
         basalFrictionMesh.scale.y = Number(controlsUI.exaggeration.value);
         basalFrictionMesh.visible = controlsUI.showBasalFriction.checked;
         basalFrictionMesh.material.wireframe = controlsUI.wireframe.checked;
-        basalFrictionMesh.renderOrder = 18;
+        basalFrictionMesh.renderOrder = 6;
         scene.add(basalFrictionMesh);
 
         context.basalFrictionLoaded = true;
@@ -6895,7 +6909,7 @@
         effectivePressureMesh.scale.y = Number(controlsUI.exaggeration.value);
         effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
         effectivePressureMesh.material.wireframe = controlsUI.wireframe.checked;
-        effectivePressureMesh.renderOrder = 20;
+        effectivePressureMesh.renderOrder = 7;
         scene.add(effectivePressureMesh);
 
         if (workerResult.channelPositions && workerResult.channelColors && workerResult.channelPositions.length) {
@@ -6916,7 +6930,7 @@
           subglacialChannelMesh.visible = controlsUI.showSubglacialChannels.checked;
           subglacialChannelMesh.scale.y = Number(controlsUI.exaggeration.value);
           subglacialChannelMesh.userData.channelCount = workerResult.channelCount || 0;
-          subglacialChannelMesh.renderOrder = 30;
+          subglacialChannelMesh.renderOrder = 8;
           scene.add(subglacialChannelMesh);
         } else {
           controlsUI.showSubglacialChannels.checked = false;
