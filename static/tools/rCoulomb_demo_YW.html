@@ -1282,6 +1282,7 @@
     const DISPLAY_CAP = 50000;
     const THREE_D_DEBOUNCE_MS = 140;
     const PRESET_ANIMATION_MS = 320;
+    const PRESET_PLOT_REFRESH_MS = 72;
     const MOBILE_BREAKPOINT = 960;
     const MOBILE_PANEL_PEEK_PX = 66;
     const DEFAULT_CAMERA = {
@@ -1388,8 +1389,14 @@
       animation: null,
       animationFrame: null,
       lastAnimationStamp: null,
+      lastAnimationPlotRenderMs: null,
       pending3DTimer: null,
-      copyFeedbackTimer: null
+      copyFeedbackTimer: null,
+      renderQueues: {
+        plot2d: { inFlight: false, pendingTask: null, activePromise: null },
+        plotFallback: { inFlight: false, pendingTask: null, activePromise: null },
+        plot3d: { inFlight: false, pendingTask: null, activePromise: null }
+      }
     };
 
     function cloneCamera(camera) {
@@ -1962,13 +1969,17 @@
     }
 
     function render2DPlot(metrics) {
-      const figure = build2DTraces(metrics);
-      return Plotly.react(dom.plot2d, figure.data, figure.layout, figure.config);
+      return enqueueLatestRender("plot2d", () => {
+        const figure = build2DTraces(metrics);
+        return Plotly.react(dom.plot2d, figure.data, figure.layout, figure.config);
+      });
     }
 
     function renderFallbackPlot(metrics) {
-      const figure = build2DTraces(metrics, { compact: true });
-      return Plotly.react(dom.plotFallback, figure.data, figure.layout, figure.config);
+      return enqueueLatestRender("plotFallback", () => {
+        const figure = build2DTraces(metrics, { compact: true });
+        return Plotly.react(dom.plotFallback, figure.data, figure.layout, figure.config);
+      });
     }
 
     function bind3DPlotEvents() {
@@ -2030,16 +2041,18 @@
 
     function render3DPlot(metrics) {
       if (state.fallback3d) return Promise.resolve();
-      const figure = build3DTraces(metrics);
-      return Plotly.react(dom.plot3d, figure.data, figure.layout, figure.config)
-        .then(() => {
-          bind3DPlotEvents();
-          setFallbackMode(false);
-        })
-        .catch((error) => {
-          setFallbackMode(true, error?.message || "3D surface failed");
-          return renderFallbackPlot(metrics);
-        });
+      return enqueueLatestRender("plot3d", () => {
+        const figure = build3DTraces(metrics);
+        return Plotly.react(dom.plot3d, figure.data, figure.layout, figure.config)
+          .then(() => {
+            bind3DPlotEvents();
+            setFallbackMode(false);
+          })
+          .catch((error) => {
+            setFallbackMode(true, error?.message || "3D surface failed");
+            return renderFallbackPlot(metrics);
+          });
+      });
     }
 
     function renderSnapshot(metrics) {
@@ -2087,6 +2100,33 @@
       return window.matchMedia("(pointer: fine)").matches;
     }
 
+    function enqueueLatestRender(queueKey, task) {
+      const queue = state.renderQueues[queueKey];
+      if (!queue) return Promise.resolve().then(task);
+      queue.pendingTask = task;
+
+      if (queue.inFlight) {
+        return queue.activePromise || Promise.resolve();
+      }
+
+      const runNextTask = () => {
+        if (!queue.pendingTask) return Promise.resolve();
+        const nextTask = queue.pendingTask;
+        queue.pendingTask = null;
+        queue.inFlight = true;
+        queue.activePromise = Promise.resolve()
+          .then(nextTask)
+          .finally(() => {
+            queue.inFlight = false;
+            queue.activePromise = null;
+            if (queue.pendingTask) runNextTask();
+          });
+        return queue.activePromise;
+      };
+
+      return runNextTask();
+    }
+
     function updateInteractionHint(metrics) {
       if (metrics.transitionExceedsCap) {
         dom.interactionHint.innerHTML = state.fallback3d
@@ -2129,7 +2169,7 @@
     }
 
     function renderFromState(options = {}) {
-      const { update3D = true, force3D = false } = options;
+      const { update2D = true, update3D = true, force3D = false, syncUrl = true } = options;
       const metrics = getMetrics();
       updateControlDisplays(metrics);
       updatePresetButtons();
@@ -2137,11 +2177,13 @@
       renderSnapshot(metrics);
       updateInteractionHint(metrics);
 
-      render2DPlot(metrics)
-        .then(() => resizeAllPlots())
-        .catch(() => {});
+      if (update2D) {
+        render2DPlot(metrics)
+          .then(() => resizeAllPlots())
+          .catch(() => {});
 
-      renderFallbackPlot(metrics).catch(() => {});
+        renderFallbackPlot(metrics).catch(() => {});
+      }
 
       if (update3D || force3D) {
         render3DPlot(metrics)
@@ -2149,7 +2191,7 @@
           .catch(() => {});
       }
 
-      updateUrl();
+      if (syncUrl) updateUrl();
       return metrics;
     }
 
@@ -2235,9 +2277,14 @@
     function stopAnimation() {
       state.animation = null;
       state.lastAnimationStamp = null;
+      state.lastAnimationPlotRenderMs = null;
       if (state.animationFrame) {
         window.cancelAnimationFrame(state.animationFrame);
         state.animationFrame = null;
+      }
+      if (state.pending3DTimer) {
+        window.clearTimeout(state.pending3DTimer);
+        state.pending3DTimer = null;
       }
     }
 
@@ -2254,8 +2301,14 @@
       }
 
       state.presetKey = state.animation.presetKey;
-      renderFromState({ update3D: false });
-      schedule3DUpdate();
+      const shouldRefreshPlots =
+        progress >= 1 ||
+        state.lastAnimationPlotRenderMs == null ||
+        state.animation.elapsed - state.lastAnimationPlotRenderMs >= PRESET_PLOT_REFRESH_MS;
+      renderFromState({ update2D: shouldRefreshPlots, update3D: false, syncUrl: shouldRefreshPlots || progress >= 1 });
+      if (shouldRefreshPlots) {
+        state.lastAnimationPlotRenderMs = state.animation.elapsed;
+      }
 
       if (progress >= 1) {
         for (const [key, value] of Object.entries(state.animation.to)) {
@@ -2282,6 +2335,8 @@
     function startPresetTransition(presetKey) {
       const preset = PRESETS[presetKey];
       if (!preset) return;
+      if (state.animation?.presetKey === presetKey) return;
+      if (!state.animation && detectActivePresetKey(state) === presetKey) return;
       const target = { ...preset.values };
 
       if (reducedMotionQuery.matches) {
@@ -2307,6 +2362,7 @@
         duration: PRESET_ANIMATION_MS
       };
       state.lastAnimationStamp = null;
+      state.lastAnimationPlotRenderMs = null;
       state.animationFrame = window.requestAnimationFrame(animationTick);
     }
 

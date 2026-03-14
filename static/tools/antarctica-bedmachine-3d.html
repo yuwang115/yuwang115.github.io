@@ -507,7 +507,7 @@
     .legend-labels.legend-labels--ticks {
       position: relative;
       display: block;
-      height: 1.1rem;
+      min-height: 1.1rem;
     }
 
     .legend-labels.legend-labels--ticks span {
@@ -774,7 +774,7 @@
       </div>
       <p id="panelSubtitle" class="subtitle">
         Rotate, zoom, and explore Antarctica with interactive layers
-        for bed topography, ice surface/base, velocity, flowlines, subglacial environments, and ice-shelf melt drivers.
+        for bed topography, ice surface/base, velocity, basal friction, flowlines, subglacial environments, and ice-shelf melt drivers.
       </p>
 
       <section class="section">
@@ -807,6 +807,7 @@
         <label class="toggle"><input id="showRefinedBasins" type="checkbox" /> <span id="showRefinedBasinsLabel">Show refined basins</span></label>
         <label class="toggle"><input id="showVelocity" type="checkbox" /> Show ice surface velocity</label>
         <label class="toggle"><input id="showFlowline" type="checkbox" /> Show ice flowlines</label>
+        <label class="toggle"><input id="showBasalFriction" type="checkbox" /> Show basal friction</label>
         <label class="toggle"><input id="showEffectivePressure" type="checkbox" /> Show effective pressure</label>
         <label class="toggle"><input id="showSubglacialChannels" type="checkbox" /> Show subglacial channels</label>
         <label class="toggle"><input id="showOceanCurrents" type="checkbox" /> Show ocean streamlines</label>
@@ -838,14 +839,28 @@
         <h2 class="section-title">Ice Surface Velocity Color</h2>
         <div id="velocityLegendBar" class="legend" aria-hidden="true"></div>
         <div id="velocityLegendLabels" class="legend-labels">
-          <span>0</span>
+          <span>0 m/yr</span>
           <span>30</span>
           <span>100</span>
           <span>300</span>
           <span>1000</span>
           <span>3000</span>
         </div>
-        <div id="velocityLegendNote" class="legend-note">nonlinear scale clipped to 0 to 3000 m/yr</div>
+        <div id="velocityLegendNote" class="legend-note" hidden></div>
+      </section>
+
+      <section id="basalFrictionLegendSection" class="section">
+        <h2 class="section-title">Basal Friction Color</h2>
+        <div id="basalFrictionLegendBar" class="legend" aria-hidden="true"></div>
+        <div id="basalFrictionLegendLabels" class="legend-labels">
+          <span>0 Mpa</span>
+          <span>0.02</span>
+          <span>0.04</span>
+          <span>0.08</span>
+          <span>0.15</span>
+          <span>0.3</span>
+        </div>
+        <div id="basalFrictionLegendNote" class="legend-note" hidden></div>
       </section>
 
       <section id="basalMeltLegendSection" class="section">
@@ -983,13 +998,14 @@
         key: "antarctica",
         label: "Antarctica",
         intro:
-          "Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, ocean streamlines, subglacial environments, and RISE basal melt drivers.",
+          "Rotate, zoom, and explore Antarctica with interactive layers for bed topography, ice surface/base, velocity, basal friction, ocean streamlines, subglacial environments, and RISE basal melt drivers.",
         refinedBasinsUrl: "/tools/data/imbie_refined_basins_v2.json",
         basinToggleLabel: "Show refined basins",
         basinStatusLabel: "refined basins",
         defaultDatasetKey: "balanced",
         capabilities: {
           velocity: true,
+          basalFriction: true,
           flowline: true,
           rise: true,
           oceanCurrents: true,
@@ -1004,6 +1020,10 @@
           velocity: {
             text: "MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1",
             url: "https://nsidc.org/data/NSIDC-0754/versions/1",
+          },
+          basalFriction: {
+            text: "Jager et al. (2026) Insights from an ensemble inverse method to quantify basal friction uncertainties for ice-sheet models - Part 2: Antarctic ice sheet.",
+            url: "https://essopenarchive.org/doi/full/10.22541/essoar.177099457.70593031",
           },
           rise: {
             text: "Galton-Fenzi et al. (2025) Multi-model estimate of Antarctic ice-shelf basal melting and ocean drivers, V1",
@@ -1031,6 +1051,8 @@
             binUrl: "/tools/data/bedmachine_antarctica_v4_480.bin",
             velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.meta.json",
             velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_480.bin",
+            basalFrictionMetaUrl: "/tools/data/antarctica_basal_friction_480.meta.json?v=20260314-taub-v1",
+            basalFrictionBinUrl: "/tools/data/antarctica_basal_friction_480.bin?v=20260314-taub-v1",
             riseMetaUrl: "/tools/data/rise_antarctica_480.meta.json",
             riseBinUrl: "/tools/data/rise_antarctica_480.bin",
             oceanCurrentsMetaUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual_combined_cavity80km_remote_open_ocean.meta.json?v=20260312-waom2-combined-v3",
@@ -1046,6 +1068,8 @@
             binUrl: "/tools/data/bedmachine_antarctica_v4_741.bin",
             velocityMetaUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.meta.json",
             velocityBinUrl: "/tools/data/antarctic_ice_velocity_phase_v01_741.bin",
+            basalFrictionMetaUrl: "/tools/data/antarctica_basal_friction_741.meta.json?v=20260314-taub-v1",
+            basalFrictionBinUrl: "/tools/data/antarctica_basal_friction_741.bin?v=20260314-taub-v1",
             riseMetaUrl: "/tools/data/rise_antarctica_741.meta.json",
             riseBinUrl: "/tools/data/rise_antarctica_741.bin",
             oceanCurrentsMetaUrl: "/tools/data/antarctica_ocean_currents_waom2_yr5_annual_combined_cavity80km_remote_open_ocean.meta.json?v=20260312-waom2-combined-v3",
@@ -1059,13 +1083,14 @@
         key: "greenland",
         label: "Greenland",
         intro:
-          "Rotate, zoom, and explore Greenland in 3D with BedMachine terrain, ice-sheet structure, and ocean-circulation overlays on a shared polar grid.",
+          "Rotate, zoom, and explore Greenland in 3D with BedMachine terrain, ice-sheet structure, basal friction, and ocean-circulation overlays on a shared polar grid.",
         refinedBasinsUrl: "/tools/data/greenland_basins_ps_v1_4_2.json",
         basinToggleLabel: "Show basins",
         basinStatusLabel: "basins",
         defaultDatasetKey: "3km",
         capabilities: {
           velocity: true,
+          basalFriction: true,
           flowline: true,
           rise: false,
           oceanCurrents: true,
@@ -1080,6 +1105,10 @@
           velocity: {
             text: "ITS_LIVE Greenland ice surface velocity mosaic (120 m, V02.1)",
             url: "https://nsidc.org/data/NSIDC-0776/versions/2",
+          },
+          basalFriction: {
+            text: "Jager et al. (2026) Insights from an ensemble inverse method to quantify basal friction uncertainties for ice-sheet models - Part 1: Greenland ice sheet",
+            url: "https://essopenarchive.org/doi/full/10.22541/essoar.177099472.28419248",
           },
           oceanCurrents: {
             text: "Copernicus Marine Arctic Ocean Physics Analysis and Forecast (monthly mean ocean velocity, temperature, and salinity)",
@@ -1096,6 +1125,8 @@
             binUrl: "/tools/data/bedmachine_greenland_v6_3km.bin",
             velocityMetaUrl: "/tools/data/greenland_ice_velocity_3km.meta.json",
             velocityBinUrl: "/tools/data/greenland_ice_velocity_3km.bin",
+            basalFrictionMetaUrl: "/tools/data/greenland_basal_friction_3km.meta.json?v=20260314-taub-v1",
+            basalFrictionBinUrl: "/tools/data/greenland_basal_friction_3km.bin?v=20260314-taub-v1",
             oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260312-greenland-layered-v1",
             oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260312-greenland-layered-v1",
           },
@@ -1107,6 +1138,8 @@
             binUrl: "/tools/data/bedmachine_greenland_v6_1km.bin",
             velocityMetaUrl: "/tools/data/greenland_ice_velocity_1km.meta.json",
             velocityBinUrl: "/tools/data/greenland_ice_velocity_1km.bin",
+            basalFrictionMetaUrl: "/tools/data/greenland_basal_friction_1km.meta.json?v=20260314-taub-v1",
+            basalFrictionBinUrl: "/tools/data/greenland_basal_friction_1km.bin?v=20260314-taub-v1",
             oceanCurrentsMetaUrl: "/tools/data/greenland_ocean_currents_cmems_202508.meta.json?v=20260312-greenland-layered-v1",
             oceanCurrentsBinUrl: "/tools/data/greenland_ocean_currents_cmems_202508.bin?v=20260312-greenland-layered-v1",
             velocityMeshStride: 3,
@@ -1173,6 +1206,7 @@
       showIceBottom: document.getElementById("showIceBottom"),
       showVelocity: document.getElementById("showVelocity"),
       showFlowline: document.getElementById("showFlowline"),
+      showBasalFriction: document.getElementById("showBasalFriction"),
       showBasalMelt: document.getElementById("showBasalMelt"),
       showThermalDriving: document.getElementById("showThermalDriving"),
       showOceanCurrents: document.getElementById("showOceanCurrents"),
@@ -1197,6 +1231,10 @@
       velocityLegendBar: document.getElementById("velocityLegendBar"),
       velocityLegendLabels: document.getElementById("velocityLegendLabels"),
       velocityLegendNote: document.getElementById("velocityLegendNote"),
+      basalFrictionLegendSection: document.getElementById("basalFrictionLegendSection"),
+      basalFrictionLegendBar: document.getElementById("basalFrictionLegendBar"),
+      basalFrictionLegendLabels: document.getElementById("basalFrictionLegendLabels"),
+      basalFrictionLegendNote: document.getElementById("basalFrictionLegendNote"),
       basalMeltLegendSection: document.getElementById("basalMeltLegendSection"),
       basalMeltLegendBar: document.getElementById("basalMeltLegendBar"),
       basalMeltLegendLabels: document.getElementById("basalMeltLegendLabels"),
@@ -1227,6 +1265,7 @@
     let iceBottomMesh;
     let iceSideMesh;
     let velocitySurfaceMesh;
+    let basalFrictionMesh;
     let basalMeltMesh;
     let thermalDrivingMesh;
     let effectivePressureMesh;
@@ -1262,11 +1301,13 @@
     let mobilePanelResizeObserver = null;
     let currentCoreContext = null;
     let currentVelocityMeta = null;
+    let currentBasalFrictionMeta = null;
     let currentRiseMeta = null;
     let currentHydrologyMeta = null;
     let currentOceanCurrentMeta = null;
     let currentVelocityMedianSpeed = Number.NaN;
     let velocityLoadPromise = null;
+    let basalFrictionLoadPromise = null;
     let riseLoadPromise = null;
     let hydrologyLoadPromise = null;
     let oceanCurrentLoadPromise = null;
@@ -1506,12 +1547,16 @@
       const basinAvailable = Boolean(
         !isShowcaseMode && capabilities.refinedBasins && dataset?.refinedBasinsUrl && !getDatasetBasinUnavailable(dataset)
       );
+      const basalFrictionAvailable = Boolean(
+        !isShowcaseMode && capabilities.basalFriction && dataset?.basalFrictionMetaUrl && dataset?.basalFrictionBinUrl
+      );
       const riseAvailable = Boolean(!isShowcaseMode && capabilities.rise && dataset?.riseMetaUrl && dataset?.riseBinUrl);
       const oceanCurrentAvailable = Boolean(
         !isShowcaseMode && capabilities.oceanCurrents && dataset?.oceanCurrentsMetaUrl && dataset?.oceanCurrentsBinUrl
       );
       setToggleAvailability(controlsUI.showVelocity, capabilities.velocity);
       setToggleAvailability(controlsUI.showFlowline, capabilities.velocity && capabilities.flowline);
+      setToggleAvailability(controlsUI.showBasalFriction, basalFrictionAvailable);
       setToggleAvailability(controlsUI.showBasalMelt, riseAvailable);
       setToggleAvailability(controlsUI.showThermalDriving, riseAvailable);
       setToggleAvailability(controlsUI.showOceanCurrents, oceanCurrentAvailable);
@@ -1529,6 +1574,9 @@
         : datasetSelectionByRegion[region.key] || getDefaultDatasetKey(region.key);
       const dataset = getDatasetConfig(region.key, datasetKey);
       const capabilities = dataset?.capabilities || region.capabilities;
+      const basalFrictionAvailable = Boolean(
+        !isShowcaseMode && capabilities.basalFriction && dataset?.basalFrictionMetaUrl && dataset?.basalFrictionBinUrl
+      );
       const riseAvailable = Boolean(!isShowcaseMode && capabilities.rise && dataset?.riseMetaUrl && dataset?.riseBinUrl);
       const oceanCurrentAvailable = Boolean(
         !isShowcaseMode && capabilities.oceanCurrents && dataset?.oceanCurrentsMetaUrl && dataset?.oceanCurrentsBinUrl
@@ -1543,6 +1591,9 @@
       }
       if (controlsUI.velocityLegendSection) {
         controlsUI.velocityLegendSection.hidden = !(capabilities.velocity && (controlsUI.showVelocity.checked || controlsUI.showFlowline.checked));
+      }
+      if (controlsUI.basalFrictionLegendSection) {
+        controlsUI.basalFrictionLegendSection.hidden = !(basalFrictionAvailable && controlsUI.showBasalFriction.checked);
       }
       if (controlsUI.basalMeltLegendSection) {
         controlsUI.basalMeltLegendSection.hidden = !(riseAvailable && controlsUI.showBasalMelt.checked);
@@ -1612,6 +1663,7 @@
       controlsUI.showIceBottom.checked = true;
       controlsUI.showVelocity.checked = false;
       controlsUI.showFlowline.checked = false;
+      controlsUI.showBasalFriction.checked = false;
       controlsUI.showBasalMelt.checked = false;
       controlsUI.showThermalDriving.checked = false;
       controlsUI.showOceanCurrents.checked = false;
@@ -1621,6 +1673,7 @@
       controlsUI.showSea.checked = false;
       controlsUI.showVelocity.disabled = true;
       controlsUI.showFlowline.disabled = true;
+      controlsUI.showBasalFriction.disabled = true;
       controlsUI.showBasalMelt.disabled = true;
       controlsUI.showThermalDriving.disabled = true;
       controlsUI.showOceanCurrents.disabled = true;
@@ -1693,7 +1746,20 @@
       range: [0, 3000],
       knee: 20,
       ticks: [0, 30, 100, 300, 1000, 3000],
-      note: "nonlinear scale clipped to 0 to 3000 m/yr",
+      note: "",
+    });
+    const BASAL_FRICTION_COLOR_STOPS = [
+      [0.0, [0.047, 0.118, 0.259]],
+      [0.26, [0.125, 0.478, 0.678]],
+      [0.52, [0.88, 0.91, 0.79]],
+      [0.78, [0.851, 0.545, 0.188]],
+      [1.0, [0.588, 0.094, 0.114]],
+    ];
+    const BASAL_FRICTION_VISUALIZATION = Object.freeze({
+      range: [0, 0.3],
+      knee: 0.015,
+      ticks: [0, 0.02, 0.04, 0.08, 0.15, 0.3],
+      note: "",
     });
     const VELOCITY_BLOCKING_OVERLAY_ENABLED = false;
     const OCEAN_CURRENT_BLOCKING_OVERLAY_ENABLED = true;
@@ -2038,6 +2104,29 @@
       return VELOCITY_VISUALIZATION;
     }
 
+    function getBasalFrictionVisualizationConfig() {
+      const metaRange = currentBasalFrictionMeta?.visualization?.display_range_mpa;
+      const metaKnee = Number(currentBasalFrictionMeta?.visualization?.knee_mpa);
+      const metaTicks = Array.isArray(currentBasalFrictionMeta?.visualization?.ticks_mpa)
+        ? currentBasalFrictionMeta.visualization.ticks_mpa.map((value) => Number(value))
+        : null;
+      const fallback = BASAL_FRICTION_VISUALIZATION;
+      const rawTicks =
+        Array.isArray(metaTicks) && metaTicks.length >= 2 && metaTicks.every((value) => Number.isFinite(value))
+          ? metaTicks
+          : fallback.ticks;
+      const ticks = Array.from(new Set(rawTicks.map((value) => Number(value.toFixed(6))))).sort((a, b) => a - b);
+      return {
+        range:
+          Array.isArray(metaRange) && metaRange.length >= 2 && Number.isFinite(Number(metaRange[0])) && Number.isFinite(Number(metaRange[1]))
+            ? [Number(metaRange[0]), Number(metaRange[1])]
+            : fallback.range,
+        knee: Number.isFinite(metaKnee) && metaKnee > 0 ? metaKnee : fallback.knee,
+        ticks,
+        note: currentBasalFrictionMeta?.visualization?.note || fallback.note,
+      };
+    }
+
     function velocityScaleT(speedMetersPerYear) {
       const { range, knee } = getVelocityVisualizationConfig();
       const minValue = Number(range[0]);
@@ -2048,22 +2137,120 @@
       return clamp01(scaled);
     }
 
+    function basalFrictionScaleT(valueMpa) {
+      const { range, knee } = getBasalFrictionVisualizationConfig();
+      const minValue = Number(range[0]);
+      const maxValue = Number(range[1]);
+      const clamped = Math.max(minValue, Math.min(maxValue, Number(valueMpa)));
+      const safeKnee = Math.max(1e-6, Number(knee) || 1);
+      const scaled =
+        Math.log1p(Math.max(0, clamped - minValue) / safeKnee) /
+        Math.log1p(Math.max(1e-6, maxValue - minValue) / safeKnee);
+      return clamp01(scaled);
+    }
+
     function formatVelocityTick(value) {
+      if (value === 0) return "0 m/yr";
       return formatCoord(value, 0);
+    }
+
+    function formatBasalFrictionTick(value) {
+      if (value === 0) return "0 Mpa";
+      if (Math.abs(value) < 0.1) return formatCoord(value, 2);
+      if (Math.abs(value) < 1) {
+        const roundedToTenth = Number(value.toFixed(1));
+        return Math.abs(value - roundedToTenth) > 1e-6 ? formatCoord(value, 2) : formatCoord(value, 1);
+      }
+      return formatCoord(value, 1);
+    }
+
+    function layoutTickLegendLabels(targetEl, { minGapPx = 6 } = {}) {
+      if (!targetEl) return false;
+      const labels = Array.from(targetEl.querySelectorAll("span[data-left-percent]"));
+      if (!labels.length) {
+        targetEl.style.removeProperty("height");
+        return true;
+      }
+
+      const containerWidth = targetEl.clientWidth;
+      if (!containerWidth) return false;
+
+      const fontSizePx = parseFloat(window.getComputedStyle(targetEl).fontSize) || 12;
+      const rowHeightPx = Math.max(14, Math.ceil(fontSizePx * 1.15));
+      const rowStridePx = rowHeightPx + 2;
+      const rowRightEdges = [];
+
+      for (const label of labels) {
+        const leftPercent = clamp01((Number(label.dataset.leftPercent) || 0) / 100) * 100;
+        const leftPx = (leftPercent / 100) * containerWidth;
+        const widthPx = Math.ceil(label.getBoundingClientRect().width || label.offsetWidth || 0);
+        const anchor = label.dataset.anchor || "center";
+        let labelLeftPx = leftPx;
+        if (anchor === "center") {
+          labelLeftPx -= widthPx * 0.5;
+        } else if (anchor === "right") {
+          labelLeftPx -= widthPx;
+        }
+        labelLeftPx = clamp(labelLeftPx, 0, Math.max(0, containerWidth - widthPx));
+
+        let rowIndex = 0;
+        while (rowIndex < rowRightEdges.length && labelLeftPx < rowRightEdges[rowIndex] + minGapPx) {
+          rowIndex += 1;
+        }
+        rowRightEdges[rowIndex] = labelLeftPx + widthPx;
+
+        label.style.left = `${labelLeftPx.toFixed(2)}px`;
+        label.style.top = `${rowIndex * rowStridePx}px`;
+        label.style.transform = "none";
+      }
+
+      const rowCount = Math.max(1, rowRightEdges.length);
+      targetEl.style.height = `${(rowCount - 1) * rowStridePx + rowHeightPx}px`;
+      return true;
+    }
+
+    function scheduleTickLegendLayout(targetEl, options) {
+      if (!targetEl) return;
+      window.requestAnimationFrame(() => {
+        if (layoutTickLegendLabels(targetEl, options)) return;
+        window.requestAnimationFrame(() => {
+          layoutTickLegendLabels(targetEl, options);
+        });
+      });
+    }
+
+    function renderTickLegendLabels(targetEl, ticks, scaleFn, formatFn, layoutOptions = {}) {
+      if (!targetEl) return;
+      targetEl.classList.add("legend-labels--ticks");
+      targetEl.innerHTML = ticks
+        .map((value) => {
+          const left = clamp01(scaleFn(value)) * 100;
+          const anchor = left <= 4 ? "left" : left >= 94 ? "right" : "center";
+          const translate = anchor === "left" ? "translateX(0)" : anchor === "right" ? "translateX(-100%)" : "translateX(-50%)";
+          return `<span data-left-percent="${left.toFixed(4)}" data-anchor="${anchor}" style="left:${left.toFixed(
+            2
+          )}%;transform:${translate};">${formatFn(value)}</span>`;
+        })
+        .join("");
+      scheduleTickLegendLayout(targetEl, layoutOptions);
     }
 
     function renderVelocityLegendTicks() {
       if (!controlsUI.velocityLegendLabels) return;
       const { ticks } = getVelocityVisualizationConfig();
-      controlsUI.velocityLegendLabels.classList.add("legend-labels--ticks");
-      controlsUI.velocityLegendLabels.innerHTML = ticks
-        .map((value) => {
-          const left = velocityScaleT(value) * 100;
-          const translate =
-            left <= 4 ? "translateX(0)" : left >= 94 ? "translateX(-100%)" : "translateX(-50%)";
-          return `<span style="left:${left.toFixed(2)}%;transform:${translate};">${formatVelocityTick(value)}</span>`;
-        })
-        .join("");
+      renderTickLegendLabels(controlsUI.velocityLegendLabels, ticks, velocityScaleT, formatVelocityTick);
+    }
+
+    function renderBasalFrictionLegendTicks() {
+      if (!controlsUI.basalFrictionLegendLabels) return;
+      const { ticks } = getBasalFrictionVisualizationConfig();
+      renderTickLegendLabels(
+        controlsUI.basalFrictionLegendLabels,
+        ticks,
+        basalFrictionScaleT,
+        formatBasalFrictionTick,
+        { minGapPx: 8 }
+      );
     }
 
     function formatBasalMeltTick(value) {
@@ -2096,15 +2283,7 @@
     function renderBasalMeltLegendTicks() {
       if (!controlsUI.basalMeltLegendLabels) return;
       const { ticks } = getBasalMeltVisualizationConfig();
-      controlsUI.basalMeltLegendLabels.classList.add("legend-labels--ticks");
-      controlsUI.basalMeltLegendLabels.innerHTML = ticks
-        .map((value) => {
-          const left = basalMeltScaleT(value) * 100;
-          const translate =
-            left <= 4 ? "translateX(0)" : left >= 94 ? "translateX(-100%)" : "translateX(-50%)";
-          return `<span style="left:${left.toFixed(2)}%;transform:${translate};">${formatBasalMeltTick(value)}</span>`;
-        })
-        .join("");
+      renderTickLegendLabels(controlsUI.basalMeltLegendLabels, ticks, basalMeltScaleT, formatBasalMeltTick);
     }
 
     function updateBedLegend() {
@@ -2140,7 +2319,26 @@
       });
       renderVelocityLegendTicks();
       if (controlsUI.velocityLegendNote) {
-        controlsUI.velocityLegendNote.textContent = getVelocityVisualizationConfig().note;
+        const note = getVelocityVisualizationConfig().note || "";
+        controlsUI.velocityLegendNote.textContent = note;
+        controlsUI.velocityLegendNote.hidden = !note;
+      }
+    }
+
+    function updateBasalFrictionLegend() {
+      updateContinuousLegend(controlsUI.basalFrictionLegendBar, (t) => {
+        const { range, knee } = getBasalFrictionVisualizationConfig();
+        const minValue = Number(range[0]);
+        const maxValue = Number(range[1]);
+        const safeKnee = Math.max(1e-6, Number(knee) || 1);
+        const value = minValue + safeKnee * Math.expm1(t * Math.log1p(Math.max(1e-6, maxValue - minValue) / safeKnee));
+        return basalFrictionColor(value);
+      });
+      renderBasalFrictionLegendTicks();
+      if (controlsUI.basalFrictionLegendNote) {
+        const note = getBasalFrictionVisualizationConfig().note || "";
+        controlsUI.basalFrictionLegendNote.textContent = note;
+        controlsUI.basalFrictionLegendNote.hidden = !note;
       }
     }
 
@@ -2298,6 +2496,10 @@
         ],
         scaled
       );
+    }
+
+    function basalFrictionColor(valueMpa) {
+      return sampleColorStops(BASAL_FRICTION_COLOR_STOPS, basalFrictionScaleT(valueMpa));
     }
 
     function getVelocityTextureType(rendererInstance, nx = 0, ny = 0) {
@@ -3780,6 +3982,7 @@
         showIceBottom: Boolean(controlsUI.showIceBottom?.checked),
         showVelocity: Boolean(controlsUI.showVelocity?.checked),
         showFlowline: Boolean(controlsUI.showFlowline?.checked),
+        showBasalFriction: Boolean(controlsUI.showBasalFriction?.checked),
         showBasalMelt: Boolean(controlsUI.showBasalMelt?.checked),
         showThermalDriving: Boolean(controlsUI.showThermalDriving?.checked),
         showOceanCurrents: Boolean(controlsUI.showOceanCurrents?.checked),
@@ -3804,6 +4007,7 @@
         legends: {
           bed: Boolean(controlsUI.bedLegendSection && !controlsUI.bedLegendSection.hidden),
           velocity: Boolean(controlsUI.velocityLegendSection && !controlsUI.velocityLegendSection.hidden),
+          basalFriction: Boolean(controlsUI.basalFrictionLegendSection && !controlsUI.basalFrictionLegendSection.hidden),
           basalMelt: Boolean(controlsUI.basalMeltLegendSection && !controlsUI.basalMeltLegendSection.hidden),
           thermalDriving: Boolean(controlsUI.thermalDrivingLegendSection && !controlsUI.thermalDrivingLegendSection.hidden),
           oceanCurrents: Boolean(controlsUI.oceanLegendSection && !controlsUI.oceanLegendSection.hidden),
@@ -3841,6 +4045,7 @@
           iceBottom: Boolean(iceBottomMesh && iceBottomMesh.visible),
           velocity: Boolean(velocitySurfaceMesh && velocitySurfaceMesh.visible),
           flowline: Boolean(flowlineMesh && flowlineMesh.visible),
+          basalFriction: Boolean(basalFrictionMesh && basalFrictionMesh.visible),
           basalMelt: Boolean(basalMeltMesh && basalMeltMesh.visible),
           thermalDriving: Boolean(thermalDrivingMesh && thermalDrivingMesh.visible),
           oceanCurrents: Boolean(oceanCurrentMesh && oceanCurrentMesh.visible),
@@ -3915,6 +4120,7 @@
       iceSideMesh = disposeMesh(iceSideMesh);
       velocitySurfaceMesh = disposeMesh(velocitySurfaceMesh);
       velocityDataTexture = disposeTexture(velocityDataTexture);
+      basalFrictionMesh = disposeMesh(basalFrictionMesh);
       basalMeltMesh = disposeMesh(basalMeltMesh);
       basalMeltDataTexture = disposeTexture(basalMeltDataTexture);
       thermalDrivingMesh = disposeMesh(thermalDrivingMesh);
@@ -4342,7 +4548,22 @@
       syncIceSurfaceVisibilityFromControls();
     }
 
-    function hideIceAndIceBottomSurfacesForBedOverlay() {
+    function hideBedStressOverlaysExcept(activeKey = "") {
+      let changed = false;
+      if (activeKey !== "basalFriction" && controlsUI.showBasalFriction.checked) {
+        controlsUI.showBasalFriction.checked = false;
+        changed = true;
+      }
+      if (activeKey !== "effectivePressure" && controlsUI.showEffectivePressure.checked) {
+        controlsUI.showEffectivePressure.checked = false;
+        changed = true;
+      }
+      if (basalFrictionMesh) basalFrictionMesh.visible = controlsUI.showBasalFriction.checked;
+      if (effectivePressureMesh) effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
+      return changed;
+    }
+
+    function hideSurfaceAndVelocityOverlaysForBedOverlay() {
       let changed = false;
       if (controlsUI.showIce.checked) {
         controlsUI.showIce.checked = false;
@@ -4352,9 +4573,20 @@
         controlsUI.showIceBottom.checked = false;
         changed = true;
       }
+      if (controlsUI.showVelocity.checked) {
+        controlsUI.showVelocity.checked = false;
+        changed = true;
+      }
+      if (controlsUI.showFlowline.checked) {
+        controlsUI.showFlowline.checked = false;
+        changed = true;
+      }
       if (changed) {
         syncIceSurfaceVisibilityFromControls();
+        if (velocitySurfaceMesh) velocitySurfaceMesh.visible = false;
+        updateFlowlineVisibility();
       }
+      return changed;
     }
 
     function updateFlowlineVisibility() {
@@ -4752,6 +4984,9 @@
         }
       }
       updateFullscreenControls();
+      scheduleTickLegendLayout(controlsUI?.velocityLegendLabels);
+      scheduleTickLegendLayout(controlsUI?.basalFrictionLegendLabels, { minGapPx: 8 });
+      scheduleTickLegendLayout(controlsUI?.basalMeltLegendLabels);
     }
 
     function setInteractionGateActive(active) {
@@ -4933,12 +5168,13 @@
       controlsUI.exaggeration.addEventListener("input", () => {
         const value = Number(controlsUI.exaggeration.value);
         controlsUI.exaggerationValue.textContent = `${value.toFixed(1)}x`;
-        if (bedMesh) bedMesh.scale.y = value;
-        if (iceMesh) iceMesh.scale.y = value;
-        if (iceBottomMesh) iceBottomMesh.scale.y = value;
-        if (iceSideMesh) iceSideMesh.scale.y = value;
-        if (velocitySurfaceMesh) velocitySurfaceMesh.scale.y = value;
-        if (basalMeltMesh) basalMeltMesh.scale.y = value;
+      if (bedMesh) bedMesh.scale.y = value;
+      if (iceMesh) iceMesh.scale.y = value;
+      if (iceBottomMesh) iceBottomMesh.scale.y = value;
+      if (iceSideMesh) iceSideMesh.scale.y = value;
+      if (velocitySurfaceMesh) velocitySurfaceMesh.scale.y = value;
+      if (basalFrictionMesh) basalFrictionMesh.scale.y = value;
+      if (basalMeltMesh) basalMeltMesh.scale.y = value;
         if (thermalDrivingMesh) thermalDrivingMesh.scale.y = value;
         if (effectivePressureMesh) effectivePressureMesh.scale.y = value;
         if (subglacialChannelMesh) subglacialChannelMesh.scale.y = value;
@@ -4963,26 +5199,56 @@
         updateLegendVisibility();
       });
       controlsUI.showIce.addEventListener("change", () => {
+        if (controlsUI.showIce.checked) {
+          hideBedStressOverlaysExcept();
+        }
         syncIceSurfaceVisibilityFromControls();
+        updateMetaFromCurrentState();
       });
       controlsUI.showIceBottom.addEventListener("change", () => {
+        if (controlsUI.showIceBottom.checked) {
+          hideBedStressOverlaysExcept();
+        }
         syncIceSurfaceVisibilityFromControls();
+        updateMetaFromCurrentState();
       });
       controlsUI.showVelocity.addEventListener("change", () => {
+        if (controlsUI.showVelocity.checked) {
+          hideBedStressOverlaysExcept();
+        }
         updateLegendVisibility();
         if (controlsUI.showVelocity.checked && !velocitySurfaceMesh) {
           ensureVelocityLoaded({ trigger: "toggle" });
           return;
         }
         if (velocitySurfaceMesh) velocitySurfaceMesh.visible = controlsUI.showVelocity.checked;
+        updateMetaFromCurrentState();
       });
       controlsUI.showFlowline.addEventListener("change", () => {
+        if (controlsUI.showFlowline.checked) {
+          hideBedStressOverlaysExcept();
+        }
         updateLegendVisibility();
         if (controlsUI.showFlowline.checked && !velocityField) {
           ensureVelocityLoaded({ trigger: "toggle" });
           return;
         }
         updateFlowlineVisibility();
+        updateMetaFromCurrentState();
+      });
+      controlsUI.showBasalFriction.addEventListener("change", () => {
+        if (controlsUI.showBasalFriction.checked) {
+          hideBedStressOverlaysExcept("basalFriction");
+          hideSurfaceAndVelocityOverlaysForBedOverlay();
+        }
+        updateLegendVisibility();
+        if (controlsUI.showBasalFriction.checked && !basalFrictionMesh) {
+          ensureBasalFrictionLoaded({ trigger: "toggle" });
+          updateMetaFromCurrentState();
+          return;
+        }
+        if (basalFrictionMesh) basalFrictionMesh.visible = controlsUI.showBasalFriction.checked;
+        updateMetaFromCurrentState();
       });
       controlsUI.showBasalMelt.addEventListener("change", () => {
         if (controlsUI.showBasalMelt.checked && controlsUI.showThermalDriving.checked) {
@@ -5059,7 +5325,8 @@
       });
       controlsUI.showEffectivePressure.addEventListener("change", () => {
         if (controlsUI.showEffectivePressure.checked) {
-          hideIceAndIceBottomSurfacesForBedOverlay();
+          hideBedStressOverlaysExcept("effectivePressure");
+          hideSurfaceAndVelocityOverlaysForBedOverlay();
         }
         updateLegendVisibility();
         if (controlsUI.showEffectivePressure.checked && !effectivePressureMesh) {
@@ -5067,10 +5334,11 @@
           return;
         }
         if (effectivePressureMesh) effectivePressureMesh.visible = controlsUI.showEffectivePressure.checked;
+        updateMetaFromCurrentState();
       });
       controlsUI.showSubglacialChannels.addEventListener("change", () => {
         if (controlsUI.showSubglacialChannels.checked) {
-          hideIceAndIceBottomSurfacesForBedOverlay();
+          hideSurfaceAndVelocityOverlaysForBedOverlay();
         }
         updateLegendVisibility();
         if (controlsUI.showSubglacialChannels.checked && !subglacialChannelMesh) {
@@ -5078,6 +5346,7 @@
           return;
         }
         if (subglacialChannelMesh) subglacialChannelMesh.visible = controlsUI.showSubglacialChannels.checked;
+        updateMetaFromCurrentState();
       });
       controlsUI.showSea.addEventListener("change", () => {
         if (seaLevelMesh) seaLevelMesh.visible = controlsUI.showSea.checked;
@@ -5090,6 +5359,7 @@
         if (iceBottomMesh) iceBottomMesh.material.wireframe = enable;
         if (iceSideMesh) iceSideMesh.material.wireframe = enable;
         if (velocitySurfaceMesh) velocitySurfaceMesh.material.wireframe = enable;
+        if (basalFrictionMesh) basalFrictionMesh.material.wireframe = enable;
         if (basalMeltMesh) basalMeltMesh.material.wireframe = enable;
         if (thermalDrivingMesh) thermalDrivingMesh.material.wireframe = enable;
         if (effectivePressureMesh) effectivePressureMesh.material.wireframe = enable;
@@ -5124,13 +5394,17 @@
       updateFullscreenControls();
     }
 
-    function updateMeta(meta, dataset, velocityMeta, riseMeta, hydrologyMeta, oceanCurrentMeta, velocityMedianSpeed) {
+    function updateMeta(meta, dataset, velocityMeta, basalFrictionMeta, riseMeta, hydrologyMeta, oceanCurrentMeta, velocityMedianSpeed) {
       const region = getRegionConfig(dataset.regionKey);
       const capabilities = dataset.capabilities || region.capabilities;
       const grid = meta.grid;
       const bedStats = meta.fields.find((f) => f.name === "bed").stats_m;
       const thickStats = meta.fields.find((f) => f.name === "thickness").stats_m;
       const speedStats = velocityMeta?.fields?.find((f) => f.name === "speed")?.stats_m_per_year;
+      const basalFrictionField = basalFrictionMeta?.fields?.find((f) => f.name === "basal_friction");
+      const basalFrictionStats = basalFrictionField?.stats_mpa;
+      const basalFrictionQuantiles = basalFrictionField?.quantiles_mpa;
+      const basalFrictionCoverage = basalFrictionMeta?.coverage;
       const riseBasalStats = riseMeta?.fields?.find((f) => f.name === "ismr")?.stats_m_per_year;
       const riseThermalStats = riseMeta?.fields?.find((f) => f.name === "tstar_zice")?.stats_c;
       const riseDraftStats = riseMeta?.fields?.find((f) => f.name === "zice")?.stats_m;
@@ -5239,6 +5513,27 @@
         <li><strong>Status:</strong> Not yet added for ${region.label}</li>
       `;
 
+      const basalFrictionSection = capabilities.basalFriction
+        ? `
+        <li class="meta-group">Basal Friction (inverted)</li>
+        <li><strong>Grounded Coverage:</strong> ${
+          basalFrictionCoverage
+            ? `${fmtPercent(basalFrictionCoverage.valid_fraction)} of grid (${fmtInt(basalFrictionCoverage.valid_count)} / ${fmtInt(
+                basalFrictionCoverage.cell_count
+              )} cells)`
+            : "Available on demand"
+        }</li>
+        <li><strong>Tau_b:</strong> ${basalFrictionStats ? `${fmtShort(basalFrictionStats.min, 3)} to ${fmtShort(basalFrictionStats.max, 2)} MPa` : "n/a"}</li>
+        <li><strong>Mean Tau_b:</strong> ${basalFrictionStats ? `${fmtShort(basalFrictionStats.mean, 3)} MPa` : "n/a"}</li>
+        <li><strong>Typical high Tau_b:</strong> ${
+          basalFrictionQuantiles ? `${fmtShort(basalFrictionQuantiles.q995, 2)} MPa (99.5th percentile)` : "n/a"
+        }</li>
+      `
+        : `
+        <li class="meta-group">Basal Friction (inverted)</li>
+        <li><strong>Status:</strong> Not yet added for ${region.label}</li>
+      `;
+
       const riseSection = capabilities.rise
         ? `
         <li class="meta-group">Ice-Shelf Basal Melt (simulated)</li>
@@ -5302,6 +5597,9 @@
       if (capabilities.velocity && dataset.sources.velocity) {
         sourceLines.push(renderSourceLine("Surface Velocity", dataset.sources.velocity));
       }
+      if (capabilities.basalFriction && dataset.sources.basalFriction) {
+        sourceLines.push(renderSourceLine("Basal Friction", dataset.sources.basalFriction));
+      }
       if (capabilities.hydrology && dataset.sources.hydrology) {
         sourceLines.push(renderSourceLine("Subglacial Hydrology", dataset.sources.hydrology));
       }
@@ -5319,7 +5617,7 @@
       if (capabilities.rise && dataset.sources.rise) {
         sourceLines.push(renderSourceLine("Melt Drivers", dataset.sources.rise, " (15,269 ice-shelf cells)"));
       }
-      if (!capabilities.velocity && !capabilities.hydrology && !capabilities.refinedBasins) {
+      if (!capabilities.velocity && !capabilities.basalFriction && !capabilities.hydrology && !capabilities.refinedBasins) {
         sourceLines.push(
           `<li class="meta-compact"><strong>Current ${region.label} scope:</strong> Bed topography, ice surface, and ice base are enabled in this version.</li>`
         );
@@ -5335,6 +5633,7 @@
         <li><strong>Mean Ice Thickness:</strong> ${Number.isFinite(thickStats.mean) ? `${fmtInt(thickStats.mean)} m` : "n/a"}</li>
 
         ${velocitySection}
+        ${basalFrictionSection}
         ${hydrologySection}
         ${oceanCurrentSection}
         ${riseSection}
@@ -5353,6 +5652,9 @@
         if (capabilities.oceanCurrents && oceanStreamlineCount > 0) {
           fieldParts.push(`Ocean streamlines: ${fmtInt(oceanStreamlineCount)}`);
         }
+        if (capabilities.basalFriction && controlsUI.showBasalFriction.checked && basalFrictionQuantiles) {
+          fieldParts.push(`Tau_b: ${fmtShort(basalFrictionQuantiles.q995, 2)} MPa high-end`);
+        }
         if (capabilities.rise && controlsUI.showBasalMelt.checked && riseBasalStats) {
           fieldParts.push(`Basal melt: ${fmtShort(riseBasalStats.max, 1)} m/yr max`);
         }
@@ -5369,6 +5671,7 @@
     function updateMetaFromCurrentState() {
       updateOceanCurrentLayerControls();
       updateLegendVisibility();
+      updateBasalFrictionLegend();
       updateBasalMeltLegend();
       updateThermalDrivingLegend();
       if (!currentCoreContext) {
@@ -5379,6 +5682,7 @@
         currentCoreContext.meta,
         currentCoreContext.dataset,
         currentVelocityMeta,
+        currentBasalFrictionMeta,
         currentRiseMeta,
         currentHydrologyMeta,
         currentOceanCurrentMeta,
@@ -5656,6 +5960,15 @@
             return null;
           });
 
+      const basalFrictionMetaPromise = !context.dataset.basalFrictionMetaUrl
+        ? Promise.resolve(null)
+        : context.basalFrictionPrefetchMeta
+        ? Promise.resolve(context.basalFrictionPrefetchMeta)
+        : fetchJsonStrict(context.dataset.basalFrictionMetaUrl, "Failed to load basal-friction metadata").catch((error) => {
+            console.warn("Basal-friction metadata prefetch failed:", error);
+            return null;
+          });
+
       const hydrologyMetaPromise = !context.dataset.hydrologyMetaUrl
         ? Promise.resolve(null)
         : context.hydrologyPrefetchMeta
@@ -5693,14 +6006,26 @@
               return null;
             });
 
-      Promise.all([velocityMetaPromise, riseMetaPromise, hydrologyMetaPromise, oceanCurrentMetaPromise, basinMetaPromise]).then(
-        ([velocityMeta, riseMeta, hydrologyMeta, oceanCurrentMeta, basinData]) => {
+      Promise.all([
+        velocityMetaPromise,
+        basalFrictionMetaPromise,
+        riseMetaPromise,
+        hydrologyMetaPromise,
+        oceanCurrentMetaPromise,
+        basinMetaPromise,
+      ]).then(
+        ([velocityMeta, basalFrictionMeta, riseMeta, hydrologyMeta, oceanCurrentMeta, basinData]) => {
         if (context !== currentCoreContext || context.generation !== loadGeneration) return;
 
         let hasUpdate = false;
         if (velocityMeta) {
           context.velocityPrefetchMeta = velocityMeta;
           currentVelocityMeta = velocityMeta;
+          hasUpdate = true;
+        }
+        if (basalFrictionMeta) {
+          context.basalFrictionPrefetchMeta = basalFrictionMeta;
+          currentBasalFrictionMeta = basalFrictionMeta;
           hasUpdate = true;
         }
         if (riseMeta) {
@@ -5742,6 +6067,10 @@
     function getHydrologyLayerMeshStride(context) {
       if (!context?.dataset) return 1;
       return context.dataset.id === "hd" ? HD_HYDROLOGY_MESH_STRIDE : 1;
+    }
+
+    function getBasalFrictionLayerMeshStride(context) {
+      return getHydrologyLayerMeshStride(context);
     }
 
     async function buildVelocityLayerFromPayload(
@@ -5855,6 +6184,170 @@
         setLoadingOverlayVisible(false);
       }
       return true;
+    }
+
+    async function ensureBasalFrictionLoaded({ trigger = "prefetch" } = {}) {
+      const context = currentCoreContext;
+      if (!context || context.generation !== loadGeneration) return false;
+      if (!context.dataset.capabilities.basalFriction || !context.dataset.basalFrictionMetaUrl || !context.dataset.basalFrictionBinUrl) {
+        context.basalFrictionUnavailable = true;
+        return false;
+      }
+      if (context.basalFrictionLoaded) {
+        if (basalFrictionMesh) basalFrictionMesh.visible = controlsUI.showBasalFriction.checked;
+        return true;
+      }
+      if (context.basalFrictionUnavailable) return false;
+
+      const showOverlay = trigger === "toggle";
+      const buildLayer = trigger === "toggle" || trigger === "warmup";
+
+      if (basalFrictionLoadPromise) {
+        const settled = await basalFrictionLoadPromise;
+        if (
+          trigger === "toggle" &&
+          context === currentCoreContext &&
+          context.generation === loadGeneration &&
+          !context.basalFrictionLoaded &&
+          !context.basalFrictionUnavailable
+        ) {
+          return ensureBasalFrictionLoaded({ trigger: "toggle" });
+        }
+        return settled;
+      }
+
+      basalFrictionLoadPromise = (async () => {
+        if (showOverlay) {
+          setLoadingOverlayVisible(true);
+          updateLoadingProgress(0.08, "Loading basal friction metadata...");
+          statusEl.textContent = "Loading basal friction...";
+        }
+
+        let basalFrictionMeta = context.basalFrictionPrefetchMeta;
+        let basalFrictionBuffer = context.basalFrictionPrefetchBuffer;
+        if (!basalFrictionMeta) {
+          basalFrictionMeta = await fetchJsonStrict(context.dataset.basalFrictionMetaUrl, "Failed to load basal-friction metadata");
+          if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        }
+        if (context === currentCoreContext && context.generation === loadGeneration && basalFrictionMeta) {
+          currentBasalFrictionMeta = basalFrictionMeta;
+          updateBasalFrictionLegend();
+          updateMetaFromCurrentState();
+        }
+
+        if (!basalFrictionBuffer) {
+          basalFrictionBuffer = showOverlay
+            ? await fetchArrayBufferWithProgress(context.dataset.basalFrictionBinUrl, 0.18, 0.74, "Downloading basal friction field")
+            : await fetchArrayBufferStrict(context.dataset.basalFrictionBinUrl, "Failed to load basal-friction field");
+          if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+        }
+
+        if (!buildLayer) {
+          context.basalFrictionPrefetchMeta = basalFrictionMeta;
+          context.basalFrictionPrefetchBuffer = basalFrictionBuffer;
+          return true;
+        }
+
+        context.basalFrictionPrefetchMeta = null;
+        context.basalFrictionPrefetchBuffer = null;
+        if (basalFrictionMeta.grid.nx !== context.nx || basalFrictionMeta.grid.ny !== context.ny) {
+          throw new Error("Basal-friction grid is not aligned to BedMachine grid.");
+        }
+
+        if (showOverlay) {
+          updateLoadingProgress(0.76, "Processing basal friction field...");
+        }
+
+        const workerResult = await runGeometryWorkerTask(
+          "buildBasalFriction",
+          {
+            basalFrictionMeta,
+            basalFrictionBuffer,
+            nx: context.nx,
+            ny: context.ny,
+            cellCount: context.cellCount,
+            baseConfig: context.baseConfig,
+            bedHeights: context.bedHeights,
+            bedValid: context.bedValid,
+            mask: context.mask,
+            meshStride: getBasalFrictionLayerMeshStride(context),
+            reportProgress: showOverlay,
+          },
+          {
+            transfer: [basalFrictionBuffer],
+            onProgress: showOverlay
+              ? (progress, stage) => {
+                  const p = 0.76 + clamp01(progress) * 0.22;
+                  updateLoadingProgress(p, stage || "Processing basal friction field...");
+                }
+              : null,
+          }
+        );
+        if (context !== currentCoreContext || context.generation !== loadGeneration) return false;
+
+        basalFrictionMesh = disposeMesh(basalFrictionMesh);
+        const meshStride = getBasalFrictionLayerMeshStride(context);
+        const polygonOffset = meshStride > 1 ? -4 : -2;
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute("position", new THREE.BufferAttribute(workerResult.positions, 3));
+        geometry.setAttribute("color", new THREE.BufferAttribute(workerResult.colors, 3, true));
+        geometry.setIndex(new THREE.BufferAttribute(workerResult.indices, 1));
+        const material = new THREE.MeshBasicMaterial({
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.92,
+          side: THREE.DoubleSide,
+          depthWrite: false,
+          polygonOffset: true,
+          polygonOffsetFactor: polygonOffset,
+          polygonOffsetUnits: polygonOffset,
+        });
+        basalFrictionMesh = new THREE.Mesh(geometry, material);
+        basalFrictionMesh.scale.y = Number(controlsUI.exaggeration.value);
+        basalFrictionMesh.visible = controlsUI.showBasalFriction.checked;
+        basalFrictionMesh.material.wireframe = controlsUI.wireframe.checked;
+        basalFrictionMesh.renderOrder = 18;
+        scene.add(basalFrictionMesh);
+
+        context.basalFrictionLoaded = true;
+        context.basalFrictionPrefetchMeta = null;
+        context.basalFrictionPrefetchBuffer = null;
+        currentBasalFrictionMeta = basalFrictionMeta;
+        updateBasalFrictionLegend();
+        updateMetaFromCurrentState();
+        if (showOverlay) {
+          statusEl.textContent = getReadyStatusText(context);
+          updateLoadingProgress(1, "Basal friction layer ready");
+          setLoadingOverlayVisible(false);
+        }
+        return true;
+      })()
+        .catch((error) => {
+          console.error("Basal-friction layer load failed:", error);
+          if (context === currentCoreContext && context.generation === loadGeneration && trigger === "toggle") {
+            context.basalFrictionUnavailable = true;
+            controlsUI.showBasalFriction.checked = false;
+            controlsUI.showBasalFriction.disabled = true;
+            basalFrictionMesh = disposeMesh(basalFrictionMesh);
+            const readyText = getReadyStatusText(context);
+            const transientText = "Basal friction layer unavailable";
+            statusEl.textContent = transientText;
+            window.setTimeout(() => {
+              if (statusEl.textContent === transientText) {
+                statusEl.textContent = readyText;
+              }
+            }, 1800);
+            setLoadingOverlayVisible(false);
+          }
+          return false;
+        })
+        .finally(() => {
+          if (context === currentCoreContext) {
+            basalFrictionLoadPromise = null;
+          }
+        });
+
+      return basalFrictionLoadPromise;
     }
 
     async function ensureRiseLoaded({ trigger = "prefetch" } = {}) {
@@ -6498,6 +6991,9 @@
         await ensureVelocityLoaded({ trigger: "warmup" });
         if (!context || context !== currentCoreContext || context.generation !== loadGeneration) return;
         await nextAnimationFrame();
+        await ensureBasalFrictionLoaded({ trigger: "warmup" });
+        if (!context || context !== currentCoreContext || context.generation !== loadGeneration) return;
+        await nextAnimationFrame();
         await ensureHydrologyLoaded({ trigger: "warmup" });
         if (!context || context !== currentCoreContext || context.generation !== loadGeneration) return;
         await nextAnimationFrame();
@@ -6543,12 +7039,14 @@
       datasetSelectionByRegion[currentRegionKey] = currentDatasetKey;
       currentCoreContext = null;
       currentVelocityMeta = null;
+      currentBasalFrictionMeta = null;
       currentRiseMeta = null;
       currentHydrologyMeta = null;
       currentOceanCurrentMeta = null;
       currentVelocityMedianSpeed = Number.NaN;
       currentRefinedBasinData = null;
       velocityLoadPromise = null;
+      basalFrictionLoadPromise = null;
       riseLoadPromise = null;
       hydrologyLoadPromise = null;
       oceanCurrentLoadPromise = null;
@@ -6653,6 +7151,10 @@
           velocityUnavailable: false,
           velocityPrefetchMeta: null,
           velocityPrefetchBuffer: null,
+          basalFrictionLoaded: false,
+          basalFrictionUnavailable: false,
+          basalFrictionPrefetchMeta: null,
+          basalFrictionPrefetchBuffer: null,
           riseLoaded: false,
           riseUnavailable: false,
           risePrefetchMeta: null,
@@ -6692,6 +7194,9 @@
 
         if (controlsUI.showVelocity.checked || controlsUI.showFlowline.checked) {
           ensureVelocityLoaded({ trigger: "toggle" });
+        }
+        if (controlsUI.showBasalFriction.checked && !controlsUI.showBasalFriction.disabled) {
+          ensureBasalFrictionLoaded({ trigger: "toggle" });
         }
         if (
           (controlsUI.showBasalMelt.checked || controlsUI.showThermalDriving.checked) &&
@@ -6740,6 +7245,7 @@
         await Promise.all([loadBedColorTable(), ensureHydrologyColorTables()]);
         updateBedLegend();
         updateVelocityLegend();
+        updateBasalFrictionLegend();
         updateBasalMeltLegend();
         updateThermalDrivingLegend();
         updateOceanCurrentLegend();
