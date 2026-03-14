@@ -347,18 +347,18 @@
       padding: 0;
       list-style: none;
       display: grid;
-      gap: 0;
+      gap: 8px;
       font-size: 0.84rem;
       color: #345266;
       line-height: 1.35;
     }
 
-    .meta-list li {
+    .meta-list > li {
       padding: 5px 0;
       border-bottom: 1px dashed #d7e6ef;
     }
 
-    .meta-list li:last-child {
+    .meta-list > li:last-child {
       border-bottom: none;
     }
 
@@ -366,15 +366,90 @@
       color: #13344a;
     }
 
-    .meta-list .meta-group {
-      padding-top: 10px;
-      margin-top: 4px;
+    .meta-list > .meta-section {
+      padding: 0;
       border-bottom: none;
+    }
+
+    .meta-section-details {
+      border: 1px solid rgba(137, 177, 196, 0.42);
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(248, 252, 255, 0.98) 0%, rgba(240, 248, 252, 0.96) 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+      overflow: hidden;
+    }
+
+    .meta-section-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
       font-size: 0.72rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: #4a6a7f;
       font-weight: 700;
+      transition: background-color 0.18s ease, color 0.18s ease;
+    }
+
+    .meta-section-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .meta-section-summary::marker {
+      content: "";
+    }
+
+    .meta-section-summary:hover {
+      background: rgba(92, 150, 179, 0.08);
+      color: #355568;
+    }
+
+    .meta-section-summary:focus-visible {
+      outline: 2px solid rgba(20, 116, 150, 0.35);
+      outline-offset: -2px;
+    }
+
+    .meta-section-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+    }
+
+    .meta-section-icon::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg);
+      transition: transform 0.18s ease;
+    }
+
+    .meta-section-details[open] .meta-section-icon::before {
+      transform: rotate(225deg);
+    }
+
+    .meta-section-items {
+      margin: 0;
+      padding: 0 12px 8px;
+      list-style: none;
+    }
+
+    .meta-section-items li {
+      padding: 5px 0;
+      border-bottom: 1px dashed #d7e6ef;
+    }
+
+    .meta-section-items li:last-child {
+      border-bottom: none;
     }
 
     .meta-list .meta-compact {
@@ -472,6 +547,12 @@
       pointer-events: auto;
     }
 
+    .viewer-tool-btn--compact {
+      min-width: 0;
+      height: 30px;
+      padding: 0 10px;
+    }
+
     .viewer-tool-btn:hover {
       filter: brightness(1.08);
     }
@@ -491,6 +572,137 @@
       border-radius: 0;
       border: 0;
       box-shadow: none;
+    }
+
+    .capture-panel {
+      position: absolute;
+      top: 56px;
+      right: 12px;
+      z-index: 6;
+      width: min(312px, calc(100% - 24px));
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(169, 214, 232, 0.42);
+      background: rgba(4, 17, 24, 0.84);
+      color: #e6f8ff;
+      box-shadow: 0 18px 34px rgba(2, 10, 16, 0.32);
+      backdrop-filter: blur(10px);
+    }
+
+    .capture-panel[hidden] {
+      display: none;
+    }
+
+    .capture-panel__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .capture-panel__eyebrow {
+      color: #8bdcff;
+      font-size: 0.68rem;
+      font-family: "IBM Plex Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .capture-panel__title {
+      display: block;
+      margin-top: 3px;
+      font-size: 0.94rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .capture-panel__body {
+      display: grid;
+      gap: 12px;
+    }
+
+    .capture-panel__row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .capture-panel__row--dual {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .capture-panel__field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .capture-panel__field label,
+    .capture-panel__label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      color: #d7edf7;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .capture-panel__field input[type="range"] {
+      width: 100%;
+      margin: 0;
+    }
+
+    .capture-panel__toggle-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .capture-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(169, 214, 232, 0.22);
+      background: rgba(10, 34, 48, 0.56);
+      color: #d9effa;
+      font-size: 0.76rem;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .capture-toggle input {
+      margin: 0;
+      accent-color: #57c6e8;
+    }
+
+    .capture-segmented {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .capture-segmented button.is-active {
+      border-color: rgba(120, 225, 255, 0.62);
+      background: rgba(20, 73, 96, 0.82);
+      color: #ffffff;
+    }
+
+    .capture-manual-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .capture-manual-grid button {
+      min-width: 0;
+    }
+
+    .capture-panel__hint {
+      color: #a6d1e2;
+      font-size: 0.68rem;
+      line-height: 1.45;
     }
 
     .legend {
@@ -961,6 +1173,52 @@
         <button id="interactionToggle" class="viewer-tool-btn is-hidden" type="button">Enable 3D</button>
         <button id="viewerFullscreenToggle" class="viewer-tool-btn" type="button">Enter Fullscreen</button>
       </div>
+      <div id="capturePanel" class="capture-panel" hidden>
+        <div class="capture-panel__header">
+          <div>
+            <div class="capture-panel__eyebrow">Recording Mode</div>
+            <strong class="capture-panel__title">Capture Controls</strong>
+          </div>
+          <button id="captureHideButton" class="viewer-tool-btn viewer-tool-btn--compact" type="button">Hide Controls</button>
+        </div>
+        <div class="capture-panel__body">
+          <div class="capture-panel__row capture-panel__row--dual">
+            <button id="capturePlayButton" class="viewer-tool-btn viewer-tool-btn--compact" type="button">Play</button>
+            <button id="captureResetButton" class="viewer-tool-btn viewer-tool-btn--compact" type="button">Reset</button>
+          </div>
+          <div class="capture-panel__toggle-row">
+            <label class="capture-toggle"><input id="captureOrbitToggle" type="checkbox" checked /> Orbit</label>
+            <label class="capture-toggle"><input id="captureZoomToggle" type="checkbox" checked /> Zoom Pulse</label>
+          </div>
+          <div class="capture-panel__field">
+            <div class="capture-panel__label">Direction</div>
+            <div class="capture-segmented">
+              <button id="captureDirectionCw" class="viewer-tool-btn viewer-tool-btn--compact" type="button">CW</button>
+              <button id="captureDirectionCcw" class="viewer-tool-btn viewer-tool-btn--compact" type="button">CCW</button>
+            </div>
+          </div>
+          <div class="capture-panel__field">
+            <label for="captureSpeed">Speed <span id="captureSpeedValue" class="mono">0.70x</span></label>
+            <input id="captureSpeed" type="range" min="0.25" max="2" step="0.01" value="0.7" />
+          </div>
+          <div class="capture-panel__field">
+            <label for="captureZoomAmount">Zoom Amount <span id="captureZoomAmountValue" class="mono">8%</span></label>
+            <input id="captureZoomAmount" type="range" min="0" max="18" step="0.5" value="8" />
+          </div>
+          <div class="capture-panel__field">
+            <div class="capture-panel__label">Manual Nudge</div>
+            <div class="capture-manual-grid">
+              <button class="viewer-tool-btn viewer-tool-btn--compact" type="button" data-capture-manual="orbitLeft">Left</button>
+              <button class="viewer-tool-btn viewer-tool-btn--compact" type="button" data-capture-manual="tiltUp">Up</button>
+              <button class="viewer-tool-btn viewer-tool-btn--compact" type="button" data-capture-manual="orbitRight">Right</button>
+              <button class="viewer-tool-btn viewer-tool-btn--compact" type="button" data-capture-manual="zoomOut">Out</button>
+              <button class="viewer-tool-btn viewer-tool-btn--compact" type="button" data-capture-manual="tiltDown">Down</button>
+              <button class="viewer-tool-btn viewer-tool-btn--compact" type="button" data-capture-manual="zoomIn">In</button>
+            </div>
+          </div>
+          <div class="capture-panel__hint">Hotkeys: J/L orbit, I/K tilt, U/O zoom, H show or hide controls.</div>
+        </div>
+      </div>
       <div class="hud">
         <div id="interactionHint" class="chip">
           <strong>Mouse:</strong> drag to orbit, wheel to zoom, right-drag to pan.
@@ -976,6 +1234,7 @@
     const mode = (queryParams.get("mode") || "").toLowerCase();
     const regionParam = (queryParams.get("region") || "").toLowerCase();
     const isShowcaseMode = mode === "showcase";
+    const recordingModeEnabled = queryParams.get("recording") === "1" && !isShowcaseMode;
     const lockedRegionKey = isShowcaseMode ? "antarctica" : null;
     const lockedDatasetKey = isShowcaseMode ? "balanced" : null;
     const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
@@ -995,6 +1254,9 @@
 
     if (isShowcaseMode) {
       document.body.classList.add("showcase");
+    }
+    if (recordingModeEnabled) {
+      document.body.classList.add("recording-mode");
     }
     if (shouldUseMobileDrawer()) {
       document.body.classList.add("mobile-drawer");
@@ -1192,6 +1454,7 @@
     const statusEl = document.getElementById("status");
     const metaListEl = document.getElementById("metaList");
     const fieldStatsEl = document.getElementById("fieldStats");
+    const metaSectionOpenState = new Map();
     const interactionHintEl = document.getElementById("interactionHint");
     const loadingOverlayEl = document.getElementById("loadingOverlay");
     const loadingStageEl = document.getElementById("loadingStage");
@@ -1261,7 +1524,28 @@
       effectivePressureLegendBar: document.getElementById("effectivePressureLegendBar"),
       channelLegendSection: document.getElementById("channelLegendSection"),
       channelLegendBar: document.getElementById("channelLegendBar"),
+      capturePanel: document.getElementById("capturePanel"),
+      captureHideButton: document.getElementById("captureHideButton"),
+      capturePlayButton: document.getElementById("capturePlayButton"),
+      captureResetButton: document.getElementById("captureResetButton"),
+      captureOrbitToggle: document.getElementById("captureOrbitToggle"),
+      captureZoomToggle: document.getElementById("captureZoomToggle"),
+      captureDirectionCw: document.getElementById("captureDirectionCw"),
+      captureDirectionCcw: document.getElementById("captureDirectionCcw"),
+      captureSpeed: document.getElementById("captureSpeed"),
+      captureSpeedValue: document.getElementById("captureSpeedValue"),
+      captureZoomAmount: document.getElementById("captureZoomAmount"),
+      captureZoomAmountValue: document.getElementById("captureZoomAmountValue"),
+      captureManualButtons: Array.from(document.querySelectorAll("[data-capture-manual]")),
     };
+
+    const RECORDING_AUTO_ORBIT_RAD_PER_SEC = 0.18;
+    const RECORDING_AUTO_ZOOM_HZ = 0.12;
+    const RECORDING_MANUAL_RESPONSE_SEC = 0.12;
+    const RECORDING_MANUAL_THETA_RAD_PER_SEC = 0.75;
+    const RECORDING_MANUAL_PHI_RAD_PER_SEC = 0.55;
+    const RECORDING_MIN_POLAR_EPS = 0.015;
+    const RECORDING_FRAME_DT_LIMIT_MS = 48;
 
     let THREE;
     let OrbitControlsCtor;
@@ -1324,6 +1608,7 @@
     let backgroundWarmupScheduled = false;
     let backgroundWarmupStarted = false;
     let backgroundWarmupTimer = null;
+    let lastRenderFrameTimeMs = 0;
     let pendingViewResetOnLoad = false;
     let geometryWorker = null;
     let geometryWorkerRequestSeq = 0;
@@ -1331,6 +1616,42 @@
     const refinedBasinLabelTextureCache = new Map();
     const refinedBasinDataCache = new Map();
     const refinedBasinUnavailableUrls = new Set();
+    const recordingMotionState = {
+      enabled: recordingModeEnabled,
+      panelVisible: recordingModeEnabled,
+      playing: false,
+      orbitEnabled: true,
+      zoomEnabled: true,
+      direction: "cw",
+      speed: 0.7,
+      zoomAmount: 0.08,
+      autoElapsedSec: 0,
+      baseTarget: null,
+      baseTheta: Number.NaN,
+      basePhi: Number.NaN,
+      baseRadius: Number.NaN,
+      manualIntent: { theta: 0, phi: 0, radius: 0 },
+      manualVelocity: { theta: 0, phi: 0, radius: 0 },
+      manualKeyState: {
+        orbitLeft: false,
+        orbitRight: false,
+        tiltUp: false,
+        tiltDown: false,
+        zoomIn: false,
+        zoomOut: false,
+      },
+      manualButtonState: {
+        orbitLeft: false,
+        orbitRight: false,
+        tiltUp: false,
+        tiltDown: false,
+        zoomIn: false,
+        zoomOut: false,
+      },
+    };
+    let recordingScratchOffset = null;
+    let recordingScratchSpherical = null;
+    let recordingScratchTarget = null;
 
     const SHOWCASE_HINT_IDLE =
       "<strong>Scroll page:</strong> keep using wheel to continue reading.<br /><strong>Click this scene</strong> to enter 3D interaction.";
@@ -1735,6 +2056,345 @@
     function clamp(value, min, max) {
       if (!Number.isFinite(value)) return min;
       return Math.min(max, Math.max(min, value));
+    }
+
+    function isEditableElementActive() {
+      const activeEl = document.activeElement;
+      if (!activeEl) return false;
+      const activeTag = activeEl.tagName || "";
+      return activeTag === "INPUT" || activeTag === "SELECT" || activeTag === "TEXTAREA" || activeEl.isContentEditable;
+    }
+
+    function setTransientStatus(message, durationMs = 1800) {
+      if (!statusEl || !message) return;
+      const previous = statusEl.textContent;
+      statusEl.textContent = message;
+      window.setTimeout(() => {
+        if (statusEl.textContent === message) {
+          statusEl.textContent = previous;
+        }
+      }, durationMs);
+    }
+
+    function formatRecordingSpeedLabel(value) {
+      return `${Number(value).toFixed(2)}x`;
+    }
+
+    function formatRecordingZoomLabel(value) {
+      const percent = Number(value) * 100;
+      const digits = Number.isInteger(percent) ? 0 : 1;
+      return `${percent.toFixed(digits)}%`;
+    }
+
+    function ensureRecordingScratchObjects() {
+      if (!THREE) return false;
+      if (!recordingScratchOffset) {
+        recordingScratchOffset = new THREE.Vector3();
+      }
+      if (!recordingScratchSpherical) {
+        recordingScratchSpherical = new THREE.Spherical();
+      }
+      if (!recordingScratchTarget) {
+        recordingScratchTarget = new THREE.Vector3();
+      }
+      return true;
+    }
+
+    function getRecordingStateSnapshot() {
+      return {
+        enabled: Boolean(recordingModeEnabled),
+        panelVisible: Boolean(recordingModeEnabled && recordingMotionState.panelVisible),
+        playing: Boolean(recordingModeEnabled && recordingMotionState.playing),
+        orbitEnabled: Boolean(recordingModeEnabled && recordingMotionState.orbitEnabled),
+        zoomEnabled: Boolean(recordingModeEnabled && recordingMotionState.zoomEnabled),
+        direction: recordingMotionState.direction,
+        speed: Number(recordingMotionState.speed.toFixed(2)),
+        zoomAmount: Number(recordingMotionState.zoomAmount.toFixed(3)),
+      };
+    }
+
+    function updateRecordingControlsUi() {
+      if (!controlsUI.capturePanel) return;
+      const enabled = Boolean(recordingModeEnabled);
+      controlsUI.capturePanel.hidden = !enabled || !recordingMotionState.panelVisible;
+      if (!enabled) return;
+
+      const hasAutoMotion = recordingMotionState.orbitEnabled || recordingMotionState.zoomEnabled;
+      if (controlsUI.capturePlayButton) {
+        controlsUI.capturePlayButton.textContent = recordingMotionState.playing ? "Stop" : "Play";
+        controlsUI.capturePlayButton.disabled = !recordingMotionState.playing && !hasAutoMotion;
+        controlsUI.capturePlayButton.setAttribute("aria-pressed", recordingMotionState.playing ? "true" : "false");
+      }
+      if (controlsUI.captureOrbitToggle) {
+        controlsUI.captureOrbitToggle.checked = recordingMotionState.orbitEnabled;
+      }
+      if (controlsUI.captureZoomToggle) {
+        controlsUI.captureZoomToggle.checked = recordingMotionState.zoomEnabled;
+      }
+      if (controlsUI.captureSpeed) {
+        controlsUI.captureSpeed.value = String(recordingMotionState.speed);
+      }
+      if (controlsUI.captureSpeedValue) {
+        controlsUI.captureSpeedValue.textContent = formatRecordingSpeedLabel(recordingMotionState.speed);
+      }
+      if (controlsUI.captureZoomAmount) {
+        controlsUI.captureZoomAmount.value = String(recordingMotionState.zoomAmount * 100);
+      }
+      if (controlsUI.captureZoomAmountValue) {
+        controlsUI.captureZoomAmountValue.textContent = formatRecordingZoomLabel(recordingMotionState.zoomAmount);
+      }
+      if (controlsUI.captureDirectionCw) {
+        controlsUI.captureDirectionCw.classList.toggle("is-active", recordingMotionState.direction === "cw");
+        controlsUI.captureDirectionCw.setAttribute("aria-pressed", recordingMotionState.direction === "cw" ? "true" : "false");
+      }
+      if (controlsUI.captureDirectionCcw) {
+        controlsUI.captureDirectionCcw.classList.toggle("is-active", recordingMotionState.direction === "ccw");
+        controlsUI.captureDirectionCcw.setAttribute("aria-pressed", recordingMotionState.direction === "ccw" ? "true" : "false");
+      }
+    }
+
+    function setRecordingPanelVisible(visible, { announce = true } = {}) {
+      if (!recordingModeEnabled) return;
+      recordingMotionState.panelVisible = Boolean(visible);
+      updateRecordingControlsUi();
+      if (!announce) return;
+      if (recordingMotionState.panelVisible) {
+        setTransientStatus("Capture controls shown.");
+      } else {
+        setTransientStatus("Capture controls hidden. Press H to show.");
+      }
+    }
+
+    function getRecordingManualAxisValue(negativeKey, positiveKey) {
+      const keyState = recordingMotionState.manualKeyState;
+      const buttonState = recordingMotionState.manualButtonState;
+      const negative = Number(Boolean(keyState[negativeKey])) + Number(Boolean(buttonState[negativeKey]));
+      const positive = Number(Boolean(keyState[positiveKey])) + Number(Boolean(buttonState[positiveKey]));
+      return clamp(positive - negative, -1, 1);
+    }
+
+    function syncRecordingManualIntent() {
+      recordingMotionState.manualIntent.theta = getRecordingManualAxisValue("orbitLeft", "orbitRight");
+      recordingMotionState.manualIntent.phi = getRecordingManualAxisValue("tiltUp", "tiltDown");
+      recordingMotionState.manualIntent.radius = getRecordingManualAxisValue("zoomIn", "zoomOut");
+    }
+
+    function zeroRecordingManualVelocity() {
+      recordingMotionState.manualVelocity.theta = 0;
+      recordingMotionState.manualVelocity.phi = 0;
+      recordingMotionState.manualVelocity.radius = 0;
+    }
+
+    function clearRecordingManualState({ preserveVelocity = false } = {}) {
+      for (const key of Object.keys(recordingMotionState.manualKeyState)) {
+        recordingMotionState.manualKeyState[key] = false;
+      }
+      for (const key of Object.keys(recordingMotionState.manualButtonState)) {
+        recordingMotionState.manualButtonState[key] = false;
+      }
+      syncRecordingManualIntent();
+      if (!preserveVelocity) {
+        zeroRecordingManualVelocity();
+      }
+    }
+
+    function syncOrbitImmediately() {
+      if (!orbit) return;
+      const previousDamping = orbit.enableDamping;
+      orbit.enableDamping = false;
+      orbit.update();
+      orbit.enableDamping = previousDamping;
+    }
+
+    function captureRecordingBasePoseFromCurrentView() {
+      if (!recordingModeEnabled || !camera || !orbit || !ensureRecordingScratchObjects()) return false;
+      recordingScratchOffset.copy(camera.position).sub(orbit.target);
+      recordingScratchSpherical.setFromVector3(recordingScratchOffset);
+      if (!(recordingScratchSpherical.radius > 0)) return false;
+      recordingScratchSpherical.makeSafe();
+      recordingMotionState.baseTarget = {
+        x: Number(orbit.target.x),
+        y: Number(orbit.target.y),
+        z: Number(orbit.target.z),
+      };
+      recordingMotionState.baseTheta = Number(recordingScratchSpherical.theta);
+      recordingMotionState.basePhi = Number(recordingScratchSpherical.phi);
+      recordingMotionState.baseRadius = Number(recordingScratchSpherical.radius);
+      return true;
+    }
+
+    function stopRecordingPlayback({ syncBasePose = true } = {}) {
+      if (!recordingModeEnabled) return;
+      recordingMotionState.playing = false;
+      recordingMotionState.autoElapsedSec = 0;
+      if (syncBasePose) {
+        syncOrbitImmediately();
+        captureRecordingBasePoseFromCurrentView();
+      }
+      updateRecordingControlsUi();
+    }
+
+    function resetRecordingMotionState({ syncBasePose = true } = {}) {
+      if (!recordingModeEnabled) return;
+      stopRecordingPlayback({ syncBasePose: false });
+      clearRecordingManualState();
+      if (syncBasePose) {
+        syncOrbitImmediately();
+        captureRecordingBasePoseFromCurrentView();
+      }
+      updateRecordingControlsUi();
+    }
+
+    function setRecordingDirection(direction) {
+      if (!recordingModeEnabled) return;
+      recordingMotionState.direction = direction === "ccw" ? "ccw" : "cw";
+      updateRecordingControlsUi();
+    }
+
+    function getRecordingManualRadiusSpeed(radius) {
+      return clamp(radius * 0.18, 1.5, 14);
+    }
+
+    function easeVelocityToward(current, target, deltaSeconds) {
+      if (!(deltaSeconds > 0)) return current;
+      const alpha = 1 - Math.exp(-deltaSeconds / RECORDING_MANUAL_RESPONSE_SEC);
+      return current + (target - current) * alpha;
+    }
+
+    function applyRecordingOrbitFrame(targetLike, theta, phi, radius) {
+      if (!camera || !orbit || !ensureRecordingScratchObjects()) return false;
+      const minDistance = Math.max(0.001, Number.isFinite(orbit.minDistance) ? orbit.minDistance : 0.001);
+      const maxDistance = Number.isFinite(orbit.maxDistance) ? orbit.maxDistance : Infinity;
+      const minPolarAngle = Math.max(RECORDING_MIN_POLAR_EPS, Number.isFinite(orbit.minPolarAngle) ? orbit.minPolarAngle : 0);
+      const maxPolarAngle = Math.min(
+        Math.PI - RECORDING_MIN_POLAR_EPS,
+        Number.isFinite(orbit.maxPolarAngle) ? orbit.maxPolarAngle : Math.PI
+      );
+
+      recordingScratchTarget.set(Number(targetLike?.x) || 0, Number(targetLike?.y) || 0, Number(targetLike?.z) || 0);
+      recordingScratchSpherical.radius = clamp(radius, minDistance, maxDistance);
+      recordingScratchSpherical.theta = Number(theta) || 0;
+      recordingScratchSpherical.phi = clamp(phi, minPolarAngle, maxPolarAngle);
+      recordingScratchSpherical.makeSafe();
+      recordingScratchOffset.setFromSpherical(recordingScratchSpherical);
+
+      orbit.target.copy(recordingScratchTarget);
+      camera.position.copy(recordingScratchTarget).add(recordingScratchOffset);
+      camera.lookAt(orbit.target);
+      return true;
+    }
+
+    function startRecordingPlayback() {
+      if (!recordingModeEnabled) return;
+      if (!camera || !orbit) return;
+      if (!recordingMotionState.orbitEnabled && !recordingMotionState.zoomEnabled) {
+        setTransientStatus("Enable Orbit or Zoom Pulse first.");
+        updateRecordingControlsUi();
+        return;
+      }
+      clearRecordingManualState();
+      syncOrbitImmediately();
+      if (!captureRecordingBasePoseFromCurrentView()) return;
+      recordingMotionState.autoElapsedSec = 0;
+      recordingMotionState.playing = true;
+      updateRecordingControlsUi();
+    }
+
+    function setRecordingManualSource(sourceKey, action, active) {
+      if (!recordingModeEnabled) return;
+      const source = recordingMotionState[sourceKey];
+      if (!source || !Object.prototype.hasOwnProperty.call(source, action)) return;
+      const nextValue = Boolean(active);
+      if (source[action] === nextValue) return;
+      source[action] = nextValue;
+      if (nextValue) {
+        stopRecordingPlayback({ syncBasePose: true });
+      }
+      syncRecordingManualIntent();
+    }
+
+    function stepRecordingMotion(deltaSeconds) {
+      if (!recordingModeEnabled || !camera || !orbit || !ensureRecordingScratchObjects()) return;
+      const dt = clamp(Number(deltaSeconds) || 0, 0, RECORDING_FRAME_DT_LIMIT_MS / 1000);
+      if (!(dt > 0)) return;
+
+      if (recordingMotionState.playing) {
+        if (!recordingMotionState.baseTarget) {
+          captureRecordingBasePoseFromCurrentView();
+        }
+        const directionSign = recordingMotionState.direction === "ccw" ? 1 : -1;
+        const speedMultiplier = clamp(recordingMotionState.speed, 0.25, 2);
+        const baseTarget = recordingMotionState.baseTarget || {
+          x: Number(orbit.target.x),
+          y: Number(orbit.target.y),
+          z: Number(orbit.target.z),
+        };
+        const baseTheta = Number.isFinite(recordingMotionState.baseTheta) ? recordingMotionState.baseTheta : 0;
+        const basePhi = Number.isFinite(recordingMotionState.basePhi) ? recordingMotionState.basePhi : Math.PI / 2;
+        const baseRadius =
+          Number.isFinite(recordingMotionState.baseRadius) && recordingMotionState.baseRadius > 0
+            ? recordingMotionState.baseRadius
+            : camera.position.distanceTo(orbit.target);
+        recordingMotionState.autoElapsedSec += dt;
+
+        const theta = recordingMotionState.orbitEnabled
+          ? baseTheta + directionSign * RECORDING_AUTO_ORBIT_RAD_PER_SEC * speedMultiplier * recordingMotionState.autoElapsedSec
+          : baseTheta;
+        const zoomOffset =
+          recordingMotionState.zoomEnabled
+            ? Math.sin(recordingMotionState.autoElapsedSec * Math.PI * 2 * RECORDING_AUTO_ZOOM_HZ * speedMultiplier) *
+              baseRadius *
+              recordingMotionState.zoomAmount
+            : 0;
+        applyRecordingOrbitFrame(baseTarget, theta, basePhi, baseRadius + zoomOffset);
+      }
+
+      const currentTarget = {
+        x: Number(orbit.target.x),
+        y: Number(orbit.target.y),
+        z: Number(orbit.target.z),
+      };
+      recordingScratchOffset.copy(camera.position).sub(orbit.target);
+      recordingScratchSpherical.setFromVector3(recordingScratchOffset);
+      if (!(recordingScratchSpherical.radius > 0)) return;
+      recordingScratchSpherical.makeSafe();
+
+      const targetThetaVelocity = recordingMotionState.manualIntent.theta * RECORDING_MANUAL_THETA_RAD_PER_SEC;
+      const targetPhiVelocity = recordingMotionState.manualIntent.phi * RECORDING_MANUAL_PHI_RAD_PER_SEC;
+      const targetRadiusVelocity = recordingMotionState.manualIntent.radius * getRecordingManualRadiusSpeed(recordingScratchSpherical.radius);
+      recordingMotionState.manualVelocity.theta = easeVelocityToward(
+        recordingMotionState.manualVelocity.theta,
+        targetThetaVelocity,
+        dt
+      );
+      recordingMotionState.manualVelocity.phi = easeVelocityToward(recordingMotionState.manualVelocity.phi, targetPhiVelocity, dt);
+      recordingMotionState.manualVelocity.radius = easeVelocityToward(
+        recordingMotionState.manualVelocity.radius,
+        targetRadiusVelocity,
+        dt
+      );
+
+      const hasManualMovement =
+        Math.abs(recordingMotionState.manualVelocity.theta) > 1e-4 ||
+        Math.abs(recordingMotionState.manualVelocity.phi) > 1e-4 ||
+        Math.abs(recordingMotionState.manualVelocity.radius) > 1e-3;
+      if (!hasManualMovement) {
+        zeroRecordingManualVelocity();
+        return;
+      }
+
+      const theta = recordingScratchSpherical.theta + recordingMotionState.manualVelocity.theta * dt;
+      const phi = recordingScratchSpherical.phi + recordingMotionState.manualVelocity.phi * dt;
+      const radius = recordingScratchSpherical.radius + recordingMotionState.manualVelocity.radius * dt;
+      applyRecordingOrbitFrame(currentTarget, theta, phi, radius);
+    }
+
+    function stepRuntime(deltaMs = 16) {
+      const safeDeltaMs = clamp(Number(deltaMs) || 0, 0, RECORDING_FRAME_DT_LIMIT_MS);
+      if (recordingModeEnabled) {
+        stepRecordingMotion(safeDeltaMs / 1000);
+      }
+      if (orbit) orbit.update();
     }
 
     function lerp(a, b, t) {
@@ -3893,8 +4553,11 @@
 
     function resetCameraToDefaultPose() {
       if (!camera || !orbit) return;
+      resetRecordingMotionState({ syncBasePose: false });
       const pose = getDefaultCameraPose();
       applyCameraPose(pose);
+      captureRecordingBasePoseFromCurrentView();
+      updateRecordingControlsUi();
     }
 
     function waitForAnimationFrames(frameCount = 2) {
@@ -4020,6 +4683,11 @@
         region: currentRegionKey,
         dataset: currentDatasetKey,
         status: statusEl?.textContent || "",
+        recordingMode: {
+          enabled: Boolean(recordingModeEnabled),
+          panelVisible: Boolean(recordingModeEnabled && recordingMotionState.panelVisible),
+        },
+        captureMotion: getRecordingStateSnapshot(),
         toggles,
         controls: { ...toggles },
         legends: {
@@ -4081,8 +4749,10 @@
       };
     }
 
-    function renderLoop() {
-      orbit.update();
+    function renderLoop(frameTimeMs = performance.now()) {
+      const deltaMs = lastRenderFrameTimeMs ? frameTimeMs - lastRenderFrameTimeMs : 1000 / 60;
+      lastRenderFrameTimeMs = frameTimeMs;
+      stepRuntime(deltaMs);
       renderer.render(scene, camera);
       animationHandle = requestAnimationFrame(renderLoop);
     }
@@ -4661,6 +5331,35 @@
       return `<li class="meta-compact"><strong>${escapeHtml(label)}:</strong> ${renderSourceValue(source)}${suffix}</li>`;
     }
 
+    function renderMetaSection(sectionId, title, items, options = {}) {
+      if (!items.length) return "";
+      const defaultOpen = Boolean(options.defaultOpen);
+      const isOpen = metaSectionOpenState.has(sectionId) ? metaSectionOpenState.get(sectionId) : defaultOpen;
+      return `
+        <li class="meta-section">
+          <details class="meta-section-details"${isOpen ? " open" : ""} data-section-id="${escapeHtml(sectionId)}">
+            <summary class="meta-section-summary">
+              <span>${escapeHtml(title)}</span>
+              <span class="meta-section-icon" aria-hidden="true"></span>
+            </summary>
+            <ul class="meta-section-items">
+              ${items.join("")}
+            </ul>
+          </details>
+        </li>
+      `;
+    }
+
+    function bindMetaSectionToggles() {
+      metaListEl.querySelectorAll(".meta-section-details").forEach((detailsEl) => {
+        detailsEl.addEventListener("toggle", () => {
+          const sectionId = detailsEl.dataset.sectionId || "";
+          if (!sectionId) return;
+          metaSectionOpenState.set(sectionId, detailsEl.open);
+        });
+      });
+    }
+
     async function exportCurrentViewPose() {
       if (!camera || !orbit) return;
 
@@ -5112,6 +5811,155 @@
       canvas.addEventListener("touchstart", markInteraction, { passive: true });
     }
 
+    function bindRecordingMode() {
+      updateRecordingControlsUi();
+      if (!recordingModeEnabled || !renderer) return;
+
+      const canvas = renderer.domElement;
+      const interruptAutoMotion = () => {
+        if (!recordingMotionState.playing) return;
+        stopRecordingPlayback({ syncBasePose: true });
+      };
+      canvas.addEventListener("pointerdown", interruptAutoMotion, { passive: true });
+      canvas.addEventListener("wheel", interruptAutoMotion, { passive: true });
+      canvas.addEventListener("touchstart", interruptAutoMotion, { passive: true });
+
+      if (controlsUI.capturePlayButton) {
+        controlsUI.capturePlayButton.addEventListener("click", () => {
+          if (recordingMotionState.playing) {
+            stopRecordingPlayback({ syncBasePose: true });
+          } else {
+            startRecordingPlayback();
+          }
+        });
+      }
+
+      if (controlsUI.captureResetButton) {
+        controlsUI.captureResetButton.addEventListener("click", () => {
+          resetCameraToDefaultPose();
+        });
+      }
+
+      if (controlsUI.captureHideButton) {
+        controlsUI.captureHideButton.addEventListener("click", () => {
+          setRecordingPanelVisible(false);
+        });
+      }
+
+      if (controlsUI.captureOrbitToggle) {
+        controlsUI.captureOrbitToggle.addEventListener("change", () => {
+          recordingMotionState.orbitEnabled = Boolean(controlsUI.captureOrbitToggle.checked);
+          if (!recordingMotionState.orbitEnabled && !recordingMotionState.zoomEnabled && recordingMotionState.playing) {
+            stopRecordingPlayback({ syncBasePose: true });
+          }
+          updateRecordingControlsUi();
+        });
+      }
+
+      if (controlsUI.captureZoomToggle) {
+        controlsUI.captureZoomToggle.addEventListener("change", () => {
+          recordingMotionState.zoomEnabled = Boolean(controlsUI.captureZoomToggle.checked);
+          if (!recordingMotionState.orbitEnabled && !recordingMotionState.zoomEnabled && recordingMotionState.playing) {
+            stopRecordingPlayback({ syncBasePose: true });
+          }
+          updateRecordingControlsUi();
+        });
+      }
+
+      if (controlsUI.captureDirectionCw) {
+        controlsUI.captureDirectionCw.addEventListener("click", () => {
+          setRecordingDirection("cw");
+        });
+      }
+
+      if (controlsUI.captureDirectionCcw) {
+        controlsUI.captureDirectionCcw.addEventListener("click", () => {
+          setRecordingDirection("ccw");
+        });
+      }
+
+      if (controlsUI.captureSpeed) {
+        controlsUI.captureSpeed.addEventListener("input", () => {
+          recordingMotionState.speed = clamp(Number(controlsUI.captureSpeed.value), 0.25, 2);
+          updateRecordingControlsUi();
+        });
+      }
+
+      if (controlsUI.captureZoomAmount) {
+        controlsUI.captureZoomAmount.addEventListener("input", () => {
+          recordingMotionState.zoomAmount = clamp(Number(controlsUI.captureZoomAmount.value) / 100, 0, 0.18);
+          updateRecordingControlsUi();
+        });
+      }
+
+      for (const button of controlsUI.captureManualButtons) {
+        const action = button.dataset.captureManual;
+        if (!action) continue;
+        let activePointerId = null;
+
+        const release = (event = null) => {
+          if (event && activePointerId !== null && event.pointerId !== activePointerId) return;
+          setRecordingManualSource("manualButtonState", action, false);
+          activePointerId = null;
+        };
+
+        button.addEventListener("pointerdown", (event) => {
+          if (event.pointerType === "mouse" && event.button !== 0) return;
+          activePointerId = event.pointerId;
+          setRecordingManualSource("manualButtonState", action, true);
+          button.setPointerCapture(event.pointerId);
+          event.preventDefault();
+        });
+        button.addEventListener("pointerup", release);
+        button.addEventListener("pointercancel", release);
+        button.addEventListener("lostpointercapture", () => {
+          release();
+        });
+      }
+
+      window.addEventListener("keydown", (event) => {
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        if (isEditableElementActive()) return;
+
+        if (event.code === "KeyH" && !event.repeat) {
+          event.preventDefault();
+          setRecordingPanelVisible(!recordingMotionState.panelVisible);
+          return;
+        }
+
+        const keyMap = {
+          KeyJ: "orbitLeft",
+          KeyL: "orbitRight",
+          KeyI: "tiltUp",
+          KeyK: "tiltDown",
+          KeyU: "zoomOut",
+          KeyO: "zoomIn",
+        };
+        const action = keyMap[event.code];
+        if (!action) return;
+        event.preventDefault();
+        setRecordingManualSource("manualKeyState", action, true);
+      });
+
+      window.addEventListener("keyup", (event) => {
+        const keyMap = {
+          KeyJ: "orbitLeft",
+          KeyL: "orbitRight",
+          KeyI: "tiltUp",
+          KeyK: "tiltDown",
+          KeyU: "zoomOut",
+          KeyO: "zoomIn",
+        };
+        const action = keyMap[event.code];
+        if (!action) return;
+        setRecordingManualSource("manualKeyState", action, false);
+      });
+
+      window.addEventListener("blur", () => {
+        clearRecordingManualState();
+      });
+    }
+
     function bindUI() {
       bindMobileDrawerDrag();
       if (panelEl && !mobilePanelResizeObserver && "ResizeObserver" in window) {
@@ -5469,140 +6317,139 @@
             oceanCurrentLayerCount > 1 ? ` across ${fmtInt(oceanCurrentLayerCount)} depth layers` : ""
           } (${fmtInt(oceanCurrentSegmentCount)} segments), plotted from the ${oceanCurrentReferenceText}.`;
 
-      const velocitySection = capabilities.velocity
-        ? `
-        <li class="meta-group">Ice Surface Velocity (observed)</li>
-        <li><strong>Surface Speed Range:</strong> ${speedStats ? `${fmtInt(speedStats.min)} to ${fmtInt(speedStats.max)} m/yr` : "n/a"}</li>
-        <li><strong>Speed Quantiles:</strong> ${
-          quantileSummary([
-            quantileEntry(
-              "median",
-              Number.isFinite(Number(speedQuantiles?.median)) ? speedQuantiles.median : velocityMedianSpeed,
-              fmtInt,
-              " m/yr"
-            ),
-            quantileEntry("P90", speedQuantiles?.q90, fmtInt, " m/yr"),
-            quantileEntry("P95", speedQuantiles?.q95, fmtInt, " m/yr"),
-            quantileEntry("P99", speedQuantiles?.q99, fmtInt, " m/yr"),
-          ]) || "Available on demand"
-        }</li>
-      `
-        : `
-        <li class="meta-group">Ice Surface Velocity (observed)</li>
-        <li><strong>Status:</strong> Not yet added for ${region.label}</li>
-      `;
+      const geometryItems = [
+        `<li><strong>Preset:</strong> ${region.label} ${dataset.label} (${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km grid)</li>`,
+        `<li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)}</li>`,
+        `<li><strong>Projection:</strong> ${projectionLabel}</li>`,
+        `<li><strong>Bed Elevation:</strong> ${fmtInt(bedStats.min)} to ${fmtInt(bedStats.max)} m</li>`,
+        `<li><strong>Max Ice Thickness:</strong> ${fmtInt(thickStats.max)} m</li>`,
+        `<li><strong>Mean Ice Thickness:</strong> ${Number.isFinite(thickStats.mean) ? `${fmtInt(thickStats.mean)} m` : "n/a"}</li>`,
+      ];
 
-      const basalFrictionSection = capabilities.basalFriction
-        ? `
-        <li class="meta-group">Basal Friction (inverted)</li>
-        <li><strong>Inverted Friction:</strong> Median of ensemble inversions using Elmer/Ice, based on the Shallow Shelf Approximation</li>
-        <li><strong>Friction Range:</strong> ${basalFrictionStats ? `${fmtShort(basalFrictionStats.min, 3)} to ${fmtShort(basalFrictionStats.max, 2)} MPa` : "n/a"}</li>
-        <li><strong>Friction Quantiles:</strong> ${
-          quantileSummary([
-            quantileEntry("median", basalFrictionQuantiles?.median, (value) => fmtShort(value, 3), " MPa"),
-            quantileEntry("P90", basalFrictionQuantiles?.q90, (value) => fmtShort(value, 3), " MPa"),
-            quantileEntry("P95", basalFrictionQuantiles?.q95, (value) => fmtShort(value, 3), " MPa"),
-            quantileEntry("P99", basalFrictionQuantiles?.q99, (value) => fmtShort(value, 3), " MPa"),
-          ]) || "n/a"
-        }</li>
-      `
-        : `
-        <li class="meta-group">Basal Friction (inverted)</li>
-        <li><strong>Status:</strong> Not yet added for ${region.label}</li>
-      `;
+      const velocityItems = capabilities.velocity
+        ? [
+            `<li><strong>Surface Speed Range:</strong> ${speedStats ? `${fmtInt(speedStats.min)} to ${fmtInt(speedStats.max)} m/yr` : "n/a"}</li>`,
+            `<li><strong>Speed Quantiles:</strong> ${
+              quantileSummary([
+                quantileEntry(
+                  "median",
+                  Number.isFinite(Number(speedQuantiles?.median)) ? speedQuantiles.median : velocityMedianSpeed,
+                  fmtInt,
+                  " m/yr"
+                ),
+                quantileEntry("P90", speedQuantiles?.q90, fmtInt, " m/yr"),
+                quantileEntry("P95", speedQuantiles?.q95, fmtInt, " m/yr"),
+                quantileEntry("P99", speedQuantiles?.q99, fmtInt, " m/yr"),
+              ]) || "Available on demand"
+            }</li>`,
+          ]
+        : [`<li><strong>Status:</strong> Not yet added for ${region.label}</li>`];
 
-      const riseSection = capabilities.rise
-        ? `
-        <li class="meta-group">Ice-Shelf Basal Melt (simulated)</li>
-        <li><strong>Basal Melt Rate:</strong> ${
-          riseBasalStats ? `${fmtShort(riseBasalStats.min, 3)} to ${fmtShort(riseBasalStats.max, 3)} m/yr` : "Available on demand"
-        }</li>
-        <li><strong>Melt Quantiles:</strong> ${
-          quantileSummary([
-            quantileEntry("median", riseBasalQuantiles?.median, (value) => fmtShort(value, 3), " m/yr"),
-            quantileEntry("P90", riseBasalQuantiles?.q90, (value) => fmtShort(value, 3), " m/yr"),
-            quantileEntry("P95", riseBasalQuantiles?.q95, (value) => fmtShort(value, 3), " m/yr"),
-            quantileEntry("P99", riseBasalQuantiles?.q99, (value) => fmtShort(value, 3), " m/yr"),
-          ]) || "Available on demand"
-        }</li>
-        <li><strong>Thermal Driving:</strong> ${
-          riseThermalStats ? `${fmtShort(riseThermalStats.min, 3)} to ${fmtShort(riseThermalStats.max, 3)} °C` : "Available on demand"
-        }</li>
-        <li><strong>Thermal Quantiles:</strong> ${
-          quantileSummary([
-            quantileEntry("median", riseThermalQuantiles?.median, (value) => fmtShort(value, 3), " °C"),
-            quantileEntry("P90", riseThermalQuantiles?.q90, (value) => fmtShort(value, 3), " °C"),
-            quantileEntry("P95", riseThermalQuantiles?.q95, (value) => fmtShort(value, 3), " °C"),
-            quantileEntry("P99", riseThermalQuantiles?.q99, (value) => fmtShort(value, 3), " °C"),
-          ]) || "Available on demand"
-        }</li>
-        <li><strong>Ice Draft:</strong> ${
-          riseDraftStats ? `${fmtShort(riseDraftStats.min, 0)} to ${fmtShort(riseDraftStats.max, 0)} m` : "Available on demand"
-        }</li>
-        <li><strong>Draft Quantiles:</strong> ${
-          quantileSummary([
-            quantileEntry("median", riseDraftQuantiles?.median, (value) => fmtShort(value, 0), " m"),
-            quantileEntry("P90", riseDraftQuantiles?.q90, (value) => fmtShort(value, 0), " m"),
-            quantileEntry("P95", riseDraftQuantiles?.q95, (value) => fmtShort(value, 0), " m"),
-            quantileEntry("P99", riseDraftQuantiles?.q99, (value) => fmtShort(value, 0), " m"),
-          ]) || "Available on demand"
-        }</li>
-      `
-        : "";
+      const basalFrictionItems = capabilities.basalFriction
+        ? [
+            `<li><strong>Inverted Friction:</strong> Median of ensemble inversions using Elmer/Ice, based on the Shallow Shelf Approximation</li>`,
+            `<li><strong>Friction Range:</strong> ${
+              basalFrictionStats ? `${fmtShort(basalFrictionStats.min, 3)} to ${fmtShort(basalFrictionStats.max, 2)} MPa` : "n/a"
+            }</li>`,
+            `<li><strong>Friction Quantiles:</strong> ${
+              quantileSummary([
+                quantileEntry("median", basalFrictionQuantiles?.median, (value) => fmtShort(value, 3), " MPa"),
+                quantileEntry("P90", basalFrictionQuantiles?.q90, (value) => fmtShort(value, 3), " MPa"),
+                quantileEntry("P95", basalFrictionQuantiles?.q95, (value) => fmtShort(value, 3), " MPa"),
+                quantileEntry("P99", basalFrictionQuantiles?.q99, (value) => fmtShort(value, 3), " MPa"),
+              ]) || "n/a"
+            }</li>`,
+          ]
+        : [`<li><strong>Status:</strong> Not yet added for ${region.label}</li>`];
 
-      const oceanCurrentSection = capabilities.oceanCurrents
-        ? `
-        <li class="meta-group">Ocean Circulation (simulated)</li>
-        <li><strong>Ocean streamlines:</strong> ${oceanCurrentSummary}</li>
-        <li><strong>3D Depth Span:</strong> ${
-          Number.isFinite(oceanCurrentDepthMin) && Number.isFinite(oceanCurrentDepthMax)
-            ? `${fmtShort(oceanCurrentDepthMin, 0)} to ${fmtShort(oceanCurrentDepthMax, 0)} m`
-            : "n/a"
-        }</li>
-        <li><strong>Horizontal Speed:</strong> ${
-          oceanCurrentSpeedStats ? `${fmtShort(oceanCurrentSpeedStats.min)} to ${fmtShort(oceanCurrentSpeedStats.max)} m/s` : "n/a"
-        }</li>
-        <li><strong>Water-Mass Color:</strong> ${
-          oceanCurrentThetaStats && oceanCurrentSalinityStats
-            ? `Cold-fresh cyan, cold-salty indigo, warm-fresh green, warm-salty orange-red (${fmtShort(
-                oceanCurrentThetaStats.min,
-                1
-              )} to ${fmtShort(oceanCurrentThetaStats.max, 1)} °C; ${fmtShort(oceanCurrentSalinityStats.min, 1)} to ${fmtShort(
-                oceanCurrentSalinityStats.max,
-                1
-              )} PSU)`
-            : "Four-corner temperature-salinity palette"
-        }</li>
-      `
-        : "";
+      const riseItems = capabilities.rise
+        ? [
+            `<li><strong>Basal Melt Rate:</strong> ${
+              riseBasalStats ? `${fmtShort(riseBasalStats.min, 3)} to ${fmtShort(riseBasalStats.max, 3)} m/yr` : "Available on demand"
+            }</li>`,
+            `<li><strong>Melt Quantiles:</strong> ${
+              quantileSummary([
+                quantileEntry("median", riseBasalQuantiles?.median, (value) => fmtShort(value, 3), " m/yr"),
+                quantileEntry("P90", riseBasalQuantiles?.q90, (value) => fmtShort(value, 3), " m/yr"),
+                quantileEntry("P95", riseBasalQuantiles?.q95, (value) => fmtShort(value, 3), " m/yr"),
+                quantileEntry("P99", riseBasalQuantiles?.q99, (value) => fmtShort(value, 3), " m/yr"),
+              ]) || "Available on demand"
+            }</li>`,
+            `<li><strong>Thermal Driving:</strong> ${
+              riseThermalStats ? `${fmtShort(riseThermalStats.min, 3)} to ${fmtShort(riseThermalStats.max, 3)} °C` : "Available on demand"
+            }</li>`,
+            `<li><strong>Thermal Quantiles:</strong> ${
+              quantileSummary([
+                quantileEntry("median", riseThermalQuantiles?.median, (value) => fmtShort(value, 3), " °C"),
+                quantileEntry("P90", riseThermalQuantiles?.q90, (value) => fmtShort(value, 3), " °C"),
+                quantileEntry("P95", riseThermalQuantiles?.q95, (value) => fmtShort(value, 3), " °C"),
+                quantileEntry("P99", riseThermalQuantiles?.q99, (value) => fmtShort(value, 3), " °C"),
+              ]) || "Available on demand"
+            }</li>`,
+            `<li><strong>Ice Draft:</strong> ${
+              riseDraftStats ? `${fmtShort(riseDraftStats.min, 0)} to ${fmtShort(riseDraftStats.max, 0)} m` : "Available on demand"
+            }</li>`,
+            `<li><strong>Draft Quantiles:</strong> ${
+              quantileSummary([
+                quantileEntry("median", riseDraftQuantiles?.median, (value) => fmtShort(value, 0), " m"),
+                quantileEntry("P90", riseDraftQuantiles?.q90, (value) => fmtShort(value, 0), " m"),
+                quantileEntry("P95", riseDraftQuantiles?.q95, (value) => fmtShort(value, 0), " m"),
+                quantileEntry("P99", riseDraftQuantiles?.q99, (value) => fmtShort(value, 0), " m"),
+              ]) || "Available on demand"
+            }</li>`,
+          ]
+        : [];
 
-      const hydrologySection = capabilities.hydrology
-        ? `
-        <li class="meta-group">Subglacial Hydrology (simulated)</li>
-        <li><strong>Effective Pressure Range:</strong> ${pressureStats ? `${fmtMpa(pressureStats.min)} to ${fmtMpa(pressureStats.max)} MPa` : "n/a"}</li>
-        <li><strong>Pressure Quantiles:</strong> ${
-          quantileSummary([
-            quantileEntry("median", pressureQuantiles?.median, fmtMpa, " MPa"),
-            quantileEntry("P90", pressureQuantiles?.q90, fmtMpa, " MPa"),
-            quantileEntry("P95", pressureQuantiles?.q95, fmtMpa, " MPa"),
-            quantileEntry("P99", pressureQuantiles?.q99, fmtMpa, " MPa"),
-          ]) || "n/a"
-        }</li>
-        <li><strong>Channel Discharge Range:</strong> ${channelStats ? `${fmtQ(channelStats.min)} to ${fmtQ(channelStats.max)} m3/s` : "n/a"}</li>
-        <li><strong>Discharge Quantiles:</strong> ${
-          quantileSummary([
-            quantileEntry("median", channelQuantiles?.median, fmtQ, " m3/s"),
-            quantileEntry("P90", channelQuantiles?.q90, fmtQ, " m3/s"),
-            quantileEntry("P95", channelQuantiles?.q95, fmtQ, " m3/s"),
-            quantileEntry("P99", channelQuantiles?.q99, fmtQ, " m3/s"),
-          ]) || "n/a"
-        }</li>
-        <li><strong>Rendered Channels:</strong> ${channelCoverage ? fmtInt(channelCoverage.channel_segment_count_unique) : "n/a"}</li>
-      `
-        : `
-        <li class="meta-group">Subglacial Hydrology (simulated)</li>
-        <li><strong>Status:</strong> Not yet added for ${region.label}</li>
-      `;
+      const oceanCurrentItems = capabilities.oceanCurrents
+        ? [
+            `<li><strong>Ocean streamlines:</strong> ${oceanCurrentSummary}</li>`,
+            `<li><strong>3D Depth Span:</strong> ${
+              Number.isFinite(oceanCurrentDepthMin) && Number.isFinite(oceanCurrentDepthMax)
+                ? `${fmtShort(oceanCurrentDepthMin, 0)} to ${fmtShort(oceanCurrentDepthMax, 0)} m`
+                : "n/a"
+            }</li>`,
+            `<li><strong>Horizontal Speed:</strong> ${
+              oceanCurrentSpeedStats ? `${fmtShort(oceanCurrentSpeedStats.min)} to ${fmtShort(oceanCurrentSpeedStats.max)} m/s` : "n/a"
+            }</li>`,
+            `<li><strong>Water-Mass Color:</strong> ${
+              oceanCurrentThetaStats && oceanCurrentSalinityStats
+                ? `Cold-fresh cyan, cold-salty indigo, warm-fresh green, warm-salty orange-red (${fmtShort(
+                    oceanCurrentThetaStats.min,
+                    1
+                  )} to ${fmtShort(oceanCurrentThetaStats.max, 1)} °C; ${fmtShort(oceanCurrentSalinityStats.min, 1)} to ${fmtShort(
+                    oceanCurrentSalinityStats.max,
+                    1
+                  )} PSU)`
+                : "Four-corner temperature-salinity palette"
+            }</li>`,
+          ]
+        : [];
+
+      const hydrologyItems = capabilities.hydrology
+        ? [
+            `<li><strong>Effective Pressure Range:</strong> ${
+              pressureStats ? `${fmtMpa(pressureStats.min)} to ${fmtMpa(pressureStats.max)} MPa` : "n/a"
+            }</li>`,
+            `<li><strong>Pressure Quantiles:</strong> ${
+              quantileSummary([
+                quantileEntry("median", pressureQuantiles?.median, fmtMpa, " MPa"),
+                quantileEntry("P90", pressureQuantiles?.q90, fmtMpa, " MPa"),
+                quantileEntry("P95", pressureQuantiles?.q95, fmtMpa, " MPa"),
+                quantileEntry("P99", pressureQuantiles?.q99, fmtMpa, " MPa"),
+              ]) || "n/a"
+            }</li>`,
+            `<li><strong>Channel Discharge Range:</strong> ${channelStats ? `${fmtQ(channelStats.min)} to ${fmtQ(channelStats.max)} m3/s` : "n/a"}</li>`,
+            `<li><strong>Discharge Quantiles:</strong> ${
+              quantileSummary([
+                quantileEntry("median", channelQuantiles?.median, fmtQ, " m3/s"),
+                quantileEntry("P90", channelQuantiles?.q90, fmtQ, " m3/s"),
+                quantileEntry("P95", channelQuantiles?.q95, fmtQ, " m3/s"),
+                quantileEntry("P99", channelQuantiles?.q99, fmtQ, " m3/s"),
+              ]) || "n/a"
+            }</li>`,
+            `<li><strong>Rendered Channels:</strong> ${channelCoverage ? fmtInt(channelCoverage.channel_segment_count_unique) : "n/a"}</li>`,
+          ]
+        : [`<li><strong>Status:</strong> Not yet added for ${region.label}</li>`];
 
       const sourceLines = [renderSourceLine("Bed/Ice Geometry", dataset.sources.geometry)];
       if (dataset.regionKey === "antarctica" && dataset.sources.basins) {
@@ -5637,24 +6484,18 @@
         );
       }
 
-      metaListEl.innerHTML = `
-        <li class="meta-group">Geometry & Grid</li>
-        <li><strong>Preset:</strong> ${region.label} ${dataset.label} (${stepKm.toFixed(stepKm >= 10 ? 0 : 1)} km grid)</li>
-        <li><strong>Grid:</strong> ${fmtInt(grid.nx)} x ${fmtInt(grid.ny)}</li>
-        <li><strong>Projection:</strong> ${projectionLabel}</li>
-        <li><strong>Bed Elevation:</strong> ${fmtInt(bedStats.min)} to ${fmtInt(bedStats.max)} m</li>
-        <li><strong>Max Ice Thickness:</strong> ${fmtInt(thickStats.max)} m</li>
-        <li><strong>Mean Ice Thickness:</strong> ${Number.isFinite(thickStats.mean) ? `${fmtInt(thickStats.mean)} m` : "n/a"}</li>
+      const sections = [
+        renderMetaSection("geometry-grid", "Geometry & Grid", geometryItems),
+        renderMetaSection("surface-velocity", "Ice Surface Velocity (observed)", velocityItems),
+        renderMetaSection("basal-friction", "Basal Friction (inverted)", basalFrictionItems),
+        renderMetaSection("subglacial-hydrology", "Subglacial Hydrology (simulated)", hydrologyItems),
+        renderMetaSection("ocean-circulation", "Ocean Circulation (simulated)", oceanCurrentItems),
+        renderMetaSection("basal-melt", "Ice-Shelf Basal Melt (simulated)", riseItems),
+        renderMetaSection("sources", "Data Sources", sourceLines),
+      ].filter(Boolean);
 
-        ${velocitySection}
-        ${basalFrictionSection}
-        ${hydrologySection}
-        ${oceanCurrentSection}
-        ${riseSection}
-
-        <li class="meta-group">Sources</li>
-        ${sourceLines.join("")}
-      `;
+      metaListEl.innerHTML = sections.join("");
+      bindMetaSectionToggles();
       if (fieldStatsEl) {
         const fieldParts = [
           `${region.label}`,
@@ -7073,6 +7914,7 @@
       backgroundWarmupStarted = false;
       backgroundWarmupScheduled = false;
       viewerInteracted = false;
+      resetRecordingMotionState({ syncBasePose: false });
       if (backgroundWarmupTimer !== null) {
         window.clearTimeout(backgroundWarmupTimer);
         backgroundWarmupTimer = null;
@@ -7199,6 +8041,8 @@
           resetCameraToDefaultPose();
           pendingViewResetOnLoad = false;
         }
+        captureRecordingBasePoseFromCurrentView();
+        updateRecordingControlsUi();
         updateMetaFromCurrentState();
         updateFlowlineVisibility();
         statusEl.textContent = getReadyStatusText(currentCoreContext);
@@ -7258,6 +8102,7 @@
         document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
         bindInteractionGate();
         bindBackgroundWarmupTrigger();
+        bindRecordingMode();
         renderLoop();
 
         await Promise.all([loadBedColorTable(), ensureHydrologyColorTables()]);
@@ -7279,9 +8124,11 @@
     window.render_game_to_text = () => JSON.stringify(collectExplorerState());
 
     window.advanceTime = (ms = 16) => {
-      const steps = Math.max(1, Math.round(Number(ms) / (1000 / 60)));
+      const totalMs = Math.max(0, Number(ms) || 0);
+      const steps = Math.max(1, Math.round(totalMs / (1000 / 60)));
+      const stepMs = totalMs > 0 ? totalMs / steps : 1000 / 60;
       for (let i = 0; i < steps; i += 1) {
-        if (orbit) orbit.update();
+        stepRuntime(stepMs);
       }
       if (renderer && scene && camera) {
         renderer.render(scene, camera);
