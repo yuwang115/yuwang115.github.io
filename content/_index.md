@@ -128,7 +128,7 @@ sections:
             ></iframe>
           </div>
           <p class="showcase-note">
-            Open the <a href="/tools/">Tools page</a> to unlock all interactions.
+            Open the <a href="/tools/">Tools page</a> to explore more.
           </p>
         </div>
     design:
