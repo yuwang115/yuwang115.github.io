@@ -7,9 +7,21 @@ sections:
   - block: markdown
     id: antarctica-3d-demo
     content:
-      title: "Hold Antarctica and Greenland in your hands with 3D ICE ❄️"
+      title: "Hold Antarctica and Greenland in your hands with [3D ICE](https://yuwang.blog/tools/3D-interactive-cryosphere-explorer.html) ❄️"
       text: |
         <style>
+          #antarctica-3d-demo .text-3xl a {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-color: rgba(16, 81, 109, 0.34);
+            text-underline-offset: 0.12em;
+            transition: color 180ms ease, text-decoration-color 180ms ease;
+          }
+          #antarctica-3d-demo .text-3xl a:hover,
+          #antarctica-3d-demo .text-3xl a:focus-visible {
+            color: #0b5874;
+            text-decoration-color: currentColor;
+          }
           #antarctica-3d-demo .max-w-prose {
             max-width: none;
             width: 100%;
@@ -35,7 +47,7 @@ sections:
         <div class="tools-embed">
           <iframe
             title="Hold Antarctica and Greenland in your hands with 3D ICE ❄️"
-            src="/tools/antarctica-bedmachine-3d.html"
+            src="/tools/3D-interactive-cryosphere-explorer.html"
             loading="lazy"
             fetchpriority="low"
             referrerpolicy="no-referrer"
@@ -46,7 +58,7 @@ sections:
   - block: markdown
     id: tools-demo
     content:
-      title: "Interact with the “best” ice sliding law 🧊"
+      title: "Interact with the “best” ice sliding law 🧊 (demo)"
       text: |
         <style>
           #tools-demo .max-w-prose {

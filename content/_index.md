@@ -50,9 +50,21 @@ sections:
   - block: markdown
     id: antarctica-showcase-home
     content:
-      title: "Hold Antarctica in your hands with 3D ICE ❄️"
+      title: "Hold Antarctica in your hands with [3D ICE](https://yuwang.blog/tools/3D-interactive-cryosphere-explorer.html) ❄️"
       text: |
         <style>
+          #antarctica-showcase-home .text-3xl a {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-color: rgba(16, 81, 109, 0.34);
+            text-underline-offset: 0.12em;
+            transition: color 180ms ease, text-decoration-color 180ms ease;
+          }
+          #antarctica-showcase-home .text-3xl a:hover,
+          #antarctica-showcase-home .text-3xl a:focus-visible {
+            color: #0b5874;
+            text-decoration-color: currentColor;
+          }
           #antarctica-showcase-home .max-w-prose {
             max-width: none;
             width: 100%;
@@ -109,7 +121,7 @@ sections:
           <div class="showcase-embed">
             <iframe
               title="Hold Antarctica in your hands with 3D ICE ❄️"
-              src="/tools/antarctica-bedmachine-3d.html?mode=showcase"
+              src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase"
               loading="eager"
               fetchpriority="high"
               referrerpolicy="no-referrer"
