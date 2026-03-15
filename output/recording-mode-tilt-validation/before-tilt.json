@@ -1,0 +1,104 @@
+{
+  "ready": false,
+  "mode": "interactive",
+  "region": "antarctica",
+  "dataset": "balanced",
+  "status": "Ready (Antarctica Balanced)",
+  "recordingMode": {
+    "enabled": true,
+    "panelVisible": true
+  },
+  "captureMotion": {
+    "enabled": true,
+    "panelVisible": true,
+    "playing": true,
+    "orbitEnabled": true,
+    "zoomEnabled": true,
+    "direction": "cw",
+    "speed": 0.7,
+    "zoomAmount": 0.3
+  },
+  "toggles": {
+    "showBed": true,
+    "showIce": true,
+    "showIceBottom": true,
+    "showVelocity": false,
+    "showFlowline": false,
+    "showBasalFriction": false,
+    "showBasalMelt": false,
+    "showThermalDriving": false,
+    "showOceanCurrents": false,
+    "showOceanLayerSurface": false,
+    "showOceanLayerUpper": false,
+    "showOceanLayerMid": false,
+    "showOceanLayerLower": false,
+    "showRefinedBasins": false,
+    "showEffectivePressure": false,
+    "showSubglacialChannels": false,
+    "showSea": false,
+    "wireframe": false
+  },
+  "controls": {
+    "showBed": true,
+    "showIce": true,
+    "showIceBottom": true,
+    "showVelocity": false,
+    "showFlowline": false,
+    "showBasalFriction": false,
+    "showBasalMelt": false,
+    "showThermalDriving": false,
+    "showOceanCurrents": false,
+    "showOceanLayerSurface": false,
+    "showOceanLayerUpper": false,
+    "showOceanLayerMid": false,
+    "showOceanLayerLower": false,
+    "showRefinedBasins": false,
+    "showEffectivePressure": false,
+    "showSubglacialChannels": false,
+    "showSea": false,
+    "wireframe": false
+  },
+  "legends": {
+    "bed": true,
+    "velocity": false,
+    "basalFriction": false,
+    "basalMelt": false,
+    "thermalDriving": false,
+    "oceanCurrents": false,
+    "effectivePressure": false,
+    "subglacialChannels": false
+  },
+  "camera": {
+    "position": {
+      "x": -10.21,
+      "y": 63.65,
+      "z": 89.06
+    },
+    "target": {
+      "x": 3.5,
+      "y": -7,
+      "z": 3
+    },
+    "fov": 45
+  },
+  "grid": {
+    "nx": 667,
+    "ny": 667,
+    "dx_m": 10000,
+    "dy_m": -10000,
+    "origin": "Scene origin is centered on the grid midpoint; +x follows increasing projected x and +z follows increasing grid row."
+  },
+  "meshes": {
+    "bed": true,
+    "ice": true,
+    "iceBottom": true,
+    "velocity": false,
+    "flowline": false,
+    "basalFriction": false,
+    "basalMelt": false,
+    "thermalDriving": false,
+    "oceanCurrents": false,
+    "basins": false,
+    "hydrology": false
+  }
+}
