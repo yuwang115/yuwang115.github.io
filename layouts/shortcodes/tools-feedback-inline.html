@@ -1,5 +1,8 @@
 {{ $identifier := .Get "identifier" | default (printf "tools-feedback-%s" (anchorize .Page.File.TranslationBaseName)) }}
-{{ $title := .Get "title" | default "Tools feedback" }}
+{{ $title := "Tools feedback" }}
+{{ if isset .Params "title" }}
+  {{ $title = .Get "title" }}
+{{ end }}
 {{ $text := .Get "text" | default "" }}
 {{ $action := .Get "action" | default "" }}
 {{ $source_page := .Get "source_page" | default .Page.RelPermalink }}

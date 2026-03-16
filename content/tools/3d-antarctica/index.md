@@ -56,12 +56,15 @@ image:
 <h3>Antarctic ice velocity + flowlines</h3>
 <p>Show how fast-flowing corridors connect ice shelves, outlet glaciers, and basin-scale drainage patterns across Antarctica.</p>
 </div>
-<div class="explorer-video-media">
-<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Antarctic ice velocity and flowlines"></video>
+<div class="explorer-video-media explorer-video-media--interactive">
+<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-velocity-flowlines" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=antarctica&preset=antarctica-velocity-flowlines" data-preview-title="3D ICE preview for Antarctic ice velocity and flowlines">
+<span class="explorer-preview-poster" aria-hidden="true"></span>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Demo slot</span>
-<strong>Replace with your looped Antarctica velocity clip</strong>
+<span class="explorer-video-badge">Live preview</span>
+<strong>Hover to spin this velocity and flowlines view</strong>
+<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
 </div>
+</a>
 </div>
 </article>
 <article class="explorer-video-card" data-demo-slot="antarctica-basin-boundary">
@@ -69,12 +72,15 @@ image:
 <h3>Basin boundary</h3>
 <p>Use basin outlines to explain how the ice sheet is partitioned and why regional responses need to be interpreted within basin context.</p>
 </div>
-<div class="explorer-video-media">
-<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Antarctic basin boundary"></video>
+<div class="explorer-video-media explorer-video-media--interactive">
+<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-basin-boundary" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=antarctica&preset=antarctica-basin-boundary" data-preview-title="3D ICE preview for Antarctic basin boundaries">
+<span class="explorer-preview-poster" aria-hidden="true"></span>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Demo slot</span>
-<strong>Replace with your Antarctica basin boundary clip</strong>
+<span class="explorer-video-badge">Live preview</span>
+<strong>Hover to spin this basin-boundary view</strong>
+<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
 </div>
+</a>
 </div>
 </article>
 <article class="explorer-video-card" data-demo-slot="antarctica-subglacial-features">
@@ -82,12 +88,15 @@ image:
 <h3>Subglacial features</h3>
 <p>Highlight the hidden structure beneath the ice through effective pressure and subglacial channels, turning invisible processes into something spatially intuitive.</p>
 </div>
-<div class="explorer-video-media">
-<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Antarctic subglacial features"></video>
+<div class="explorer-video-media explorer-video-media--interactive">
+<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-subglacial-features" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=antarctica&preset=antarctica-subglacial-features" data-preview-title="3D ICE preview for Antarctic subglacial features">
+<span class="explorer-preview-poster" aria-hidden="true"></span>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Demo slot</span>
-<strong>Replace with your Antarctica subglacial features clip</strong>
+<span class="explorer-video-badge">Live preview</span>
+<strong>Hover to spin this subglacial feature view</strong>
+<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
 </div>
+</a>
 </div>
 </article>
 <article class="explorer-video-card" data-demo-slot="antarctica-ocean-circulations">
@@ -95,12 +104,15 @@ image:
 <h3>Ocean circulations</h3>
 <p>Reveal how Antarctic ocean circulation frames ice-shelf environment, shelf connectivity, and the broader marine setting around the continent.</p>
 </div>
-<div class="explorer-video-media">
-<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Antarctic ocean circulations"></video>
+<div class="explorer-video-media explorer-video-media--interactive">
+<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-ocean-circulations" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=antarctica&preset=antarctica-ocean-circulations" data-preview-title="3D ICE preview for Antarctic ocean circulations">
+<span class="explorer-preview-poster" aria-hidden="true"></span>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Demo slot</span>
-<strong>Replace with your Antarctica ocean circulation clip</strong>
+<span class="explorer-video-badge">Live preview</span>
+<strong>Hover to spin this Antarctic ocean view</strong>
+<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
 </div>
+</a>
 </div>
 </article>
 </div>
@@ -117,12 +129,15 @@ image:
 <h3>Greenland ice velocity + flowlines</h3>
 <p>Focus on outlet glaciers, fast-flow structure, and how the Greenland ice sheet routes ice from interior catchments to the coast.</p>
 </div>
-<div class="explorer-video-media">
-<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Greenland ice velocity and flowlines"></video>
+<div class="explorer-video-media explorer-video-media--interactive">
+<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-velocity-flowlines" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=greenland&preset=greenland-velocity-flowlines" data-preview-title="3D ICE preview for Greenland ice velocity and flowlines">
+<span class="explorer-preview-poster" aria-hidden="true"></span>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Demo slot</span>
-<strong>Replace with your Greenland velocity clip</strong>
+<span class="explorer-video-badge">Live preview</span>
+<strong>Hover to spin this Greenland velocity view</strong>
+<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
 </div>
+</a>
 </div>
 </article>
 <article class="explorer-video-card" data-demo-slot="greenland-ocean-circulations">
@@ -130,12 +145,15 @@ image:
 <h3>Ocean circulations</h3>
 <p>Show Greenland's fjord-to-shelf ocean setting and how surrounding circulation patterns provide context for marine-terminating glacier behaviour.</p>
 </div>
-<div class="explorer-video-media">
-<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Greenland ocean circulations"></video>
+<div class="explorer-video-media explorer-video-media--interactive">
+<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-ocean-circulations" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=greenland&preset=greenland-ocean-circulations" data-preview-title="3D ICE preview for Greenland ocean circulations">
+<span class="explorer-preview-poster" aria-hidden="true"></span>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Demo slot</span>
-<strong>Replace with your Greenland ocean circulation clip</strong>
+<span class="explorer-video-badge">Live preview</span>
+<strong>Hover to spin this Greenland ocean view</strong>
+<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
 </div>
+</a>
 </div>
 </article>
 </div>
@@ -168,42 +186,18 @@ image:
 </article>
 </div>
 </section>
-<section class="explorer-section explorer-faq-feedback">
-<div class="explorer-faq-feedback-grid">
-<div class="explorer-faq-panel">
-<p class="explorer-region-label">Support</p>
-<h2>FAQ and feedback</h2>
-<p>If you still have a question after browsing the quick answers below, use the tools feedback box to send a note directly from this page.</p>
-<div class="explorer-faq">
-<details open>
-<summary>What is 3D ICE?</summary>
-<p>3D ICE is the Interactive Cryosphere Explorer, a browser-based tool for exploring Antarctica and Greenland through 3D geometry, dynamics, and environmental context.</p>
-</details>
-<details>
-<summary>What can I explore in Antarctica?</summary>
-<p>Antarctica includes ice geometry, velocity, flowlines, basin boundaries, subglacial features, and ocean circulation layers that can be combined inside one live scene.</p>
-</details>
-<details>
-<summary>What can I explore in Greenland?</summary>
-<p>Greenland includes bed and ice geometry, ice velocity, flowlines, basin overlays, and ocean circulation, using the same runtime and camera workflow as Antarctica.</p>
-</details>
-<details>
-<summary>Does 3D ICE work on mobile?</summary>
-<p>Yes for exploration and demonstration. The balanced datasets are the best default on phones and tablets, while the heavier presets are better suited to desktop browsing.</p>
-</details>
-</div>
-</div>
-<div class="explorer-feedback-panel">
+<section class="explorer-section explorer-feedback-only">
+<p class="explorer-region-label">Feedback</p>
+<div class="explorer-feedback-panel explorer-feedback-panel--faq-style">
 {{< tools-feedback-inline
   identifier="faq-feedback-3d-ice"
-  title="Tools feedback"
-  text="If 3D ICE was helpful, confusing, or a little rough around the edges, send me a quick note here. I use this inbox to collect bug reports, usability feedback, and ideas for what to improve next."
+  title=""
+  text="Send a quick note if something felt useful, confusing, or unfinished. I read this inbox for bug reports, usability issues, and the next improvements to make in 3D ICE."
   default_tool="Hold Antarctica and Greenland in your hands with 3D ICE ❄️"
   source_page="/tools/3d-antarctica/"
-  source_section="faq-feedback"
-  root_class="tool-feedback-root--inline"
+  source_section="tools-feedback"
+  root_class="tool-feedback-root--inline tool-feedback-root--untitled"
 >}}
-</div>
 </div>
 </section>
 <section class="explorer-section explorer-final-cta">

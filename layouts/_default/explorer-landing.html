@@ -13,6 +13,101 @@
     <div class="explorer-page-content">
       {{ .Content }}
     </div>
+    {{ if eq .RelPermalink "/tools/3d-antarctica/" }}
+    <script>
+      (() => {
+        const previewLinks = Array.from(document.querySelectorAll(".explorer-preview-link[data-preview-src]"));
+        if (!previewLinks.length) return;
+
+        const canUseHoverPreview = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+        let activeLink = null;
+
+        const clearTimers = (link) => {
+          if (!link) return;
+          if (link._previewEnterTimer) {
+            window.clearTimeout(link._previewEnterTimer);
+            link._previewEnterTimer = null;
+          }
+          if (link._previewLeaveTimer) {
+            window.clearTimeout(link._previewLeaveTimer);
+            link._previewLeaveTimer = null;
+          }
+        };
+
+        const teardownPreview = (link) => {
+          if (!link) return;
+          clearTimers(link);
+          const frame = link.querySelector("iframe");
+          if (frame) frame.remove();
+          link.classList.remove("is-preview-active", "is-preview-loading");
+          if (activeLink === link) {
+            activeLink = null;
+          }
+        };
+
+        const mountPreview = (link) => {
+          if (!canUseHoverPreview || !link) return;
+          clearTimers(link);
+          if (activeLink && activeLink !== link) {
+            teardownPreview(activeLink);
+          }
+          if (link.querySelector("iframe")) {
+            link.classList.add("is-preview-active");
+            activeLink = link;
+            return;
+          }
+
+          const iframe = document.createElement("iframe");
+          iframe.src = link.dataset.previewSrc || "";
+          iframe.title = link.dataset.previewTitle || "3D ICE feature preview";
+          iframe.loading = "eager";
+          iframe.referrerPolicy = "no-referrer";
+          iframe.tabIndex = -1;
+          iframe.setAttribute("aria-hidden", "true");
+          iframe.addEventListener(
+            "load",
+            () => {
+              link.classList.remove("is-preview-loading");
+            },
+            { once: true }
+          );
+
+          link.insertBefore(iframe, link.firstChild);
+          link.classList.add("is-preview-active", "is-preview-loading");
+          activeLink = link;
+        };
+
+        for (const link of previewLinks) {
+          link.addEventListener("mouseenter", () => {
+            clearTimers(link);
+            link._previewEnterTimer = window.setTimeout(() => mountPreview(link), 160);
+          });
+
+          link.addEventListener("mouseleave", () => {
+            clearTimers(link);
+            link._previewLeaveTimer = window.setTimeout(() => teardownPreview(link), 140);
+          });
+
+          link.addEventListener("focusin", () => {
+            mountPreview(link);
+          });
+
+          link.addEventListener("focusout", (event) => {
+            if (link.contains(event.relatedTarget)) return;
+            teardownPreview(link);
+          });
+        }
+
+        window.addEventListener("pagehide", () => {
+          previewLinks.forEach((link) => teardownPreview(link));
+        });
+
+        if (!canUseHoverPreview) {
+          document.documentElement.classList.add("explorer-preview-static");
+        }
+      })();
+    </script>
+    {{ end }}
   </article>
 </div>
 {{ end }}

@@ -3,7 +3,11 @@
 {{ $page := .wcPage }}
 {{ $block := .wcBlock }}
 {{ $identifier := .wcIdentifier }}
-{{ $title := $block.content.title | emojify | $page.RenderString }}
+{{ $title_raw := $block.content.title | default "" }}
+{{ $has_title := ne (trim $title_raw " \n\r\t") "" }}
+{{ $text_raw := $block.content.text | default "" }}
+{{ $has_text := ne (trim $text_raw " \n\r\t") "" }}
+{{ $title := $title_raw | emojify | $page.RenderString }}
 {{ $text := $block.content.text | emojify | $page.RenderString | safeHTML }}
 {{ $form_action := site.Params.feedback.tools_form_endpoint | default ($block.content.action | default "") }}
 {{ $email := site.Params.feedback.fallback_email | default "yu.wang0@utas.edu.au" }}
@@ -326,10 +330,12 @@
 
     <div class="tool-feedback-card">
     <div class="tool-feedback-card-inner">
-      <div class="tool-feedback-heading">
-        <h2 class="tool-feedback-title">{{ $title }}</h2>
+      {{ if or $has_title $has_text }}
+      <div class="tool-feedback-heading{{ if not $has_title }} tool-feedback-heading--untitled{{ end }}">
+        {{ if $has_title }}<h2 class="tool-feedback-title">{{ $title }}</h2>{{ end }}
         {{ with $text }}<div class="tool-feedback-body">{{ . }}</div>{{ end }}
       </div>
+      {{ end }}
 
       {{ if not $is_configured }}
       <div class="tool-feedback-note">
