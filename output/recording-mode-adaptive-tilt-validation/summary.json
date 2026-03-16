@@ -1,0 +1,32 @@
+{
+  "slow": {
+    "beforePhi": 0.8895590808006641,
+    "afterPhi": 0.7720453906612726,
+    "deltaPhi": -0.1175136901393915,
+    "capture": {
+      "enabled": true,
+      "panelVisible": true,
+      "playing": true,
+      "orbitEnabled": true,
+      "zoomEnabled": true,
+      "direction": "cw",
+      "speed": 0.7,
+      "zoomAmount": 0.08
+    }
+  },
+  "fast": {
+    "beforePhi": 0.8895104951790159,
+    "afterPhi": 0.6544997941650393,
+    "deltaPhi": -0.2350107010139766,
+    "capture": {
+      "enabled": true,
+      "panelVisible": true,
+      "playing": true,
+      "orbitEnabled": true,
+      "zoomEnabled": true,
+      "direction": "cw",
+      "speed": 1.4,
+      "zoomAmount": 0.08
+    }
+  }
+}

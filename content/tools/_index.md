@@ -7,9 +7,21 @@ sections:
   - block: markdown
     id: antarctica-3d-demo
     content:
-      title: "3D Antarctica & Greenland Explorer 🇦🇶" 
+      title: "Hold Antarctica and Greenland in your hands with [3D ICE](https://yuwang.blog/tools/3D-interactive-cryosphere-explorer.html) ❄️"
       text: |
         <style>
+          #antarctica-3d-demo .text-3xl a {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-color: rgba(16, 81, 109, 0.34);
+            text-underline-offset: 0.12em;
+            transition: color 180ms ease, text-decoration-color 180ms ease;
+          }
+          #antarctica-3d-demo .text-3xl a:hover,
+          #antarctica-3d-demo .text-3xl a:focus-visible {
+            color: #0b5874;
+            text-decoration-color: currentColor;
+          }
           #antarctica-3d-demo .max-w-prose {
             max-width: none;
             width: 100%;
@@ -50,8 +62,8 @@ sections:
         </p>
         <div class="tools-embed">
           <iframe
-            title="3D Antarctica & Greenland Explorer 🇦🇶"
-            src="/tools/antarctica-bedmachine-3d.html"
+            title="Hold Antarctica and Greenland in your hands with 3D ICE ❄️"
+            src="/tools/3D-interactive-cryosphere-explorer.html"
             loading="lazy"
             fetchpriority="low"
             referrerpolicy="no-referrer"
@@ -62,7 +74,7 @@ sections:
   - block: markdown
     id: tools-demo
     content:
-      title: "Interact with the “best” ice sliding law 🧊"
+      title: "Interact with the “best” ice sliding law 🧊 (demo)"
       text: |
         <style>
           #tools-demo .max-w-prose {
@@ -71,8 +83,8 @@ sections:
           }
           #tools-demo .tools-embed {
             width: 100%;
-            height: min(88dvh, 980px);
-            min-height: 560px;
+            height: clamp(780px, 104dvh, 1120px);
+            min-height: 780px;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
             overflow: hidden;
@@ -101,6 +113,8 @@ sections:
             loading="eager"
             fetchpriority="high"
             referrerpolicy="no-referrer"
+            allow="fullscreen"
+            allowfullscreen
           ></iframe>
         </div>
     design:

@@ -50,9 +50,21 @@ sections:
   - block: markdown
     id: antarctica-showcase-home
     content:
-      title: "3D Antarctica & Greenland Explorer 🇦🇶"
+      title: "Hold Antarctica in your hands with [3D ICE](https://yuwang.blog/tools/3D-interactive-cryosphere-explorer.html) ❄️"
       text: |
         <style>
+          #antarctica-showcase-home .text-3xl a {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-color: rgba(16, 81, 109, 0.34);
+            text-underline-offset: 0.12em;
+            transition: color 180ms ease, text-decoration-color 180ms ease;
+          }
+          #antarctica-showcase-home .text-3xl a:hover,
+          #antarctica-showcase-home .text-3xl a:focus-visible {
+            color: #0b5874;
+            text-decoration-color: currentColor;
+          }
           #antarctica-showcase-home .max-w-prose {
             max-width: none;
             width: 100%;
@@ -108,16 +120,15 @@ sections:
         <div class="showcase-wrap">
           <div class="showcase-embed">
             <iframe
-              title="3D Antarctica & Greenland Explorer 🇦🇶"
-              src="/tools/antarctica-bedmachine-3d.html?mode=showcase"
+              title="Hold Antarctica in your hands with 3D ICE ❄️"
+              src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase"
               loading="eager"
               fetchpriority="high"
               referrerpolicy="no-referrer"
             ></iframe>
           </div>
           <p class="showcase-note">
-            This interactive 3D Antarctica map lets visitors rotate the Antarctic ice sheet, inspect bed topography, ice velocity, and subglacial hydrology, and switch into a Greenland explorer built on the same polar workflow.
-            <a href="/tools/3d-antarctica/">Open the full 3D Antarctica Explorer landing page</a> or <a href="/tools/antarctica-bedmachine-3d.html">launch the live explorer</a>.
+            Open the <a href="/tools/">Tools page</a> to explore more.
           </p>
         </div>
     design:

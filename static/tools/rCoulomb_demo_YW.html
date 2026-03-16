@@ -1,785 +1,2641 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regularised Coulomb Sliding Law | Unified Dashboard</title>
-    
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlacioSliding | Sliding Regime Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #edf6fb;
+      --panel: rgba(255, 255, 255, 0.88);
+      --panel-border: rgba(152, 191, 210, 0.62);
+      --ink: #0f2b3d;
+      --muted: #537184;
+      --accent: #0f82ab;
+      --accent-2: #19a88f;
+      --accent-soft: rgba(24, 137, 180, 0.12);
+      --shadow: 0 18px 46px rgba(6, 30, 44, 0.16);
+      --viewer-grad-top: #072640;
+      --viewer-grad-mid: #0d3550;
+      --viewer-grad-bottom: #124860;
+      --danger: #ef5b57;
+      --warn: #f5a524;
+      --good: #20bf88;
+      --chip: rgba(5, 20, 30, 0.68);
+      --mobile-panel-peek: 66px;
+    }
 
-    <style>
-        :root {
-            --bg-dark: #1e293b;
-            --bg-panel: #ffffff;
-            --text-main: #334155;
-            --text-light: #64748b;
-            --accent: #2563eb; /* Royal Blue */
-            --accent-hover: #1d4ed8;
-            --border: #e2e8f0;
-            --mobile-tabs-height: 56px;
-            --mobile-tabs-bg: #0f172a;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      color: var(--ink);
+      font-family: "Space Grotesk", sans-serif;
+      background:
+        radial-gradient(circle at 14% 18%, #d6eef9 0%, rgba(214, 238, 249, 0.06) 42%, transparent 60%),
+        radial-gradient(circle at 86% 80%, #e7f8f0 0%, rgba(231, 248, 240, 0.08) 36%, transparent 56%),
+        linear-gradient(160deg, #f7fbfe 0%, #edf6fb 55%, #e7f2f8 100%);
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: var(--text-main);
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+    body {
+      min-height: 100dvh;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
 
-        /* Layout */
-        .app-container {
-            display: flex;
-            flex: 1;
-            height: 100%;
-            min-height: 100dvh;
-            overflow: hidden;
-        }
+    body.mobile-drawer {
+      height: 100dvh;
+      overflow: hidden;
+    }
 
-        .mobile-tabs {
-            display: none;
-        }
+    button,
+    input,
+    select {
+      font: inherit;
+    }
 
-        .mobile-tab {
-            border: 1px solid transparent;
-            border-radius: 999px;
-            background: #1e293b;
-            color: #cbd5e1;
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 8px 10px;
-            min-height: 40px;
-            cursor: pointer;
-        }
+    .app {
+      width: 100%;
+      min-height: 100dvh;
+      display: grid;
+      grid-template-columns: minmax(296px, 356px) 1fr;
+      gap: 16px;
+      padding: 16px;
+      align-items: start;
+    }
 
-        .mobile-tab.is-active {
-            background: #e2e8f0;
-            color: #0f172a;
-        }
+    .panel,
+    .card,
+    .viewer-shell {
+      border-radius: 18px;
+      border: 1px solid var(--panel-border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
 
-        /* Sidebar Controls */
-        .sidebar {
-            width: 320px;
-            background-color: var(--bg-dark);
-            color: white;
-            padding: 25px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
-            z-index: 10;
-        }
+    .panel {
+      position: sticky;
+      top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: calc(100dvh - 32px);
+      padding: 18px;
+      background: var(--panel);
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+    }
 
-        .sidebar h2 {
-            font-weight: 600;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            color: #f1f5f9;
-        }
+    .panel-header {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: -2px -4px 0;
+      padding: 2px 4px 12px;
+      border-bottom: 1px solid rgba(170, 202, 216, 0.7);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
 
-        .sidebar .subtitle {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            margin-bottom: 30px;
-            line-height: 1.4;
-        }
+    .panel-grab {
+      width: 70px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(80, 117, 138, 0.34);
+      cursor: ns-resize;
+      touch-action: none;
+    }
 
-        .control-section {
-            margin-bottom: 25px;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 20px;
-        }
+    .panel-close-btn {
+      display: none;
+      min-width: 88px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(96, 145, 171, 0.56);
+      background: #edf7fb;
+      color: #204660;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-        .control-section:last-child {
-            border-bottom: none;
-        }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      width: fit-content;
+      border-radius: 999px;
+      border: 1px solid rgba(136, 184, 206, 0.58);
+      background: rgba(255, 255, 255, 0.72);
+      color: #2b536c;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
 
-        .section-title {
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            color: #94a3b8;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
+    h1 {
+      margin: 4px 0 0;
+      font-size: 1.6rem;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
 
-        /* Inputs */
-        .input-group {
-            margin-bottom: 18px;
-        }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
 
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
+    .section {
+      display: grid;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(182, 211, 224, 0.72);
+    }
 
-        .var-name {
-            font-family: 'Times New Roman', serif;
-            font-style: italic;
-            font-weight: bold;
-            color: #60a5fa;
-        }
+    .section:first-of-type {
+      padding-top: 0;
+      border-top: 0;
+    }
 
-        .value-display {
-            font-family: 'JetBrains Mono', monospace;
-            background: rgba(255,255,255,0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-        }
+    .section-title {
+      margin: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #406277;
+    }
 
-        input[type="range"] {
-            width: 100%;
-            -webkit-appearance: none;
-            appearance: none;
-            background: transparent;
-            cursor: pointer;
-            accent-color: var(--accent);
-            min-height: 32px;
-            touch-action: pan-x;
-        }
+    .preset-grid {
+      display: grid;
+      gap: 10px;
+    }
 
-        input[type="range"]::-webkit-slider-runnable-track {
-            height: 8px;
-            border-radius: 999px;
-            background: rgba(148, 163, 184, 0.35);
-        }
+    .preset-card {
+      width: 100%;
+      padding: 12px 12px 13px;
+      border-radius: 14px;
+      border: 1px solid rgba(147, 188, 209, 0.52);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(242, 250, 254, 0.92) 100%);
+      color: #11344b;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 22px;
-            height: 22px;
-            margin-top: -7px;
-            border-radius: 50%;
-            background: var(--accent);
-            border: 2px solid #ffffff;
-            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.35);
-        }
+    .preset-card:hover {
+      transform: translateY(-1px);
+      border-color: rgba(77, 153, 191, 0.58);
+      box-shadow: 0 10px 20px rgba(10, 48, 68, 0.08);
+    }
 
-        input[type="range"]::-moz-range-track {
-            height: 8px;
-            border-radius: 999px;
-            background: rgba(148, 163, 184, 0.35);
-        }
+    .preset-card.is-active {
+      border-color: rgba(25, 144, 183, 0.78);
+      background:
+        linear-gradient(145deg, rgba(233, 248, 254, 0.98) 0%, rgba(226, 252, 244, 0.96) 100%);
+      box-shadow: 0 12px 24px rgba(14, 73, 100, 0.11);
+    }
 
-        input[type="range"]::-moz-range-thumb {
-            width: 22px;
-            height: 22px;
-            border: 2px solid #ffffff;
-            border-radius: 50%;
-            background: var(--accent);
-            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.35);
-        }
+    .preset-card strong {
+      display: block;
+      font-size: 0.98rem;
+      margin-bottom: 4px;
+    }
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            display: grid;
-            grid-template-rows: auto 1fr;
-            gap: 20px;
-        }
+    .preset-card span {
+      display: block;
+      color: #567284;
+      font-size: 0.84rem;
+      line-height: 1.42;
+    }
 
-        .physics-banner {
-            background: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
+    .control-grid {
+      display: grid;
+      gap: 14px;
+    }
 
-        .equation {
-            font-size: 1.1rem;
-            color: var(--text-main);
-        }
+    .control label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: #1e4056;
+      font-size: 0.92rem;
+    }
 
-        .viz-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            height: 100%;
-            min-height: 500px;
-        }
+    .control small {
+      display: block;
+      margin-top: 5px;
+      color: #6a8697;
+      font-size: 0.74rem;
+      line-height: 1.4;
+    }
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
+    .mono {
+      font-family: "IBM Plex Mono", monospace;
+      color: #1e5973;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
 
-        .card-header {
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .var {
+      font-family: "IBM Plex Mono", monospace;
+      color: #0c78a5;
+      font-size: 0.8rem;
+    }
 
-        .badge {
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-weight: normal;
-        }
-        .badge-2d { background: #dbeafe; color: #1e40af; }
-        .badge-3d { background: #f3e8ff; color: #6b21a8; }
+    input[type="range"] {
+      width: 100%;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+      accent-color: var(--accent);
+      min-height: 28px;
+      touch-action: pan-x;
+    }
 
-        .plot-area {
-            flex: 1;
-            width: 100%;
-            min-height: 0; /* Important for flex/grid sizing */
-        }
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(125, 168, 188, 0.28);
+    }
 
-        /* Physics Explanation Box within Sidebar */
-        .physics-note {
-            background: rgba(30, 41, 59, 0.5);
-            border-left: 3px solid var(--accent);
-            padding: 15px;
-            margin-top: auto;
-            font-size: 0.85rem;
-            color: #cbd5e1;
-        }
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      margin-top: -6px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      box-shadow: 0 2px 8px rgba(10, 48, 68, 0.22);
+    }
 
-        .physics-note strong { color: white; }
+    input[type="range"]::-moz-range-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(125, 168, 188, 0.28);
+    }
 
-        @media (max-width: 1024px) {
-            .viz-grid { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-        }
-        @media (max-width: 768px) {
-            body {
-                min-height: 100svh;
-            }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      box-shadow: 0 2px 8px rgba(10, 48, 68, 0.22);
+    }
 
-            .mobile-tabs {
-                display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 8px;
-                align-items: center;
-                padding: 8px;
-                min-height: var(--mobile-tabs-height);
-                box-sizing: border-box;
-                background: var(--mobile-tabs-bg);
-                border-bottom: 1px solid #1e293b;
-                position: sticky;
-                top: 0;
-                z-index: 30;
-            }
+    .panel-note {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(10, 95, 135, 0.07);
+      border: 1px solid rgba(134, 184, 207, 0.45);
+      color: #385a70;
+      font-size: 0.82rem;
+      line-height: 1.48;
+    }
 
-            .app-container {
-                flex-direction: column;
-                height: calc(100dvh - var(--mobile-tabs-height));
-                min-height: calc(100svh - var(--mobile-tabs-height));
-            }
+    .panel-note strong {
+      color: #103249;
+    }
 
-            .sidebar {
-                width: auto;
-                height: 100%;
-                max-height: none;
-                padding: 18px 16px 24px;
-            }
+    .mobile-analysis {
+      display: none;
+      gap: 12px;
+    }
 
-            .main-content {
-                height: 100%;
-                padding: 12px;
-                display: block;
-            }
+    .stage-layout {
+      display: grid;
+      grid-template-rows: minmax(420px, 7fr) auto;
+      gap: 16px;
+      min-width: 0;
+      min-height: calc(100dvh - 32px);
+      align-content: start;
+    }
 
-            .physics-banner {
-                display: none;
-            }
+    .stage-top-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+      min-width: 0;
+      min-height: 0;
+    }
 
-            .viz-grid {
-                display: block;
-                min-height: 0;
-            }
+    .slice-dock,
+    .snapshot-dock {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+    }
 
-            .card {
-                min-height: calc(100dvh - 180px);
-                padding: 10px;
-            }
+    .slice-dock > .card {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
-            .card + .card {
-                margin-top: 12px;
-            }
+    .snapshot-dock > .card {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
-            .card-header {
-                font-size: 0.95rem;
-                margin-bottom: 8px;
-                padding-bottom: 8px;
-            }
+    .viewer-shell {
+      position: relative;
+      min-height: 0;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(43, 144, 186, 0.22) 0%, transparent 28%),
+        radial-gradient(circle at 82% 84%, rgba(61, 184, 162, 0.2) 0%, transparent 26%),
+        linear-gradient(180deg, var(--viewer-grad-top) 0%, var(--viewer-grad-mid) 52%, var(--viewer-grad-bottom) 100%);
+    }
 
-            .plot-area {
-                min-height: calc(100dvh - 260px);
-            }
+    .viewer-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(179, 216, 233, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(179, 216, 233, 0.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity: 0.32;
+      pointer-events: none;
+    }
 
-            .input-group {
-                margin-bottom: 22px;
-            }
+    .viewer-surface {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
 
-            .label-row {
-                font-size: 0.98rem;
-                margin-bottom: 10px;
-            }
+    .plot-3d,
+    .plot-2d,
+    .plot-fallback {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+    }
 
-            .value-display {
-                font-size: 0.95rem;
-                padding: 4px 8px;
-            }
+    .viewer-fallback {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: none;
+      padding: 26px;
+      overflow: auto;
+      background:
+        linear-gradient(180deg, rgba(7, 24, 37, 0.72) 0%, rgba(10, 38, 56, 0.78) 100%);
+    }
 
-            .section-title {
-                font-size: 0.8rem;
-            }
+    .viewer-shell.is-fallback .viewer-fallback {
+      display: block;
+    }
 
-            body.mobile-view-controls .main-content {
-                display: none;
-            }
+    .viewer-shell.is-fallback .plot-3d {
+      visibility: hidden;
+      pointer-events: none;
+    }
 
-            body.mobile-view-2d .sidebar,
-            body.mobile-view-3d .sidebar {
-                display: none;
-            }
+    .fallback-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(8, 27, 39, 0.8);
+      border: 1px solid rgba(154, 203, 227, 0.26);
+      box-shadow: 0 20px 42px rgba(3, 10, 18, 0.28);
+      color: #e6f6ff;
+    }
 
-            body.mobile-view-2d .card-3d {
-                display: none;
-            }
+    .fallback-title {
+      margin: 8px 0 10px;
+      font-size: 1.32rem;
+      line-height: 1.16;
+    }
 
-            body.mobile-view-3d .card-2d {
-                display: none;
-            }
+    .fallback-copy {
+      margin: 0 0 14px;
+      color: #b9dceb;
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
 
-            body.mobile-view-3d #plot3d {
-                touch-action: none;
-            }
-        }
-    </style>
+    .fallback-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .fallback-metric {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(152, 201, 224, 0.22);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .fallback-metric strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #91d5f3;
+    }
+
+    .fallback-metric span {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.9rem;
+      color: #f1fbff;
+    }
+
+    .viewer-toolbar,
+    .status,
+    .hud {
+      position: absolute;
+      z-index: 4;
+    }
+
+    .viewer-toolbar {
+      top: 14px;
+      left: 14px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .tool-btn {
+      min-width: 0;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(158, 205, 226, 0.38);
+      background: rgba(4, 17, 25, 0.72);
+      color: #e7f7ff;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.76rem;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: filter 160ms ease, transform 160ms ease, border-color 160ms ease;
+    }
+
+    .tool-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .tool-btn:disabled {
+      opacity: 0.56;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+    }
+
+    .status {
+      top: 14px;
+      right: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(168, 215, 235, 0.38);
+      background: rgba(4, 17, 25, 0.72);
+      color: #e7f7ff;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.74rem;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #78d9ff;
+      box-shadow: 0 0 0 6px rgba(120, 217, 255, 0.12);
+    }
+
+    .status.is-fallback .status-dot {
+      background: #f7b63b;
+      box-shadow: 0 0 0 6px rgba(247, 182, 59, 0.12);
+    }
+
+    .hud {
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .chip {
+      max-width: 460px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(172, 215, 235, 0.32);
+      background: var(--chip);
+      color: #ebf8ff;
+      backdrop-filter: blur(4px);
+      font-size: 0.76rem;
+      line-height: 1.42;
+    }
+
+    .chip strong {
+      color: #aee8ff;
+    }
+
+    .chip.mono {
+      color: #f2fbff;
+      font-size: 0.74rem;
+    }
+
+    .card {
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.84);
+      padding: 16px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(183, 211, 223, 0.64);
+    }
+
+    .card-title-wrap {
+      display: grid;
+      gap: 4px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 1.02rem;
+      line-height: 1.2;
+    }
+
+    .card-subtitle {
+      color: #607a8b;
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(137, 191, 213, 0.56);
+      color: #12536d;
+      font-size: 0.76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill.weertman-like {
+      background: rgba(18, 131, 168, 0.14);
+      color: #0e6c91;
+    }
+
+    .pill.transition-regime {
+      background: rgba(245, 165, 36, 0.14);
+      color: #9a6608;
+    }
+
+    .pill.coulomb-limited {
+      background: rgba(239, 91, 87, 0.16);
+      color: #a83936;
+    }
+
+    .slice-chart-wrap {
+      height: 100%;
+      flex: 1;
+      min-width: 0;
+      min-height: 320px;
+    }
+
+    .snapshot-grid {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 12px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .snapshot-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr) minmax(0, 0.94fr);
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .snapshot-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-content: start;
+    }
+
+    .metric-card {
+      padding: 12px;
+      border-radius: 14px;
+      background:
+        linear-gradient(160deg, rgba(255, 255, 255, 0.96) 0%, rgba(238, 248, 252, 0.92) 100%);
+      border: 1px solid rgba(145, 187, 208, 0.44);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .metric-label {
+      display: block;
+      margin-bottom: 6px;
+      color: #60798b;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .metric-value {
+      display: block;
+      color: #11344b;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 1.04rem;
+      line-height: 1.3;
+    }
+
+    .equation-card,
+    .summary-card,
+    .note-card {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 190, 208, 0.48);
+      background:
+        linear-gradient(145deg, rgba(250, 253, 255, 0.96) 0%, rgba(240, 248, 252, 0.92) 100%);
+    }
+
+    .summary-card.snapshot-lead {
+      background:
+        linear-gradient(145deg, rgba(232, 246, 253, 0.98) 0%, rgba(240, 249, 253, 0.94) 100%);
+      border-color: rgba(126, 186, 210, 0.56);
+    }
+
+    .equation-card.equation-card-inline {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+    }
+
+    .equation-card-inline .equation-label {
+      margin-bottom: 0;
+      white-space: nowrap;
+    }
+
+    .equation-card-inline .equation-body {
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .equation-label,
+    .summary-label,
+    .note-label {
+      margin-bottom: 8px;
+      color: #507184;
+      font-size: 0.73rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .equation-body {
+      color: #17384d;
+      font-size: 1rem;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .summary-copy,
+    .note-copy {
+      color: #516f81;
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .summary-copy strong,
+    .note-copy strong {
+      color: #15364b;
+    }
+
+    .meta-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      color: #5c7688;
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    .meta-list li strong {
+      color: #14374e;
+    }
+
+    .snapshot-banner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding-bottom: 2px;
+    }
+
+    .snapshot-banner .pill {
+      font-size: 0.74rem;
+    }
+
+    .snapshot-detail-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .snapshot-detail-card .meta-list {
+      gap: 6px;
+      font-size: 0.8rem;
+    }
+
+    .domain-warning {
+      color: #9a6608;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+      white-space: nowrap;
+    }
+
+    .copied-state {
+      color: #7de3ff;
+    }
+
+    @media (max-width: 1320px) {
+      .snapshot-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .stage-layout {
+        height: auto;
+        grid-template-rows: auto auto;
+      }
+
+      .stage-top-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .viewer-shell {
+        min-height: 420px;
+      }
+
+      .snapshot-layout,
+      .snapshot-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .slice-chart-wrap {
+        height: 330px;
+      }
+    }
+
+    @media (max-width: 960px) {
+      body:not(.mobile-drawer) .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      body:not(.mobile-drawer) .stage-layout {
+        height: auto;
+        grid-template-rows: auto auto;
+      }
+
+      body:not(.mobile-drawer) .stage-top-grid {
+        grid-template-columns: 1fr;
+      }
+
+      body:not(.mobile-drawer) .panel {
+        max-height: 46vh;
+      }
+
+      body.mobile-drawer .app {
+        display: block;
+        height: 100dvh;
+        padding: 0;
+      }
+
+      body.mobile-drawer .stage-layout {
+        height: 100dvh;
+        grid-template-rows: 1fr;
+        gap: 0;
+      }
+
+      body.mobile-drawer .stage-top-grid {
+        height: 100dvh;
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      body.mobile-drawer .slice-dock,
+      body.mobile-drawer .snapshot-dock {
+        display: none;
+      }
+
+      body.mobile-drawer .viewer-shell {
+        min-height: 100dvh;
+        height: 100dvh;
+        border-radius: 0;
+        border: 0;
+        box-shadow: none;
+      }
+
+      body.mobile-drawer .panel {
+        position: fixed;
+        left: calc(env(safe-area-inset-left, 0px) + 8px);
+        right: calc(env(safe-area-inset-right, 0px) + 8px);
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+        z-index: 20;
+        max-height: min(80dvh, 760px);
+        padding: 0 14px 16px;
+        border-radius: 16px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        transform: translateY(var(--mobile-panel-offset, calc(100% - var(--mobile-panel-peek))));
+        transition: transform 220ms ease;
+      }
+
+      body.mobile-drawer.mobile-panel-dragging .panel {
+        transition: none;
+        overflow-y: hidden;
+      }
+
+      body.mobile-drawer .panel-header {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        display: flex;
+        margin: 0 -14px 10px;
+        padding: 12px 14px 10px;
+        min-height: 56px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
+      }
+
+      body.mobile-drawer .panel-close-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      body.mobile-drawer .mobile-analysis {
+        display: grid;
+      }
+
+      body.mobile-drawer .viewer-toolbar {
+        top: calc(env(safe-area-inset-top, 0px) + 12px);
+        left: calc(env(safe-area-inset-left, 0px) + 12px);
+        right: calc(env(safe-area-inset-right, 0px) + 12px);
+      }
+
+      body.mobile-drawer .status {
+        top: calc(env(safe-area-inset-top, 0px) + 58px);
+        right: calc(env(safe-area-inset-right, 0px) + 12px);
+        max-width: calc(100% - 24px);
+      }
+
+      body.mobile-drawer .hud {
+        left: calc(env(safe-area-inset-left, 0px) + 12px);
+        right: calc(env(safe-area-inset-right, 0px) + 12px);
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 86px);
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      body.mobile-drawer .chip {
+        max-width: min(100%, 420px);
+      }
+
+      body.mobile-drawer .fallback-inner {
+        margin-top: 44px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .viewer-toolbar {
+        gap: 6px;
+      }
+
+      .tool-btn {
+        height: 34px;
+        padding: 0 12px;
+        font-size: 0.73rem;
+      }
+
+      .status {
+        font-size: 0.72rem;
+      }
+
+      .snapshot-metrics,
+      .fallback-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .snapshot-layout,
+      .snapshot-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .slice-chart-wrap {
+        height: 320px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+
+      .fallback-inner {
+        padding: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="app">
+    <aside class="panel" id="controlPanel">
+      <div class="panel-header" id="panelHeader">
+        <div class="panel-grab" aria-hidden="true"></div>
+        <button id="panelCloseButton" class="panel-close-btn" type="button">Done</button>
+      </div>
 
-<div class="mobile-tabs" role="tablist" aria-label="Mobile view switcher">
-    <button type="button" class="mobile-tab" data-mobile-view="controls" aria-selected="false">Controls</button>
-    <button type="button" class="mobile-tab is-active" data-mobile-view="2d" aria-selected="true">2D</button>
-    <button type="button" class="mobile-tab" data-mobile-view="3d" aria-selected="false">3D</button>
-</div>
+      <div class="eyebrow">Regularised Coulomb law explorer</div>
+      <h1>GlacioSliding</h1>
+      <p class="subtitle">
+        Explore how sliding velocity, effective pressure, and bed roughness move the law from
+        Weertman-like drag toward Coulomb-limited resistance.
+      </p>
 
-<div class="app-container">
-    <aside class="sidebar">
-        <div>
-            <h2>GlacioSliding</h2>
-            <div class="subtitle">Regularised Coulomb Law Visualization</div>
+      <section class="section">
+        <h2 class="section-title">Story Presets</h2>
+        <div class="preset-grid" id="presetGrid">
+          <button class="preset-card" type="button" data-preset="reference">
+            <strong>Reference</strong>
+            <span>Benchmark the transition near 1 MPa effective pressure with a moderate bed.</span>
+          </button>
+          <button class="preset-card" type="button" data-preset="low-pressure">
+            <strong>Low pressure</strong>
+            <span>Watch the transition collapse toward lower velocities as effective pressure falls.</span>
+          </button>
+          <button class="preset-card" type="button" data-preset="rough-bed">
+            <strong>Rough bed</strong>
+            <span>Shift the transition ridge rightward by increasing bed roughness.</span>
+          </button>
+          <button class="preset-card" type="button" data-preset="strong-friction">
+            <strong>Strong friction</strong>
+            <span>Raise both the limit stress and the transition threshold with a larger C.</span>
+          </button>
         </div>
+      </section>
 
-        <div class="control-section">
-            <div class="section-title">Material Properties</div>
-            
-            <div class="input-group">
-                <div class="label-row">
-                    <span>Friction Coefficient (<span class="var-name">C</span>)</span>
-                    <span id="val_C" class="value-display">0.50</span>
-                </div>
-                <input type="range" id="slider_C" min="0.1" max="1.0" step="0.01" value="0.5">
-            </div>
+      <section class="section">
+        <h2 class="section-title">Controls</h2>
+        <div class="control-grid">
+          <div class="control">
+            <label for="sliderC">
+              <span>Friction coefficient <span class="var">C</span></span>
+              <span id="valueC" class="mono">0.50</span>
+            </label>
+            <input id="sliderC" type="range" min="0.1" max="1" step="0.01" value="0.5" />
+          </div>
 
-            <div class="input-group">
-                <div class="label-row">
-                    <span>Bed Roughness (<span class="var-name">As</span>)</span>
-                    <span id="val_As" class="value-display">2400</span>
-                </div>
-                <input type="range" id="slider_As" min="0" max="20000" step="100" value="2400">
-            </div>
+          <div class="control">
+            <label for="sliderAs">
+              <span>Bed roughness <span class="var">As</span></span>
+              <span id="valueAs" class="mono">2400</span>
+            </label>
+            <input id="sliderAs" type="range" min="0" max="20000" step="100" value="2400" />
+          </div>
 
-            <div class="input-group">
-                <div class="label-row">
-                    <span>Flow Exponent (<span class="var-name">n</span>)</span>
-                    <span id="val_n" class="value-display">3.0</span>
-                </div>
-                <input type="range" id="slider_n" min="1" max="6" step="0.1" value="3.0">
-            </div>
+          <div class="control">
+            <label for="slidern">
+              <span>Flow exponent <span class="var">n</span></span>
+              <span id="valuen" class="mono">3.0</span>
+            </label>
+            <input id="slidern" type="range" min="1" max="6" step="0.1" value="3" />
+          </div>
+
+          <div class="control">
+            <label for="sliderN">
+              <span>Effective pressure <span class="var">N</span></span>
+              <span id="valueN" class="mono">1.0 MPa</span>
+            </label>
+            <input id="sliderN" type="range" min="0.1" max="4" step="0.1" value="1" />
+            <small>Sets the active 2D slice and the highlighted cross-section on the 3D regime surface.</small>
+          </div>
+
+          <div class="control">
+            <label for="sliderU">
+              <span>Probe velocity <span class="var">u</span></span>
+              <span id="valueU" class="mono">300 m/yr</span>
+            </label>
+            <input id="sliderU" type="range" min="0" max="3000" step="10" value="300" />
+            <small id="probeRangeNote">Probe range follows the current display domain.</small>
+          </div>
         </div>
+      </section>
 
-        <div class="control-section">
-            <div class="section-title">State Variable (2D Slice)</div>
-            <div class="input-group">
-                <div class="label-row">
-                    <span>Effective Pressure (<span class="var-name">N</span>)</span>
-                    <span id="val_N" class="value-display">1.0 MPa</span>
-                </div>
-                <input type="range" id="slider_N" min="0.1" max="4.0" step="0.1" value="1.0">
-                <div style="margin-top:5px; font-size:0.75rem; color:#94a3b8;">
-                    *Controls the 2D cross-section view.
-                </div>
-            </div>
+      <section class="section">
+        <h2 class="section-title">Guide</h2>
+        <div class="panel-note">
+          <strong>How to read the explorer.</strong>
+          Drag sliders for immediate 2D updates, then inspect the 3D surface after the short debounce.
+          Click the 3D surface to jump the current <span class="var">N</span> slice and probe point together.
         </div>
+      </section>
 
-        <div class="physics-note">
-            <div style="margin-bottom:8px; font-weight:600; color:#fff;">Transition Velocity (\(u_0\))</div>
-            
-            <div style="margin-bottom: 10px; color: #e2e8f0; text-align: center; border-bottom: 1px solid #475569; padding-bottom: 8px;">
-                \[ u_0 = C^n N^n A_s\]
-            </div>
-
-            <div id="val_u0" style="font-family:'JetBrains Mono'; color:#60a5fa; font-size:1.1rem; margin-bottom:5px;">--</div>
-            <div>The characteristic velocity threshold marking the transition from Weertman-type viscous sliding to plastic Coulomb failure.</div>
-        </div>
+      <section class="section">
+        <h2 class="section-title">Mobile Analysis</h2>
+        <div id="mobileAnalysisMount" class="mobile-analysis"></div>
+      </section>
     </aside>
 
-    <main class="main-content">
-        
-        <div class="physics-banner">
-            <div>
-                <strong>Governing Equation</strong> (Regularised Coulomb Friction Law):
+    <main class="stage-layout">
+      <div class="stage-top-grid">
+        <div id="sliceDock" class="slice-dock">
+          <section id="sliceInspectorCard" class="card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <h2 class="card-title">Slice Inspector</h2>
+                <div class="card-subtitle">
+                  Focused 2D response at the current effective pressure, with transition and probe markers.
+                </div>
+              </div>
+              <div class="pill">2D slice at current N</div>
             </div>
-            <div class="equation">
-                \[ \tau_b = C N \left( \frac{u_b}{C^n N^n A_s + u_b} \right)^{\frac{1}{n}} \]
+            <div class="slice-chart-wrap">
+              <div id="plot2d" class="plot-2d" aria-label="2D slice plot"></div>
             </div>
+          </section>
         </div>
 
-        <div class="viz-grid">
-            
-            <div class="card card-2d">
-                <div class="card-header">
-                    <span>Cross-Section View</span>
-                    <span class="badge badge-2d">2D Slice at current N</span>
+        <section class="viewer-shell" id="viewerShell" aria-label="3D sliding regime explorer">
+          <div class="viewer-toolbar">
+            <button id="resetViewButton" class="tool-btn" type="button">Reset View</button>
+            <button id="fullscreenButton" class="tool-btn" type="button">Enter Fullscreen</button>
+            <button id="copyLinkButton" class="tool-btn" type="button">Copy Link</button>
+          </div>
+
+          <div id="viewerStatus" class="status">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="viewerStatusText">3D regime surface ready</span>
+          </div>
+
+          <div class="viewer-surface">
+            <div id="plot3d" class="plot-3d" aria-label="3D plot of basal shear stress"></div>
+          </div>
+
+          <div id="viewerFallback" class="viewer-fallback" aria-live="polite">
+            <div class="fallback-inner">
+              <div class="eyebrow">Fallback mode</div>
+              <h2 class="fallback-title">Interactive 3D surface unavailable in this browser.</h2>
+              <p class="fallback-copy">
+                The main stage falls back to a fully interactive 2D slice, so the transition velocity,
+                probe marker, and regime interpretation remain available without the blank WebGL failure state.
+              </p>
+              <div id="plotFallback" class="plot-fallback" aria-label="Fallback 2D plot"></div>
+              <div class="fallback-metrics">
+                <div class="fallback-metric">
+                  <strong>Active regime</strong>
+                  <span id="fallbackRegimeValue">Transition regime</span>
                 </div>
-                <div id="plot2d" class="plot-area"></div>
+                <div class="fallback-metric">
+                  <strong>Transition velocity</strong>
+                  <span id="fallbackU0Value">300 m/yr</span>
+                </div>
+                <div class="fallback-metric">
+                  <strong>Probe shear stress</strong>
+                  <span id="fallbackTauValue">0.397 MPa</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hud">
+            <div id="interactionHint" class="chip">
+              <strong>3D interaction:</strong> orbit to read the surface, hover for preview, and click to set
+              the active <span class="var">N</span> slice and probe velocity.
+            </div>
+            <div id="hoverReadout" class="chip mono">
+              Hover surface: u 300 m/yr | N 1.00 MPa | tau 0.397 MPa
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="snapshotDock" class="snapshot-dock">
+        <section id="snapshotCard" class="card">
+          <div class="card-header">
+            <div class="card-title-wrap">
+              <h2 class="card-title">Regime Snapshot</h2>
+              <div class="card-subtitle">
+                The current probe state, the active preset, and a concise physical interpretation.
+              </div>
+            </div>
+            <div id="snapshotRegimePill" class="pill transition-regime">Transition regime</div>
+          </div>
+
+          <div class="snapshot-grid">
+            <div class="snapshot-banner">
+              <div id="snapshotPresetPill" class="pill">Reference</div>
+              <div id="snapshotRatioPill" class="pill">u / u0 = 1.00</div>
+              <div id="snapshotDomainWarning" class="domain-warning" hidden>u0 exceeds display cap</div>
             </div>
 
-            <div class="card card-3d">
-                <div class="card-header">
-                    <span>Parameter Space Topology</span>
-                    <span class="badge badge-3d">Full N Spectrum</span>
-                </div>
-                <div id="plot3d" class="plot-area"></div>
+            <div class="equation-card equation-card-inline">
+              <div class="equation-label">Governing equation</div>
+              <div class="equation-body">
+                \( \tau_b = C N \left( \frac{u_b}{C^n N^n A_s + u_b} \right)^{1/n} \)
+              </div>
             </div>
 
-        </div>
+            <div class="snapshot-layout">
+              <div class="summary-card snapshot-lead">
+                <div class="summary-label">Current interpretation</div>
+                <div id="snapshotSummary" class="summary-copy">
+                  The probe sits close to the transition threshold, where the law departs from purely viscous drag
+                  but has not yet fully saturated at the Coulomb limit.
+                </div>
+              </div>
+
+              <div class="snapshot-metrics">
+                <div class="metric-card">
+                  <span class="metric-label">Transition velocity</span>
+                  <span id="snapshotU0" class="metric-value">300 m/yr</span>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-label">Coulomb limit</span>
+                  <span id="snapshotTauMax" class="metric-value">0.500 MPa</span>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-label">Probe velocity</span>
+                  <span id="snapshotProbeVelocity" class="metric-value">300 m/yr</span>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-label">Probe shear stress</span>
+                  <span id="snapshotProbeTau" class="metric-value">0.397 MPa</span>
+                </div>
+              </div>
+
+              <div class="note-card snapshot-detail-card">
+                <div class="note-label">State details</div>
+                <ul id="snapshotDetails" class="meta-list">
+                  <li><strong>Current slice:</strong> N = 1.00 MPa.</li>
+                  <li><strong>Probe marker:</strong> u = 300 m/yr and tau = 0.397 MPa.</li>
+                  <li><strong>Display domain:</strong> 0 to 3000 m/yr.</li>
+                  <li><strong>Shortcut keys:</strong> 1-4 presets, R reset, F fullscreen.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
-</div>
+  </div>
 
-<script>
-    // --- Physics Logic ---
-    function calculateTauB(C, As, n, N, u_b) {
-        if (u_b === 0) return 0;
-        // To avoid division by zero or overflow
-        const denominator = Math.pow(C, n) * Math.pow(N, n) * As + u_b;
-        if (denominator === 0) return 0;
-        
-        const term = Math.pow(u_b / denominator, 1 / n);
-        return C * N * term;
+  <script>
+    function calculateTauB(C, As, n, N, u) {
+      if (u <= 0) return 0;
+      const denominator = Math.pow(C, n) * Math.pow(N, n) * As + u;
+      if (!Number.isFinite(denominator) || denominator <= 0) return 0;
+      const term = Math.pow(u / denominator, 1 / n);
+      return C * N * term;
     }
 
     function calculateTransitionVelocity(C, As, n, N) {
-        // u0 = As * (C*N)^n
-        // At this velocity, the resistive term is significant
-        return As * Math.pow(C * N, n);
+      return As * Math.pow(C * N, n);
     }
 
-    // --- State Management ---
+    const LIMITS = {
+      C: { min: 0.1, max: 1, step: 0.01, digits: 2 },
+      As: { min: 0, max: 20000, step: 100, digits: 0 },
+      n: { min: 1, max: 6, step: 0.1, digits: 1 },
+      N: { min: 0.1, max: 4, step: 0.1, digits: 1 },
+      uProbe: { min: 0, max: 50000, step: 10, digits: 0 }
+    };
+
+    const DISPLAY_MIN = 3000;
+    const DISPLAY_CAP = 50000;
+    const THREE_D_DEBOUNCE_MS = 140;
+    const PRESET_ANIMATION_MS = 320;
+    const PRESET_PLOT_REFRESH_MS = 72;
+    const MOBILE_BREAKPOINT = 960;
+    const MOBILE_PANEL_PEEK_PX = 66;
+    const DEFAULT_CAMERA = {
+      eye: { x: 1.7, y: 1.48, z: 1.16 },
+      center: { x: 0.04, y: 0.02, z: -0.04 },
+      up: { x: 0, y: 0, z: 1 }
+    };
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileMediaQuery = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+
+    const PRESETS = {
+      reference: {
+        label: "Reference",
+        values: { C: 0.5, As: 2400, n: 3.0, N: 1.0, uProbe: 300 },
+        description: "A balanced reference case where the probe sits near the transition threshold."
+      },
+      "low-pressure": {
+        label: "Low pressure",
+        values: { C: 0.5, As: 2400, n: 3.0, N: 0.6, uProbe: 65 },
+        description: "Lower effective pressure compresses the transition to lower velocities."
+      },
+      "rough-bed": {
+        label: "Rough bed",
+        values: { C: 0.5, As: 10000, n: 3.0, N: 1.0, uProbe: 1250 },
+        description: "Increasing As delays the transition and pushes the ridge to larger velocities."
+      },
+      "strong-friction": {
+        label: "Strong friction",
+        values: { C: 0.8, As: 2400, n: 3.0, N: 1.0, uProbe: 1200 },
+        description: "A stronger friction coefficient raises both the limiting stress and the transition speed."
+      }
+    };
+
+    const dom = {
+      body: document.body,
+      panel: document.getElementById("controlPanel"),
+      panelHeader: document.getElementById("panelHeader"),
+      panelCloseButton: document.getElementById("panelCloseButton"),
+      presetButtons: Array.from(document.querySelectorAll("[data-preset]")),
+      plot2d: document.getElementById("plot2d"),
+      plot3d: document.getElementById("plot3d"),
+      plotFallback: document.getElementById("plotFallback"),
+      viewerShell: document.getElementById("viewerShell"),
+      viewerFallback: document.getElementById("viewerFallback"),
+      viewerStatus: document.getElementById("viewerStatus"),
+      viewerStatusText: document.getElementById("viewerStatusText"),
+      interactionHint: document.getElementById("interactionHint"),
+      hoverReadout: document.getElementById("hoverReadout"),
+      resetViewButton: document.getElementById("resetViewButton"),
+      fullscreenButton: document.getElementById("fullscreenButton"),
+      copyLinkButton: document.getElementById("copyLinkButton"),
+      sliceDock: document.getElementById("sliceDock"),
+      snapshotDock: document.getElementById("snapshotDock"),
+      mobileAnalysisMount: document.getElementById("mobileAnalysisMount"),
+      sliceInspectorCard: document.getElementById("sliceInspectorCard"),
+      snapshotCard: document.getElementById("snapshotCard"),
+      snapshotRegimePill: document.getElementById("snapshotRegimePill"),
+      snapshotPresetPill: document.getElementById("snapshotPresetPill"),
+      snapshotRatioPill: document.getElementById("snapshotRatioPill"),
+      snapshotDomainWarning: document.getElementById("snapshotDomainWarning"),
+      snapshotU0: document.getElementById("snapshotU0"),
+      snapshotTauMax: document.getElementById("snapshotTauMax"),
+      snapshotProbeVelocity: document.getElementById("snapshotProbeVelocity"),
+      snapshotProbeTau: document.getElementById("snapshotProbeTau"),
+      snapshotSummary: document.getElementById("snapshotSummary"),
+      snapshotDetails: document.getElementById("snapshotDetails"),
+      fallbackRegimeValue: document.getElementById("fallbackRegimeValue"),
+      fallbackU0Value: document.getElementById("fallbackU0Value"),
+      fallbackTauValue: document.getElementById("fallbackTauValue"),
+      probeRangeNote: document.getElementById("probeRangeNote"),
+      sliders: {
+        C: document.getElementById("sliderC"),
+        As: document.getElementById("sliderAs"),
+        n: document.getElementById("slidern"),
+        N: document.getElementById("sliderN"),
+        uProbe: document.getElementById("sliderU")
+      },
+      values: {
+        C: document.getElementById("valueC"),
+        As: document.getElementById("valueAs"),
+        n: document.getElementById("valuen"),
+        N: document.getElementById("valueN"),
+        uProbe: document.getElementById("valueU")
+      }
+    };
+
     const state = {
-        C: 0.5,
-        As: 2400,
-        n: 3.0,
-        N: 1.0, // Current slice N
-        camera: { eye: {x: 1.5, y: 1.5, z: 1.2} } // Persist 3D view
+      C: PRESETS.reference.values.C,
+      As: PRESETS.reference.values.As,
+      n: PRESETS.reference.values.n,
+      N: PRESETS.reference.values.N,
+      uProbe: PRESETS.reference.values.uProbe,
+      presetKey: "reference",
+      camera: cloneCamera(DEFAULT_CAMERA),
+      hoverPoint: null,
+      fallback3d: false,
+      fallbackReason: "",
+      mobileDrawerEnabled: false,
+      mobilePanelOpen: false,
+      mobilePanelOffsetPx: 0,
+      mobilePanelClosedOffsetPx: 0,
+      mobilePanelDragState: null,
+      analysisInDrawer: false,
+      animation: null,
+      animationFrame: null,
+      lastAnimationStamp: null,
+      lastAnimationPlotRenderMs: null,
+      pending3DTimer: null,
+      copyFeedbackTimer: null,
+      renderQueues: {
+        plot2d: { inFlight: false, pendingTask: null, activePromise: null },
+        plotFallback: { inFlight: false, pendingTask: null, activePromise: null },
+        plot3d: { inFlight: false, pendingTask: null, activePromise: null }
+      }
     };
 
-    const THREE_D_DEBOUNCE_MS = 120;
-    const mobileMediaQuery = window.matchMedia('(max-width: 768px)');
-    const mobileViewClasses = ['mobile-view-controls', 'mobile-view-2d', 'mobile-view-3d'];
-    let pending3DUpdateTimer = null;
-
-    // --- DOM Elements ---
-    const sliders = {
-        C: document.getElementById('slider_C'),
-        As: document.getElementById('slider_As'),
-        n: document.getElementById('slider_n'),
-        N: document.getElementById('slider_N')
-    };
-
-    const displays = {
-        C: document.getElementById('val_C'),
-        As: document.getElementById('val_As'),
-        n: document.getElementById('val_n'),
-        N: document.getElementById('val_N'),
-        u0: document.getElementById('val_u0')
-    };
-
-    const plotElements = {
-        plot2d: document.getElementById('plot2d'),
-        plot3d: document.getElementById('plot3d')
-    };
-
-    const mobileTabs = Array.from(document.querySelectorAll('.mobile-tab'));
-
-    function isMobile3DMode() {
-        return mobileMediaQuery.matches && document.body.classList.contains('mobile-view-3d');
+    function cloneCamera(camera) {
+      return JSON.parse(JSON.stringify(camera));
     }
 
-    function get3DPlotConfig() {
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function roundToStep(value, step) {
+      return Math.round(value / step) * step;
+    }
+
+    function sanitizeValue(key, value) {
+      const config = LIMITS[key];
+      if (!config) return value;
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric)) return config.min;
+      return clamp(roundToStep(numeric, config.step), config.min, config.max);
+    }
+
+    function formatParamValue(key, value) {
+      if (key === "As") return `${Math.round(value)}`;
+      if (key === "N") return `${value.toFixed(1)} MPa`;
+      if (key === "uProbe") return `${Math.round(value)} m/yr`;
+      return value.toFixed(LIMITS[key].digits);
+    }
+
+    function formatVelocity(value) {
+      if (!Number.isFinite(value)) return "0 m/yr";
+      const rounded = Math.abs(value) >= 1000 ? Math.round(value).toLocaleString("en-US") : Math.round(value).toString();
+      return `${rounded} m/yr`;
+    }
+
+    function formatTau(value) {
+      return `${value.toFixed(3)} MPa`;
+    }
+
+    function roundNice(value) {
+      if (!Number.isFinite(value) || value <= 0) return DISPLAY_MIN;
+      const exponent = Math.floor(Math.log10(value));
+      const power = Math.pow(10, exponent);
+      const normalized = value / power;
+      let nice = 1;
+      if (normalized <= 1) nice = 1;
+      else if (normalized <= 2) nice = 2;
+      else if (normalized <= 5) nice = 5;
+      else nice = 10;
+      return nice * power;
+    }
+
+    function getAxisStep(maxValue, targetSteps = 6) {
+      if (!Number.isFinite(maxValue) || maxValue <= 0) return 1;
+      const rawStep = maxValue / Math.max(1, targetSteps);
+      const exponent = Math.floor(Math.log10(rawStep));
+      const power = Math.pow(10, exponent);
+      const normalized = rawStep / power;
+      let nice = 1;
+      if (normalized <= 1) nice = 1;
+      else if (normalized <= 2) nice = 2;
+      else if (normalized <= 2.5) nice = 2.5;
+      else if (normalized <= 5) nice = 5;
+      else nice = 10;
+      return nice * power;
+    }
+
+    function buildVelocitySamples(maxU) {
+      const safeMax = Math.max(DISPLAY_MIN, maxU);
+      const samples = new Set([0, safeMax]);
+      const lowBand = Math.min(safeMax * 0.22, 1200);
+      const linearCount = 28;
+      const logCount = 40;
+
+      for (let i = 0; i <= linearCount; i += 1) {
+        samples.add((lowBand * i) / linearCount);
+      }
+
+      const start = Math.max(1, lowBand || safeMax / 40);
+      const ratio = safeMax / start;
+      for (let i = 0; i <= logCount; i += 1) {
+        const t = i / logCount;
+        samples.add(start * Math.pow(Math.max(1, ratio), t));
+      }
+
+      return Array.from(samples)
+        .map((value) => clamp(value, 0, safeMax))
+        .sort((a, b) => a - b);
+    }
+
+    function buildPressureSamples() {
+      const samples = [];
+      for (let pressure = 0.1; pressure <= 4.0001; pressure += 0.15) {
+        samples.push(Number(pressure.toFixed(2)));
+      }
+      if (samples[samples.length - 1] !== 4) samples.push(4);
+      return samples;
+    }
+
+    function detectActivePresetKey(values = state) {
+      const tolerance = {
+        C: 0.0001,
+        As: 1,
+        n: 0.0001,
+        N: 0.0001,
+        uProbe: 0.5
+      };
+      for (const [presetKey, preset] of Object.entries(PRESETS)) {
+        const matches = Object.keys(preset.values).every((key) => Math.abs(values[key] - preset.values[key]) <= tolerance[key]);
+        if (matches) return presetKey;
+      }
+      return "custom";
+    }
+
+    function getMetrics(values = state) {
+      const u0 = calculateTransitionVelocity(values.C, values.As, values.n, values.N);
+      const tauMax = values.C * values.N;
+      const tauProbe = calculateTauB(values.C, values.As, values.n, values.N, values.uProbe);
+      const safeU0 = u0 <= 0 ? 0 : u0;
+      const ratio = safeU0 <= 0 ? (values.uProbe > 0 ? Infinity : 0) : values.uProbe / safeU0;
+      const rawDisplayMax = Math.max(DISPLAY_MIN, roundNice(Math.max(values.uProbe, safeU0) * 1.35));
+      const displayMax = clamp(rawDisplayMax, DISPLAY_MIN, DISPLAY_CAP);
+      const transitionExceedsDisplay = safeU0 > displayMax;
+      const transitionExceedsCap = safeU0 > DISPLAY_CAP;
+      const regime = getRegimeFromRatio(ratio);
+      return {
+        u0,
+        tauMax,
+        tauProbe,
+        ratio,
+        displayMax,
+        transitionExceedsDisplay,
+        transitionExceedsCap,
+        regime
+      };
+    }
+
+    function getRegimeFromRatio(ratio) {
+      if (ratio < 0.6) {
         return {
-            responsive: true,
-            displayModeBar: false,
-            // Enable two-finger pinch zoom only in mobile 3D view.
-            scrollZoom: isMobile3DMode()
+          key: "weertman-like",
+          label: "Weertman-like",
+          summary:
+            "The probe velocity remains well below u0, so the law behaves close to the viscous-Weertman branch and shear stress still rises rapidly with velocity."
         };
+      }
+      if (ratio <= 1.6) {
+        return {
+          key: "transition-regime",
+          label: "Transition regime",
+          summary:
+            "The probe sits around u0, where the regularisation bends the response away from purely viscous drag and toward the Coulomb limit."
+        };
+      }
+      return {
+        key: "coulomb-limited",
+        label: "Coulomb-limited",
+        summary:
+          "The probe has moved beyond the transition ridge, so additional velocity produces only modest stress growth as the law saturates toward the Coulomb limit."
+      };
     }
 
-    function setMobileView(view) {
-        if (!mobileMediaQuery.matches) return;
+    function getDisplayDomainLabel(metrics) {
+      return `0 to ${formatVelocity(metrics.displayMax)}`;
+    }
 
-        document.body.classList.remove(...mobileViewClasses);
-        document.body.classList.add(`mobile-view-${view}`);
+    function buildSummaryCopy(metrics) {
+      const preset = PRESETS[state.presetKey];
+      const presetLead = preset
+        ? `${preset.label} preset: ${preset.description}`
+        : "Custom state: manually tuned controls are overriding the closest preset.";
+      const ratioText = Number.isFinite(metrics.ratio) ? metrics.ratio.toFixed(2) : "inf";
+      const pressureText = `${state.N.toFixed(2)} MPa`;
+      return `${presetLead} ${metrics.regime.summary} At N = ${pressureText}, the probe sits at u / u0 = ${ratioText}.`;
+    }
 
-        mobileTabs.forEach(tab => {
-            const isActive = tab.dataset.mobileView === view;
-            tab.classList.toggle('is-active', isActive);
-            tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    function updateControlDisplays(metrics) {
+      dom.values.C.textContent = formatParamValue("C", state.C);
+      dom.values.As.textContent = formatParamValue("As", state.As);
+      dom.values.n.textContent = formatParamValue("n", state.n);
+      dom.values.N.textContent = formatParamValue("N", state.N);
+      dom.values.uProbe.textContent = formatParamValue("uProbe", state.uProbe);
+
+      for (const [key, slider] of Object.entries(dom.sliders)) {
+        slider.value = state[key];
+      }
+
+      dom.sliders.uProbe.max = String(metrics.displayMax);
+      dom.sliders.uProbe.step = metrics.displayMax <= 5000 ? "10" : metrics.displayMax <= 20000 ? "25" : "50";
+      if (state.uProbe > metrics.displayMax) {
+        state.uProbe = metrics.displayMax;
+        dom.sliders.uProbe.value = state.uProbe;
+        dom.values.uProbe.textContent = formatParamValue("uProbe", state.uProbe);
+      }
+      dom.probeRangeNote.textContent = `Probe range: 0 to ${formatVelocity(metrics.displayMax)}.`;
+    }
+
+    function updatePresetButtons() {
+      dom.presetButtons.forEach((button) => {
+        const isActive = button.dataset.preset === state.presetKey;
+        button.classList.toggle("is-active", isActive);
+        button.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    }
+
+    function build2DTraces(metrics, options = {}) {
+      const domainMax = metrics.displayMax;
+      const velocities = buildVelocitySamples(domainMax);
+      const tauValues = velocities.map((velocity) => calculateTauB(state.C, state.As, state.n, state.N, velocity));
+      const tauAtU0Visible = calculateTauB(state.C, state.As, state.n, state.N, Math.min(metrics.u0, domainMax));
+      const visibleTransitionX = Math.min(metrics.u0, domainMax);
+      const viscousBoundary = clamp(Math.min(metrics.u0 * 0.6, domainMax), 0, domainMax);
+      const transitionBoundary = clamp(Math.min(metrics.u0 * 1.6, domainMax), 0, domainMax);
+      const yMax = Math.max(metrics.tauMax * 1.18, metrics.tauProbe * 1.14, 0.08);
+      const showLegend = !options.compact;
+
+      const lineTrace = {
+        x: velocities,
+        y: tauValues,
+        type: "scatter",
+        mode: "lines",
+        name: "Friction curve",
+        line: { color: "#2784c6", width: options.compact ? 3 : 3.4 },
+        hovertemplate: "u %{x:.0f} m/yr<br>tau %{y:.3f} MPa<extra>slice</extra>"
+      };
+
+      const limitTrace = {
+        x: [0, domainMax],
+        y: [metrics.tauMax, metrics.tauMax],
+        type: "scatter",
+        mode: "lines",
+        name: "Coulomb limit",
+        line: { color: "#ef5b57", width: 2.2, dash: "dash" },
+        hoverinfo: "skip"
+      };
+
+      const transitionTrace = {
+        x: [visibleTransitionX],
+        y: [tauAtU0Visible],
+        type: "scatter",
+        mode: "markers",
+        name: "Transition u0",
+        marker: {
+          size: options.compact ? 11 : 12,
+          color: "#f5a524",
+          line: { color: "#ffffff", width: 1.5 }
+        },
+        hovertemplate: metrics.transitionExceedsDisplay
+          ? "u0 exceeds display cap<extra>transition</extra>"
+          : "u0 %{x:.0f} m/yr<br>tau %{y:.3f} MPa<extra>transition</extra>"
+      };
+
+      const probeTrace = {
+        x: [state.uProbe],
+        y: [metrics.tauProbe],
+        type: "scatter",
+        mode: "markers",
+        name: "Probe marker",
+        marker: {
+          size: options.compact ? 11 : 13,
+          color: "#1ec48b",
+          symbol: "circle",
+          line: { color: "#ffffff", width: 1.5 }
+        },
+        hovertemplate: "Probe u %{x:.0f} m/yr<br>tau %{y:.3f} MPa<extra>probe</extra>"
+      };
+
+      const annotations = [];
+      if (viscousBoundary > 80) {
+        annotations.push({
+          x: viscousBoundary * 0.5,
+          y: yMax * 0.95,
+          text: "Weertman-like",
+          showarrow: false,
+          font: { size: 11, color: "#4a6f85" }
         });
+      }
+      if (transitionBoundary - viscousBoundary > 120) {
+        annotations.push({
+          x: viscousBoundary + (transitionBoundary - viscousBoundary) * 0.5,
+          y: yMax * 0.95,
+          text: "Transition",
+          showarrow: false,
+          font: { size: 11, color: "#7a5f18" }
+        });
+      }
+      if (domainMax - transitionBoundary > 140) {
+        annotations.push({
+          x: transitionBoundary + (domainMax - transitionBoundary) * 0.5,
+          y: yMax * 0.95,
+          text: "Coulomb-limited",
+          showarrow: false,
+          font: { size: 11, color: "#7c4040" }
+        });
+      }
 
-        if (view === '3d') {
-            generate3DPlot();
+      if (metrics.transitionExceedsCap || metrics.transitionExceedsDisplay) {
+        annotations.push({
+          x: domainMax * 0.98,
+          y: yMax * 0.76,
+          text: "u0 exceeds display cap",
+          xanchor: "right",
+          showarrow: false,
+          font: { size: 11, color: "#9a6608" },
+          bgcolor: "rgba(255, 245, 223, 0.88)",
+          bordercolor: "rgba(245, 165, 36, 0.35)",
+          borderpad: 4
+        });
+      }
+
+      const shapes = [
+        {
+          type: "rect",
+          xref: "x",
+          yref: "paper",
+          x0: 0,
+          x1: Math.max(viscousBoundary, 0),
+          y0: 0,
+          y1: 1,
+          fillcolor: "rgba(39, 132, 198, 0.10)",
+          line: { width: 0 }
+        },
+        {
+          type: "rect",
+          xref: "x",
+          yref: "paper",
+          x0: viscousBoundary,
+          x1: Math.max(transitionBoundary, viscousBoundary),
+          y0: 0,
+          y1: 1,
+          fillcolor: "rgba(245, 165, 36, 0.12)",
+          line: { width: 0 }
+        },
+        {
+          type: "rect",
+          xref: "x",
+          yref: "paper",
+          x0: transitionBoundary,
+          x1: domainMax,
+          y0: 0,
+          y1: 1,
+          fillcolor: "rgba(239, 91, 87, 0.10)",
+          line: { width: 0 }
         }
+      ];
 
-        requestAnimationFrame(resizeVisiblePlots);
+      const layout = {
+        margin: options.compact ? { l: 54, r: 18, t: 18, b: 54 } : { l: 62, r: 20, t: 18, b: 58 },
+        xaxis: {
+          title: "Sliding velocity, u (m/yr)",
+          range: [0, domainMax],
+          gridcolor: "rgba(145, 184, 201, 0.25)",
+          zeroline: false
+        },
+        yaxis: {
+          title: "Basal shear stress, tau_b (MPa)",
+          range: [0, yMax],
+          gridcolor: "rgba(145, 184, 201, 0.25)",
+          zeroline: false
+        },
+        showlegend: showLegend,
+        legend: showLegend
+          ? {
+              x: 0,
+              y: -0.16,
+              orientation: "h",
+              font: { size: 11 }
+            }
+          : undefined,
+        annotations,
+        shapes,
+        plot_bgcolor: "rgba(255,255,255,0)",
+        paper_bgcolor: "rgba(255,255,255,0)",
+        font: { family: "Space Grotesk, sans-serif", color: "#17364a" }
+      };
+
+      const config = { responsive: true, displayModeBar: false };
+      return {
+        data: [lineTrace, limitTrace, transitionTrace, probeTrace],
+        layout,
+        config
+      };
     }
 
-    function syncMobileLayout() {
-        if (mobileMediaQuery.matches) {
-            const activeTab = mobileTabs.find(tab => tab.classList.contains('is-active'));
-            const activeView = activeTab ? activeTab.dataset.mobileView : '2d';
-            setMobileView(activeView);
-            return;
-        }
+    function build3DTraces(metrics) {
+      const xValues = buildVelocitySamples(metrics.displayMax);
+      const yValues = buildPressureSamples();
+      const zValues = yValues.map((pressure) =>
+        xValues.map((velocity) => calculateTauB(state.C, state.As, state.n, pressure, velocity))
+      );
 
-        document.body.classList.remove(...mobileViewClasses);
-        requestAnimationFrame(resizeVisiblePlots);
+      const transitionLineX = [];
+      const transitionLineY = [];
+      const transitionLineZ = [];
+
+      yValues.forEach((pressure) => {
+        const transitionVelocity = calculateTransitionVelocity(state.C, state.As, state.n, pressure);
+        const visibleX = Math.min(metrics.displayMax, transitionVelocity);
+        transitionLineX.push(visibleX);
+        transitionLineY.push(pressure);
+        transitionLineZ.push(calculateTauB(state.C, state.As, state.n, pressure, visibleX));
+      });
+
+      const currentSliceZ = xValues.map((velocity) => calculateTauB(state.C, state.As, state.n, state.N, velocity));
+      const zMax = Math.max(...zValues.flat(), metrics.tauProbe, metrics.tauMax, 0.08) * 1.05;
+      const velocityGridStep = getAxisStep(metrics.displayMax, 6);
+      const stressGridStep = getAxisStep(zMax, 6);
+
+      const surface = {
+        x: xValues,
+        y: yValues,
+        z: zValues,
+        type: "surface",
+        name: "Regime surface",
+        showscale: false,
+        hoverinfo: "none",
+        opacity: 0.98,
+        colorscale: [
+          [0, "#c9e8f9"],
+          [0.25, "#84c2e7"],
+          [0.55, "#2f8fca"],
+          [0.8, "#145e91"],
+          [1, "#083c63"]
+        ],
+        contours: {
+          z: {
+            show: true,
+            highlight: false,
+            usecolormap: true,
+            project: { z: true },
+            color: "rgba(255,255,255,0.2)",
+            width: 1
+          }
+        },
+        lighting: {
+          ambient: 0.8,
+          diffuse: 0.7,
+          roughness: 0.95,
+          specular: 0.18
+        },
+        lightposition: { x: 1200, y: 800, z: 800 }
+      };
+
+      const currentSlice = {
+        type: "scatter3d",
+        mode: "lines",
+        name: "Current N slice",
+        x: xValues,
+        y: xValues.map(() => state.N),
+        z: currentSliceZ,
+        line: {
+          color: "#7de3ff",
+          width: 7
+        },
+        hoverinfo: "none"
+      };
+
+      const transitionRidge = {
+        type: "scatter3d",
+        mode: "lines",
+        name: "Transition ridge",
+        x: transitionLineX,
+        y: transitionLineY,
+        z: transitionLineZ,
+        line: {
+          color: "#ffbf49",
+          width: 8
+        },
+        hoverinfo: "none"
+      };
+
+      const probeMarker = {
+        type: "scatter3d",
+        mode: "markers",
+        name: "Probe marker",
+        x: [state.uProbe],
+        y: [state.N],
+        z: [metrics.tauProbe],
+        marker: {
+          color: "#2de5a7",
+          size: 7,
+          line: { color: "#ffffff", width: 2 }
+        },
+        hoverinfo: "none"
+      };
+
+      const sceneGridColor = "rgba(150, 156, 163, 0.68)";
+      const sceneAxisColor = "rgba(205, 210, 214, 0.88)";
+      const scenePlaneColor = "rgba(246, 248, 250, 0.18)";
+      const sceneTextColor = "#ebf0f3";
+
+      const layout = {
+        margin: { l: 0, r: 0, t: 0, b: 0 },
+        scene: {
+          camera: cloneCamera(state.camera),
+          uirevision: "glaciosliding-camera",
+          aspectratio: { x: 1.6, y: 0.85, z: 0.82 },
+          xaxis: {
+            title: "Sliding velocity u (m/yr)",
+            range: [0, metrics.displayMax],
+            tick0: 0,
+            dtick: velocityGridStep,
+            gridcolor: sceneGridColor,
+            gridwidth: 1,
+            zeroline: false,
+            showspikes: false,
+            showline: true,
+            linecolor: sceneAxisColor,
+            linewidth: 3,
+            showbackground: true,
+            backgroundcolor: scenePlaneColor,
+            tickcolor: sceneAxisColor,
+            tickwidth: 2.5,
+            color: sceneTextColor
+          },
+          yaxis: {
+            title: "Effective pressure N (MPa)",
+            range: [0.1, 4],
+            tick0: 0,
+            dtick: 0.5,
+            gridcolor: sceneGridColor,
+            gridwidth: 1,
+            zeroline: false,
+            showspikes: false,
+            showline: true,
+            linecolor: sceneAxisColor,
+            linewidth: 3,
+            showbackground: true,
+            backgroundcolor: scenePlaneColor,
+            tickcolor: sceneAxisColor,
+            tickwidth: 2.5,
+            color: sceneTextColor
+          },
+          zaxis: {
+            title: "Basal shear stress tau_b (MPa)",
+            range: [0, zMax],
+            tick0: 0,
+            dtick: stressGridStep,
+            gridcolor: sceneGridColor,
+            gridwidth: 1,
+            zeroline: false,
+            showspikes: false,
+            showline: true,
+            linecolor: sceneAxisColor,
+            linewidth: 3,
+            showbackground: true,
+            backgroundcolor: scenePlaneColor,
+            tickcolor: sceneAxisColor,
+            tickwidth: 2.5,
+            color: sceneTextColor
+          },
+          bgcolor: "rgba(0,0,0,0)"
+        },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        showlegend: false,
+        font: { family: "Space Grotesk, sans-serif", color: "#dff5ff" }
+      };
+
+      const config = {
+        responsive: true,
+        displayModeBar: false,
+        scrollZoom: supportsFinePointer()
+      };
+
+      return {
+        data: [surface, currentSlice, transitionRidge, probeMarker],
+        layout,
+        config
+      };
     }
 
-    function resizeVisiblePlots() {
-        if (plotElements.plot2d) Plotly.Plots.resize(plotElements.plot2d);
-        if (plotElements.plot3d) Plotly.Plots.resize(plotElements.plot3d);
+    function render2DPlot(metrics) {
+      return enqueueLatestRender("plot2d", () => {
+        const figure = build2DTraces(metrics);
+        return Plotly.react(dom.plot2d, figure.data, figure.layout, figure.config);
+      });
     }
 
-    function cancelScheduled3DUpdate() {
-        if (pending3DUpdateTimer === null) return;
-        clearTimeout(pending3DUpdateTimer);
-        pending3DUpdateTimer = null;
+    function renderFallbackPlot(metrics) {
+      return enqueueLatestRender("plotFallback", () => {
+        const figure = build2DTraces(metrics, { compact: true });
+        return Plotly.react(dom.plotFallback, figure.data, figure.layout, figure.config);
+      });
+    }
+
+    function bind3DPlotEvents() {
+      if (dom.plot3d.__glacioBindingsBound) return;
+
+      dom.plot3d.on("plotly_click", (event) => {
+        const point = event?.points?.[0];
+        if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) return;
+        applyStateValues(
+          {
+            N: sanitizeValue("N", point.y),
+            uProbe: sanitizeValue("uProbe", point.x)
+          },
+          { update3D: true, syncPreset: true }
+        );
+      });
+
+      dom.plot3d.on("plotly_hover", (event) => {
+        const point = event?.points?.[0];
+        if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y) || !Number.isFinite(point.z)) return;
+        state.hoverPoint = { u: point.x, N: point.y, tau: point.z };
+        updateHoverReadout();
+      });
+
+      dom.plot3d.on("plotly_unhover", () => {
+        state.hoverPoint = null;
+        updateHoverReadout();
+      });
+
+      dom.plot3d.on("plotly_relayout", (event) => {
+        const camera = event?.["scene.camera"];
+        if (camera) state.camera = cloneCamera(camera);
+      });
+
+      dom.plot3d.__glacioBindingsBound = true;
+    }
+
+    function updateHoverReadout() {
+      const point = state.hoverPoint;
+      const metrics = getMetrics();
+      if (point) {
+        dom.hoverReadout.textContent = `Hover preview: u ${Math.round(point.u)} m/yr | N ${point.N.toFixed(2)} MPa | tau ${point.tau.toFixed(3)} MPa`;
+      } else {
+        dom.hoverReadout.textContent = `Probe state: u ${Math.round(state.uProbe)} m/yr | N ${state.N.toFixed(2)} MPa | tau ${metrics.tauProbe.toFixed(3)} MPa`;
+      }
+    }
+
+    function setFallbackMode(enabled, reason = "") {
+      state.fallback3d = enabled;
+      state.fallbackReason = reason;
+      dom.viewerShell.classList.toggle("is-fallback", enabled);
+      dom.viewerStatus.classList.toggle("is-fallback", enabled);
+      dom.viewerStatusText.textContent = enabled ? "Fallback 2D slice active" : "3D regime surface ready";
+      dom.interactionHint.innerHTML = enabled
+        ? "<strong>Fallback mode:</strong> the main stage is using the interactive 2D slice because WebGL surface rendering is unavailable."
+        : "<strong>3D interaction:</strong> orbit to read the surface, hover for preview, and click to set the active <span class=\"var\">N</span> slice and probe velocity.";
+      dom.resetViewButton.disabled = enabled;
+    }
+
+    function render3DPlot(metrics) {
+      if (state.fallback3d) return Promise.resolve();
+      return enqueueLatestRender("plot3d", () => {
+        const figure = build3DTraces(metrics);
+        return Plotly.react(dom.plot3d, figure.data, figure.layout, figure.config)
+          .then(() => {
+            bind3DPlotEvents();
+            setFallbackMode(false);
+          })
+          .catch((error) => {
+            setFallbackMode(true, error?.message || "3D surface failed");
+            return renderFallbackPlot(metrics);
+          });
+      });
+    }
+
+    function renderSnapshot(metrics) {
+      const activePreset = PRESETS[state.presetKey];
+      dom.snapshotRegimePill.className = `pill ${metrics.regime.key}`;
+      dom.snapshotRegimePill.textContent = metrics.regime.label;
+      dom.snapshotPresetPill.textContent = activePreset ? activePreset.label : "Custom state";
+      const ratioText = Number.isFinite(metrics.ratio) ? metrics.ratio.toFixed(2) : "inf";
+      dom.snapshotRatioPill.textContent = `u / u0 = ${ratioText}`;
+      dom.snapshotU0.textContent = metrics.transitionExceedsCap
+        ? `${formatVelocity(DISPLAY_CAP)}+`
+        : formatVelocity(metrics.u0);
+      dom.snapshotTauMax.textContent = formatTau(metrics.tauMax);
+      dom.snapshotProbeVelocity.textContent = formatVelocity(state.uProbe);
+      dom.snapshotProbeTau.textContent = formatTau(metrics.tauProbe);
+      dom.snapshotSummary.textContent = buildSummaryCopy(metrics);
+      dom.snapshotDomainWarning.hidden = !metrics.transitionExceedsCap;
+      dom.fallbackRegimeValue.textContent = metrics.regime.label;
+      dom.fallbackU0Value.textContent = metrics.transitionExceedsCap
+        ? `${formatVelocity(DISPLAY_CAP)}+`
+        : formatVelocity(metrics.u0);
+      dom.fallbackTauValue.textContent = formatTau(metrics.tauProbe);
+
+      dom.snapshotDetails.innerHTML = `
+        <li><strong>Current slice:</strong> N = ${state.N.toFixed(2)} MPa with a Coulomb limit of ${formatTau(metrics.tauMax)}.</li>
+        <li><strong>Probe marker:</strong> u = ${formatVelocity(state.uProbe)} and tau = ${formatTau(metrics.tauProbe)}.</li>
+        <li><strong>Display domain:</strong> ${getDisplayDomainLabel(metrics)}.</li>
+        <li><strong>Shortcut keys:</strong> 1-4 presets, R reset view, F fullscreen, Esc close drawer/fullscreen.</li>
+      `;
+    }
+
+    function supportsWebGL() {
+      const canvas = document.createElement("canvas");
+      try {
+        const context =
+          canvas.getContext("webgl", { failIfMajorPerformanceCaveat: false }) ||
+          canvas.getContext("experimental-webgl", { failIfMajorPerformanceCaveat: false });
+        return Boolean(context);
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function supportsFinePointer() {
+      return window.matchMedia("(pointer: fine)").matches;
+    }
+
+    function enqueueLatestRender(queueKey, task) {
+      const queue = state.renderQueues[queueKey];
+      if (!queue) return Promise.resolve().then(task);
+      queue.pendingTask = task;
+
+      if (queue.inFlight) {
+        return queue.activePromise || Promise.resolve();
+      }
+
+      const runNextTask = () => {
+        if (!queue.pendingTask) return Promise.resolve();
+        const nextTask = queue.pendingTask;
+        queue.pendingTask = null;
+        queue.inFlight = true;
+        queue.activePromise = Promise.resolve()
+          .then(nextTask)
+          .finally(() => {
+            queue.inFlight = false;
+            queue.activePromise = null;
+            if (queue.pendingTask) runNextTask();
+          });
+        return queue.activePromise;
+      };
+
+      return runNextTask();
+    }
+
+    function updateInteractionHint(metrics) {
+      if (metrics.transitionExceedsCap) {
+        dom.interactionHint.innerHTML = state.fallback3d
+          ? "<strong>Fallback mode:</strong> transition velocity is beyond the display cap, so the 2D slice marks the boundary while the controls remain fully interactive."
+          : "<strong>3D interaction:</strong> transition velocity exceeds the display cap, so the ridge and slice annotate the clipped boundary while the probe remains interactive.";
+        return;
+      }
+
+      dom.interactionHint.innerHTML = state.fallback3d
+        ? "<strong>Fallback mode:</strong> the main stage is using the interactive 2D slice because WebGL surface rendering is unavailable."
+        : "<strong>3D interaction:</strong> orbit to read the surface, hover for preview, and click to set the active <span class=\"var\">N</span> slice and probe velocity.";
     }
 
     function schedule3DUpdate() {
-        cancelScheduled3DUpdate();
-        pending3DUpdateTimer = setTimeout(() => {
-            pending3DUpdateTimer = null;
-            generate3DPlot();
-        }, THREE_D_DEBOUNCE_MS);
+      if (state.pending3DTimer) window.clearTimeout(state.pending3DTimer);
+      state.pending3DTimer = window.setTimeout(() => {
+        state.pending3DTimer = null;
+        renderFromState({ update3D: true, force3D: true });
+      }, THREE_D_DEBOUNCE_MS);
     }
 
-    function flush3DUpdate(force = false) {
-        if (pending3DUpdateTimer !== null) {
-            cancelScheduled3DUpdate();
-            generate3DPlot();
-            return;
+    function flush3DUpdate() {
+      if (state.pending3DTimer) {
+        window.clearTimeout(state.pending3DTimer);
+        state.pending3DTimer = null;
+      }
+      renderFromState({ update3D: true, force3D: true });
+    }
+
+    function updateUrl() {
+      const params = new URLSearchParams();
+      params.set("preset", state.presetKey === "custom" ? "reference" : state.presetKey);
+      params.set("C", state.C.toFixed(2));
+      params.set("As", String(Math.round(state.As)));
+      params.set("n", state.n.toFixed(1));
+      params.set("N", state.N.toFixed(1));
+      params.set("u", String(Math.round(state.uProbe)));
+      const nextUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, "", nextUrl);
+    }
+
+    function renderFromState(options = {}) {
+      const { update2D = true, update3D = true, force3D = false, syncUrl = true } = options;
+      const metrics = getMetrics();
+      updateControlDisplays(metrics);
+      updatePresetButtons();
+      updateHoverReadout();
+      renderSnapshot(metrics);
+      updateInteractionHint(metrics);
+
+      if (update2D) {
+        render2DPlot(metrics)
+          .then(() => resizeAllPlots())
+          .catch(() => {});
+
+        renderFallbackPlot(metrics).catch(() => {});
+      }
+
+      if (update3D || force3D) {
+        render3DPlot(metrics)
+          .then(() => resizeAllPlots())
+          .catch(() => {});
+      }
+
+      if (syncUrl) updateUrl();
+      return metrics;
+    }
+
+    function setCopyFeedback(active) {
+      if (state.copyFeedbackTimer) {
+        window.clearTimeout(state.copyFeedbackTimer);
+        state.copyFeedbackTimer = null;
+      }
+
+      if (active) {
+        dom.copyLinkButton.textContent = "Link Copied";
+        dom.copyLinkButton.classList.add("copied-state");
+        state.copyFeedbackTimer = window.setTimeout(() => {
+          dom.copyLinkButton.textContent = "Copy Link";
+          dom.copyLinkButton.classList.remove("copied-state");
+          state.copyFeedbackTimer = null;
+        }, 1400);
+        return;
+      }
+
+      dom.copyLinkButton.textContent = "Copy Link";
+      dom.copyLinkButton.classList.remove("copied-state");
+    }
+
+    async function copyCurrentLink() {
+      const currentUrl = window.location.href;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(currentUrl);
+        } else {
+          const textarea = document.createElement("textarea");
+          textarea.value = currentUrl;
+          textarea.setAttribute("readonly", "readonly");
+          textarea.style.position = "absolute";
+          textarea.style.left = "-9999px";
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          textarea.remove();
+        }
+        setCopyFeedback(true);
+      } catch (error) {
+        setCopyFeedback(false);
+        dom.viewerStatusText.textContent = "Copy failed";
+        window.setTimeout(() => {
+          dom.viewerStatusText.textContent = state.fallback3d ? "Fallback 2D slice active" : "3D regime surface ready";
+        }, 1200);
+      }
+    }
+
+    function parseInitialState() {
+      const params = new URLSearchParams(window.location.search);
+      const presetParam = params.get("preset");
+      const presetKey = PRESETS[presetParam] ? presetParam : "reference";
+      const nextValues = { ...PRESETS[presetKey].values };
+
+      if (params.has("C")) nextValues.C = sanitizeValue("C", params.get("C"));
+      if (params.has("As")) nextValues.As = sanitizeValue("As", params.get("As"));
+      if (params.has("n")) nextValues.n = sanitizeValue("n", params.get("n"));
+      if (params.has("N")) nextValues.N = sanitizeValue("N", params.get("N"));
+      if (params.has("u")) nextValues.uProbe = sanitizeValue("uProbe", params.get("u"));
+
+      Object.assign(state, nextValues);
+      state.presetKey = detectActivePresetKey(nextValues);
+      if (state.presetKey === "custom" && PRESETS[presetKey]) state.presetKey = "custom";
+    }
+
+    function applyStateValues(nextValues, options = {}) {
+      const { update3D = true, syncPreset = false } = options;
+      for (const [key, value] of Object.entries(nextValues)) {
+        if (!(key in state)) continue;
+        state[key] = sanitizeValue(key, value);
+      }
+      if (syncPreset) state.presetKey = detectActivePresetKey(state);
+      renderFromState({ update3D });
+      if (!update3D) schedule3DUpdate();
+    }
+
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function stopAnimation() {
+      state.animation = null;
+      state.lastAnimationStamp = null;
+      state.lastAnimationPlotRenderMs = null;
+      if (state.animationFrame) {
+        window.cancelAnimationFrame(state.animationFrame);
+        state.animationFrame = null;
+      }
+      if (state.pending3DTimer) {
+        window.clearTimeout(state.pending3DTimer);
+        state.pending3DTimer = null;
+      }
+    }
+
+    function stepAnimation(deltaMs) {
+      if (!state.animation) return false;
+      state.animation.elapsed = Math.min(state.animation.duration, state.animation.elapsed + deltaMs);
+      const progress = state.animation.duration <= 0 ? 1 : state.animation.elapsed / state.animation.duration;
+      const eased = easeOutCubic(progress);
+
+      for (const key of Object.keys(state.animation.from)) {
+        const fromValue = state.animation.from[key];
+        const toValue = state.animation.to[key];
+        state[key] = sanitizeValue(key, fromValue + (toValue - fromValue) * eased);
+      }
+
+      state.presetKey = state.animation.presetKey;
+      const shouldRefreshPlots =
+        progress >= 1 ||
+        state.lastAnimationPlotRenderMs == null ||
+        state.animation.elapsed - state.lastAnimationPlotRenderMs >= PRESET_PLOT_REFRESH_MS;
+      renderFromState({ update2D: shouldRefreshPlots, update3D: false, syncUrl: shouldRefreshPlots || progress >= 1 });
+      if (shouldRefreshPlots) {
+        state.lastAnimationPlotRenderMs = state.animation.elapsed;
+      }
+
+      if (progress >= 1) {
+        for (const [key, value] of Object.entries(state.animation.to)) {
+          state[key] = sanitizeValue(key, value);
+        }
+        state.presetKey = state.animation.presetKey;
+        stopAnimation();
+        flush3DUpdate();
+        return false;
+      }
+
+      return true;
+    }
+
+    function animationTick(timestamp) {
+      if (!state.animation) return;
+      if (state.lastAnimationStamp == null) state.lastAnimationStamp = timestamp;
+      const delta = timestamp - state.lastAnimationStamp;
+      state.lastAnimationStamp = timestamp;
+      const active = stepAnimation(delta);
+      if (active) state.animationFrame = window.requestAnimationFrame(animationTick);
+    }
+
+    function startPresetTransition(presetKey) {
+      const preset = PRESETS[presetKey];
+      if (!preset) return;
+      if (state.animation?.presetKey === presetKey) return;
+      if (!state.animation && detectActivePresetKey(state) === presetKey) return;
+      const target = { ...preset.values };
+
+      if (reducedMotionQuery.matches) {
+        stopAnimation();
+        Object.assign(state, target);
+        state.presetKey = presetKey;
+        renderFromState({ update3D: true, force3D: true });
+        return;
+      }
+
+      stopAnimation();
+      state.animation = {
+        presetKey,
+        from: {
+          C: state.C,
+          As: state.As,
+          n: state.n,
+          N: state.N,
+          uProbe: state.uProbe
+        },
+        to: target,
+        elapsed: 0,
+        duration: PRESET_ANIMATION_MS
+      };
+      state.lastAnimationStamp = null;
+      state.lastAnimationPlotRenderMs = null;
+      state.animationFrame = window.requestAnimationFrame(animationTick);
+    }
+
+    function resizeAllPlots() {
+      [dom.plot2d, dom.plot3d, dom.plotFallback].forEach((node) => {
+        if (!node) return;
+        try {
+          Plotly.Plots.resize(node);
+        } catch (error) {
+          /* noop */
+        }
+      });
+    }
+
+    function moveAnalysisCardsToDrawer(enabled) {
+      if (enabled && !state.analysisInDrawer) {
+        dom.mobileAnalysisMount.appendChild(dom.sliceInspectorCard);
+        dom.mobileAnalysisMount.appendChild(dom.snapshotCard);
+        state.analysisInDrawer = true;
+      } else if (!enabled && state.analysisInDrawer) {
+        dom.sliceDock.appendChild(dom.sliceInspectorCard);
+        dom.snapshotDock.appendChild(dom.snapshotCard);
+        state.analysisInDrawer = false;
+      }
+      window.requestAnimationFrame(resizeAllPlots);
+    }
+
+    function setMobilePanelOffset(offset, immediate = false) {
+      const safeOffset = clamp(offset, 0, state.mobilePanelClosedOffsetPx);
+      state.mobilePanelOffsetPx = safeOffset;
+      if (!state.mobileDrawerEnabled) return;
+      if (immediate) {
+        const previousTransition = dom.panel.style.transition;
+        dom.panel.style.transition = "none";
+        dom.panel.style.setProperty("--mobile-panel-offset", `${safeOffset}px`);
+        window.requestAnimationFrame(() => {
+          dom.panel.style.transition = previousTransition;
+        });
+      } else {
+        dom.panel.style.setProperty("--mobile-panel-offset", `${safeOffset}px`);
+      }
+    }
+
+    function setMobilePanelOpen(open, immediate = false) {
+      state.mobilePanelOpen = open;
+      setMobilePanelOffset(open ? 0 : state.mobilePanelClosedOffsetPx, immediate);
+      window.requestAnimationFrame(resizeAllPlots);
+    }
+
+    function refreshMobilePanelMetrics() {
+      if (!state.mobileDrawerEnabled) return;
+      const panelHeight = dom.panel.offsetHeight;
+      state.mobilePanelClosedOffsetPx = Math.max(0, panelHeight - MOBILE_PANEL_PEEK_PX);
+      setMobilePanelOffset(state.mobilePanelOpen ? 0 : state.mobilePanelClosedOffsetPx, true);
+    }
+
+    function applyResponsiveLayout() {
+      state.mobileDrawerEnabled = mobileMediaQuery.matches;
+      dom.body.classList.toggle("mobile-drawer", state.mobileDrawerEnabled);
+      moveAnalysisCardsToDrawer(state.mobileDrawerEnabled);
+
+      if (state.mobileDrawerEnabled) {
+        state.mobilePanelOpen = false;
+        window.requestAnimationFrame(refreshMobilePanelMetrics);
+      } else {
+        dom.panel.style.removeProperty("--mobile-panel-offset");
+        dom.body.classList.remove("mobile-panel-dragging");
+      }
+
+      window.requestAnimationFrame(resizeAllPlots);
+    }
+
+    function bindMobileDrawer() {
+      const start = (event) => {
+        if (!state.mobileDrawerEnabled) return;
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        if (event.target instanceof Element && event.target.closest("button, input, select, textarea, a")) return;
+        state.mobilePanelDragState = {
+          pointerId: event.pointerId,
+          startY: event.clientY,
+          lastY: event.clientY,
+          lastTime: performance.now(),
+          startOffset: state.mobilePanelOffsetPx,
+          velocity: 0
+        };
+        dom.body.classList.add("mobile-panel-dragging");
+        dom.panelHeader.setPointerCapture(event.pointerId);
+      };
+
+      const move = (event) => {
+        if (!state.mobilePanelDragState || event.pointerId !== state.mobilePanelDragState.pointerId) return;
+        const now = performance.now();
+        const deltaY = event.clientY - state.mobilePanelDragState.startY;
+        const rawOffset = clamp(state.mobilePanelDragState.startOffset + deltaY, 0, state.mobilePanelClosedOffsetPx);
+        const dt = Math.max(8, now - state.mobilePanelDragState.lastTime);
+        state.mobilePanelDragState.velocity = (event.clientY - state.mobilePanelDragState.lastY) / dt;
+        state.mobilePanelDragState.lastY = event.clientY;
+        state.mobilePanelDragState.lastTime = now;
+        setMobilePanelOffset(rawOffset);
+      };
+
+      const end = (event) => {
+        if (!state.mobilePanelDragState || event.pointerId !== state.mobilePanelDragState.pointerId) return;
+        const velocity = state.mobilePanelDragState.velocity;
+        const halfway = state.mobilePanelClosedOffsetPx / 2;
+        const shouldOpen = velocity < -0.35 || (velocity <= 0.15 && state.mobilePanelOffsetPx < halfway);
+        state.mobilePanelDragState = null;
+        dom.body.classList.remove("mobile-panel-dragging");
+        try {
+          dom.panelHeader.releasePointerCapture(event.pointerId);
+        } catch (error) {
+          /* noop */
+        }
+        setMobilePanelOpen(shouldOpen);
+      };
+
+      dom.panelHeader.addEventListener("pointerdown", start);
+      dom.panelHeader.addEventListener("pointermove", move);
+      dom.panelHeader.addEventListener("pointerup", end);
+      dom.panelHeader.addEventListener("pointercancel", end);
+      dom.panelHeader.addEventListener("click", (event) => {
+        if (!state.mobileDrawerEnabled) return;
+        if (event.target instanceof Element && event.target.closest("button")) return;
+        if (state.mobilePanelDragState) return;
+        setMobilePanelOpen(!state.mobilePanelOpen);
+      });
+
+      dom.panelCloseButton.addEventListener("click", () => {
+        if (!state.mobileDrawerEnabled) return;
+        setMobilePanelOpen(false);
+      });
+    }
+
+    function handleFullscreenChange() {
+      const active = document.fullscreenElement === dom.viewerShell;
+      dom.fullscreenButton.textContent = active ? "Exit Fullscreen" : "Enter Fullscreen";
+    }
+
+    function toggleFullscreen() {
+      if (document.fullscreenElement === dom.viewerShell) {
+        document.exitFullscreen?.();
+        return;
+      }
+      dom.viewerShell.requestFullscreen?.();
+    }
+
+    function resetView() {
+      if (state.fallback3d) return;
+      state.camera = cloneCamera(DEFAULT_CAMERA);
+      state.hoverPoint = null;
+      updateHoverReadout();
+      flush3DUpdate();
+    }
+
+    function bindControls() {
+      for (const [key, slider] of Object.entries(dom.sliders)) {
+        slider.addEventListener("input", () => {
+          stopAnimation();
+          state[key] = sanitizeValue(key, slider.value);
+          state.presetKey = detectActivePresetKey(state);
+          renderFromState({ update3D: false });
+          schedule3DUpdate();
+        });
+        slider.addEventListener("change", () => flush3DUpdate());
+        slider.addEventListener("pointerup", () => flush3DUpdate());
+        slider.addEventListener("touchend", () => flush3DUpdate(), { passive: true });
+      }
+
+      dom.presetButtons.forEach((button) => {
+        button.addEventListener("click", () => startPresetTransition(button.dataset.preset));
+      });
+
+      dom.resetViewButton.addEventListener("click", resetView);
+      dom.fullscreenButton.addEventListener("click", toggleFullscreen);
+      dom.copyLinkButton.addEventListener("click", copyCurrentLink);
+
+      document.addEventListener("fullscreenchange", handleFullscreenChange);
+      window.addEventListener("resize", () => {
+        if (state.mobileDrawerEnabled) refreshMobilePanelMetrics();
+        resizeAllPlots();
+      });
+
+      if (typeof mobileMediaQuery.addEventListener === "function") {
+        mobileMediaQuery.addEventListener("change", applyResponsiveLayout);
+      } else if (typeof mobileMediaQuery.addListener === "function") {
+        mobileMediaQuery.addListener(applyResponsiveLayout);
+      }
+
+      window.addEventListener("keydown", (event) => {
+        const activeTag = document.activeElement?.tagName || "";
+        const interactive = /INPUT|SELECT|TEXTAREA|BUTTON/.test(activeTag);
+        if (!interactive) {
+          if (event.key === "r" || event.key === "R") {
+            event.preventDefault();
+            resetView();
+          } else if (event.key === "f" || event.key === "F") {
+            event.preventDefault();
+            toggleFullscreen();
+          } else if (/^[1-4]$/.test(event.key)) {
+            event.preventDefault();
+            const presetKeys = ["reference", "low-pressure", "rough-bed", "strong-friction"];
+            startPresetTransition(presetKeys[Number(event.key) - 1]);
+          }
         }
 
-        if (force) generate3DPlot();
-    }
-
-    // --- Plot Updates ---
-    function updateDashboard(options = {}) {
-        const { update3D = true } = options;
-
-        // 1. Read Inputs
-        state.C = parseFloat(sliders.C.value);
-        state.As = parseFloat(sliders.As.value);
-        state.n = parseFloat(sliders.n.value);
-        state.N = parseFloat(sliders.N.value);
-
-        // 2. Update Text Displays
-        displays.C.innerText = state.C.toFixed(2);
-        displays.As.innerText = state.As;
-        displays.n.innerText = state.n.toFixed(1);
-        displays.N.innerText = state.N.toFixed(1) + " MPa";
-
-        const u0 = calculateTransitionVelocity(state.C, state.As, state.n, state.N);
-        displays.u0.innerText = u0.toFixed(1) + " m/a";
-
-        // 3. Generate Data
-        generate2DPlot(u0);
-        if (update3D) generate3DPlot();
-    }
-
-    function generate2DPlot(u0) {
-        let u_b = [];
-        let tau_b = [];
-        const maxU = 3000;
-        
-        for (let i = 0; i <= maxU; i += 10) {
-            u_b.push(i);
-            tau_b.push(calculateTauB(state.C, state.As, state.n, state.N, i));
+        if (event.key === "Escape") {
+          if (document.fullscreenElement === dom.viewerShell) {
+            document.exitFullscreen?.();
+          } else if (state.mobileDrawerEnabled && state.mobilePanelOpen) {
+            setMobilePanelOpen(false);
+          }
         }
-
-        // Theoretical Max Friction (Plastic Limit)
-        const tau_max = state.C * state.N;
-
-        const traceLine = {
-            x: u_b,
-            y: tau_b,
-            type: 'scatter',
-            mode: 'lines',
-            name: 'Friction Curve',
-            line: {color: '#2563eb', width: 3}
-        };
-
-        const traceLimit = {
-            x: [0, maxU],
-            y: [tau_max, tau_max],
-            type: 'scatter',
-            mode: 'lines',
-            name: 'Coulomb Limit',
-            line: {color: '#ef4444', width: 2, dash: 'dash'}
-        };
-
-        // Mark Transition Velocity
-        const tau_at_u0 = calculateTauB(state.C, state.As, state.n, state.N, u0);
-        const tracePoint = {
-            x: [u0],
-            y: [tau_at_u0],
-            mode: 'markers',
-            name: 'Transition u₀',
-            marker: {size: 10, color: '#10b981'}
-        };
-
-        const layout = {
-            margin: {l: 50, r: 20, t: 30, b: 40},
-            xaxis: { title: 'Sliding Velocity, u_b (m/a)', gridcolor: '#f1f5f9' },
-            yaxis: { title: 'Basal Shear Stress, τ_b (MPa)', gridcolor: '#f1f5f9', range: [0, tau_max * 1.2] },
-            showlegend: true,
-            legend: {x: 0.5, y: -0.2, orientation: 'h'},
-            plot_bgcolor: '#fff',
-            paper_bgcolor: '#fff'
-        };
-
-        Plotly.react(plotElements.plot2d, [traceLine, traceLimit, tracePoint], layout, {responsive: true, displayModeBar: false});
+      });
     }
 
-    function generate3DPlot() {
-        let u_vals = [];
-        let N_vals = [];
-        let z_vals = [];
+    function initialise() {
+      parseInitialState();
+      bindControls();
+      bindMobileDrawer();
+      applyResponsiveLayout();
 
-        // Grid resolution
-        for (let u = 0; u <= 3000; u += 100) u_vals.push(u);
-        for (let N = 0.1; N <= 4.0; N += 0.2) N_vals.push(N);
+      if (!supportsWebGL()) setFallbackMode(true, "WebGL unavailable");
+      renderFromState({ update3D: true, force3D: true });
+      handleFullscreenChange();
+      if (window.MathJax?.typesetPromise) {
+        window.MathJax.typesetPromise().catch(() => {});
+      }
+    }
 
-        for (let i = 0; i < N_vals.length; i++) {
-            let row = [];
-            for (let j = 0; j < u_vals.length; j++) {
-                row.push(calculateTauB(state.C, state.As, state.n, N_vals[i], u_vals[j]));
+    window.render_game_to_text = () => {
+      const metrics = getMetrics();
+      return JSON.stringify({
+        mode: state.fallback3d ? "fallback-2d" : "interactive-3d",
+        preset: state.presetKey,
+        params: {
+          C: Number(state.C.toFixed(2)),
+          As: Math.round(state.As),
+          n: Number(state.n.toFixed(1)),
+          N: Number(state.N.toFixed(2)),
+          uProbe: Math.round(state.uProbe)
+        },
+        transitionVelocity: Number(metrics.u0.toFixed(3)),
+        tauMax: Number(metrics.tauMax.toFixed(4)),
+        tauProbe: Number(metrics.tauProbe.toFixed(4)),
+        regime: metrics.regime.label,
+        ratio: Number.isFinite(metrics.ratio) ? Number(metrics.ratio.toFixed(3)) : "inf",
+        displayMax: metrics.displayMax,
+        drawerOpen: state.mobileDrawerEnabled ? state.mobilePanelOpen : null,
+        fullscreen: document.fullscreenElement === dom.viewerShell,
+        fallback3d: state.fallback3d,
+        hoverPoint: state.hoverPoint
+          ? {
+              u: Math.round(state.hoverPoint.u),
+              N: Number(state.hoverPoint.N.toFixed(3)),
+              tau: Number(state.hoverPoint.tau.toFixed(4))
             }
-            z_vals.push(row);
-        }
+          : null
+      });
+    };
 
-        const data = [{
-            x: u_vals,
-            y: N_vals,
-            z: z_vals,
-            type: 'surface',
-            colorscale: 'Blues',
-            reversescale: true,
-            showscale: false,
-            contours: {
-                z: { show: true, usecolormap: true, project: {z: true} }
-            },
-            lightposition: {x: 0, y: 0, z: 1000}, // Lighting to highlight geometry
-        }];
+    window.advanceTime = (ms) => {
+      const total = Math.max(0, Number(ms) || 0);
+      if (!state.animation || total === 0) return window.render_game_to_text();
+      const step = 16;
+      let remaining = total;
+      while (remaining > 0 && state.animation) {
+        stepAnimation(Math.min(step, remaining));
+        remaining -= step;
+      }
+      return window.render_game_to_text();
+    };
 
-        const layout = {
-            margin: {l: 0, r: 0, t: 0, b: 0},
-            scene: {
-                camera: state.camera,
-                xaxis: {title: 'Sliding Velocity (m/a)', gridcolor: '#e2e8f0', backgroundcolor: '#f8fafc'},
-                yaxis: {title: 'Effective Pressure (MPa)', gridcolor: '#e2e8f0', backgroundcolor: '#f8fafc'},
-                zaxis: {title: 'Basal Shear Stress (MPa)', gridcolor: '#e2e8f0', backgroundcolor: '#f8fafc'},
-                aspectratio: {x: 1, y: 1, z: 0.7}
-            },
-            paper_bgcolor: 'rgba(0,0,0,0)'
-        };
-
-        Plotly.react(plotElements.plot3d, data, layout, get3DPlotConfig()).then(gd => {
-            // Keep camera sync. Bind once to avoid repeated listeners.
-            if (!gd.__cameraListenerBound) {
-                gd.on('plotly_relayout', d => {
-                    if (d && d['scene.camera']) state.camera = d['scene.camera'];
-                });
-                gd.__cameraListenerBound = true;
-            }
-        });
-    }
-
-    // --- Initialization ---
-    Object.values(sliders).forEach(slider => {
-        slider.addEventListener('input', () => {
-            updateDashboard({ update3D: false });
-            schedule3DUpdate();
-        });
-
-        slider.addEventListener('change', () => {
-            updateDashboard({ update3D: false });
-            flush3DUpdate(true);
-        });
-
-        slider.addEventListener('pointerup', () => flush3DUpdate());
-        slider.addEventListener('touchend', () => flush3DUpdate(), {passive: true});
-    });
-
-    mobileTabs.forEach(tab => {
-        tab.addEventListener('click', () => setMobileView(tab.dataset.mobileView));
-    });
-
-    if (typeof mobileMediaQuery.addEventListener === 'function') {
-        mobileMediaQuery.addEventListener('change', syncMobileLayout);
-    } else if (typeof mobileMediaQuery.addListener === 'function') {
-        mobileMediaQuery.addListener(syncMobileLayout);
-    }
-
-    window.addEventListener('resize', resizeVisiblePlots);
-
-    // Initial Render
-    updateDashboard();
-    syncMobileLayout();
-    
-</script>
+    initialise();
+  </script>
 </body>
 </html>
