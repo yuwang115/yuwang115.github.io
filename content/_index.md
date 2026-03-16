@@ -116,7 +116,8 @@ sections:
             ></iframe>
           </div>
           <p class="showcase-note">
-            Open the <a href="/tools/">Tools page</a> to unlock all interactions.
+            This interactive 3D Antarctica map lets visitors rotate the Antarctic ice sheet, inspect bed topography, ice velocity, and subglacial hydrology, and switch into a Greenland explorer built on the same polar workflow.
+            <a href="/tools/3d-antarctica/">Open the full 3D Antarctica Explorer landing page</a> or <a href="/tools/antarctica-bedmachine-3d.html">launch the live explorer</a>.
           </p>
         </div>
     design:

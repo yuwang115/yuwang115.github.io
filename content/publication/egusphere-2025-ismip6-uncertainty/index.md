@@ -37,7 +37,7 @@ url_pdf: "https://egusphere.copernicus.org/preprints/2025/egusphere-2025-4069/eg
 url_code: ""
 url_dataset: ""
 url_poster: ""
-url_project: ""
+url_project: "/tools/3d-antarctica/"
 url_slides: ""
 url_source: "https://egusphere.copernicus.org/preprints/2025/egusphere-2025-4069/"
 url_video: ""

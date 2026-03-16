@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3D Antarctica &amp; Greenland Explorer 🇦🇶</title>
+  <meta
+    name="description"
+    content="Run the live 3D Antarctica and Greenland explorer. For the indexed overview, data sources, FAQ, and trailer, use the main landing page."
+  />
+  <meta name="robots" content="noindex,follow" />
+  <link rel="canonical" href="https://yuwang.blog/tools/3d-antarctica/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -438,7 +444,20 @@
       pointer-events: auto;
     }
 
+    .viewer-tool-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 164px;
+      padding: 0 14px;
+      text-decoration: none;
+    }
+
     .viewer-tool-btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .viewer-tool-link:hover {
       filter: brightness(1.08);
     }
 
@@ -902,6 +921,7 @@
       </div>
       <div id="status" class="status">Loading data...</div>
       <div class="viewer-toolbar">
+        <a class="viewer-tool-btn viewer-tool-link" href="/tools/3d-antarctica/">Back to landing page</a>
         <button id="interactionToggle" class="viewer-tool-btn is-hidden" type="button">Enable 3D</button>
         <button id="viewerFullscreenToggle" class="viewer-tool-btn" type="button">Enter Fullscreen</button>
       </div>

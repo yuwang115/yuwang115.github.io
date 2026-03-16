@@ -1,0 +1,67 @@
+{{ if eq .RelPermalink "/tools/3d-antarctica/" }}
+  {{ $featured := (.Resources.ByType "image").GetMatch "*featured*" }}
+  {{ $image := "" }}
+  {{ if $featured }}
+    {{ $image = $featured.Permalink }}
+  {{ else }}
+    {{ $image = (partial "functions/get_site_icon" 512).Permalink }}
+  {{ end }}
+  {{ $app := dict
+    "@context" "https://schema.org"
+    "@type" "WebApplication"
+    "name" .Title
+    "url" .Permalink
+    "description" (.Params.summary | plainify)
+    "applicationCategory" "EducationalApplication"
+    "operatingSystem" "Any"
+    "browserRequirements" "Requires a modern WebGL-enabled browser."
+    "image" $image
+    "thumbnailUrl" $image
+    "author" (dict "@type" "Person" "name" "Yu Wang" "url" site.Home.Permalink)
+    "publisher" (dict "@type" "Organization" "name" "Yu Wang" "url" site.Home.Permalink)
+    "offers" (dict "@type" "Offer" "price" "0" "priceCurrency" "USD")
+    "featureList" (slice
+      "Interactive 3D Antarctica map"
+      "Greenland 3D explorer mode"
+      "Bed topography and ice geometry"
+      "Ice velocity and flowlines"
+      "Subglacial hydrology overlays"
+      "Ocean and basal-melt context")
+    "inLanguage" (site.LanguageCode | default "en-us")
+  }}
+  {{ $faq := dict
+    "@context" "https://schema.org"
+    "@type" "FAQPage"
+    "mainEntity" (slice
+      (dict
+        "@type" "Question"
+        "name" "What is this 3D Antarctica map?"
+        "acceptedAnswer" (dict "@type" "Answer" "text" "It is a browser-based 3D Antarctica explorer that combines bed topography, ice geometry, velocity, and scientific overlays into one interactive view."))
+      (dict
+        "@type" "Question"
+        "name" "Can I explore Greenland too?"
+        "acceptedAnswer" (dict "@type" "Answer" "text" "Yes. The same interface includes a Greenland explorer mode with BedMachine terrain, ice velocity, basin overlays, and ocean streamlines."))
+      (dict
+        "@type" "Question"
+        "name" "What datasets does it use?"
+        "acceptedAnswer" (dict "@type" "Answer" "text" "The explorer uses BedMachine, MEaSUREs and ITS_LIVE velocity products, Antarctic basin references, hydrology outputs, and Copernicus Marine ocean fields, all linked on the landing page."))
+      (dict
+        "@type" "Question"
+        "name" "Does it work on mobile?"
+        "acceptedAnswer" (dict "@type" "Answer" "text" "Yes for exploration and demonstration, but the balanced dataset is the better default on phones and tablets. HD mode is best on desktop.")))
+  }}
+  {{ $video := dict
+    "@context" "https://schema.org"
+    "@type" "VideoObject"
+    "name" "3D Antarctica Explorer trailer"
+    "description" "A short trailer showing the 3D Antarctica and Greenland explorer, including topography, velocity, hydrology, and ocean-context views."
+    "thumbnailUrl" (slice $image)
+    "uploadDate" "2026-03-09"
+    "duration" "PT49S"
+    "contentUrl" (printf "%smedia/antarctica-greenland-explorer-trailer-v1.mp4" site.Home.Permalink)
+    "embedUrl" (printf "%s#watch-demo" .Permalink)
+  }}
+<script type="application/ld+json">{{ $app | jsonify | safeJS }}</script>
+<script type="application/ld+json">{{ $faq | jsonify | safeJS }}</script>
+<script type="application/ld+json">{{ $video | jsonify | safeJS }}</script>
+{{ end }}

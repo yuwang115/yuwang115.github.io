@@ -1,0 +1,18 @@
+{{ define "main" }}
+<div class="explorer-page-shell">
+  <article>
+    <nav class="explorer-page-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ "/tools/" | relLangURL }}">Tools</a>
+      <span>/</span>
+      <span>3D Antarctica Explorer</span>
+    </nav>
+    <header>
+      <p class="explorer-page-kicker">Interactive polar data visualization</p>
+      <h1 class="explorer-page-title">{{ .Title }}</h1>
+    </header>
+    <div class="explorer-page-content">
+      {{ .Content }}
+    </div>
+  </article>
+</div>
+{{ end }}

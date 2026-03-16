@@ -1,6 +1,6 @@
 ---
 title: Tools
-summary: Interactive research tools
+summary: Interactive research tools, including a 3D Antarctica and Greenland explorer for polar data visualization.
 type: landing
 
 sections:
@@ -13,6 +13,18 @@ sections:
           #antarctica-3d-demo .max-w-prose {
             max-width: none;
             width: 100%;
+          }
+          #antarctica-3d-demo .tools-intro {
+            max-width: 920px;
+            margin: 0 auto 1.25rem;
+            color: #254558;
+            font-size: 1rem;
+            line-height: 1.7;
+          }
+          #antarctica-3d-demo .tools-intro a {
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 2px;
           }
           #antarctica-3d-demo .tools-embed {
             width: 100%;
@@ -32,6 +44,10 @@ sections:
             display: block;
           }
         </style>
+        <p class="tools-intro">
+          This is the main interactive Antarctica map on the site: a 3D Antarctica and Greenland explorer for bed topography, ice thickness, velocity, basin context, and subglacial hydrology.
+          <a href="/tools/3d-antarctica/">Open the full 3D Antarctica Explorer landing page</a> for the overview, trailer, data sources, and launch options.
+        </p>
         <div class="tools-embed">
           <iframe
             title="3D Antarctica & Greenland Explorer 🇦🇶"
