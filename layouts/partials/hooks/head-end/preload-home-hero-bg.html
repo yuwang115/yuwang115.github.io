@@ -1,17 +1,48 @@
 {{ if and .IsHome (eq .Type "landing") }}
   {{ $bgFilename := "" }}
+  {{ $bgSectionID := "" }}
+  {{ $bgColor := "#101a24" }}
+  {{ $bgPosition := "center" }}
+  {{ $bgSize := "cover" }}
+  {{ $bgBrightness := 1 }}
   {{ range .Params.sections }}
     {{ if and (eq $bgFilename "") .design.background.image.filename }}
       {{ $bgFilename = .design.background.image.filename }}
+      {{ $blockType := lower (.blox | default .block | default "markdown") }}
+      {{ $bgSectionID = .id | default (printf "section-%s" (replace (replace $blockType "." "-") "_" "-")) }}
+      {{ with .design.background.color }}{{ $bgColor = . }}{{ end }}
+      {{ with .design.background.image.position }}{{ $bgPosition = . }}{{ end }}
+      {{ with .design.background.image.size }}{{ $bgSize = replace . "actual" "auto" }}{{ end }}
+      {{ with .design.background.image.filters.brightness }}{{ $bgBrightness = . }}{{ end }}
     {{ end }}
   {{ end }}
   {{ with $bgFilename }}
-    {{ $bgImg := resources.Get (printf "media/%s" .) }}
-    {{ if $bgImg }}
-      {{ if ne $bgImg.MediaType.SubType "svg" }}
-        {{ $bgImg = $bgImg.Fit "1920x1920 webp" }}
+    {{ $srcImg := resources.Get (printf "media/%s" .) }}
+    {{ if $srcImg }}
+      {{ $bgImg := $srcImg }}
+      {{ $placeholderImg := $srcImg }}
+      {{ if ne $srcImg.MediaType.SubType "svg" }}
+        {{ $bgImg = $srcImg.Fit "1920x1920 webp" }}
+        {{ $placeholderImg = $srcImg.Fit "96x96 webp q20" }}
       {{ end }}
       <link rel="preload" as="image" href="{{ $bgImg.Permalink }}" fetchpriority="high">
+      {{ if and $bgSectionID (ne $srcImg.MediaType.SubType "svg") }}
+        {{ $overlayOpacity := 0 }}
+        {{ if lt $bgBrightness 1 }}{{ $overlayOpacity = sub 1 $bgBrightness }}{{ end }}
+        <style>
+          #{{ $bgSectionID }} > .home-section-bg {
+            background-color: {{ $bgColor }} !important;
+            background-image:
+              linear-gradient(rgba(0, 0, 0, {{ printf "%.3f" $overlayOpacity }}), rgba(0, 0, 0, {{ printf "%.3f" $overlayOpacity }})),
+              url('{{ $bgImg.Permalink }}'),
+              url('{{ $placeholderImg.Permalink }}') !important;
+            background-position: {{ $bgPosition }}, {{ $bgPosition }}, {{ $bgPosition }} !important;
+            background-repeat: no-repeat !important;
+            background-size: {{ $bgSize }}, {{ $bgSize }}, {{ $bgSize }} !important;
+            filter: none !important;
+          }
+        </style>
+      {{ end }}
     {{ end }}
   {{ end }}
 {{ end }}
