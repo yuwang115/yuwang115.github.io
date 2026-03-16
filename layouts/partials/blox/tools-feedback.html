@@ -7,6 +7,10 @@
 {{ $text := $block.content.text | emojify | $page.RenderString | safeHTML }}
 {{ $form_action := site.Params.feedback.tools_form_endpoint | default ($block.content.action | default "") }}
 {{ $email := site.Params.feedback.fallback_email | default "yu.wang0@utas.edu.au" }}
+{{ $source_page := $block.content.source_page | default "/tools/" }}
+{{ $source_section_value := $block.content.source_section | default "tool-feedback" }}
+{{ $default_tool := $block.content.default_tool | default "" }}
+{{ $root_class := $block.content.root_class | default "" }}
 {{ $placeholder_matches := findRE "YOUR[-_]FORM[-_]ID|YOUR_FORM_ID" $form_action }}
 {{ $is_configured := and (ne $form_action "") (eq (len $placeholder_matches) 0) }}
 {{ $success_id := printf "%s-success" $identifier }}
@@ -14,7 +18,7 @@
 {{ $form_id := printf "%s-form" $identifier }}
 {{ $status_id := printf "%s-status" $identifier }}
 
-<div class="mx-auto flex w-full flex-col gap-6 px-6">
+<div class="mx-auto flex w-full flex-col gap-6 px-6{{ with $root_class }} {{ . }}{{ end }}">
   <style>
     .tool-feedback-secondary,
     .tool-feedback-reset,
@@ -352,8 +356,8 @@
         accept-charset="UTF-8"
         {{ if $is_configured }}data-basin-form data-basin-success-action="render" data-basin-success-id="{{ $success_id }}" data-basin-error-id="{{ $error_id }}"{{ end }}
       >
-        <input type="hidden" name="source_page" value="/tools/">
-        <input type="hidden" name="source_section" value="tool-feedback" data-feedback-source-section>
+        <input type="hidden" name="source_page" value="{{ $source_page }}">
+        <input type="hidden" name="source_section" value="{{ $source_section_value }}" data-feedback-source-section>
         <input type="hidden" name="page_url" value="" data-feedback-page-url>
         <input type="hidden" name="page_title" value="{{ $page.Title }}">
         <input type="hidden" name="site_lang" value="{{ $page.Lang }}">
@@ -368,10 +372,10 @@
             <label class="tool-feedback-label" for="{{ $identifier }}-tool">Tool</label>
             <select id="{{ $identifier }}-tool" class="tool-feedback-select" name="tool" required data-feedback-tool-select>
               <option value="" selected disabled>Select a tool</option>
-              <option value="Hold Antarctica and Greenland in your hands with 3D ICE ❄️">Hold Antarctica and Greenland in your hands with 3D ICE ❄️</option>
-              <option value="Regularised Coulomb Sliding Law demo">Regularised Coulomb Sliding Law demo</option>
-              <option value="Marine Ice Sheet Flowline Lab">Marine Ice Sheet Flowline Lab</option>
-              <option value="General tools/site feedback">General tools/site feedback</option>
+              <option value="Hold Antarctica and Greenland in your hands with 3D ICE ❄️"{{ if eq $default_tool "Hold Antarctica and Greenland in your hands with 3D ICE ❄️" }} selected{{ end }}>Hold Antarctica and Greenland in your hands with 3D ICE ❄️</option>
+              <option value="Regularised Coulomb Sliding Law demo"{{ if eq $default_tool "Regularised Coulomb Sliding Law demo" }} selected{{ end }}>Regularised Coulomb Sliding Law demo</option>
+              <option value="Marine Ice Sheet Flowline Lab"{{ if eq $default_tool "Marine Ice Sheet Flowline Lab" }} selected{{ end }}>Marine Ice Sheet Flowline Lab</option>
+              <option value="General tools/site feedback"{{ if eq $default_tool "General tools/site feedback" }} selected{{ end }}>General tools/site feedback</option>
             </select>
           </div>
 
@@ -410,6 +414,8 @@
       const form = document.getElementById({{ $form_id }});
       if (!form) return;
 
+      const defaultToolValue = {{ $default_tool | jsonify | safeJS }};
+      const defaultSourceSection = {{ $source_section_value | jsonify | safeJS }};
       const toolSelect = form.querySelector("[data-feedback-tool-select]");
       const sourceSection = form.querySelector("[data-feedback-source-section]");
       const pageUrl = form.querySelector("[data-feedback-page-url]");
@@ -422,7 +428,10 @@
 
       const syncMetadata = () => {
         pageUrl.value = window.location.href;
-        sourceSection.value = "tool-feedback";
+        sourceSection.value = defaultSourceSection;
+        if (toolSelect && defaultToolValue && !toolSelect.value) {
+          toolSelect.value = defaultToolValue;
+        }
       };
 
       const restoreForm = () => {

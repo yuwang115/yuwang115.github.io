@@ -1,0 +1,39 @@
+[      64ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[     104ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[    6040ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[    6061ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[    9054ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[    9078ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[    9534ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[    9546ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[   16037ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[   16052ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[   19049ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[   19069ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[   46047ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[   46061ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[   59032ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[   59047ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[   66531ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[   66545ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[   73031ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[   73039ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[   75530ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[   75544ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[   80524ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/tools/3d-antarctica/:0
+[   80536ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:60248/favicon.ico:0
+[   83196ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[   83218ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[   83259ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[   83341ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[   83504ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[   83826ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[   84468ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[   85751ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[   88314ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[   93439ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[  103682ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[  124165ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[  165128ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[  225131ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1
+[  285135ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:60248/livereload' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:60248/livereload.js?mindelay=10&v=2&port=60248&path=livereload:1

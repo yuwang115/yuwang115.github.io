@@ -1,0 +1,9 @@
+- generic [ref=e3] [cursor=pointer]:
+  - generic: Ready (Balanced Demo)
+  - generic:
+    - generic:
+      - strong: "Scroll page:"
+      - text: keep using wheel to continue reading.
+      - strong: Click this scene
+      - text: to enter 3D interaction.
+  - text: Click to interact

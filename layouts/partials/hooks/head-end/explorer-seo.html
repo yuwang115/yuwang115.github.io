@@ -21,12 +21,12 @@
     "publisher" (dict "@type" "Organization" "name" "Yu Wang" "url" site.Home.Permalink)
     "offers" (dict "@type" "Offer" "price" "0" "priceCurrency" "USD")
     "featureList" (slice
-      "Interactive 3D Antarctica map"
-      "Greenland 3D explorer mode"
-      "Bed topography and ice geometry"
-      "Ice velocity and flowlines"
-      "Subglacial hydrology overlays"
-      "Ocean and basal-melt context")
+      "Interactive Antarctica and Greenland 3D explorer"
+      "Ice geometry, velocity, and flowlines"
+      "Basin boundaries and regional context"
+      "Subglacial feature visualization"
+      "Ocean circulation context"
+      "Balanced and HD cryosphere datasets")
     "inLanguage" (site.LanguageCode | default "en-us")
   }}
   {{ $faq := dict
@@ -35,33 +35,21 @@
     "mainEntity" (slice
       (dict
         "@type" "Question"
-        "name" "What is this 3D Antarctica map?"
-        "acceptedAnswer" (dict "@type" "Answer" "text" "It is a browser-based 3D Antarctica explorer that combines bed topography, ice geometry, velocity, and scientific overlays into one interactive view."))
+        "name" "What is 3D ICE?"
+        "acceptedAnswer" (dict "@type" "Answer" "text" "3D ICE is the Interactive Cryosphere Explorer, a browser-based tool for exploring Antarctica and Greenland through 3D geometry, dynamics, and environmental context."))
       (dict
         "@type" "Question"
-        "name" "Can I explore Greenland too?"
-        "acceptedAnswer" (dict "@type" "Answer" "text" "Yes. The same interface includes a Greenland explorer mode with BedMachine terrain, ice velocity, basin overlays, and ocean streamlines."))
+        "name" "What can I explore in Antarctica?"
+        "acceptedAnswer" (dict "@type" "Answer" "text" "Antarctica includes ice geometry, velocity, flowlines, basin boundaries, subglacial features, and ocean circulation layers that can be combined inside one live scene."))
       (dict
         "@type" "Question"
-        "name" "What datasets does it use?"
-        "acceptedAnswer" (dict "@type" "Answer" "text" "The explorer uses BedMachine, MEaSUREs and ITS_LIVE velocity products, Antarctic basin references, hydrology outputs, and Copernicus Marine ocean fields, all linked on the landing page."))
+        "name" "What can I explore in Greenland?"
+        "acceptedAnswer" (dict "@type" "Answer" "text" "Greenland includes bed and ice geometry, ice velocity, flowlines, basin overlays, and ocean circulation, using the same runtime and camera workflow as Antarctica."))
       (dict
         "@type" "Question"
-        "name" "Does it work on mobile?"
-        "acceptedAnswer" (dict "@type" "Answer" "text" "Yes for exploration and demonstration, but the balanced dataset is the better default on phones and tablets. HD mode is best on desktop.")))
-  }}
-  {{ $video := dict
-    "@context" "https://schema.org"
-    "@type" "VideoObject"
-    "name" "3D Antarctica Explorer trailer"
-    "description" "A short trailer showing the 3D Antarctica and Greenland explorer, including topography, velocity, hydrology, and ocean-context views."
-    "thumbnailUrl" (slice $image)
-    "uploadDate" "2026-03-09"
-    "duration" "PT49S"
-    "contentUrl" (printf "%smedia/antarctica-greenland-explorer-trailer-v1.mp4" site.Home.Permalink)
-    "embedUrl" (printf "%s#watch-demo" .Permalink)
+        "name" "Does 3D ICE work on mobile?"
+        "acceptedAnswer" (dict "@type" "Answer" "text" "Yes for exploration and demonstration. The balanced datasets are the best default on phones and tablets, while the heavier presets are better suited to desktop browsing.")))
   }}
 <script type="application/ld+json">{{ $app | jsonify | safeJS }}</script>
 <script type="application/ld+json">{{ $faq | jsonify | safeJS }}</script>
-<script type="application/ld+json">{{ $video | jsonify | safeJS }}</script>
 {{ end }}

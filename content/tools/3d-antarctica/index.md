@@ -1,10 +1,10 @@
 ---
-title: "3D Antarctica: Interactive Antarctica & Greenland Explorer"
+title: "3D ICE: Interactive Cryosphere Explorer"
 seo:
-  title: "3D Antarctica: Interactive Antarctica & Greenland Explorer | Yu Wang"
-summary: "Explore Antarctica and Greenland in 3D with interactive bed topography, ice thickness, velocity, subglacial hydrology, and ocean layers."
+  title: "3D ICE: Interactive Cryosphere Explorer | Yu Wang"
+summary: "Explore Antarctica and Greenland with 3D ICE, an interactive cryosphere explorer for ice geometry, velocity, flowlines, basin boundaries, subglacial systems, and ocean circulation."
 date: 2026-03-09
-lastmod: 2026-03-09
+lastmod: 2026-03-17
 layout: explorer-landing
 type: page
 slug: 3d-antarctica
@@ -13,128 +13,206 @@ share: true
 show_breadcrumb: false
 hide_date: true
 reading_time: false
+explorer_theme: ice
+explorer_kicker: "Interactive cryosphere explorer"
 image:
-  alt_text: "3D Antarctica Explorer overview showing the Antarctic ice sheet and surrounding bathymetry."
+  alt_text: "3D ICE interactive cryosphere explorer preview showing Antarctica and Greenland data views."
   preview_only: true
 ---
 
-<div class="explorer-landing">
-  <section class="explorer-hero">
-    <p class="explorer-summary">
-      This 3D Antarctica experience is an interactive Antarctica map for exploring the Antarctic ice sheet in a way that ordinary static figures cannot. It combines bed topography, ice thickness, ice velocity, basin outlines, subglacial hydrology, and ocean-linked melt context in a single browser-based view. You can also switch into a Greenland 3D explorer built on the same workflow, compare balanced and HD datasets, and move from overview to detail without leaving the page. If someone searches for a 3D Antarctica tool, this is the page intended to explain it, preview it, and launch it.
-    </p>
-    <div class="explorer-actions">
-      <a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
-      <a class="explorer-button explorer-button--secondary" href="#watch-demo">Watch 45-second Demo</a>
-    </div>
-    <figure class="explorer-hero-media">
-      <img src="featured.png" alt="3D Antarctica Explorer overview showing the Antarctic ice sheet and surrounding bathymetry." loading="eager" />
-      <figcaption>
-        The live scene combines Antarctic topography, ice geometry, and polar context in a browser-ready 3D Antarctica map.
-      </figcaption>
-    </figure>
-  </section>
-
-  <section class="explorer-section">
-    <h2>What you can explore</h2>
-    <div class="explorer-grid">
-      <article class="explorer-card">
-        <h3>Antarctic ice sheet geometry</h3>
-        <p>Inspect bed topography, surface elevation, ice base elevation, and ice thickness across Antarctica in a single 3D frame.</p>
-      </article>
-      <article class="explorer-card">
-        <h3>Flow and subglacial systems</h3>
-        <p>Toggle ice velocity, flowlines, effective pressure, and subglacial hydrology layers to see where fast flow and water pathways matter most.</p>
-      </article>
-      <article class="explorer-card">
-        <h3>Greenland 3D explorer mode</h3>
-        <p>Switch regions to open the Greenland 3D explorer, including terrain, velocity, basin overlays, and ocean streamlines.</p>
-      </article>
-      <article class="explorer-card">
-        <h3>Resolution and viewing control</h3>
-        <p>Choose balanced or HD datasets, adjust vertical exaggeration, change opacity, and reset the camera to move from storytelling to inspection.</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="explorer-section">
-    <h2>Why this is useful</h2>
-    <p>
-      A standard Antarctica 3D map is often just a pretty globe. This tool is built as a scientific explainer: it lets readers, students, collaborators, and curious visitors understand how the Antarctic ice sheet sits on its bed, where ice velocity accelerates, and why subglacial hydrology and melt forcing matter for sea-level change. The same interface also makes it easier to communicate research results outside papers and conference slides.
-    </p>
-    <p class="explorer-note">
-      If you need an interactive Antarctica map that goes beyond a static screenshot, this landing page is the overview and the live explorer is one click away.
-    </p>
-  </section>
-
-  <section class="explorer-section">
-    <h2>Data sources</h2>
-    <ul class="explorer-source-list">
-      <li><a href="https://nsidc.org/data/NSIDC-0756/versions/4" target="_blank" rel="noopener">MEaSUREs BedMachine Antarctica, Version 4</a></li>
-      <li><a href="https://nsidc.org/data/NSIDC-0754/versions/1" target="_blank" rel="noopener">MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1</a></li>
-      <li><a href="https://data.aad.gov.au/metadata/RISE" target="_blank" rel="noopener">RISE Antarctic ice-shelf basal melting and ocean-driver data</a></li>
-      <li><a href="https://zenodo.org/records/12738170" target="_blank" rel="noopener">Antarctic Wide Subglacial Hydrology Modeling</a></li>
-      <li><a href="https://nsidc.org/data/NSIDC-0709/versions/2" target="_blank" rel="noopener">IMBIE refined basin boundaries for Antarctica</a></li>
-      <li><a href="https://nsidc.org/data/idbmg4/versions/6" target="_blank" rel="noopener">BedMachine Greenland, Version 6</a></li>
-      <li><a href="https://nsidc.org/data/NSIDC-0776/versions/2" target="_blank" rel="noopener">ITS_LIVE Greenland ice velocity mosaic</a></li>
-      <li><a href="https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description" target="_blank" rel="noopener">Copernicus Marine Arctic Ocean physics analysis and forecast</a></li>
-    </ul>
-  </section>
-
-  <section class="explorer-section">
-    <h2>How to use it</h2>
-    <ol class="explorer-howto">
-      <li>Launch the explorer and start in Antarctica for the default balanced view.</li>
-      <li>Rotate, zoom, and pan to inspect bed topography, grounding-zone context, and large-scale basin structure.</li>
-      <li>Turn on ice velocity, flowlines, or subglacial hydrology to inspect dynamic patterns in the Antarctic ice sheet.</li>
-      <li>Switch to Greenland when you want the Greenland 3D explorer with ocean streamlines and basin overlays.</li>
-      <li>Use HD mode on desktop when you want more detail and your connection can handle larger datasets.</li>
-    </ol>
-  </section>
-
-  <section id="watch-demo" class="explorer-section">
-    <h2>Watch the demo</h2>
-    <p>
-      The trailer below is the quickest way to preview what the interface can do before you open the full runtime.
-    </p>
-    <div class="explorer-video">
-      <video controls preload="metadata" poster="featured.png">
-        <source src="/media/antarctica-greenland-explorer-trailer-v1.mp4" type="video/mp4" />
-        Your browser does not support HTML5 video.
-      </video>
-    </div>
-  </section>
-
-  <section class="explorer-section">
-    <h2>FAQ</h2>
-    <div class="explorer-faq">
-      <details open>
-        <summary>What is this 3D Antarctica map?</summary>
-        <p>It is a browser-based 3D Antarctica explorer that combines bed topography, ice geometry, velocity, and scientific overlays into one interactive view.</p>
-      </details>
-      <details>
-        <summary>Can I explore Greenland too?</summary>
-        <p>Yes. The same interface includes a Greenland explorer mode with BedMachine terrain, ice velocity, basin overlays, and ocean streamlines.</p>
-      </details>
-      <details>
-        <summary>What datasets does it use?</summary>
-        <p>The explorer uses BedMachine, MEaSUREs and ITS_LIVE velocity products, Antarctic basin references, hydrology outputs, and Copernicus Marine ocean fields, all linked above.</p>
-      </details>
-      <details>
-        <summary>Does it work on mobile?</summary>
-        <p>Yes for exploration and demonstration, but the balanced dataset is the better default on phones and tablets. HD mode is best on desktop.</p>
-      </details>
-    </div>
-  </section>
-
-  <section class="explorer-section explorer-final-cta">
-    <h2>Launch the full explorer</h2>
-    <p>
-      Ready to move from overview into the live runtime? Open the standalone explorer and start navigating Antarctica in 3D.
-    </p>
-    <div class="explorer-actions explorer-actions--center">
-      <a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
-      <a class="explorer-button explorer-button--ghost" href="/tools/">Browse all research tools</a>
-    </div>
-  </section>
+<div class="explorer-landing explorer-landing--ice">
+<section class="explorer-ice-hero">
+<div class="explorer-ice-brand">
+<img class="explorer-ice-logo" src="/tools/3d-ice-logo-light.jpg" alt="3D ICE Interactive Cryosphere Explorer" loading="eager" />
+<p class="explorer-ice-brand-note">3D ICE stands for Interactive Cryosphere Explorer: a browser-based way to inspect Antarctica and Greenland as connected, explorable 3D systems.</p>
+</div>
+<p class="explorer-summary">3D ICE is built for interactive polar storytelling. Open Antarctica to inspect ice velocity, flowlines, basin boundaries, subglacial structure, and ocean circulation in one view, then switch to Greenland to compare fast-flow corridors and marine context with the same interface. It is designed to feel immediate for outreach, but detailed enough for research communication, teaching, and scientific demos.</p>
+<div class="explorer-actions">
+<a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
+<a class="explorer-button explorer-button--secondary" href="#antarctica-features">Antarctica Features</a>
+<a class="explorer-button explorer-button--ghost" href="#greenland-features">Greenland Features</a>
+</div>
+<ul class="explorer-ice-highlights">
+<li>Interactive Antarctica and Greenland scene switching</li>
+<li>Balanced and HD datasets for storytelling or closer inspection</li>
+<li>Velocity, flowlines, basins, subglacial systems, and ocean circulation</li>
+</ul>
+<div class="explorer-showcase-breakout">
+<div class="explorer-showcase-frame">
+<iframe title="3D ICE interactive Antarctica showcase" src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></iframe>
+</div>
+<p class="explorer-showcase-note">Interact with the live Antarctica showcase here, or <a href="/tools/3D-interactive-cryosphere-explorer.html">launch the full runtime</a> to switch regions, change resolution, and unlock the full control panel.</p>
+</div>
+</section>
+<section id="antarctica-features" class="explorer-section explorer-region">
+<div class="explorer-region-intro">
+<p class="explorer-region-label">Antarctica</p>
+<h2>Feature walkthroughs for the Antarctic ice sheet</h2>
+<p>These Antarctica demo slots are organized around the views that matter most when introducing 3D ICE. Antarctica is where the explorer brings together grounded ice, basin structure, subglacial context, and surrounding ocean circulation in one coordinated scene.</p>
+</div>
+<div class="explorer-video-grid explorer-video-grid--antarctica">
+<article class="explorer-video-card" data-demo-slot="antarctica-velocity-flowlines">
+<div class="explorer-video-copy">
+<h3>Antarctic ice velocity + flowlines</h3>
+<p>Show how fast-flowing corridors connect ice shelves, outlet glaciers, and basin-scale drainage patterns across Antarctica.</p>
+</div>
+<div class="explorer-video-media">
+<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Antarctic ice velocity and flowlines"></video>
+<div class="explorer-video-overlay">
+<span class="explorer-video-badge">Demo slot</span>
+<strong>Replace with your looped Antarctica velocity clip</strong>
+</div>
+</div>
+</article>
+<article class="explorer-video-card" data-demo-slot="antarctica-basin-boundary">
+<div class="explorer-video-copy">
+<h3>Basin boundary</h3>
+<p>Use basin outlines to explain how the ice sheet is partitioned and why regional responses need to be interpreted within basin context.</p>
+</div>
+<div class="explorer-video-media">
+<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Antarctic basin boundary"></video>
+<div class="explorer-video-overlay">
+<span class="explorer-video-badge">Demo slot</span>
+<strong>Replace with your Antarctica basin boundary clip</strong>
+</div>
+</div>
+</article>
+<article class="explorer-video-card" data-demo-slot="antarctica-subglacial-features">
+<div class="explorer-video-copy">
+<h3>Subglacial features</h3>
+<p>Highlight the hidden structure beneath the ice through effective pressure and subglacial channels, turning invisible processes into something spatially intuitive.</p>
+</div>
+<div class="explorer-video-media">
+<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Antarctic subglacial features"></video>
+<div class="explorer-video-overlay">
+<span class="explorer-video-badge">Demo slot</span>
+<strong>Replace with your Antarctica subglacial features clip</strong>
+</div>
+</div>
+</article>
+<article class="explorer-video-card" data-demo-slot="antarctica-ocean-circulations">
+<div class="explorer-video-copy">
+<h3>Ocean circulations</h3>
+<p>Reveal how Antarctic ocean circulation frames ice-shelf environment, shelf connectivity, and the broader marine setting around the continent.</p>
+</div>
+<div class="explorer-video-media">
+<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Antarctic ocean circulations"></video>
+<div class="explorer-video-overlay">
+<span class="explorer-video-badge">Demo slot</span>
+<strong>Replace with your Antarctica ocean circulation clip</strong>
+</div>
+</div>
+</article>
+</div>
+</section>
+<section id="greenland-features" class="explorer-section explorer-region">
+<div class="explorer-region-intro">
+<p class="explorer-region-label">Greenland</p>
+<h2>Greenland views in the same 3D ICE workflow</h2>
+<p>Greenland runs through the same runtime, so it becomes easy to compare geometry, fast flow, and marine forcing between the two polar ice sheets without changing tools or mental models.</p>
+</div>
+<div class="explorer-video-grid explorer-video-grid--greenland">
+<article class="explorer-video-card" data-demo-slot="greenland-velocity-flowlines">
+<div class="explorer-video-copy">
+<h3>Greenland ice velocity + flowlines</h3>
+<p>Focus on outlet glaciers, fast-flow structure, and how the Greenland ice sheet routes ice from interior catchments to the coast.</p>
+</div>
+<div class="explorer-video-media">
+<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Greenland ice velocity and flowlines"></video>
+<div class="explorer-video-overlay">
+<span class="explorer-video-badge">Demo slot</span>
+<strong>Replace with your Greenland velocity clip</strong>
+</div>
+</div>
+</article>
+<article class="explorer-video-card" data-demo-slot="greenland-ocean-circulations">
+<div class="explorer-video-copy">
+<h3>Ocean circulations</h3>
+<p>Show Greenland's fjord-to-shelf ocean setting and how surrounding circulation patterns provide context for marine-terminating glacier behaviour.</p>
+</div>
+<div class="explorer-video-media">
+<video autoplay muted loop playsinline preload="metadata" poster="featured.png" aria-label="Placeholder video for Greenland ocean circulations"></video>
+<div class="explorer-video-overlay">
+<span class="explorer-video-badge">Demo slot</span>
+<strong>Replace with your Greenland ocean circulation clip</strong>
+</div>
+</div>
+</article>
+</div>
+</section>
+<section class="explorer-section">
+<div class="explorer-region-intro">
+<p class="explorer-region-label">Scientific data</p>
+<h2>Scientific data behind 3D ICE</h2>
+<p>The landing page stays light, but the explorer itself is built on published cryosphere and ocean datasets chosen to keep the visuals scientifically grounded.</p>
+</div>
+<div class="explorer-source-columns">
+<article class="explorer-source-column">
+<h3>Antarctica</h3>
+<ul class="explorer-source-list">
+<li><a href="https://nsidc.org/data/NSIDC-0756/versions/4" target="_blank" rel="noopener">MEaSUREs BedMachine Antarctica, Version 4</a></li>
+<li><a href="https://nsidc.org/data/NSIDC-0754/versions/1" target="_blank" rel="noopener">MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1</a></li>
+<li><a href="https://nsidc.org/data/NSIDC-0709/versions/2" target="_blank" rel="noopener">IMBIE refined basin boundaries for Antarctica</a></li>
+<li><a href="https://zenodo.org/records/12738170" target="_blank" rel="noopener">Antarctic Wide Subglacial Hydrology Modeling</a></li>
+<li><a href="https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2023.1027704/full" target="_blank" rel="noopener">WAOM2 annual-mean Antarctic ocean circulation fields</a></li>
+</ul>
+</article>
+<article class="explorer-source-column">
+<h3>Greenland</h3>
+<ul class="explorer-source-list">
+<li><a href="https://nsidc.org/data/idbmg4/versions/6" target="_blank" rel="noopener">BedMachine Greenland, Version 6</a></li>
+<li><a href="https://nsidc.org/data/NSIDC-0776/versions/2" target="_blank" rel="noopener">ITS_LIVE Greenland ice velocity mosaic</a></li>
+<li><a href="https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description" target="_blank" rel="noopener">Copernicus Marine Arctic Ocean physics analysis and forecast</a></li>
+<li><a href="https://essopenarchive.org/doi/full/10.22541/essoar.177099472.28419248" target="_blank" rel="noopener">Greenland basal friction ensemble inversion reference</a></li>
+</ul>
+</article>
+</div>
+</section>
+<section class="explorer-section explorer-faq-feedback">
+<div class="explorer-faq-feedback-grid">
+<div class="explorer-faq-panel">
+<p class="explorer-region-label">Support</p>
+<h2>FAQ and feedback</h2>
+<p>If you still have a question after browsing the quick answers below, use the tools feedback box to send a note directly from this page.</p>
+<div class="explorer-faq">
+<details open>
+<summary>What is 3D ICE?</summary>
+<p>3D ICE is the Interactive Cryosphere Explorer, a browser-based tool for exploring Antarctica and Greenland through 3D geometry, dynamics, and environmental context.</p>
+</details>
+<details>
+<summary>What can I explore in Antarctica?</summary>
+<p>Antarctica includes ice geometry, velocity, flowlines, basin boundaries, subglacial features, and ocean circulation layers that can be combined inside one live scene.</p>
+</details>
+<details>
+<summary>What can I explore in Greenland?</summary>
+<p>Greenland includes bed and ice geometry, ice velocity, flowlines, basin overlays, and ocean circulation, using the same runtime and camera workflow as Antarctica.</p>
+</details>
+<details>
+<summary>Does 3D ICE work on mobile?</summary>
+<p>Yes for exploration and demonstration. The balanced datasets are the best default on phones and tablets, while the heavier presets are better suited to desktop browsing.</p>
+</details>
+</div>
+</div>
+<div class="explorer-feedback-panel">
+{{< tools-feedback-inline
+  identifier="faq-feedback-3d-ice"
+  title="Tools feedback"
+  text="If 3D ICE was helpful, confusing, or a little rough around the edges, send me a quick note here. I use this inbox to collect bug reports, usability feedback, and ideas for what to improve next."
+  default_tool="Hold Antarctica and Greenland in your hands with 3D ICE ❄️"
+  source_page="/tools/3d-antarctica/"
+  source_section="faq-feedback"
+  root_class="tool-feedback-root--inline"
+>}}
+</div>
+</div>
+</section>
+<section class="explorer-section explorer-final-cta">
+<p class="explorer-region-label">Ready to explore</p>
+<h2>Launch the full 3D ICE experience</h2>
+<p>Open the standalone runtime to move from this overview page into the full interactive explorer for Antarctica and Greenland.</p>
+<div class="explorer-actions explorer-actions--center">
+<a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
+<a class="explorer-button explorer-button--ghost" href="/tools/">Browse all research tools</a>
+</div>
+</section>
 </div>

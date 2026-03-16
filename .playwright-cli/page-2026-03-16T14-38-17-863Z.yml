@@ -1,0 +1,8 @@
+- generic [ref=e3]:
+  - generic: Ready (Balanced Demo)
+  - generic:
+    - generic:
+      - strong: "Interactive:"
+      - text: drag to orbit, wheel to zoom, right-drag to pan. Press
+      - strong: Esc
+      - text: to return to page scrolling.

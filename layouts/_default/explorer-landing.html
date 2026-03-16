@@ -1,13 +1,13 @@
 {{ define "main" }}
-<div class="explorer-page-shell">
+<div class="explorer-page-shell{{ with .Params.explorer_theme }} explorer-page-shell--{{ . }}{{ end }}">
   <article>
     <nav class="explorer-page-breadcrumb" aria-label="Breadcrumb">
       <a href="{{ "/tools/" | relLangURL }}">Tools</a>
       <span>/</span>
-      <span>3D Antarctica Explorer</span>
+      <span>{{ .Title }}</span>
     </nav>
     <header>
-      <p class="explorer-page-kicker">Interactive polar data visualization</p>
+      <p class="explorer-page-kicker">{{ .Params.explorer_kicker | default "Interactive polar data visualization" }}</p>
       <h1 class="explorer-page-title">{{ .Title }}</h1>
     </header>
     <div class="explorer-page-content">

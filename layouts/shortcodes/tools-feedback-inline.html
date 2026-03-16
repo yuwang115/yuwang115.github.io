@@ -1,0 +1,18 @@
+{{ $identifier := .Get "identifier" | default (printf "tools-feedback-%s" (anchorize .Page.File.TranslationBaseName)) }}
+{{ $title := .Get "title" | default "Tools feedback" }}
+{{ $text := .Get "text" | default "" }}
+{{ $action := .Get "action" | default "" }}
+{{ $source_page := .Get "source_page" | default .Page.RelPermalink }}
+{{ $source_section := .Get "source_section" | default "tool-feedback" }}
+{{ $default_tool := .Get "default_tool" | default "" }}
+{{ $root_class := .Get "root_class" | default "" }}
+{{ $block := dict "content" (dict
+  "title" $title
+  "text" $text
+  "action" $action
+  "source_page" $source_page
+  "source_section" $source_section
+  "default_tool" $default_tool
+  "root_class" $root_class
+) }}
+{{ partial "blox/tools-feedback.html" (dict "wcPage" .Page "wcBlock" $block "wcIdentifier" $identifier) }}
