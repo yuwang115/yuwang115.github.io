@@ -16,8 +16,36 @@
     {{ if eq .RelPermalink "/tools/3d-ice/" }}
     <script>
       (() => {
+        const logoEl = document.querySelector(".explorer-ice-logo");
+        const lightLogoSrc = "/tools/3d-ice-logo-light.jpg";
+        const darkLogoSrc = "/tools/3d-ice-logo.jpg";
+        const syncThemeLogo = () => {
+          if (!logoEl) return;
+          const nextSrc = document.documentElement.classList.contains("dark") ? darkLogoSrc : lightLogoSrc;
+          if (logoEl.getAttribute("src") !== nextSrc) {
+            logoEl.setAttribute("src", nextSrc);
+          }
+        };
+
+        syncThemeLogo();
+        document.addEventListener("hbThemeChange", syncThemeLogo);
+
+        const themeObserver = new MutationObserver(() => {
+          syncThemeLogo();
+        });
+        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
         const previewLinks = Array.from(document.querySelectorAll(".explorer-preview-link[data-preview-src]"));
-        if (!previewLinks.length) return;
+        if (!previewLinks.length) {
+          window.addEventListener(
+            "pagehide",
+            () => {
+              themeObserver.disconnect();
+            },
+            { once: true }
+          );
+          return;
+        }
 
         const canUseHoverPreview = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
         let activeLink = null;
@@ -100,6 +128,7 @@
 
         window.addEventListener("pagehide", () => {
           previewLinks.forEach((link) => teardownPreview(link));
+          themeObserver.disconnect();
         });
 
         if (!canUseHoverPreview) {

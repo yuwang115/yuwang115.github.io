@@ -82,6 +82,27 @@
   --ice-border-strong: #afcddd;
   --ice-panel: #ffffff;
   --ice-panel-soft: linear-gradient(180deg, #fbfdff 0%, #f2f8fb 100%);
+  --ice-region-bg:
+    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.08), transparent 20%),
+    var(--ice-panel);
+  --ice-feature-section-bg:
+    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.07), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(92, 168, 175, 0.022), transparent 30%),
+    linear-gradient(180deg, #fcfeff 0%, #f6fafc 100%);
+  --ice-source-section-bg:
+    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.07), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(94, 170, 176, 0.024), transparent 30%),
+    linear-gradient(180deg, #fcfeff 0%, #f6fafc 100%);
+  --ice-feedback-only-bg:
+    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.1), transparent 24%),
+    linear-gradient(180deg, #fcfeff 0%, #f3f9fc 100%);
+  --ice-community-section-bg:
+    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.14), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(23, 144, 107, 0.08), transparent 30%),
+    linear-gradient(180deg, #fcfeff 0%, #f3f9fc 100%);
+  --ice-final-cta-bg:
+    radial-gradient(circle at 50% 0%, rgba(116, 220, 255, 0.16), transparent 24%),
+    linear-gradient(180deg, #f9fdff 0%, #f2f8fb 100%);
   --ice-panel-card:
     radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.08), transparent 24%),
     radial-gradient(circle at 0% 100%, rgba(88, 164, 170, 0.028), transparent 30%),
@@ -112,11 +133,309 @@
     linear-gradient(160deg, #f7fbfe 0%, #edf6fb 54%, #f8fbfd 100%);
   --ice-shadow: 0 18px 40px rgba(11, 36, 50, 0.08);
   --ice-shadow-strong: 0 22px 50px rgba(9, 34, 49, 0.16);
+  --ice-card-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    0 12px 24px rgba(9, 34, 49, 0.035);
+  --ice-card-shadow-soft:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 12px 24px rgba(9, 34, 49, 0.035);
+  --ice-card-shadow-strong:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 16px 30px rgba(9, 34, 49, 0.055);
+  --ice-card-border: rgba(175, 205, 221, 0.88);
+  --ice-card-border-strong: rgba(175, 205, 221, 0.9);
+  --ice-card-border-hover: #a7c9d9;
+  --ice-card-sheen-feature:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.045), transparent 22%);
+  --ice-card-sheen-video:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.038), transparent 24%);
+  --ice-card-sheen-source:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.038), transparent 24%);
+  --ice-card-sheen-link:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.03), transparent 22%);
+  --ice-feature-heading: #15374a;
+  --ice-video-heading: #15374a;
+  --ice-source-heading: #163a4d;
+  --ice-faq-summary: #143648;
+  --ice-faq-border: #d9e7ee;
+  --ice-source-link-text: #11425a;
+  --ice-source-link-hover-border: #9dc2d3;
+  --ice-showcase-border: #c3dce8;
+  --ice-showcase-bg: linear-gradient(160deg, #061f31 0%, #0c3a53 58%, #15536b 100%);
+  --ice-showcase-note: #123447;
+  --ice-logo-surface-url: url("/tools/3d-ice-logo-light.jpg");
+  --ice-video-media-bg:
+    linear-gradient(160deg, rgba(8, 31, 49, 0.95) 0%, rgba(16, 62, 86, 0.88) 54%, rgba(30, 107, 123, 0.82) 100%),
+    var(--ice-logo-surface-url) center/cover no-repeat;
+  --ice-video-media-interactive-bg: linear-gradient(160deg, rgba(8, 31, 49, 0.95) 0%, rgba(16, 62, 86, 0.88) 54%, rgba(30, 107, 123, 0.82) 100%);
+  --ice-preview-poster-bg:
+    linear-gradient(160deg, rgba(8, 31, 49, 0.82) 0%, rgba(16, 62, 86, 0.56) 54%, rgba(30, 107, 123, 0.38) 100%),
+    var(--ice-logo-surface-url) center/cover no-repeat;
+  --ice-video-media-border: #c1d8e5;
+  --ice-button-secondary-bg: rgba(255, 255, 255, 0.88);
+  --ice-button-secondary-text: #12435b;
+  --ice-button-ghost-bg: #f3f9fc;
+  --ice-button-ghost-border: #c6dce7;
+  --ice-button-ghost-text: #204c61;
+  --ice-highlight-card-border: rgba(175, 205, 221, 0.85);
+  --ice-highlight-card-bg: rgba(255, 255, 255, 0.72);
+  --ice-highlight-card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --ice-community-item-border: #d8e6ee;
+  --ice-community-item-bg: rgba(255, 255, 255, 0.84);
+  --ice-community-item-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  --ice-community-strong: #12384d;
+  --ice-community-utility-border: rgba(175, 205, 221, 0.92);
+  --ice-community-utility-bg: rgba(255, 255, 255, 0.92);
+  --ice-community-utility-text: #12435b;
+  --ice-community-utility-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 10px 20px rgba(9, 34, 49, 0.06);
+  --ice-community-utility-hover-bg: #f6fbfd;
+  --ice-community-utility-hover-border: #9fc4d5;
+  --ice-browse-spotlight-border: rgba(11, 97, 130, 0.16);
+  --ice-browse-spotlight-bg:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 32%),
+    linear-gradient(135deg, #0f7ea8 0%, #16988c 100%);
+  --ice-browse-spotlight-shadow:
+    0 18px 30px rgba(16, 104, 139, 0.24),
+    0 0 0 6px rgba(255, 255, 255, 0.42);
+  --ice-browse-spotlight-glow: radial-gradient(circle at 92% 18%, rgba(190, 240, 255, 0.24), transparent 28%);
+  --ice-browse-spotlight-hover-border: rgba(11, 97, 130, 0.22);
+  --ice-browse-spotlight-hover-shadow:
+    0 22px 36px rgba(16, 104, 139, 0.28),
+    0 0 0 6px rgba(255, 255, 255, 0.5);
+  --ice-feedback-card-border: rgba(175, 205, 221, 0.88);
+  --ice-feedback-card-bg:
+    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.18), transparent 22%),
+    radial-gradient(circle at 0% 100%, rgba(23, 144, 107, 0.1), transparent 26%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 251, 253, 0.98) 100%);
+  --ice-feedback-card-shadow: var(--ice-shadow);
+  --ice-feedback-heading-border: rgba(175, 205, 221, 0.9);
+  --ice-feedback-heading-bg: linear-gradient(155deg, rgba(250, 253, 255, 0.96) 0%, rgba(237, 247, 251, 0.92) 100%);
+  --ice-feedback-heading-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 16px 30px rgba(9, 34, 49, 0.05);
+  --ice-feedback-heading-sheen:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 32%),
+    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.08), transparent 22%);
+  --ice-feedback-heading-badge-border: rgba(15, 126, 168, 0.18);
+  --ice-feedback-heading-badge-bg: rgba(255, 255, 255, 0.82);
+  --ice-feedback-heading-badge-text: var(--ice-accent);
+  --ice-feedback-heading-glow: radial-gradient(circle, rgba(116, 220, 255, 0.22) 0%, rgba(116, 220, 255, 0) 72%);
+  --ice-feedback-untitled-body: #33586c;
+  --ice-feedback-note-border: #dfc98d;
+  --ice-feedback-note-bg: linear-gradient(180deg, #fffaf0 0%, #fff3d6 100%);
+  --ice-feedback-note-text: #6a4f08;
+  --ice-feedback-alert-border: #efc5c5;
+  --ice-feedback-alert-bg: linear-gradient(180deg, #fff8f8 0%, #fff1f1 100%);
+  --ice-feedback-success-border: #bdddc9;
+  --ice-feedback-success-bg: linear-gradient(180deg, #f6fdf8 0%, #eefaf2 100%);
+  --ice-feedback-label: #12384d;
+  --ice-feedback-input-border: #c8dbe6;
+  --ice-feedback-input-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 251, 253, 0.98) 100%);
+  --ice-feedback-input-text: #103345;
+  --ice-feedback-input-placeholder: #7b95a5;
+  --ice-feedback-input-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 8px 18px rgba(9, 34, 49, 0.04);
+  --ice-feedback-input-focus-border: #8ebcd0;
+  --ice-feedback-input-focus-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 0 0 4px rgba(15, 126, 168, 0.1),
+    0 16px 30px rgba(9, 34, 49, 0.08);
+  --ice-feedback-actions-border: rgba(175, 205, 221, 0.7);
+  --ice-feedback-secondary-bg: rgba(255, 255, 255, 0.9);
+  --ice-feedback-secondary-text: #12435b;
+  --ice-feedback-secondary-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
   --ice-deep: #081f31;
   --ice-deep-2: #0f3850;
   --ice-accent: #0f7ea8;
   --ice-accent-2: #17906b;
   --ice-highlight: #f4fbff;
+}
+
+html.dark .explorer-page-shell--ice {
+  --ice-ink: #ebf8ff;
+  --ice-text: #b7d6e6;
+  --ice-muted: #88aabf;
+  --ice-border: rgba(111, 166, 196, 0.28);
+  --ice-border-strong: rgba(137, 199, 226, 0.38);
+  --ice-panel: rgba(6, 16, 24, 0.9);
+  --ice-panel-soft: linear-gradient(180deg, rgba(7, 18, 27, 0.96) 0%, rgba(8, 20, 30, 0.98) 100%);
+  --ice-region-bg:
+    radial-gradient(circle at 100% 0%, rgba(58, 152, 198, 0.18), transparent 26%),
+    linear-gradient(180deg, rgba(7, 18, 27, 0.98) 0%, rgba(7, 16, 24, 0.96) 100%);
+  --ice-feature-section-bg:
+    radial-gradient(circle at 100% 0%, rgba(68, 173, 216, 0.16), transparent 26%),
+    radial-gradient(circle at 0% 100%, rgba(37, 142, 132, 0.12), transparent 32%),
+    linear-gradient(180deg, rgba(7, 19, 28, 0.98) 0%, rgba(8, 21, 30, 0.98) 100%);
+  --ice-source-section-bg:
+    radial-gradient(circle at 100% 0%, rgba(67, 168, 213, 0.16), transparent 26%),
+    radial-gradient(circle at 0% 100%, rgba(32, 130, 129, 0.12), transparent 32%),
+    linear-gradient(180deg, rgba(7, 18, 27, 0.98) 0%, rgba(8, 20, 29, 0.98) 100%);
+  --ice-feedback-only-bg:
+    radial-gradient(circle at 100% 0%, rgba(71, 179, 222, 0.18), transparent 26%),
+    linear-gradient(180deg, rgba(6, 18, 27, 0.98) 0%, rgba(8, 19, 29, 0.98) 100%);
+  --ice-community-section-bg:
+    radial-gradient(circle at 100% 0%, rgba(73, 177, 221, 0.2), transparent 28%),
+    radial-gradient(circle at 0% 100%, rgba(23, 144, 107, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(7, 19, 29, 0.98) 0%, rgba(7, 17, 26, 0.98) 100%);
+  --ice-final-cta-bg:
+    radial-gradient(circle at 50% 0%, rgba(75, 186, 228, 0.24), transparent 28%),
+    linear-gradient(180deg, rgba(6, 17, 25, 0.98) 0%, rgba(7, 16, 24, 0.98) 100%);
+  --ice-panel-card:
+    radial-gradient(circle at 100% 0%, rgba(74, 184, 225, 0.16), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(30, 124, 132, 0.12), transparent 30%),
+    linear-gradient(180deg, rgba(8, 19, 29, 0.98) 0%, rgba(9, 21, 30, 0.96) 100%);
+  --ice-panel-card-soft:
+    radial-gradient(circle at 88% 10%, rgba(88, 193, 233, 0.18), transparent 24%),
+    radial-gradient(circle at 10% 100%, rgba(39, 144, 137, 0.12), transparent 30%),
+    linear-gradient(155deg, rgba(8, 20, 30, 0.98) 0%, rgba(9, 22, 31, 0.96) 100%);
+  --ice-panel-card-sky:
+    radial-gradient(circle at 92% 8%, rgba(91, 178, 223, 0.18), transparent 22%),
+    radial-gradient(circle at 8% 100%, rgba(64, 132, 188, 0.12), transparent 30%),
+    linear-gradient(155deg, rgba(7, 19, 29, 0.98) 0%, rgba(10, 23, 32, 0.96) 100%);
+  --ice-panel-card-mint:
+    radial-gradient(circle at 92% 10%, rgba(72, 177, 173, 0.14), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(31, 122, 122, 0.12), transparent 30%),
+    linear-gradient(155deg, rgba(7, 18, 28, 0.98) 0%, rgba(8, 20, 29, 0.96) 100%);
+  --ice-panel-card-frost:
+    radial-gradient(circle at 100% 0%, rgba(99, 180, 222, 0.18), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(51, 138, 180, 0.12), transparent 30%),
+    linear-gradient(155deg, rgba(7, 19, 29, 0.98) 0%, rgba(8, 21, 30, 0.96) 100%);
+  --ice-panel-card-glacier:
+    radial-gradient(circle at 88% 10%, rgba(80, 180, 209, 0.16), transparent 22%),
+    radial-gradient(circle at 10% 100%, rgba(38, 138, 135, 0.1), transparent 28%),
+    linear-gradient(155deg, rgba(7, 19, 28, 0.98) 0%, rgba(8, 20, 30, 0.96) 100%);
+  --ice-panel-hero:
+    radial-gradient(circle at 12% 18%, rgba(53, 169, 219, 0.34), transparent 30%),
+    radial-gradient(circle at 92% 86%, rgba(28, 138, 122, 0.24), transparent 28%),
+    linear-gradient(160deg, rgba(6, 18, 27, 0.98) 0%, rgba(8, 23, 33, 0.96) 54%, rgba(8, 19, 28, 0.98) 100%);
+  --ice-shadow: 0 22px 46px rgba(2, 8, 13, 0.42);
+  --ice-shadow-strong: 0 28px 60px rgba(2, 8, 13, 0.56);
+  --ice-card-shadow:
+    inset 0 1px 0 rgba(223, 248, 255, 0.05),
+    0 18px 32px rgba(2, 8, 13, 0.34);
+  --ice-card-shadow-soft:
+    inset 0 1px 0 rgba(223, 248, 255, 0.06),
+    0 18px 32px rgba(2, 8, 13, 0.3);
+  --ice-card-shadow-strong:
+    inset 0 1px 0 rgba(223, 248, 255, 0.08),
+    0 22px 40px rgba(2, 8, 13, 0.42);
+  --ice-card-border: rgba(112, 168, 197, 0.24);
+  --ice-card-border-strong: rgba(120, 181, 209, 0.28);
+  --ice-card-border-hover: rgba(146, 215, 241, 0.44);
+  --ice-card-sheen-feature:
+    linear-gradient(140deg, rgba(231, 250, 255, 0.08) 0%, rgba(231, 250, 255, 0) 36%),
+    radial-gradient(circle at 88% 12%, rgba(58, 169, 212, 0.18), transparent 24%);
+  --ice-card-sheen-video:
+    linear-gradient(140deg, rgba(231, 250, 255, 0.07) 0%, rgba(231, 250, 255, 0) 36%),
+    radial-gradient(circle at 88% 12%, rgba(60, 173, 214, 0.18), transparent 24%);
+  --ice-card-sheen-source:
+    linear-gradient(140deg, rgba(231, 250, 255, 0.07) 0%, rgba(231, 250, 255, 0) 36%),
+    radial-gradient(circle at 88% 12%, rgba(60, 173, 214, 0.16), transparent 24%);
+  --ice-card-sheen-link:
+    linear-gradient(140deg, rgba(231, 250, 255, 0.07) 0%, rgba(231, 250, 255, 0) 36%),
+    radial-gradient(circle at 88% 12%, rgba(60, 173, 214, 0.14), transparent 22%);
+  --ice-feature-heading: #e8f7ff;
+  --ice-video-heading: #e6f6ff;
+  --ice-source-heading: #dbf2ff;
+  --ice-faq-summary: #dff2ff;
+  --ice-faq-border: rgba(124, 178, 205, 0.16);
+  --ice-source-link-text: #d6f0ff;
+  --ice-source-link-hover-border: rgba(147, 214, 239, 0.44);
+  --ice-showcase-border: rgba(116, 175, 205, 0.28);
+  --ice-showcase-bg: linear-gradient(160deg, #03111c 0%, #092437 58%, #0d3550 100%);
+  --ice-showcase-note: #9fc1d4;
+  --ice-logo-surface-url: url("/tools/3d-ice-logo.jpg");
+  --ice-video-media-bg:
+    linear-gradient(160deg, rgba(3, 15, 23, 0.98) 0%, rgba(7, 30, 43, 0.92) 54%, rgba(12, 53, 70, 0.88) 100%),
+    var(--ice-logo-surface-url) center/cover no-repeat;
+  --ice-video-media-interactive-bg: linear-gradient(160deg, rgba(3, 15, 23, 0.98) 0%, rgba(7, 30, 43, 0.92) 54%, rgba(12, 53, 70, 0.88) 100%);
+  --ice-preview-poster-bg:
+    linear-gradient(160deg, rgba(4, 18, 27, 0.88) 0%, rgba(8, 34, 48, 0.66) 54%, rgba(13, 56, 73, 0.5) 100%),
+    var(--ice-logo-surface-url) center/cover no-repeat;
+  --ice-video-media-border: rgba(116, 176, 204, 0.26);
+  --ice-button-secondary-bg: rgba(10, 24, 34, 0.78);
+  --ice-button-secondary-text: #d4efff;
+  --ice-button-ghost-bg: rgba(8, 20, 29, 0.92);
+  --ice-button-ghost-border: rgba(121, 186, 214, 0.24);
+  --ice-button-ghost-text: #c6e7f8;
+  --ice-highlight-card-border: rgba(111, 166, 196, 0.22);
+  --ice-highlight-card-bg: rgba(7, 21, 30, 0.7);
+  --ice-highlight-card-shadow: inset 0 1px 0 rgba(221, 247, 255, 0.04);
+  --ice-community-item-border: rgba(110, 168, 198, 0.2);
+  --ice-community-item-bg: rgba(7, 20, 29, 0.74);
+  --ice-community-item-shadow: inset 0 1px 0 rgba(223, 248, 255, 0.04);
+  --ice-community-strong: #e6f6ff;
+  --ice-community-utility-border: rgba(123, 185, 213, 0.26);
+  --ice-community-utility-bg: rgba(9, 22, 31, 0.9);
+  --ice-community-utility-text: #d1ecfb;
+  --ice-community-utility-shadow:
+    inset 0 1px 0 rgba(223, 248, 255, 0.06),
+    0 12px 24px rgba(2, 8, 13, 0.3);
+  --ice-community-utility-hover-bg: rgba(11, 27, 38, 0.96);
+  --ice-community-utility-hover-border: rgba(145, 211, 237, 0.4);
+  --ice-browse-spotlight-border: rgba(91, 192, 228, 0.22);
+  --ice-browse-spotlight-bg:
+    linear-gradient(140deg, rgba(204, 243, 255, 0.06) 0%, rgba(204, 243, 255, 0) 34%),
+    linear-gradient(135deg, #0b5d82 0%, #0c7c73 100%);
+  --ice-browse-spotlight-shadow:
+    0 22px 40px rgba(2, 12, 18, 0.4),
+    0 0 0 6px rgba(13, 37, 51, 0.42);
+  --ice-browse-spotlight-glow: radial-gradient(circle at 92% 18%, rgba(152, 225, 248, 0.18), transparent 28%);
+  --ice-browse-spotlight-hover-border: rgba(133, 218, 249, 0.34);
+  --ice-browse-spotlight-hover-shadow:
+    0 24px 44px rgba(2, 12, 18, 0.48),
+    0 0 0 6px rgba(15, 43, 60, 0.52);
+  --ice-feedback-card-border: rgba(118, 176, 204, 0.24);
+  --ice-feedback-card-bg:
+    radial-gradient(circle at 100% 0%, rgba(74, 184, 225, 0.18), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(23, 144, 107, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(7, 18, 27, 0.98) 0%, rgba(8, 20, 29, 0.98) 100%);
+  --ice-feedback-card-shadow: 0 24px 48px rgba(2, 8, 13, 0.4);
+  --ice-feedback-heading-border: rgba(119, 179, 207, 0.24);
+  --ice-feedback-heading-bg: linear-gradient(155deg, rgba(9, 24, 35, 0.96) 0%, rgba(8, 21, 31, 0.92) 100%);
+  --ice-feedback-heading-shadow:
+    inset 0 1px 0 rgba(223, 248, 255, 0.06),
+    0 18px 32px rgba(2, 8, 13, 0.34);
+  --ice-feedback-heading-sheen:
+    linear-gradient(140deg, rgba(225, 248, 255, 0.08) 0%, rgba(225, 248, 255, 0) 32%),
+    radial-gradient(circle at 88% 12%, rgba(58, 169, 212, 0.16), transparent 22%);
+  --ice-feedback-heading-badge-border: rgba(126, 193, 221, 0.22);
+  --ice-feedback-heading-badge-bg: rgba(8, 24, 34, 0.78);
+  --ice-feedback-heading-badge-text: #82d6ff;
+  --ice-feedback-heading-glow: radial-gradient(circle, rgba(74, 184, 225, 0.18) 0%, rgba(74, 184, 225, 0) 74%);
+  --ice-feedback-untitled-body: #a8cbdd;
+  --ice-feedback-note-border: rgba(144, 118, 44, 0.42);
+  --ice-feedback-note-bg: linear-gradient(180deg, rgba(74, 59, 18, 0.28) 0%, rgba(59, 46, 14, 0.36) 100%);
+  --ice-feedback-note-text: #f4df9a;
+  --ice-feedback-alert-border: rgba(142, 72, 72, 0.44);
+  --ice-feedback-alert-bg: linear-gradient(180deg, rgba(70, 22, 22, 0.34) 0%, rgba(60, 20, 20, 0.38) 100%);
+  --ice-feedback-success-border: rgba(58, 128, 89, 0.42);
+  --ice-feedback-success-bg: linear-gradient(180deg, rgba(13, 52, 30, 0.38) 0%, rgba(14, 45, 28, 0.42) 100%);
+  --ice-feedback-label: #dff2ff;
+  --ice-feedback-input-border: rgba(119, 179, 207, 0.24);
+  --ice-feedback-input-bg: linear-gradient(180deg, rgba(6, 18, 27, 0.96) 0%, rgba(8, 21, 30, 0.98) 100%);
+  --ice-feedback-input-text: #e8f7ff;
+  --ice-feedback-input-placeholder: #7fa3b6;
+  --ice-feedback-input-shadow:
+    inset 0 1px 0 rgba(223, 248, 255, 0.06),
+    0 10px 20px rgba(2, 8, 13, 0.24);
+  --ice-feedback-input-focus-border: rgba(95, 188, 222, 0.5);
+  --ice-feedback-input-focus-shadow:
+    inset 0 1px 0 rgba(223, 248, 255, 0.06),
+    0 0 0 4px rgba(52, 150, 183, 0.18),
+    0 18px 32px rgba(2, 8, 13, 0.34);
+  --ice-feedback-actions-border: rgba(114, 173, 201, 0.16);
+  --ice-feedback-secondary-bg: rgba(9, 22, 32, 0.9);
+  --ice-feedback-secondary-text: #d4eeff;
+  --ice-feedback-secondary-shadow: inset 0 1px 0 rgba(223, 248, 255, 0.06);
+  color-scheme: dark;
 }
 
 .explorer-page-shell--ice .explorer-page-breadcrumb {
@@ -283,15 +602,15 @@
 }
 
 .explorer-page-shell--ice .explorer-button--secondary {
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--ice-button-secondary-bg);
   border-color: var(--ice-border-strong);
-  color: #12435b;
+  color: var(--ice-button-secondary-text);
 }
 
 .explorer-page-shell--ice .explorer-button--ghost {
-  background: #f3f9fc;
-  border-color: #c6dce7;
-  color: #204c61;
+  background: var(--ice-button-ghost-bg);
+  border-color: var(--ice-button-ghost-border);
+  color: var(--ice-button-ghost-text);
 }
 
 .explorer-page-shell--ice .explorer-ice-highlights {
@@ -306,10 +625,10 @@
 .explorer-page-shell--ice .explorer-ice-highlights li {
   margin: 0;
   padding: 0.95rem 1rem;
-  border: 1px solid rgba(175, 205, 221, 0.85);
+  border: 1px solid var(--ice-highlight-card-border);
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  background: var(--ice-highlight-card-bg);
+  box-shadow: var(--ice-highlight-card-shadow);
   font-size: 0.96rem;
 }
 
@@ -333,12 +652,12 @@
   aspect-ratio: 1.9 / 1;
   min-height: 540px;
   max-height: 680px;
-  border: 1px solid #c3dce8;
+  border: 1px solid var(--ice-showcase-border);
   border-radius: 24px;
   overflow: hidden;
   box-shadow: var(--ice-shadow-strong);
   position: relative;
-  background: linear-gradient(160deg, #061f31 0%, #0c3a53 58%, #15536b 100%);
+  background: var(--ice-showcase-bg);
 }
 
 .explorer-page-shell--ice .explorer-ice-hero--split .explorer-showcase-frame {
@@ -361,7 +680,7 @@
   margin: 1rem 0 0;
   padding: 0;
   text-align: left;
-  color: #123447;
+  color: var(--ice-showcase-note);
   font-size: 1rem;
   line-height: 1.65;
 }
@@ -386,9 +705,7 @@
 }
 
 .explorer-page-shell--ice .explorer-region {
-  background:
-    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.08), transparent 20%),
-    var(--ice-panel);
+  background: var(--ice-region-bg);
 }
 
 .explorer-page-shell--ice .explorer-region-intro {
@@ -412,9 +729,7 @@
 }
 
 .explorer-page-shell--ice .explorer-mission-section {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(116, 220, 255, 0.08), transparent 24%),
-    linear-gradient(180deg, #fbfeff 0%, #f4fafc 100%);
+  background: var(--ice-panel-soft);
 }
 
 .explorer-page-shell--ice .explorer-mission-audiences {
@@ -429,10 +744,10 @@
 .explorer-page-shell--ice .explorer-mission-audiences li {
   margin: 0;
   padding: 0.95rem 1rem;
-  border: 1px solid rgba(175, 205, 221, 0.88);
+  border: 1px solid var(--ice-card-border);
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.82);
-  color: #163b4e;
+  background: var(--ice-highlight-card-bg);
+  color: var(--ice-text);
   font-weight: 600;
 }
 
@@ -444,27 +759,20 @@
 }
 
 .explorer-page-shell--ice .explorer-feature-section {
-  background:
-    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.07), transparent 24%),
-    radial-gradient(circle at 0% 100%, rgba(92, 168, 175, 0.022), transparent 30%),
-    linear-gradient(180deg, #fcfeff 0%, #f6fafc 100%);
+  background: var(--ice-feature-section-bg);
 }
 
 .explorer-page-shell--ice .explorer-feature-card {
   --ice-card-bg: var(--ice-panel-card-soft);
-  --ice-card-sheen:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 34%),
-    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.045), transparent 22%);
+  --ice-card-sheen: var(--ice-card-sheen-feature);
   position: relative;
   isolation: isolate;
   overflow: hidden;
   padding: 1.1rem;
-  border: 1px solid rgba(175, 205, 221, 0.9);
+  border: 1px solid var(--ice-card-border-strong);
   border-radius: 24px;
   background: var(--ice-card-bg);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.78),
-    0 12px 24px rgba(9, 34, 49, 0.035);
+  box-shadow: var(--ice-card-shadow-soft);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -510,15 +818,13 @@
 .explorer-page-shell--ice .explorer-feature-card:hover,
 .explorer-page-shell--ice .explorer-feature-card:focus-within {
   transform: translateY(-1px);
-  border-color: #a7c9d9;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 16px 30px rgba(9, 34, 49, 0.055);
+  border-color: var(--ice-card-border-hover);
+  box-shadow: var(--ice-card-shadow-strong);
 }
 
 .explorer-page-shell--ice .explorer-feature-card h3 {
   margin: 0 0 0.55rem;
-  color: #15374a;
+  color: var(--ice-feature-heading);
   font-size: 1.12rem;
   line-height: 1.25;
   font-weight: 800;
@@ -536,21 +842,17 @@
 
 .explorer-page-shell--ice .explorer-video-card {
   --ice-card-bg: var(--ice-panel-card);
-  --ice-card-sheen:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
-    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.038), transparent 24%);
+  --ice-card-sheen: var(--ice-card-sheen-video);
   position: relative;
   isolation: isolate;
   overflow: hidden;
   display: grid;
   gap: 1rem;
   padding: 1rem;
-  border: 1px solid rgba(175, 205, 221, 0.88);
+  border: 1px solid var(--ice-card-border);
   border-radius: 24px;
   background: var(--ice-card-bg);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.76),
-    0 12px 24px rgba(9, 34, 49, 0.035);
+  box-shadow: var(--ice-card-shadow);
 }
 
 .explorer-page-shell--ice .explorer-video-card:nth-child(4n + 1) {
@@ -571,7 +873,7 @@
 
 .explorer-page-shell--ice .explorer-video-copy h3 {
   margin: 0 0 0.45rem;
-  color: #15374a;
+  color: var(--ice-video-heading);
   font-size: 1.12rem;
   line-height: 1.25;
 }
@@ -585,15 +887,13 @@
   position: relative;
   overflow: hidden;
   aspect-ratio: 16 / 9;
-  border: 1px solid #c1d8e5;
+  border: 1px solid var(--ice-video-media-border);
   border-radius: 20px;
-  background:
-    linear-gradient(160deg, rgba(8, 31, 49, 0.95) 0%, rgba(16, 62, 86, 0.88) 54%, rgba(30, 107, 123, 0.82) 100%),
-    url("/tools/3d-ice-logo-light.jpg") center/cover no-repeat;
+  background: var(--ice-video-media-bg);
 }
 
 .explorer-page-shell--ice .explorer-video-media--interactive {
-  background: linear-gradient(160deg, rgba(8, 31, 49, 0.95) 0%, rgba(16, 62, 86, 0.88) 54%, rgba(30, 107, 123, 0.82) 100%);
+  background: var(--ice-video-media-interactive-bg);
 }
 
 .explorer-page-shell--ice .explorer-preview-link {
@@ -609,9 +909,7 @@
 .explorer-page-shell--ice .explorer-preview-poster {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(160deg, rgba(8, 31, 49, 0.82) 0%, rgba(16, 62, 86, 0.56) 54%, rgba(30, 107, 123, 0.38) 100%),
-    url("/tools/3d-ice-logo-light.jpg") center/cover no-repeat;
+  background: var(--ice-preview-poster-bg);
   transition: opacity 180ms ease, transform 180ms ease;
 }
 
@@ -706,27 +1004,20 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 }
 
 .explorer-page-shell--ice .explorer-source-section {
-  background:
-    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.07), transparent 24%),
-    radial-gradient(circle at 0% 100%, rgba(94, 170, 176, 0.024), transparent 30%),
-    linear-gradient(180deg, #fcfeff 0%, #f6fafc 100%);
+  background: var(--ice-source-section-bg);
 }
 
 .explorer-page-shell--ice .explorer-source-column {
   --ice-card-bg: var(--ice-panel-card);
-  --ice-card-sheen:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
-    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.038), transparent 24%);
+  --ice-card-sheen: var(--ice-card-sheen-source);
   position: relative;
   isolation: isolate;
   overflow: hidden;
   padding: 1rem;
-  border: 1px solid rgba(175, 205, 221, 0.88);
+  border: 1px solid var(--ice-card-border);
   border-radius: 24px;
   background: var(--ice-card-bg);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.76),
-    0 12px 24px rgba(9, 34, 49, 0.03);
+  box-shadow: var(--ice-card-shadow);
 }
 
 .explorer-page-shell--ice .explorer-source-column:first-child {
@@ -739,7 +1030,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 
 .explorer-page-shell--ice .explorer-source-column h3 {
   margin: 0 0 0.85rem;
-  color: #163a4d;
+  color: var(--ice-source-heading);
   font-size: 1.08rem;
 }
 
@@ -757,24 +1048,20 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 
 .explorer-page-shell--ice .explorer-source-list a {
   --ice-card-bg: var(--ice-panel-card-soft);
-  --ice-card-sheen:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
-    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.03), transparent 22%);
+  --ice-card-sheen: var(--ice-card-sheen-link);
   position: relative;
   isolation: isolate;
   display: block;
   height: 100%;
   padding: 0.95rem 1rem;
   overflow: hidden;
-  border: 1px solid rgba(175, 205, 221, 0.88);
+  border: 1px solid var(--ice-card-border);
   border-radius: 18px;
   background: var(--ice-card-bg);
-  color: #11425a;
+  color: var(--ice-source-link-text);
   font-weight: 600;
   text-decoration: none;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 8px 18px rgba(9, 34, 49, 0.025);
+  box-shadow: var(--ice-card-shadow-soft);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -796,15 +1083,13 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 .explorer-page-shell--ice .explorer-source-list a:hover,
 .explorer-page-shell--ice .explorer-source-list a:focus-visible {
   transform: translateY(-1px);
-  border-color: #9dc2d3;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    0 12px 24px rgba(13, 59, 83, 0.05);
+  border-color: var(--ice-source-link-hover-border);
+  box-shadow: var(--ice-card-shadow-strong);
 }
 
 .explorer-page-shell--ice .explorer-faq details {
   padding: 1rem 0;
-  border-top: 1px solid #d9e7ee;
+  border-top: 1px solid var(--ice-faq-border);
 }
 
 .explorer-page-shell--ice .explorer-faq details:first-child {
@@ -814,7 +1099,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 
 .explorer-page-shell--ice .explorer-faq summary {
   cursor: pointer;
-  color: #143648;
+  color: var(--ice-faq-summary);
   font-size: 1.04rem;
   font-weight: 700;
 }
@@ -824,9 +1109,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 }
 
 .explorer-page-shell--ice .explorer-feedback-only {
-  background:
-    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.1), transparent 24%),
-    linear-gradient(180deg, #fcfeff 0%, #f3f9fc 100%);
+  background: var(--ice-feedback-only-bg);
 }
 
 .explorer-page-shell--ice .explorer-feedback-only > .explorer-region-label {
@@ -836,10 +1119,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 .explorer-page-shell--ice .explorer-community-section {
   display: grid;
   gap: 1.35rem;
-  background:
-    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.14), transparent 24%),
-    radial-gradient(circle at 0% 100%, rgba(23, 144, 107, 0.08), transparent 30%),
-    linear-gradient(180deg, #fcfeff 0%, #f3f9fc 100%);
+  background: var(--ice-community-section-bg);
 }
 
 .explorer-page-shell--ice .explorer-community-grid {
@@ -872,14 +1152,14 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 .explorer-page-shell--ice .explorer-community-list li {
   margin: 0;
   padding: 1rem 1.05rem;
-  border: 1px solid #d8e6ee;
+  border: 1px solid var(--ice-community-item-border);
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.84);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  background: var(--ice-community-item-bg);
+  box-shadow: var(--ice-community-item-shadow);
 }
 
 .explorer-page-shell--ice .explorer-community-list strong {
-  color: #12384d;
+  color: var(--ice-community-strong);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel {
@@ -908,48 +1188,39 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 }
 
 .explorer-page-shell--ice .explorer-button--community-utility {
-  border-color: rgba(175, 205, 221, 0.92);
-  background: rgba(255, 255, 255, 0.92);
-  color: #12435b;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    0 10px 20px rgba(9, 34, 49, 0.06);
+  border-color: var(--ice-community-utility-border);
+  background: var(--ice-community-utility-bg);
+  color: var(--ice-community-utility-text);
+  box-shadow: var(--ice-community-utility-shadow);
 }
 
 .explorer-page-shell--ice .explorer-button--community-utility:hover,
 .explorer-page-shell--ice .explorer-button--community-utility:focus-visible {
-  background: #f6fbfd;
-  border-color: #9fc4d5;
+  background: var(--ice-community-utility-hover-bg);
+  border-color: var(--ice-community-utility-hover-border);
 }
 
 .explorer-page-shell--ice .explorer-button--browse-spotlight {
   position: relative;
   overflow: hidden;
-  border-color: rgba(11, 97, 130, 0.16);
-  background:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 32%),
-    linear-gradient(135deg, #0f7ea8 0%, #16988c 100%);
+  border-color: var(--ice-browse-spotlight-border);
+  background: var(--ice-browse-spotlight-bg);
   color: #f7fdff;
-  box-shadow:
-    0 18px 30px rgba(16, 104, 139, 0.24),
-    0 0 0 6px rgba(255, 255, 255, 0.42);
+  box-shadow: var(--ice-browse-spotlight-shadow);
 }
 
 .explorer-page-shell--ice .explorer-button--browse-spotlight::before {
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 92% 18%, rgba(190, 240, 255, 0.24), transparent 28%);
+  background: var(--ice-browse-spotlight-glow);
   pointer-events: none;
 }
 
 .explorer-page-shell--ice .explorer-button--browse-spotlight:hover,
 .explorer-page-shell--ice .explorer-button--browse-spotlight:focus-visible {
-  border-color: rgba(11, 97, 130, 0.22);
-  box-shadow:
-    0 22px 36px rgba(16, 104, 139, 0.28),
-    0 0 0 6px rgba(255, 255, 255, 0.5);
+  border-color: var(--ice-browse-spotlight-hover-border);
+  box-shadow: var(--ice-browse-spotlight-hover-shadow);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-root--inline {
@@ -960,12 +1231,9 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-card {
   position: relative;
   border-radius: 26px;
-  border-color: rgba(175, 205, 221, 0.88);
-  background:
-    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.18), transparent 22%),
-    radial-gradient(circle at 0% 100%, rgba(23, 144, 107, 0.1), transparent 26%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 251, 253, 0.98) 100%);
-  box-shadow: var(--ice-shadow);
+  border-color: var(--ice-feedback-card-border);
+  background: var(--ice-feedback-card-bg);
+  box-shadow: var(--ice-feedback-card-shadow);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-card-inner {
@@ -979,9 +1247,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
   position: absolute;
   inset: 0;
   border-radius: 22px;
-  background:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 32%),
-    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.08), transparent 22%);
+  background: var(--ice-feedback-heading-sheen);
   pointer-events: none;
 }
 
@@ -994,13 +1260,10 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
   position: relative;
   gap: 0.65rem;
   padding: clamp(1rem, 2vw, 1.25rem);
-  border: 1px solid rgba(175, 205, 221, 0.9);
+  border: 1px solid var(--ice-feedback-heading-border);
   border-radius: 22px;
-  background:
-    linear-gradient(155deg, rgba(250, 253, 255, 0.96) 0%, rgba(237, 247, 251, 0.92) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.78),
-    0 16px 30px rgba(9, 34, 49, 0.05);
+  background: var(--ice-feedback-heading-bg);
+  box-shadow: var(--ice-feedback-heading-shadow);
   overflow: hidden;
 }
 
@@ -1009,10 +1272,10 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
   display: inline-flex;
   width: fit-content;
   padding: 0.3rem 0.72rem;
-  border: 1px solid rgba(15, 126, 168, 0.18);
+  border: 1px solid var(--ice-feedback-heading-badge-border);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.82);
-  color: var(--ice-accent);
+  background: var(--ice-feedback-heading-badge-bg);
+  color: var(--ice-feedback-heading-badge-text);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -1026,7 +1289,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
   width: 220px;
   height: 220px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(116, 220, 255, 0.22) 0%, rgba(116, 220, 255, 0) 72%);
+  background: var(--ice-feedback-heading-glow);
   pointer-events: none;
 }
 
@@ -1050,7 +1313,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-root--untitled .tool-feedback-body {
   max-width: none;
-  color: #33586c;
+  color: var(--ice-feedback-untitled-body);
   font-size: 0.98rem;
   line-height: 1.72;
 }
@@ -1087,23 +1350,23 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-alert,
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-success {
   border-radius: 18px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-note {
-  border-color: #dfc98d;
-  background: linear-gradient(180deg, #fffaf0 0%, #fff3d6 100%);
-  color: #6a4f08;
+  border-color: var(--ice-feedback-note-border);
+  background: var(--ice-feedback-note-bg);
+  color: var(--ice-feedback-note-text);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-alert {
-  border-color: #efc5c5;
-  background: linear-gradient(180deg, #fff8f8 0%, #fff1f1 100%);
+  border-color: var(--ice-feedback-alert-border);
+  background: var(--ice-feedback-alert-bg);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-success {
-  border-color: #bdddc9;
-  background: linear-gradient(180deg, #f6fdf8 0%, #eefaf2 100%);
+  border-color: var(--ice-feedback-success-border);
+  background: var(--ice-feedback-success-bg);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-field {
@@ -1115,7 +1378,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
   flex-wrap: wrap;
   gap: 0.35rem 0.55rem;
   align-items: baseline;
-  color: #12384d;
+  color: var(--ice-feedback-label);
   font-size: 0.79rem;
   font-weight: 800;
   line-height: 1.4;
@@ -1135,28 +1398,23 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-select,
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-textarea {
   min-height: 54px;
-  border-color: #c8dbe6;
+  border-color: var(--ice-feedback-input-border);
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 251, 253, 0.98) 100%);
-  color: #103345;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.78),
-    0 8px 18px rgba(9, 34, 49, 0.04);
+  background: var(--ice-feedback-input-bg);
+  color: var(--ice-feedback-input-text);
+  box-shadow: var(--ice-feedback-input-shadow);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-input::placeholder,
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-textarea::placeholder {
-  color: #7b95a5;
+  color: var(--ice-feedback-input-placeholder);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-input:focus,
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-select:focus,
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-textarea:focus {
-  border-color: #8ebcd0;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    0 0 0 4px rgba(15, 126, 168, 0.1),
-    0 16px 30px rgba(9, 34, 49, 0.08);
+  border-color: var(--ice-feedback-input-focus-border);
+  box-shadow: var(--ice-feedback-input-focus-shadow);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-textarea {
@@ -1166,7 +1424,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-actions {
   gap: 1rem;
   padding-top: 0.95rem;
-  border-top: 1px solid rgba(175, 205, 221, 0.7);
+  border-top: 1px solid var(--ice-feedback-actions-border);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-submit {
@@ -1182,18 +1440,18 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-secondary,
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-reset {
   border-color: var(--ice-border-strong);
-  background: rgba(255, 255, 255, 0.9);
-  color: #12435b;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  background: var(--ice-feedback-secondary-bg);
+  color: var(--ice-feedback-secondary-text);
+  box-shadow: var(--ice-feedback-secondary-shadow);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-secondary:hover,
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-reset:hover {
-  background: #f3f9fc;
+  background: var(--ice-button-ghost-bg);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-status {
-  color: #5b7a8b;
+  color: var(--ice-muted);
   font-size: 0.82rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1201,9 +1459,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 
 .explorer-page-shell--ice .explorer-final-cta {
   text-align: center;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(116, 220, 255, 0.16), transparent 24%),
-    linear-gradient(180deg, #f9fdff 0%, #f2f8fb 100%);
+  background: var(--ice-final-cta-bg);
 }
 
 @media (max-width: 1100px) {

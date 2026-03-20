@@ -1,5 +1,5 @@
 ---
-title: "3D ICE: Interactive 3D Antarctica and Greenland Explorer"
+title: "3D ICE: Hold the Polar World in Your Hands"
 breadcrumb_title: "3D ICE"
 seo:
   title: "3D ICE: Interactive 3D Cryosphere Explorer | Yu Wang"
