@@ -50,73 +50,8 @@ sections:
   - block: markdown
     id: antarctica-showcase-home
     content:
-      title: "Hold Antarctica in your hands with [3D ICE](https://yuwang.blog/tools/3D-interactive-cryosphere-explorer.html) ❄️"
+      title: "Hold Antarctica in your hands with [3D ICE](/tools/3d-ice/) ❄️"
       text: |
-        <style>
-          #antarctica-showcase-home .text-3xl a {
-            color: inherit;
-            text-decoration: underline;
-            text-decoration-color: rgba(16, 81, 109, 0.34);
-            text-underline-offset: 0.12em;
-            transition: color 180ms ease, text-decoration-color 180ms ease;
-          }
-          #antarctica-showcase-home .text-3xl a:hover,
-          #antarctica-showcase-home .text-3xl a:focus-visible {
-            color: #0b5874;
-            text-decoration-color: currentColor;
-          }
-          #antarctica-showcase-home .max-w-prose {
-            max-width: none;
-            width: 100%;
-          }
-          #antarctica-showcase-home .showcase-wrap {
-            position: relative;
-            left: 50%;
-            right: 50%;
-            margin-left: -50vw;
-            margin-right: -50vw;
-            width: 100vw;
-          }
-          #antarctica-showcase-home .showcase-embed {
-            width: 100%;
-            height: 86vh;
-            min-height: 620px;
-            border: 0;
-            border-radius: 0;
-            overflow: hidden;
-            box-shadow: 0 26px 48px rgba(5, 19, 30, 0.26);
-            position: relative;
-            background: linear-gradient(160deg, #061f31 0%, #0c3a53 58%, #15536b 100%);
-          }
-          #antarctica-showcase-home .showcase-embed iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            display: block;
-          }
-          #antarctica-showcase-home .showcase-note {
-            max-width: 960px;
-            margin: 1rem auto 0;
-            padding: 0 1rem;
-            text-align: center;
-            color: #123447;
-            line-height: 1.6;
-            font-size: 1rem;
-          }
-          #antarctica-showcase-home .showcase-note a {
-            font-weight: 700;
-            text-decoration: underline;
-          }
-          @media (max-width: 900px) {
-            #antarctica-showcase-home .showcase-embed {
-              height: 74vh;
-              min-height: 500px;
-            }
-            #antarctica-showcase-home .showcase-note {
-              font-size: 0.95rem;
-            }
-          }
-        </style>
         <div class="showcase-wrap">
           <div class="showcase-embed">
             <iframe

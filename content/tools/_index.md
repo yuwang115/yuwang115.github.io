@@ -7,7 +7,7 @@ sections:
   - block: markdown
     id: antarctica-3d-demo
     content:
-      title: "Hold Antarctica and Greenland in your hands with [3D ICE](https://yuwang.blog/tools/3D-interactive-cryosphere-explorer.html) ❄️"
+      title: "Hold Antarctica and Greenland in your hands with [3D ICE](/tools/3d-ice/) ❄️"
       text: |
         <style>
           #antarctica-3d-demo .text-3xl a {

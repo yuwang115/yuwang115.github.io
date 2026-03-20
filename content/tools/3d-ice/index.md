@@ -7,7 +7,7 @@ date: 2026-03-09
 lastmod: 2026-03-17
 layout: explorer-landing
 type: page
-slug: 3d-antarctica
+slug: 3d-ice
 profile: false
 share: true
 show_breadcrumb: false
@@ -115,6 +115,58 @@ image:
 </a>
 </div>
 </article>
+<article class="explorer-video-card" data-demo-slot="antarctica-ross-ice-shelf">
+<div class="explorer-video-copy">
+<h3>Ross Ice Shelf</h3>
+<p>Reserved window for a dedicated Ross Ice Shelf view, ready for a custom camera preset once you decide the framing.</p>
+</div>
+<div class="explorer-video-media" aria-label="Ross Ice Shelf placeholder window">
+<div class="explorer-video-overlay">
+<span class="explorer-video-badge">Reserved</span>
+<strong>Placeholder window for Ross Ice Shelf</strong>
+<span class="explorer-preview-cta">Camera preset to be configured next.</span>
+</div>
+</div>
+</article>
+<article class="explorer-video-card" data-demo-slot="antarctica-thwaites-pine-island">
+<div class="explorer-video-copy">
+<h3>Thwaites and Pine Island Glaciers</h3>
+<p>Reserved window for a focused Amundsen Sea sector view highlighting Thwaites and Pine Island glaciers.</p>
+</div>
+<div class="explorer-video-media" aria-label="Thwaites and Pine Island Glaciers placeholder window">
+<div class="explorer-video-overlay">
+<span class="explorer-video-badge">Reserved</span>
+<strong>Placeholder window for Thwaites and Pine Island</strong>
+<span class="explorer-preview-cta">Camera preset to be configured next.</span>
+</div>
+</div>
+</article>
+<article class="explorer-video-card" data-demo-slot="antarctica-lambert-amery">
+<div class="explorer-video-copy">
+<h3>Lambert Glacier-Amery Ice Shelf</h3>
+<p>Reserved window for a Lambert Glacier-Amery Ice Shelf view, ready for a dedicated preset and camera path.</p>
+</div>
+<div class="explorer-video-media" aria-label="Lambert Glacier-Amery Ice Shelf placeholder window">
+<div class="explorer-video-overlay">
+<span class="explorer-video-badge">Reserved</span>
+<strong>Placeholder window for Lambert Glacier-Amery</strong>
+<span class="explorer-preview-cta">Camera preset to be configured next.</span>
+</div>
+</div>
+</article>
+<article class="explorer-video-card" data-demo-slot="antarctica-totten-denman">
+<div class="explorer-video-copy">
+<h3>Totten and Denman Glacier</h3>
+<p>Reserved window for an East Antarctic coastal view centered on Totten and Denman glacier systems.</p>
+</div>
+<div class="explorer-video-media" aria-label="Totten and Denman Glacier placeholder window">
+<div class="explorer-video-overlay">
+<span class="explorer-video-badge">Reserved</span>
+<strong>Placeholder window for Totten and Denman</strong>
+<span class="explorer-preview-cta">Camera preset to be configured next.</span>
+</div>
+</div>
+</article>
 </div>
 </section>
 <section id="greenland-features" class="explorer-section explorer-region">
@@ -178,8 +230,8 @@ image:
 <article class="explorer-source-column">
 <h3>Greenland</h3>
 <ul class="explorer-source-list">
-<li><a href="https://nsidc.org/data/idbmg4/versions/6" target="_blank" rel="noopener">BedMachine Greenland, Version 6</a></li>
-<li><a href="https://nsidc.org/data/NSIDC-0776/versions/2" target="_blank" rel="noopener">ITS_LIVE Greenland ice velocity mosaic</a></li>
+<li><a href="https://nsidc.org/data/idbmg4/versions/6" target="_blank" rel="noopener">IceBridge BedMachine Greenland, Version 6</a></li>
+<li><a href="https://nsidc.org/data/NSIDC-0776/versions/2" target="_blank" rel="noopener">MEaSUREs ITS_LIVE Regional Glacier and Ice Sheet Surface Velocities, Version 2</a></li>
 <li><a href="https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description" target="_blank" rel="noopener">Copernicus Marine Arctic Ocean physics analysis and forecast</a></li>
 <li><a href="https://essopenarchive.org/doi/full/10.22541/essoar.177099472.28419248" target="_blank" rel="noopener">Greenland basal friction ensemble inversion reference</a></li>
 </ul>
@@ -194,7 +246,7 @@ image:
   title=""
   text="Send a quick note if something felt useful, confusing, or unfinished. I read this inbox for bug reports, usability issues, and the next improvements to make in 3D ICE."
   default_tool="Hold Antarctica and Greenland in your hands with 3D ICE ❄️"
-  source_page="/tools/3d-antarctica/"
+  source_page="/tools/3d-ice/"
   source_section="tools-feedback"
   root_class="tool-feedback-root--inline tool-feedback-root--untitled"
 >}}
