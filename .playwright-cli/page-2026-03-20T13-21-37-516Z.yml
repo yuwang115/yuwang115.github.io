@@ -1,0 +1,100 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - img "3D ICE Interactive Cryosphere Explorer" [ref=e5]
+    - paragraph [ref=e6]: Explore Antarctica from every angle. Rotate, zoom, and peel back the ice to uncover a hidden world in interactive 3D.
+    - generic [ref=e7]:
+      - heading "View Controls" [level=2] [ref=e8]
+      - generic [ref=e9]:
+        - generic [ref=e10]: Region
+        - combobox "Region" [ref=e11]:
+          - option "Antarctica" [selected]
+          - option "Greenland"
+      - generic [ref=e12]:
+        - generic [ref=e13]: Resolution preset
+        - combobox "Resolution preset" [ref=e14]:
+          - option "Balanced (10 km grid; ~3.0 MB)" [selected]
+          - option "HD (4 km grid; ~18.6 MB)"
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - text: Vertical exaggeration
+          - generic [ref=e17]: 4.8x
+        - slider "Vertical exaggeration 4.8x" [ref=e18]: "4.8"
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - text: Ice opacity
+          - generic [ref=e21]: "1.00"
+        - slider "Ice opacity 1.00" [ref=e22]: "1"
+      - generic [ref=e23]:
+        - checkbox "Show bed topography" [checked] [ref=e24]
+        - text: Show bed topography
+      - generic [ref=e25]:
+        - checkbox "Show ice surface" [checked] [ref=e26]
+        - text: Show ice surface
+      - generic [ref=e27]:
+        - checkbox "Show ice bottom surface" [checked] [ref=e28]
+        - text: Show ice bottom surface
+      - generic [ref=e29]:
+        - checkbox "Show refined basins" [ref=e30]
+        - generic [ref=e31]: Show refined basins
+      - generic [ref=e32]:
+        - checkbox "Show ice surface velocity" [checked] [ref=e33]
+        - text: Show ice surface velocity
+      - generic [ref=e34]:
+        - checkbox "Show ice flowlines" [checked] [ref=e35]
+        - text: Show ice flowlines
+      - generic [ref=e36]:
+        - checkbox "Show basal friction" [ref=e37]
+        - text: Show basal friction
+      - generic [ref=e38]:
+        - checkbox "Show effective pressure" [ref=e39]
+        - text: Show effective pressure
+      - generic [ref=e40]:
+        - checkbox "Show subglacial channels" [ref=e41]
+        - text: Show subglacial channels
+      - generic [ref=e43]:
+        - checkbox "Show ocean streamlines" [ref=e44]
+        - text: Show ocean streamlines
+      - generic [ref=e45]:
+        - checkbox "Show ice-shelf basal melt" [ref=e46]
+        - text: Show ice-shelf basal melt
+      - generic [ref=e47]:
+        - checkbox "Show ice-shelf thermal driving" [ref=e48]
+        - text: Show ice-shelf thermal driving
+      - generic [ref=e49]:
+        - checkbox "Show sea level (0 m)" [ref=e50]
+        - text: Show sea level (0 m)
+      - generic [ref=e51]:
+        - checkbox "Wireframe mode" [ref=e52]
+        - text: Wireframe mode
+      - button "Reset Camera" [ref=e53] [cursor=pointer]
+      - button "Enter Fullscreen" [ref=e54] [cursor=pointer]
+    - generic [ref=e55]:
+      - heading "Bed Elevation Color" [level=2] [ref=e56]
+      - generic [ref=e58]:
+        - generic [ref=e59]: "-7000 m"
+        - generic [ref=e60]: "0"
+        - generic [ref=e61]: +3500 m
+    - generic [ref=e62]:
+      - heading "Ice Surface Velocity Color" [level=2] [ref=e63]
+      - generic [ref=e65]:
+        - generic [ref=e66]: 0 m/yr
+        - generic [ref=e67]: "50"
+        - generic [ref=e68]: "200"
+        - generic [ref=e69]: "500"
+        - generic [ref=e70]: "1000"
+        - generic [ref=e71]: "3000"
+    - generic [ref=e72]:
+      - heading "Data Snapshot" [level=2] [ref=e73]
+      - list [ref=e74]:
+        - listitem [ref=e75]:
+          - strong [ref=e76]: "Error:"
+          - text: "Failed to fetch dynamically imported module: http://127.0.0.1:4174/tools/vendor/three/OrbitControls.js"
+  - generic [ref=e77]:
+    - generic: Load failed
+    - button "Enter Fullscreen" [ref=e79] [cursor=pointer]
+    - generic:
+      - generic:
+        - strong: "Mouse:"
+        - text: drag to orbit, wheel to zoom, right-drag to pan.
+        - strong: "Touch:"
+        - text: one finger orbit, pinch zoom.

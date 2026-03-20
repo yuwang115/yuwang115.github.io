@@ -1,7 +1,7 @@
 ---
 title: "3D ICE: Hold the Polar World in Your Hands"
 seo:
-  title: "3D ICE: Hold the Polar World in Your Hands | Yu Wang"
+  title: "3D ICE | Yu Wang | Antarctic Reseacher"
 summary: "Explore Antarctica and Greenland like never before with 3D ICE, an interactive cryosphere platform that makes specialised cryosphere data vivid, intuitive, and accessible."
 date: 2026-03-09
 lastmod: 2026-03-20
@@ -30,8 +30,8 @@ image:
 <p class="explorer-summary">3D ICE is an interactive visualization platform designed to transform complex, state-of-the-art cryosphere datasets of Antarctica and Greenland into an intuitive 3D experience, seamlessly bridging the gap between rigorous glaciological research and public curiosity.</p>
 <div class="explorer-actions explorer-actions--hero-grid">
 <a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
+<a class="explorer-button explorer-button--ghost" href="#antarctica-features">Antarctica Features</a>
 <a class="explorer-button explorer-button--ghost" href="#source-data">Source Data</a>
-<a class="explorer-button explorer-button--secondary" href="#antarctica-features">Antarctica Features</a>
 <a class="explorer-button explorer-button--ghost" href="#greenland-features">Greenland Features</a>
 </div>
 </div>

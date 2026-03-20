@@ -189,7 +189,7 @@
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   gap: clamp(1.4rem, 2.6vw, 2rem);
-  align-items: end;
+  align-items: stretch;
 }
 
 .explorer-page-shell--ice .explorer-hero-copy {
@@ -297,10 +297,11 @@
 .explorer-page-shell--ice .explorer-showcase-breakout--hero {
   margin-top: 0;
   display: grid;
-  align-content: end;
-  align-self: end;
+  align-content: stretch;
+  align-self: stretch;
   justify-self: end;
   width: min(100%, 760px);
+  height: 100%;
 }
 
 .explorer-page-shell--ice .explorer-showcase-frame {
@@ -317,9 +318,10 @@
 }
 
 .explorer-page-shell--ice .explorer-ice-hero--split .explorer-showcase-frame {
-  aspect-ratio: 5 / 3;
-  min-height: 420px;
-  max-height: 620px;
+  aspect-ratio: auto;
+  height: 100%;
+  min-height: 520px;
+  max-height: none;
 }
 
 .explorer-page-shell--ice .explorer-showcase-frame iframe {

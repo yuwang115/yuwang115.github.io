@@ -1,0 +1,290 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e4]:
+    - navigation [ref=e5]:
+      - link "Yu Wang" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - list [ref=e8]:
+        - listitem [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e11]:
+          - link "Research" [ref=e12] [cursor=pointer]:
+            - /url: /#papers
+        - listitem [ref=e13]:
+          - link "Experience" [ref=e14] [cursor=pointer]:
+            - /url: /experience/
+        - listitem [ref=e15]:
+          - link "Gallery" [ref=e16] [cursor=pointer]:
+            - /url: /gallery/
+        - listitem [ref=e17]:
+          - link "Tools" [ref=e18] [cursor=pointer]:
+            - /url: /tools/
+      - generic [ref=e19]:
+        - button "toggle search" [ref=e20] [cursor=pointer]:
+          - img [ref=e21]
+        - button "appearance" [ref=e24] [cursor=pointer]:
+          - img [ref=e25]
+  - article [ref=e29]:
+    - navigation "Breadcrumb" [ref=e30]:
+      - link "Tools" [ref=e31] [cursor=pointer]:
+        - /url: /tools/
+      - generic [ref=e32]: /
+      - generic [ref=e33]: "3D ICE: Hold the Polar World in Your Hands"
+    - generic [ref=e34]:
+      - paragraph [ref=e35]: Interactive Cryosphere Explorer
+      - 'heading "3D ICE: Hold the Polar World in Your Hands" [level=1] [ref=e36]'
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - img "3D ICE logo" [ref=e42]
+          - paragraph [ref=e43]: Explore Antarctica and Greenland like never before.
+          - paragraph [ref=e44]: 3D ICE is an interactive visualization platform designed to transform complex, state-of-the-art cryosphere datasets of Antarctica and Greenland into an intuitive 3D experience, seamlessly bridging the gap between rigorous glaciological research and public curiosity.
+          - generic [ref=e45]:
+            - link "Launch Explorer" [ref=e46] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html
+            - link "Antarctica Features" [ref=e47] [cursor=pointer]:
+              - /url: "#antarctica-features"
+            - link "Source Data" [ref=e48] [cursor=pointer]:
+              - /url: "#source-data"
+            - link "Greenland Features" [ref=e49] [cursor=pointer]:
+              - /url: "#greenland-features"
+        - iframe [ref=e52]:
+          - generic [ref=f1e3] [cursor=pointer]:
+            - generic [ref=f1e7]:
+              - generic [ref=f1e8]: Core terrain ready
+              - generic [ref=f1e11]:
+                - generic [ref=f1e12]: 100%
+                - generic [ref=f1e13]: Progressive loading enabled
+            - text: Click to interact
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - paragraph [ref=e55]: Antarctica
+          - heading "Feature walkthroughs for the Antarctic ice sheet" [level=2] [ref=e56]
+          - paragraph [ref=e57]: These Antarctica demo slots are organized around the views that matter most when introducing 3D ICE. Antarctica is where the explorer brings together grounded ice, basin structure, subglacial context, and surrounding ocean circulation in one coordinated scene.
+        - generic [ref=e58]:
+          - article [ref=e59]:
+            - generic [ref=e60]:
+              - heading "Antarctic ice velocity + flowlines" [level=3] [ref=e61]
+              - paragraph [ref=e62]: Show how fast-flowing corridors connect ice shelves, outlet glaciers, and basin-scale drainage patterns across Antarctica.
+            - link "Live preview Hover to spin this velocity and flowlines view Click to open the full 3D ICE runtime" [ref=e64] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-velocity-flowlines
+              - generic:
+                - generic: Live preview
+                - strong: Hover to spin this velocity and flowlines view
+                - generic: Click to open the full 3D ICE runtime
+          - article [ref=e66]:
+            - generic [ref=e67]:
+              - heading "Basin boundary" [level=3] [ref=e68]
+              - paragraph [ref=e69]: Use basin outlines to explain how the ice sheet is partitioned and why regional responses need to be interpreted within basin context.
+            - link "Live preview Hover to spin this basin-boundary view Click to open the full 3D ICE runtime" [ref=e71] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-basin-boundary
+              - generic:
+                - generic: Live preview
+                - strong: Hover to spin this basin-boundary view
+                - generic: Click to open the full 3D ICE runtime
+          - article [ref=e73]:
+            - generic [ref=e74]:
+              - heading "Subglacial features" [level=3] [ref=e75]
+              - paragraph [ref=e76]: Highlight the hidden structure beneath the ice through effective pressure and subglacial channels, turning invisible processes into something spatially intuitive.
+            - link "Live preview Hover to spin this subglacial feature view Click to open the full 3D ICE runtime" [ref=e78] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-subglacial-features
+              - generic:
+                - generic: Live preview
+                - strong: Hover to spin this subglacial feature view
+                - generic: Click to open the full 3D ICE runtime
+          - article [ref=e80]:
+            - generic [ref=e81]:
+              - heading "Ocean circulations" [level=3] [ref=e82]
+              - paragraph [ref=e83]: Reveal how Antarctic ocean circulation frames ice-shelf environment, shelf connectivity, and the broader marine setting around the continent.
+            - link "Live preview Hover to spin this Antarctic ocean view Click to open the full 3D ICE runtime" [ref=e85] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-ocean-circulations
+              - generic:
+                - generic: Live preview
+                - strong: Hover to spin this Antarctic ocean view
+                - generic: Click to open the full 3D ICE runtime
+          - article [ref=e87]:
+            - generic [ref=e88]:
+              - heading "Ross Ice Shelf" [level=3] [ref=e89]
+              - paragraph [ref=e90]: Reserved window for a dedicated Ross Ice Shelf view, ready for a custom camera preset once you decide the framing.
+            - generic "Ross Ice Shelf placeholder window" [ref=e91]:
+              - generic:
+                - generic: Reserved
+                - strong: Placeholder window for Ross Ice Shelf
+                - generic: Camera preset to be configured next.
+          - article [ref=e92]:
+            - generic [ref=e93]:
+              - heading "Thwaites and Pine Island Glaciers" [level=3] [ref=e94]
+              - paragraph [ref=e95]: Reserved window for a focused Amundsen Sea sector view highlighting Thwaites and Pine Island glaciers.
+            - generic "Thwaites and Pine Island Glaciers placeholder window" [ref=e96]:
+              - generic:
+                - generic: Reserved
+                - strong: Placeholder window for Thwaites and Pine Island
+                - generic: Camera preset to be configured next.
+          - article [ref=e97]:
+            - generic [ref=e98]:
+              - heading "Lambert Glacier-Amery Ice Shelf" [level=3] [ref=e99]
+              - paragraph [ref=e100]: Reserved window for a Lambert Glacier-Amery Ice Shelf view, ready for a dedicated preset and camera path.
+            - generic "Lambert Glacier-Amery Ice Shelf placeholder window" [ref=e101]:
+              - generic:
+                - generic: Reserved
+                - strong: Placeholder window for Lambert Glacier-Amery
+                - generic: Camera preset to be configured next.
+          - article [ref=e102]:
+            - generic [ref=e103]:
+              - heading "Totten and Denman Glacier" [level=3] [ref=e104]
+              - paragraph [ref=e105]: Reserved window for an East Antarctic coastal view centered on Totten and Denman glacier systems.
+            - generic "Totten and Denman Glacier placeholder window" [ref=e106]:
+              - generic:
+                - generic: Reserved
+                - strong: Placeholder window for Totten and Denman
+                - generic: Camera preset to be configured next.
+      - generic [ref=e107]:
+        - generic [ref=e108]:
+          - paragraph [ref=e109]: Greenland
+          - heading "Greenland views in the same 3D ICE workflow" [level=2] [ref=e110]
+          - paragraph [ref=e111]: Greenland runs through the same runtime, so it becomes easy to compare geometry, fast flow, and marine forcing between the two polar ice sheets without changing tools or mental models.
+        - generic [ref=e112]:
+          - article [ref=e113]:
+            - generic [ref=e114]:
+              - heading "Greenland ice velocity + flowlines" [level=3] [ref=e115]
+              - paragraph [ref=e116]: Focus on outlet glaciers, fast-flow structure, and how the Greenland ice sheet routes ice from interior catchments to the coast.
+            - link "Live preview Hover to spin this Greenland velocity view Click to open the full 3D ICE runtime" [ref=e118] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-velocity-flowlines
+              - generic:
+                - generic: Live preview
+                - strong: Hover to spin this Greenland velocity view
+                - generic: Click to open the full 3D ICE runtime
+          - article [ref=e120]:
+            - generic [ref=e121]:
+              - heading "Ocean circulations" [level=3] [ref=e122]
+              - paragraph [ref=e123]: Show Greenland's fjord-to-shelf ocean setting and how surrounding circulation patterns provide context for marine-terminating glacier behaviour.
+            - link "Live preview Hover to spin this Greenland ocean view Click to open the full 3D ICE runtime" [ref=e125] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-ocean-circulations
+              - generic:
+                - generic: Live preview
+                - strong: Hover to spin this Greenland ocean view
+                - generic: Click to open the full 3D ICE runtime
+      - generic [ref=e127]:
+        - generic [ref=e128]:
+          - paragraph [ref=e129]: Key Features
+          - heading "Four capabilities that define the 3D ICE experience" [level=2] [ref=e130]
+          - paragraph [ref=e131]: The current landing page focuses on the core ways 3D ICE supports exploration, comparison, and practical dataset access.
+        - generic [ref=e132]:
+          - article [ref=e133]:
+            - heading "Fully Interactive 3D Experience" [level=3] [ref=e134]
+            - paragraph [ref=e135]: Freely rotate, zoom, and change your viewpoint. Explore the ice sheets as if you were examining a physical model right in your hands.
+          - article [ref=e136]:
+            - heading "Comprehensive & Customisable Data" [level=3] [ref=e137]
+            - paragraph [ref=e138]: Available for both Antarctica and Greenland. Seamlessly visualise continental-scale land data alongside simulated ocean circulations. Layer and combine them in any way you desire to uncover new insights.
+          - article [ref=e139]:
+            - heading "Direct Gateway to Source Data" [level=3] [ref=e140]
+            - paragraph [ref=e141]: Built as a systematic data platform for professional researchers. First, visualise the latest state-of-the-art datasets in 3D, then simply click to jump directly to the source data you need.
+          - article [ref=e142]:
+            - heading "Optimised Cross-Platform Performance" [level=3] [ref=e143]
+            - paragraph [ref=e144]:
+              - text: Features a balanced resolution preset for smooth exploration on mobile touchscreens. For the ultimate experience, switch to the stunning
+              - strong [ref=e145]: HD Option
+              - text: (4km resolution for Antarctica, 1km for Greenland), highly recommended for large desktop screens.
+      - generic [ref=e146]:
+        - generic [ref=e147]:
+          - paragraph [ref=e148]: Source Data
+          - heading "A direct gateway to the datasets behind 3D ICE" [level=2] [ref=e149]
+          - paragraph [ref=e150]: Built as a systematic data platform for professional researchers. First, visualise the latest state-of-the-art datasets in 3D, then simply click to jump directly to the source data you need.
+        - generic [ref=e151]:
+          - article [ref=e152]:
+            - heading "Antarctica" [level=3] [ref=e153]
+            - list [ref=e154]:
+              - listitem [ref=e155]:
+                - link "MEaSUREs BedMachine Antarctica, Version 4" [ref=e156] [cursor=pointer]:
+                  - /url: https://nsidc.org/data/NSIDC-0756/versions/4
+              - listitem [ref=e157]:
+                - link "MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1" [ref=e158] [cursor=pointer]:
+                  - /url: https://nsidc.org/data/NSIDC-0754/versions/1
+              - listitem [ref=e159]:
+                - link "IMBIE refined basin boundaries for Antarctica" [ref=e160] [cursor=pointer]:
+                  - /url: https://nsidc.org/data/NSIDC-0709/versions/2
+              - listitem [ref=e161]:
+                - link "Antarctic Wide Subglacial Hydrology Modeling" [ref=e162] [cursor=pointer]:
+                  - /url: https://zenodo.org/records/12738170
+              - listitem [ref=e163]:
+                - link "WAOM2 annual-mean Antarctic ocean circulation fields" [ref=e164] [cursor=pointer]:
+                  - /url: https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2023.1027704/full
+          - article [ref=e165]:
+            - heading "Greenland" [level=3] [ref=e166]
+            - list [ref=e167]:
+              - listitem [ref=e168]:
+                - link "IceBridge BedMachine Greenland, Version 6" [ref=e169] [cursor=pointer]:
+                  - /url: https://nsidc.org/data/idbmg4/versions/6
+              - listitem [ref=e170]:
+                - link "MEaSUREs ITS_LIVE Regional Glacier and Ice Sheet Surface Velocities, Version 2" [ref=e171] [cursor=pointer]:
+                  - /url: https://nsidc.org/data/NSIDC-0776/versions/2
+              - listitem [ref=e172]:
+                - link "Copernicus Marine Arctic Ocean physics analysis and forecast" [ref=e173] [cursor=pointer]:
+                  - /url: https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description
+              - listitem [ref=e174]:
+                - link "Greenland basal friction ensemble inversion reference" [ref=e175] [cursor=pointer]:
+                  - /url: https://essopenarchive.org/doi/full/10.22541/essoar.177099472.28419248
+      - generic [ref=e177]:
+        - generic [ref=e178]:
+          - paragraph [ref=e179]: Community
+          - heading "Let’s Build the Ultimate Cryosphere Hub Together" [level=2] [ref=e180]
+          - paragraph [ref=e181]: 3D ICE is continually evolving, and I’d love to hear feedback from the glaciology community to help me improve it further.
+          - list [ref=e182]:
+            - listitem [ref=e183]:
+              - strong [ref=e184]: Have data to share?
+              - text: If you have Antarctic or Greenland datasets you’d like me to integrate into 3D ICE, please reach out.
+            - listitem [ref=e185]:
+              - strong [ref=e186]: "Spread the word:"
+              - text: If you find this tool useful for your research, teaching, or outreach, please feel free to share it with your network.
+          - generic [ref=e187]:
+            - link "Launch Explorer" [ref=e188] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html
+            - link "Browse all research tools" [ref=e189] [cursor=pointer]:
+              - /url: /tools/
+        - generic [ref=e193]:
+          - generic [ref=e195]: If you have ideas, datasets, bug reports, or usability feedback for 3D ICE, send a quick note here. English or Chinese is welcome.
+          - generic [ref=e196]:
+            - generic:
+              - text: Leave this field empty
+              - textbox
+            - generic [ref=e197]:
+              - generic [ref=e198]:
+                - generic [ref=e199]: Tool
+                - combobox "Tool" [ref=e200]:
+                  - option "Select a tool" [disabled]
+                  - 'option "3D ICE: Hold the Polar Worlds in Your Hands" [selected]'
+                  - option "Regularised Coulomb Sliding Law demo"
+                  - option "Marine Ice Sheet Flowline Lab"
+                  - option "General tools/site feedback"
+              - generic [ref=e201]:
+                - generic [ref=e202]:
+                  - text: Email
+                  - generic [ref=e203]: Optional, if you'd like a reply
+                - textbox "Email Optional, if you'd like a reply" [ref=e204]:
+                  - /placeholder: you@example.com
+              - generic [ref=e205]:
+                - generic [ref=e206]: Message
+                - textbox "Message" [ref=e207]:
+                  - /placeholder: Tell me what worked, what felt confusing, what broke, or what you'd like me to add.
+            - generic [ref=e208]:
+              - generic [ref=e209]:
+                - button "Send feedback" [ref=e210] [cursor=pointer]
+                - link "Email instead" [ref=e211] [cursor=pointer]:
+                  - /url: mailto:yu.wang0@utas.edu.au
+              - generic [ref=e212]: English or Chinese is welcome.
+  - contentinfo [ref=e214]:
+    - paragraph [ref=e215]:
+      - text: © 2026 Yu Wang. This work is licensed under
+      - link "CC BY NC ND 4.0" [ref=e216] [cursor=pointer]:
+        - /url: https://creativecommons.org/licenses/by-nc-nd/4.0
+    - paragraph:
+      - link "Creative Commons":
+        - /url: https://creativecommons.org/licenses/by-nc-nd/4.0
+    - paragraph [ref=e217]:
+      - text: Published with
+      - link "Hugo Blox Builder" [ref=e218] [cursor=pointer]:
+        - /url: https://hugoblox.com/?utm_campaign=poweredby
+      - text: — the free,
+      - link "open source" [ref=e219] [cursor=pointer]:
+        - /url: https://github.com/HugoBlox/hugo-blox-builder
+      - text: website builder that empowers creators.

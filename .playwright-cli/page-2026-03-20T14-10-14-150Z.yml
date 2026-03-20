@@ -1,0 +1,121 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - img "3D ICE Interactive Cryosphere Explorer" [ref=e5]
+    - paragraph [ref=e6]: Explore Antarctica from every angle. Rotate, zoom, and peel back the ice to uncover a hidden world in interactive 3D.
+    - generic [ref=e7]:
+      - heading "View Controls" [level=2] [ref=e8]
+      - generic [ref=e9]:
+        - generic [ref=e10]: Region
+        - combobox "Region" [ref=e11]:
+          - option "Antarctica" [selected]
+          - option "Greenland"
+      - generic [ref=e12]:
+        - generic [ref=e13]: Resolution preset
+        - combobox "Resolution preset" [ref=e14]:
+          - option "Balanced (10 km grid; ~3.0 MB)" [selected]
+          - option "HD (4 km grid; ~18.6 MB)"
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - text: Vertical exaggeration
+          - generic [ref=e17]: 4.0x
+        - slider "Vertical exaggeration 4.0x" [ref=e18]: "4"
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - text: Ice opacity
+          - generic [ref=e21]: "0.65"
+        - slider "Ice opacity 0.65" [ref=e22]: "0.65"
+      - generic [ref=e23]:
+        - checkbox "Show bed topography" [checked] [ref=e24]
+        - text: Show bed topography
+      - generic [ref=e25]:
+        - checkbox "Show ice surface" [checked] [ref=e26]
+        - text: Show ice surface
+      - generic [ref=e27]:
+        - checkbox "Show ice bottom surface" [checked] [ref=e28]
+        - text: Show ice bottom surface
+      - generic [ref=e29]:
+        - checkbox "Show refined basins" [ref=e30]
+        - generic [ref=e31]: Show refined basins
+      - generic [ref=e32]:
+        - checkbox "Show ice surface velocity" [ref=e33]
+        - text: Show ice surface velocity
+      - generic [ref=e34]:
+        - checkbox "Show ice flowlines" [ref=e35]
+        - text: Show ice flowlines
+      - generic [ref=e36]:
+        - checkbox "Show basal friction" [ref=e37]
+        - text: Show basal friction
+      - generic [ref=e38]:
+        - checkbox "Show effective pressure" [ref=e39]
+        - text: Show effective pressure
+      - generic [ref=e40]:
+        - checkbox "Show subglacial channels" [ref=e41]
+        - text: Show subglacial channels
+      - generic [ref=e43]:
+        - checkbox "Show ocean streamlines" [ref=e44]
+        - text: Show ocean streamlines
+      - generic [ref=e45]:
+        - checkbox "Show ice-shelf basal melt" [ref=e46]
+        - text: Show ice-shelf basal melt
+      - generic [ref=e47]:
+        - checkbox "Show ice-shelf thermal driving" [ref=e48]
+        - text: Show ice-shelf thermal driving
+      - generic [ref=e49]:
+        - checkbox "Show sea level (0 m)" [ref=e50]
+        - text: Show sea level (0 m)
+      - generic [ref=e51]:
+        - checkbox "Wireframe mode" [ref=e52]
+        - text: Wireframe mode
+      - button "Reset Camera" [ref=e53] [cursor=pointer]
+      - button "Enter Fullscreen" [ref=e54] [cursor=pointer]
+    - generic [ref=e55]:
+      - heading "Bed Elevation Color" [level=2] [ref=e56]
+      - generic [ref=e58]:
+        - generic [ref=e59]: "-7000 m"
+        - generic [ref=e60]: "0"
+        - generic [ref=e61]: +3500 m
+    - generic [ref=e62]:
+      - heading "Data Snapshot" [level=2] [ref=e63]
+      - list [ref=e64]:
+        - listitem [ref=e65]:
+          - group [ref=e66]:
+            - generic "Geometry & Grid" [ref=e67] [cursor=pointer]:
+              - generic [ref=e68]: Geometry & Grid
+        - listitem [ref=e70]:
+          - group [ref=e71]:
+            - generic "Ice Surface Velocity (observed)" [ref=e72] [cursor=pointer]:
+              - generic [ref=e73]: Ice Surface Velocity (observed)
+        - listitem [ref=e75]:
+          - group [ref=e76]:
+            - generic "Basal Friction (inverted)" [ref=e77] [cursor=pointer]:
+              - generic [ref=e78]: Basal Friction (inverted)
+        - listitem [ref=e80]:
+          - group [ref=e81]:
+            - generic "Subglacial Hydrology (simulated)" [ref=e82] [cursor=pointer]:
+              - generic [ref=e83]: Subglacial Hydrology (simulated)
+        - listitem [ref=e85]:
+          - group [ref=e86]:
+            - generic "Ocean Circulation (simulated)" [ref=e87] [cursor=pointer]:
+              - generic [ref=e88]: Ocean Circulation (simulated)
+        - listitem [ref=e90]:
+          - group [ref=e91]:
+            - generic "Ice-Shelf Basal Melt (simulated)" [ref=e92] [cursor=pointer]:
+              - generic [ref=e93]: Ice-Shelf Basal Melt (simulated)
+        - listitem [ref=e95]:
+          - group [ref=e96]:
+            - generic "Data Sources" [ref=e97] [cursor=pointer]:
+              - generic [ref=e98]: Data Sources
+  - generic [ref=e100]:
+    - generic [ref=e104]:
+      - generic [ref=e105]: Core terrain ready
+      - generic [ref=e108]:
+        - generic [ref=e109]: 100%
+        - generic [ref=e110]: Progressive loading enabled
+    - generic: Ready (Antarctica Balanced)
+    - button "Enter Fullscreen" [ref=e115] [cursor=pointer]
+    - generic:
+      - generic:
+        - strong: "Mouse:"
+        - text: drag to orbit, wheel to zoom, right-drag to pan.
+        - strong: "Touch:"
+        - text: one finger orbit, pinch zoom.
