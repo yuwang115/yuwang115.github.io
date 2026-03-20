@@ -4,7 +4,7 @@
     <nav class="explorer-page-breadcrumb" aria-label="Breadcrumb">
       <a href="{{ "/tools/" | relLangURL }}">Tools</a>
       <span>/</span>
-      <span>{{ .Title }}</span>
+      <span>{{ .Params.breadcrumb_title | default .Title }}</span>
     </nav>
     <header>
       <p class="explorer-page-kicker">{{ .Params.explorer_kicker | default "Interactive polar data visualization" }}</p>

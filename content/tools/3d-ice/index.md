@@ -1,7 +1,8 @@
 ---
 title: "3D ICE: Hold the Polar World in Your Hands"
+breadcrumb_title: "3D ICE"
 seo:
-  title: "3D ICE | Yu Wang | Antarctic Reseacher"
+  title: "3D ICE | Yu Wang | Antarctic Researcher"
 summary: "Explore Antarctica and Greenland like never before with 3D ICE, an interactive cryosphere platform that makes specialised cryosphere data vivid, intuitive, and accessible."
 date: 2026-03-09
 lastmod: 2026-03-20
@@ -27,7 +28,7 @@ image:
 <img class="explorer-ice-logo" src="/tools/3d-ice-logo-light.jpg" alt="3D ICE logo" loading="eager" />
 </div>
 <p class="explorer-ice-lead">Explore Antarctica and Greenland like never before.</p>
-<p class="explorer-summary">3D ICE is an interactive visualization platform designed to transform complex, state-of-the-art cryosphere datasets of Antarctica and Greenland into an intuitive 3D experience, seamlessly bridging the gap between rigorous glaciological research and public curiosity.</p>
+<p class="explorer-summary">3D ICE is an interactive visualization platform designed to transform complex, state-of-the-art cryosphere datasets into an intuitive 3D experience, seamlessly bridging the gap between rigorous glaciological research and public curiosity.</p>
 <div class="explorer-actions explorer-actions--hero-grid">
 <a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
 <a class="explorer-button explorer-button--ghost" href="#antarctica-features">Antarctica Features</a>
@@ -45,7 +46,7 @@ image:
 <div class="explorer-region-intro">
 <p class="explorer-region-label">Antarctica</p>
 <h2>Feature walkthroughs for the Antarctic ice sheet</h2>
-<p>These Antarctica demo slots are organized around the views that matter most when introducing 3D ICE. Antarctica is where the explorer brings together grounded ice, basin structure, subglacial context, and surrounding ocean circulation in one coordinated scene.</p>
+<p>A vast, frozen desert at the bottom of the Earth, Antarctica holds 90% of the world's ice and hides a dynamic, hidden landscape of subglacial lakes and rivers that shape our future coastlines.</p>
 </div>
 <div class="explorer-video-grid explorer-video-grid--antarctica">
 <article class="explorer-video-card" data-demo-slot="antarctica-velocity-flowlines">
@@ -170,7 +171,7 @@ image:
 <div class="explorer-region-intro">
 <p class="explorer-region-label">Greenland</p>
 <h2>Greenland views in the same 3D ICE workflow</h2>
-<p>Greenland runs through the same runtime, so it becomes easy to compare geometry, fast flow, and marine forcing between the two polar ice sheets without changing tools or mental models.</p>
+<p>Serving as the Arctic's climate sentinel, the Greenland Ice Sheet is a rapidly transforming giant whose accelerating melt directly drives global sea-level rise and influences ocean circulation.</p>
 </div>
 <div class="explorer-video-grid explorer-video-grid--greenland">
 <article class="explorer-video-card" data-demo-slot="greenland-velocity-flowlines">
@@ -242,10 +243,12 @@ image:
 <h3>Antarctica</h3>
 <ul class="explorer-source-list">
 <li><a href="https://nsidc.org/data/NSIDC-0756/versions/4" target="_blank" rel="noopener">MEaSUREs BedMachine Antarctica, Version 4</a></li>
+<li><a href="https://nsidc.org/data/NSIDC-0709/versions/2" target="_blank" rel="noopener">MEaSUREs Antarctic Boundaries for IPY 2007-2009 from Satellite Radar, Version 2</a></li>
 <li><a href="https://nsidc.org/data/NSIDC-0754/versions/1" target="_blank" rel="noopener">MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1</a></li>
-<li><a href="https://nsidc.org/data/NSIDC-0709/versions/2" target="_blank" rel="noopener">IMBIE refined basin boundaries for Antarctica</a></li>
-<li><a href="https://zenodo.org/records/12738170" target="_blank" rel="noopener">Antarctic Wide Subglacial Hydrology Modeling</a></li>
-<li><a href="https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2023.1027704/full" target="_blank" rel="noopener">WAOM2 annual-mean Antarctic ocean circulation fields</a></li>
+<li><a href="https://essopenarchive.org/doi/full/10.22541/essoar.177099457.70593031" target="_blank" rel="noopener">Antarctic Ice-Sheet Basal Friction from Elmer/Ice Inversions</a></li>
+<li><a href="https://zenodo.org/records/12738170" target="_blank" rel="noopener">GlaDS Simulated Antarctic Wide Subglacial Hydrology</a></li>
+<li><a href="https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2023.1027704/full" target="_blank" rel="noopener">WAOM2 Annual-Mean Antarctic Ocean Circulation Fields</a></li>
+<li><a href="https://data.aad.gov.au/metadata/RISE" target="_blank" rel="noopener">Multi-Model Estimate of Antarctic Ice-Shelf Basal Melting and Ocean Drivers</a></li>
 </ul>
 </article>
 <article class="explorer-source-column">
@@ -253,8 +256,8 @@ image:
 <ul class="explorer-source-list">
 <li><a href="https://nsidc.org/data/idbmg4/versions/6" target="_blank" rel="noopener">IceBridge BedMachine Greenland, Version 6</a></li>
 <li><a href="https://nsidc.org/data/NSIDC-0776/versions/2" target="_blank" rel="noopener">MEaSUREs ITS_LIVE Regional Glacier and Ice Sheet Surface Velocities, Version 2</a></li>
-<li><a href="https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description" target="_blank" rel="noopener">Copernicus Marine Arctic Ocean physics analysis and forecast</a></li>
-<li><a href="https://essopenarchive.org/doi/full/10.22541/essoar.177099472.28419248" target="_blank" rel="noopener">Greenland basal friction ensemble inversion reference</a></li>
+<li><a href="https://essopenarchive.org/doi/full/10.22541/essoar.177099472.28419248" target="_blank" rel="noopener">Greenland Basal Friction Ensemble Inversion Reference</a></li>
+<li><a href="https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description" target="_blank" rel="noopener">Copernicus Marine Arctic Ocean Physics Analysis and Forecast</a></li>
 </ul>
 </article>
 </div>

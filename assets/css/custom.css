@@ -227,7 +227,7 @@
 }
 
 .explorer-page-shell--ice .explorer-ice-lead {
-  margin: 0;
+  margin: 0.8rem 0;
   width: 100%;
   max-width: none;
   color: var(--ice-ink);
@@ -408,7 +408,7 @@
 
 .explorer-page-shell--ice .explorer-region-intro p:last-child {
   margin: 0;
-  max-width: 72ch;
+  max-width: none;
 }
 
 .explorer-page-shell--ice .explorer-mission-section {
@@ -846,12 +846,14 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   gap: 1.2rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .explorer-page-shell--ice .explorer-community-copy {
   display: grid;
   gap: 1rem;
+  height: 100%;
+  align-content: space-between;
 }
 
 .explorer-page-shell--ice .explorer-community-copy h2,
@@ -882,7 +884,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 
 .explorer-page-shell--ice .explorer-feedback-panel {
   min-width: 0;
-  align-self: end;
+  align-self: stretch;
 }
 
 .explorer-page-shell--ice .explorer-community-cta-standalone {
@@ -1214,6 +1216,11 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 
   .explorer-page-shell--ice .explorer-ice-highlights {
     grid-template-columns: 1fr;
+  }
+
+  .explorer-page-shell--ice .explorer-community-copy {
+    height: auto;
+    align-content: start;
   }
 }
 
