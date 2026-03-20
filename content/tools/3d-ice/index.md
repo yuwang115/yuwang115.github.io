@@ -1,10 +1,10 @@
 ---
-title: "3D ICE: Interactive Cryosphere Explorer"
+title: "3D ICE: Hold the Polar World in Your Hands"
 seo:
-  title: "3D ICE: Interactive Cryosphere Explorer | Yu Wang"
-summary: "Explore Antarctica and Greenland with 3D ICE, an interactive cryosphere explorer for ice geometry, velocity, flowlines, basin boundaries, subglacial systems, and ocean circulation."
+  title: "3D ICE: Hold the Polar World in Your Hands | Yu Wang"
+summary: "Explore Antarctica and Greenland like never before with 3D ICE, an interactive cryosphere platform that makes specialised cryosphere data vivid, intuitive, and accessible."
 date: 2026-03-09
-lastmod: 2026-03-17
+lastmod: 2026-03-20
 layout: explorer-landing
 type: page
 slug: 3d-ice
@@ -14,34 +14,31 @@ show_breadcrumb: false
 hide_date: true
 reading_time: false
 explorer_theme: ice
-explorer_kicker: "Interactive cryosphere explorer"
+explorer_kicker: "Interactive Cryosphere Explorer"
 image:
-  alt_text: "3D ICE interactive cryosphere explorer preview showing Antarctica and Greenland data views."
+  alt_text: "3D ICE preview showing interactive Antarctica and Greenland cryosphere views."
   preview_only: true
 ---
 
 <div class="explorer-landing explorer-landing--ice">
-<section class="explorer-ice-hero">
+<section class="explorer-ice-hero explorer-ice-hero--split">
+<div class="explorer-hero-copy">
 <div class="explorer-ice-brand">
-<img class="explorer-ice-logo" src="/tools/3d-ice-logo-light.jpg" alt="3D ICE Interactive Cryosphere Explorer" loading="eager" />
-<p class="explorer-ice-brand-note">3D ICE stands for Interactive Cryosphere Explorer: a browser-based way to inspect Antarctica and Greenland as connected, explorable 3D systems.</p>
+<img class="explorer-ice-logo" src="/tools/3d-ice-logo-light.jpg" alt="3D ICE logo" loading="eager" />
 </div>
-<p class="explorer-summary">3D ICE is built for interactive polar storytelling. Open Antarctica to inspect ice velocity, flowlines, basin boundaries, subglacial structure, and ocean circulation in one view, then switch to Greenland to compare fast-flow corridors and marine context with the same interface. It is designed to feel immediate for outreach, but detailed enough for research communication, teaching, and scientific demos.</p>
-<div class="explorer-actions">
+<p class="explorer-ice-lead">Explore Antarctica and Greenland like never before.</p>
+<p class="explorer-summary">3D ICE is an interactive visualization platform designed to transform complex, state-of-the-art cryosphere datasets of Antarctica and Greenland into an intuitive 3D experience, seamlessly bridging the gap between rigorous glaciological research and public curiosity.</p>
+<div class="explorer-actions explorer-actions--hero-grid">
 <a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
+<a class="explorer-button explorer-button--ghost" href="#source-data">Source Data</a>
 <a class="explorer-button explorer-button--secondary" href="#antarctica-features">Antarctica Features</a>
 <a class="explorer-button explorer-button--ghost" href="#greenland-features">Greenland Features</a>
 </div>
-<ul class="explorer-ice-highlights">
-<li>Interactive Antarctica and Greenland scene switching</li>
-<li>Balanced and HD datasets for storytelling or closer inspection</li>
-<li>Velocity, flowlines, basins, subglacial systems, and ocean circulation</li>
-</ul>
-<div class="explorer-showcase-breakout">
-<div class="explorer-showcase-frame">
-<iframe title="3D ICE interactive Antarctica showcase" src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></iframe>
 </div>
-<p class="explorer-showcase-note">Interact with the live Antarctica showcase here, or <a href="/tools/3D-interactive-cryosphere-explorer.html">launch the full runtime</a> to switch regions, change resolution, and unlock the full control panel.</p>
+<div class="explorer-showcase-breakout explorer-showcase-breakout--hero">
+<div class="explorer-showcase-frame">
+<iframe title="3D ICE interactive Antarctica showcase" src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase&preset=tools-hero" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></iframe>
+</div>
 </div>
 </section>
 <section id="antarctica-features" class="explorer-section explorer-region">
@@ -210,11 +207,36 @@ image:
 </article>
 </div>
 </section>
-<section class="explorer-section">
+<section id="key-features" class="explorer-section explorer-feature-section">
 <div class="explorer-region-intro">
-<p class="explorer-region-label">Scientific data</p>
-<h2>Scientific data behind 3D ICE</h2>
-<p>The landing page stays light, but the explorer itself is built on published cryosphere and ocean datasets chosen to keep the visuals scientifically grounded.</p>
+<p class="explorer-region-label">Key Features</p>
+<h2>Four capabilities that define the 3D ICE experience</h2>
+<p>The current landing page focuses on the core ways 3D ICE supports exploration, comparison, and practical dataset access.</p>
+</div>
+<div class="explorer-feature-grid">
+<article class="explorer-feature-card">
+<h3>Fully Interactive 3D Experience</h3>
+<p>Freely rotate, zoom, and change your viewpoint. Explore the ice sheets as if you were examining a physical model right in your hands.</p>
+</article>
+<article class="explorer-feature-card">
+<h3>Comprehensive &amp; Customisable Data</h3>
+<p>Available for both Antarctica and Greenland. Seamlessly visualise continental-scale land data alongside simulated ocean circulations. Layer and combine them in any way you desire to uncover new insights.</p>
+</article>
+<article class="explorer-feature-card">
+<h3>Direct Gateway to Source Data</h3>
+<p>Built as a systematic data platform for professional researchers. First, visualise the latest state-of-the-art datasets in 3D, then simply click to jump directly to the source data you need.</p>
+</article>
+<article class="explorer-feature-card">
+<h3>Optimised Cross-Platform Performance</h3>
+<p>Features a balanced resolution preset for smooth exploration on mobile touchscreens. For the ultimate experience, switch to the stunning <strong>HD Option</strong> (4km resolution for Antarctica, 1km for Greenland), highly recommended for large desktop screens.</p>
+</article>
+</div>
+</section>
+<section id="source-data" class="explorer-section explorer-source-section">
+<div class="explorer-region-intro">
+<p class="explorer-region-label">Source Data</p>
+<h2>A direct gateway to the datasets behind 3D ICE</h2>
+<p>Built as a systematic data platform for professional researchers. First, visualise the latest state-of-the-art datasets in 3D, then simply click to jump directly to the source data you need.</p>
 </div>
 <div class="explorer-source-columns">
 <article class="explorer-source-column">
@@ -238,27 +260,32 @@ image:
 </article>
 </div>
 </section>
-<section class="explorer-section explorer-feedback-only">
-<p class="explorer-region-label">Feedback</p>
+<section class="explorer-section explorer-feedback-only explorer-community-section">
+<div class="explorer-community-grid">
+<div class="explorer-community-copy">
+<p class="explorer-region-label">Community</p>
+<h2>Let&rsquo;s Build the Ultimate Cryosphere Hub Together</h2>
+<p>3D ICE is continually evolving, and I&rsquo;d love to hear feedback from the glaciology community to help me improve it further.</p>
+<ul class="explorer-community-list">
+<li><strong>Have data to share?</strong> If you have Antarctic or Greenland datasets you&rsquo;d like me to integrate into 3D ICE, please reach out.</li>
+<li><strong>Spread the word:</strong> If you find this tool useful for your research, teaching, or outreach, please feel free to share it with your network.</li>
+</ul>
+<div class="explorer-actions">
+<a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
+<a class="explorer-button explorer-button--ghost" href="/tools/">Browse all research tools</a>
+</div>
+</div>
 <div class="explorer-feedback-panel explorer-feedback-panel--faq-style">
 {{< tools-feedback-inline
   identifier="faq-feedback-3d-ice"
   title=""
-  text="Send a quick note if something felt useful, confusing, or unfinished. I read this inbox for bug reports, usability issues, and the next improvements to make in 3D ICE."
-  default_tool="Hold Antarctica and Greenland in your hands with 3D ICE ❄️"
+  text="If you have ideas, datasets, bug reports, or usability feedback for 3D ICE, send a quick note here. English or Chinese is welcome."
+  default_tool="3D ICE: Hold the Polar Worlds in Your Hands"
   source_page="/tools/3d-ice/"
   source_section="tools-feedback"
   root_class="tool-feedback-root--inline tool-feedback-root--untitled"
 >}}
 </div>
-</section>
-<section class="explorer-section explorer-final-cta">
-<p class="explorer-region-label">Ready to explore</p>
-<h2>Launch the full 3D ICE experience</h2>
-<p>Open the standalone runtime to move from this overview page into the full interactive explorer for Antarctica and Greenland.</p>
-<div class="explorer-actions explorer-actions--center">
-<a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
-<a class="explorer-button explorer-button--ghost" href="/tools/">Browse all research tools</a>
 </div>
 </section>
 </div>

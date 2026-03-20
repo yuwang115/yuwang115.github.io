@@ -56,7 +56,7 @@ sections:
           <div class="showcase-embed">
             <iframe
               title="Hold Antarctica in your hands with 3D ICE ❄️"
-              src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase"
+              src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase&preset=home-hero"
               loading="eager"
               fetchpriority="high"
               referrerpolicy="no-referrer"
