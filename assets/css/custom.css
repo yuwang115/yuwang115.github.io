@@ -82,6 +82,30 @@
   --ice-border-strong: #afcddd;
   --ice-panel: #ffffff;
   --ice-panel-soft: linear-gradient(180deg, #fbfdff 0%, #f2f8fb 100%);
+  --ice-panel-card:
+    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.08), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(88, 164, 170, 0.028), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(247, 251, 253, 0.985) 100%);
+  --ice-panel-card-soft:
+    radial-gradient(circle at 88% 10%, rgba(116, 220, 255, 0.1), transparent 22%),
+    radial-gradient(circle at 10% 100%, rgba(92, 168, 175, 0.028), transparent 28%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.99) 0%, rgba(246, 251, 253, 0.975) 100%);
+  --ice-panel-card-sky:
+    radial-gradient(circle at 92% 8%, rgba(118, 203, 244, 0.09), transparent 22%),
+    radial-gradient(circle at 8% 100%, rgba(147, 206, 238, 0.05), transparent 30%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.99) 0%, rgba(246, 250, 253, 0.975) 100%);
+  --ice-panel-card-mint:
+    radial-gradient(circle at 92% 10%, rgba(132, 218, 220, 0.055), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(96, 173, 177, 0.03), transparent 30%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.99) 0%, rgba(246, 252, 252, 0.975) 100%);
+  --ice-panel-card-frost:
+    radial-gradient(circle at 100% 0%, rgba(198, 227, 248, 0.1), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(111, 188, 214, 0.045), transparent 30%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.99) 0%, rgba(248, 251, 253, 0.975) 100%);
+  --ice-panel-card-glacier:
+    radial-gradient(circle at 88% 10%, rgba(145, 216, 230, 0.08), transparent 22%),
+    radial-gradient(circle at 10% 100%, rgba(112, 184, 182, 0.028), transparent 28%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.99) 0%, rgba(246, 251, 252, 0.975) 100%);
   --ice-panel-hero:
     radial-gradient(circle at 12% 18%, rgba(124, 216, 255, 0.22), transparent 28%),
     radial-gradient(circle at 92% 86%, rgba(77, 178, 156, 0.16), transparent 26%),
@@ -419,15 +443,77 @@
   margin-top: 1.15rem;
 }
 
-.explorer-page-shell--ice .explorer-feature-card {
-  padding: 1.1rem;
-  border: 1px solid #d8e6ee;
-  border-radius: 24px;
+.explorer-page-shell--ice .explorer-feature-section {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(245, 251, 253, 0.96) 100%);
+    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.07), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(92, 168, 175, 0.022), transparent 30%),
+    linear-gradient(180deg, #fcfeff 0%, #f6fafc 100%);
+}
+
+.explorer-page-shell--ice .explorer-feature-card {
+  --ice-card-bg: var(--ice-panel-card-soft);
+  --ice-card-sheen:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.045), transparent 22%);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 1.1rem;
+  border: 1px solid rgba(175, 205, 221, 0.9);
+  border-radius: 24px;
+  background: var(--ice-card-bg);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.72),
-    0 14px 28px rgba(9, 34, 49, 0.04);
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 12px 24px rgba(9, 34, 49, 0.035);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.explorer-page-shell--ice .explorer-feature-card:nth-child(4n + 1) {
+  --ice-card-bg: var(--ice-panel-card-sky);
+}
+
+.explorer-page-shell--ice .explorer-feature-card:nth-child(4n + 2) {
+  --ice-card-bg: var(--ice-panel-card-mint);
+}
+
+.explorer-page-shell--ice .explorer-feature-card:nth-child(4n + 3) {
+  --ice-card-bg: var(--ice-panel-card-frost);
+}
+
+.explorer-page-shell--ice .explorer-feature-card:nth-child(4n + 4) {
+  --ice-card-bg: var(--ice-panel-card-glacier);
+}
+
+.explorer-page-shell--ice .explorer-feature-card::before,
+.explorer-page-shell--ice .explorer-video-card::before,
+.explorer-page-shell--ice .explorer-source-column::before,
+.explorer-page-shell--ice .explorer-source-list a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--ice-card-sheen);
+  pointer-events: none;
+}
+
+.explorer-page-shell--ice .explorer-feature-card > *,
+.explorer-page-shell--ice .explorer-video-card > *,
+.explorer-page-shell--ice .explorer-source-column > *,
+.explorer-page-shell--ice .explorer-source-list a > * {
+  position: relative;
+  z-index: 1;
+}
+
+.explorer-page-shell--ice .explorer-feature-card:hover,
+.explorer-page-shell--ice .explorer-feature-card:focus-within {
+  transform: translateY(-1px);
+  border-color: #a7c9d9;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 16px 30px rgba(9, 34, 49, 0.055);
 }
 
 .explorer-page-shell--ice .explorer-feature-card h3 {
@@ -435,6 +521,7 @@
   color: #15374a;
   font-size: 1.12rem;
   line-height: 1.25;
+  font-weight: 800;
 }
 
 .explorer-page-shell--ice .explorer-feature-card p {
@@ -448,13 +535,38 @@
 }
 
 .explorer-page-shell--ice .explorer-video-card {
+  --ice-card-bg: var(--ice-panel-card);
+  --ice-card-sheen:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.038), transparent 24%);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: grid;
   gap: 1rem;
   padding: 1rem;
-  border: 1px solid #d8e6ee;
+  border: 1px solid rgba(175, 205, 221, 0.88);
   border-radius: 24px;
-  background: var(--ice-panel-soft);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  background: var(--ice-card-bg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    0 12px 24px rgba(9, 34, 49, 0.035);
+}
+
+.explorer-page-shell--ice .explorer-video-card:nth-child(4n + 1) {
+  --ice-card-bg: var(--ice-panel-card-glacier);
+}
+
+.explorer-page-shell--ice .explorer-video-card:nth-child(4n + 2) {
+  --ice-card-bg: var(--ice-panel-card-sky);
+}
+
+.explorer-page-shell--ice .explorer-video-card:nth-child(4n + 3) {
+  --ice-card-bg: var(--ice-panel-card-frost);
+}
+
+.explorer-page-shell--ice .explorer-video-card:nth-child(4n + 4) {
+  --ice-card-bg: var(--ice-panel-card-mint);
 }
 
 .explorer-page-shell--ice .explorer-video-copy h3 {
@@ -593,11 +705,36 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
   margin-top: 1.15rem;
 }
 
+.explorer-page-shell--ice .explorer-source-section {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.07), transparent 24%),
+    radial-gradient(circle at 0% 100%, rgba(94, 170, 176, 0.024), transparent 30%),
+    linear-gradient(180deg, #fcfeff 0%, #f6fafc 100%);
+}
+
 .explorer-page-shell--ice .explorer-source-column {
+  --ice-card-bg: var(--ice-panel-card);
+  --ice-card-sheen:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.038), transparent 24%);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding: 1rem;
-  border: 1px solid #d8e6ee;
+  border: 1px solid rgba(175, 205, 221, 0.88);
   border-radius: 24px;
-  background: linear-gradient(180deg, #f9fcfe 0%, #f4fafc 100%);
+  background: var(--ice-card-bg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    0 12px 24px rgba(9, 34, 49, 0.03);
+}
+
+.explorer-page-shell--ice .explorer-source-column:first-child {
+  --ice-card-bg: var(--ice-panel-card-frost);
+}
+
+.explorer-page-shell--ice .explorer-source-column:last-child {
+  --ice-card-bg: var(--ice-panel-card-mint);
 }
 
 .explorer-page-shell--ice .explorer-source-column h3 {
@@ -619,21 +756,50 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 }
 
 .explorer-page-shell--ice .explorer-source-list a {
+  --ice-card-bg: var(--ice-panel-card-soft);
+  --ice-card-sheen:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.03), transparent 22%);
+  position: relative;
+  isolation: isolate;
   display: block;
   height: 100%;
   padding: 0.95rem 1rem;
-  border: 1px solid #d8e6ee;
+  overflow: hidden;
+  border: 1px solid rgba(175, 205, 221, 0.88);
   border-radius: 18px;
-  background: #fdfefe;
+  background: var(--ice-card-bg);
   color: #11425a;
   font-weight: 600;
   text-decoration: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 8px 18px rgba(9, 34, 49, 0.025);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.explorer-page-shell--ice .explorer-source-list li:nth-child(3n + 1) a {
+  --ice-card-bg: var(--ice-panel-card-sky);
+}
+
+.explorer-page-shell--ice .explorer-source-list li:nth-child(3n + 2) a {
+  --ice-card-bg: var(--ice-panel-card-frost);
+}
+
+.explorer-page-shell--ice .explorer-source-list li:nth-child(3n) a {
+  --ice-card-bg: var(--ice-panel-card-mint);
 }
 
 .explorer-page-shell--ice .explorer-source-list a:hover,
 .explorer-page-shell--ice .explorer-source-list a:focus-visible {
-  border-color: #8ebcd0;
-  box-shadow: 0 12px 24px rgba(13, 59, 83, 0.08);
+  transform: translateY(-1px);
+  border-color: #9dc2d3;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 12px 24px rgba(13, 59, 83, 0.05);
 }
 
 .explorer-page-shell--ice .explorer-faq details {
@@ -668,6 +834,8 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 }
 
 .explorer-page-shell--ice .explorer-community-section {
+  display: grid;
+  gap: 1.35rem;
   background:
     radial-gradient(circle at 100% 0%, rgba(116, 220, 255, 0.14), transparent 24%),
     radial-gradient(circle at 0% 100%, rgba(23, 144, 107, 0.08), transparent 30%),
@@ -714,6 +882,72 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 
 .explorer-page-shell--ice .explorer-feedback-panel {
   min-width: 0;
+  align-self: end;
+}
+
+.explorer-page-shell--ice .explorer-community-cta-standalone {
+  display: block;
+  width: 100%;
+}
+
+.explorer-page-shell--ice .explorer-community-cta-row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.34fr) minmax(0, 0.66fr);
+  gap: 0.9rem;
+  align-items: stretch;
+  width: 100%;
+  margin: 0;
+}
+
+.explorer-page-shell--ice .explorer-community-cta-row .explorer-button {
+  margin: 0;
+  min-height: 54px;
+  width: 100%;
+}
+
+.explorer-page-shell--ice .explorer-button--community-utility {
+  border-color: rgba(175, 205, 221, 0.92);
+  background: rgba(255, 255, 255, 0.92);
+  color: #12435b;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 10px 20px rgba(9, 34, 49, 0.06);
+}
+
+.explorer-page-shell--ice .explorer-button--community-utility:hover,
+.explorer-page-shell--ice .explorer-button--community-utility:focus-visible {
+  background: #f6fbfd;
+  border-color: #9fc4d5;
+}
+
+.explorer-page-shell--ice .explorer-button--browse-spotlight {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(11, 97, 130, 0.16);
+  background:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 32%),
+    linear-gradient(135deg, #0f7ea8 0%, #16988c 100%);
+  color: #f7fdff;
+  box-shadow:
+    0 18px 30px rgba(16, 104, 139, 0.24),
+    0 0 0 6px rgba(255, 255, 255, 0.42);
+}
+
+.explorer-page-shell--ice .explorer-button--browse-spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 92% 18%, rgba(190, 240, 255, 0.24), transparent 28%);
+  pointer-events: none;
+}
+
+.explorer-page-shell--ice .explorer-button--browse-spotlight:hover,
+.explorer-page-shell--ice .explorer-button--browse-spotlight:focus-visible {
+  border-color: rgba(11, 97, 130, 0.22);
+  box-shadow:
+    0 22px 36px rgba(16, 104, 139, 0.28),
+    0 0 0 6px rgba(255, 255, 255, 0.5);
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-root--inline {
@@ -1032,6 +1266,10 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 
   .explorer-page-shell--ice .explorer-button {
     width: 100%;
+  }
+
+  .explorer-page-shell--ice .explorer-community-cta-row {
+    grid-template-columns: 1fr;
   }
 
   .explorer-page-shell--ice .explorer-actions.explorer-actions--hero-grid {

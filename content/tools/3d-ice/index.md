@@ -211,7 +211,6 @@ image:
 <div class="explorer-region-intro">
 <p class="explorer-region-label">Key Features</p>
 <h2>Four capabilities that define the 3D ICE experience</h2>
-<p>The current landing page focuses on the core ways 3D ICE supports exploration, comparison, and practical dataset access.</p>
 </div>
 <div class="explorer-feature-grid">
 <article class="explorer-feature-card">
@@ -228,7 +227,7 @@ image:
 </article>
 <article class="explorer-feature-card">
 <h3>Optimised Cross-Platform Performance</h3>
-<p>Features a balanced resolution preset for smooth exploration on mobile touchscreens. For the ultimate experience, switch to the stunning <strong>HD Option</strong> (4km resolution for Antarctica, 1km for Greenland), highly recommended for large desktop screens.</p>
+<p>Features a balanced resolution preset for smooth exploration on mobile touchscreens. For the ultimate experience, switch to the stunning HD Option (4km resolution for Antarctica, 1km for Greenland), highly recommended for large desktop screens.</p>
 </article>
 </div>
 </section>
@@ -270,10 +269,6 @@ image:
 <li><strong>Have data to share?</strong> If you have Antarctic or Greenland datasets you&rsquo;d like me to integrate into 3D ICE, please reach out.</li>
 <li><strong>Spread the word:</strong> If you find this tool useful for your research, teaching, or outreach, please feel free to share it with your network.</li>
 </ul>
-<div class="explorer-actions">
-<a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
-<a class="explorer-button explorer-button--ghost" href="/tools/">Browse all research tools</a>
-</div>
 </div>
 <div class="explorer-feedback-panel explorer-feedback-panel--faq-style">
 {{< tools-feedback-inline
@@ -288,4 +283,10 @@ image:
 </div>
 </div>
 </section>
+<div class="explorer-community-cta-standalone">
+<div class="explorer-community-cta-row">
+<a class="explorer-button explorer-button--community-utility" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
+<a class="explorer-button explorer-button--browse-spotlight" href="/tools/#tools-demo">Browse all research tools</a>
+</div>
+</div>
 </div>

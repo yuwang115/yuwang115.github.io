@@ -235,6 +235,10 @@
       line-height: 1.5;
     }
 
+    .tool-feedback-status:empty {
+      display: none;
+    }
+
     .tool-feedback-submit[disabled] {
       cursor: not-allowed;
       opacity: 0.55;
@@ -404,9 +408,7 @@
             <button type="submit" class="tool-feedback-submit" {{ if not $is_configured }}disabled aria-disabled="true"{{ end }}>Send feedback</button>
             <a class="tool-feedback-secondary" href="mailto:{{ $email }}">Email instead</a>
           </div>
-          <div id="{{ $status_id }}" class="tool-feedback-status">
-            English or Chinese is welcome.
-          </div>
+          <div id="{{ $status_id }}" class="tool-feedback-status"></div>
         </div>
       </form>
     </div>
@@ -446,7 +448,7 @@
         errorPanel.style.display = "none";
         submitButton.disabled = false;
         submitButton.textContent = "Send feedback";
-        status.textContent = "English or Chinese is welcome.";
+        status.textContent = "";
         form.reset();
         syncMetadata();
       };
