@@ -896,6 +896,12 @@ html.dark .explorer-page-shell--ice {
   background: var(--ice-video-media-interactive-bg);
 }
 
+.explorer-page-shell--ice .explorer-video-media--video-preview {
+  background:
+    radial-gradient(circle at top, rgba(139, 217, 255, 0.16), transparent 56%),
+    linear-gradient(180deg, rgba(6, 28, 42, 0.9), rgba(2, 12, 20, 0.98));
+}
+
 .explorer-page-shell--ice .explorer-preview-link {
   position: relative;
   display: block;
@@ -911,6 +917,23 @@ html.dark .explorer-page-shell--ice {
   inset: 0;
   background: var(--ice-preview-poster-bg);
   transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.explorer-page-shell--ice .explorer-preview-link--video {
+  background:
+    radial-gradient(circle at 20% 18%, rgba(118, 222, 255, 0.18), transparent 40%),
+    linear-gradient(180deg, rgba(8, 34, 48, 0.7), rgba(3, 14, 24, 0.92));
+}
+
+.explorer-page-shell--ice .explorer-preview-link--video .explorer-feature-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  transition: transform 220ms ease, filter 220ms ease;
+  filter: saturate(0.92) contrast(1.03);
 }
 
 .explorer-page-shell--ice .explorer-preview-link iframe {
@@ -943,6 +966,23 @@ html.dark .explorer-page-shell--ice {
   height: 100%;
   object-fit: cover;
   background: rgba(7, 26, 40, 0.65);
+}
+
+.explorer-page-shell--ice .explorer-preview-link--video .explorer-video-overlay {
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.explorer-page-shell--ice .explorer-preview-link--video.is-video-active .explorer-feature-video,
+.explorer-page-shell--ice .explorer-preview-link--video:hover .explorer-feature-video,
+.explorer-page-shell--ice .explorer-preview-link--video:focus-visible .explorer-feature-video {
+  transform: scale(1.025);
+  filter: saturate(1.04) contrast(1.07);
+}
+
+.explorer-page-shell--ice .explorer-preview-link--video.is-video-playing .explorer-video-overlay,
+.explorer-page-shell--ice .explorer-preview-link--video:hover .explorer-video-overlay,
+.explorer-page-shell--ice .explorer-preview-link--video:focus-visible .explorer-video-overlay {
+  transform: translateY(-2px);
 }
 
 .explorer-page-shell--ice .explorer-video-overlay {

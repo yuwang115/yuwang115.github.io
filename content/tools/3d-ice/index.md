@@ -51,32 +51,32 @@ image:
 <div class="explorer-video-grid explorer-video-grid--antarctica">
 <article class="explorer-video-card" data-demo-slot="antarctica-velocity-flowlines">
 <div class="explorer-video-copy">
-<h3>Antarctic ice velocity + flowlines</h3>
-<p>Show how fast-flowing corridors connect ice shelves, outlet glaciers, and basin-scale drainage patterns across Antarctica.</p>
+<h3>Antarctic ice velocity and flowlines</h3>
+<p>Watch how fast-flowing ice streams and drainage patterns connect the deep continental interior to outlet glaciers and massive ice shelves across Antarctica.</p>
 </div>
-<div class="explorer-video-media explorer-video-media--interactive">
-<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-velocity-flowlines" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=antarctica&preset=antarctica-velocity-flowlines" data-preview-title="3D ICE preview for Antarctic ice velocity and flowlines">
-<span class="explorer-preview-poster" aria-hidden="true"></span>
+<div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
+<a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-velocity-flowlines" data-video-preview>
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-velocity-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<source src="/tools/media/3d-ice/antarctica-velocity-preview.mp4" type="video/mp4" />
+</video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Live preview</span>
-<strong>Hover to spin this velocity and flowlines view</strong>
-<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
+<span class="explorer-video-badge">Loop Preview - Click to start</span>
 </div>
 </a>
 </div>
 </article>
 <article class="explorer-video-card" data-demo-slot="antarctica-basin-boundary">
 <div class="explorer-video-copy">
-<h3>Basin boundary</h3>
-<p>Use basin outlines to explain how the ice sheet is partitioned and why regional responses need to be interpreted within basin context.</p>
+<h3>Basin boundaries</h3>
+<p>Visualize distinct catchment outlines to see exactly how the ice sheet is partitioned, highlighting why regional ice loss must be interpreted within its specific basin context.</p>
 </div>
-<div class="explorer-video-media explorer-video-media--interactive">
-<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-basin-boundary" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=antarctica&preset=antarctica-basin-boundary" data-preview-title="3D ICE preview for Antarctic basin boundaries">
-<span class="explorer-preview-poster" aria-hidden="true"></span>
+<div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
+<a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-basin-boundary" data-video-preview>
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-basin-boundary-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<source src="/tools/media/3d-ice/antarctica-basin-boundary-preview.mp4" type="video/mp4" />
+</video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Live preview</span>
-<strong>Hover to spin this basin-boundary view</strong>
-<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
+<span class="explorer-video-badge">Loop Preview - Click to start</span>
 </div>
 </a>
 </div>
@@ -84,15 +84,15 @@ image:
 <article class="explorer-video-card" data-demo-slot="antarctica-subglacial-features">
 <div class="explorer-video-copy">
 <h3>Subglacial features</h3>
-<p>Highlight the hidden structure beneath the ice through effective pressure and subglacial channels, turning invisible processes into something spatially intuitive.</p>
+<p>Reveal the hidden world. Map effective pressure and subglacial channels beneath miles of ice.</p>
 </div>
-<div class="explorer-video-media explorer-video-media--interactive">
-<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-subglacial-features" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=antarctica&preset=antarctica-subglacial-features" data-preview-title="3D ICE preview for Antarctic subglacial features">
-<span class="explorer-preview-poster" aria-hidden="true"></span>
+<div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
+<a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-subglacial-features" data-video-preview>
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-subglacial-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<source src="/tools/media/3d-ice/antarctica-subglacial-preview.mp4" type="video/mp4" />
+</video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Live preview</span>
-<strong>Hover to spin this subglacial feature view</strong>
-<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
+<span class="explorer-video-badge">Loop Preview - Click to start</span>
 </div>
 </a>
 </div>
@@ -100,69 +100,17 @@ image:
 <article class="explorer-video-card" data-demo-slot="antarctica-ocean-circulations">
 <div class="explorer-video-copy">
 <h3>Ocean circulations</h3>
-<p>Reveal how Antarctic ocean circulation frames ice-shelf environment, shelf connectivity, and the broader marine setting around the continent.</p>
+<p>Dive into the ever-changing circulation of the Southern Ocean and reveal its critical interactions with Antarctic ice shelves.</p>
 </div>
-<div class="explorer-video-media explorer-video-media--interactive">
-<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-ocean-circulations" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=antarctica&preset=antarctica-ocean-circulations" data-preview-title="3D ICE preview for Antarctic ocean circulations">
-<span class="explorer-preview-poster" aria-hidden="true"></span>
+<div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
+<a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-ocean-circulations" data-video-preview>
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-ocean-streamlines-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<source src="/tools/media/3d-ice/antarctica-ocean-streamlines-preview.mp4" type="video/mp4" />
+</video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Live preview</span>
-<strong>Hover to spin this Antarctic ocean view</strong>
-<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
+<span class="explorer-video-badge">Loop Preview - Click to start</span>
 </div>
 </a>
-</div>
-</article>
-<article class="explorer-video-card" data-demo-slot="antarctica-ross-ice-shelf">
-<div class="explorer-video-copy">
-<h3>Ross Ice Shelf</h3>
-<p>Reserved window for a dedicated Ross Ice Shelf view, ready for a custom camera preset once you decide the framing.</p>
-</div>
-<div class="explorer-video-media" aria-label="Ross Ice Shelf placeholder window">
-<div class="explorer-video-overlay">
-<span class="explorer-video-badge">Reserved</span>
-<strong>Placeholder window for Ross Ice Shelf</strong>
-<span class="explorer-preview-cta">Camera preset to be configured next.</span>
-</div>
-</div>
-</article>
-<article class="explorer-video-card" data-demo-slot="antarctica-thwaites-pine-island">
-<div class="explorer-video-copy">
-<h3>Thwaites and Pine Island Glaciers</h3>
-<p>Reserved window for a focused Amundsen Sea sector view highlighting Thwaites and Pine Island glaciers.</p>
-</div>
-<div class="explorer-video-media" aria-label="Thwaites and Pine Island Glaciers placeholder window">
-<div class="explorer-video-overlay">
-<span class="explorer-video-badge">Reserved</span>
-<strong>Placeholder window for Thwaites and Pine Island</strong>
-<span class="explorer-preview-cta">Camera preset to be configured next.</span>
-</div>
-</div>
-</article>
-<article class="explorer-video-card" data-demo-slot="antarctica-lambert-amery">
-<div class="explorer-video-copy">
-<h3>Lambert Glacier-Amery Ice Shelf</h3>
-<p>Reserved window for a Lambert Glacier-Amery Ice Shelf view, ready for a dedicated preset and camera path.</p>
-</div>
-<div class="explorer-video-media" aria-label="Lambert Glacier-Amery Ice Shelf placeholder window">
-<div class="explorer-video-overlay">
-<span class="explorer-video-badge">Reserved</span>
-<strong>Placeholder window for Lambert Glacier-Amery</strong>
-<span class="explorer-preview-cta">Camera preset to be configured next.</span>
-</div>
-</div>
-</article>
-<article class="explorer-video-card" data-demo-slot="antarctica-totten-denman">
-<div class="explorer-video-copy">
-<h3>Totten and Denman Glacier</h3>
-<p>Reserved window for an East Antarctic coastal view centered on Totten and Denman glacier systems.</p>
-</div>
-<div class="explorer-video-media" aria-label="Totten and Denman Glacier placeholder window">
-<div class="explorer-video-overlay">
-<span class="explorer-video-badge">Reserved</span>
-<strong>Placeholder window for Totten and Denman</strong>
-<span class="explorer-preview-cta">Camera preset to be configured next.</span>
-</div>
 </div>
 </article>
 </div>
@@ -176,16 +124,16 @@ image:
 <div class="explorer-video-grid explorer-video-grid--greenland">
 <article class="explorer-video-card" data-demo-slot="greenland-velocity-flowlines">
 <div class="explorer-video-copy">
-<h3>Greenland ice velocity + flowlines</h3>
-<p>Focus on outlet glaciers, fast-flow structure, and how the Greenland ice sheet routes ice from interior catchments to the coast.</p>
+<h3>Greenland ice velocity and flowlines</h3>
+<p>Focus on a complex network of outlet glaciers and fast-flow structures, visualizing how ice is swiftly routed from high-altitude interior catchments down to the coast.</p>
 </div>
-<div class="explorer-video-media explorer-video-media--interactive">
-<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-velocity-flowlines" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=greenland&preset=greenland-velocity-flowlines" data-preview-title="3D ICE preview for Greenland ice velocity and flowlines">
-<span class="explorer-preview-poster" aria-hidden="true"></span>
+<div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
+<a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-velocity-flowlines" data-video-preview>
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/greenland-velocity-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<source src="/tools/media/3d-ice/greenland-velocity-preview.mp4" type="video/mp4" />
+</video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Live preview</span>
-<strong>Hover to spin this Greenland velocity view</strong>
-<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
+<span class="explorer-video-badge">Loop Preview - Click to start</span>
 </div>
 </a>
 </div>
@@ -193,15 +141,15 @@ image:
 <article class="explorer-video-card" data-demo-slot="greenland-ocean-circulations">
 <div class="explorer-video-copy">
 <h3>Ocean circulations</h3>
-<p>Show Greenland's fjord-to-shelf ocean setting and how surrounding circulation patterns provide context for marine-terminating glacier behaviour.</p>
+<p>Examine how surrounding ocean currents interact with Greenland’s deep fjords, providing crucial context for the behavior and retreat of marine-terminating glaciers.</p>
 </div>
-<div class="explorer-video-media explorer-video-media--interactive">
-<a class="explorer-preview-link" href="/tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-ocean-circulations" data-preview-src="/tools/3D-interactive-cryosphere-explorer.html?mode=preview&region=greenland&preset=greenland-ocean-circulations" data-preview-title="3D ICE preview for Greenland ocean circulations">
-<span class="explorer-preview-poster" aria-hidden="true"></span>
+<div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
+<a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-ocean-circulations" data-video-preview>
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/greenland-ocean-circulations-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<source src="/tools/media/3d-ice/greenland-ocean-circulations-preview.mp4" type="video/mp4" />
+</video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Live preview</span>
-<strong>Hover to spin this Greenland ocean view</strong>
-<span class="explorer-preview-cta">Click to open the full 3D ICE runtime</span>
+<span class="explorer-video-badge">Loop Preview - Click to start</span>
 </div>
 </a>
 </div>
