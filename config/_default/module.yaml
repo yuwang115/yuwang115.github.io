@@ -23,5 +23,7 @@ mounts:
     target: layouts
   - source: assets
     target: assets
+  - source: static
+    target: static
   - source: generated/3d-ice-compat
     target: static
