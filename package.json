@@ -6,6 +6,7 @@
   "description": "Academic CV starter template for Hugo Blox with Tailwind CSS v4",
   "scripts": {
     "sync:3d-ice": "node scripts/sync_3d_ice_bundle.mjs",
+    "export:3d-ice-landing": "node scripts/export_3d_ice_standalone_page.mjs",
     "dev": "node scripts/sync_3d_ice_bundle.mjs && hugo server --disableFastRender",
     "build": "node scripts/sync_3d_ice_bundle.mjs && hugo --minify"
   },
