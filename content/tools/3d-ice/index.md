@@ -59,7 +59,7 @@ image:
 </div>
 <div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
 <a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-velocity-flowlines" data-video-preview>
-<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-velocity-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-velocity-preview.jpg" preload="metadata" muted autoplay loop playsinline webkit-playsinline aria-hidden="true">
 <source src="/tools/media/3d-ice/antarctica-velocity-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
@@ -75,7 +75,7 @@ image:
 </div>
 <div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
 <a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-basin-boundary" data-video-preview>
-<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-basin-boundary-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-basin-boundary-preview.jpg" preload="metadata" muted autoplay loop playsinline webkit-playsinline aria-hidden="true">
 <source src="/tools/media/3d-ice/antarctica-basin-boundary-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
@@ -91,7 +91,7 @@ image:
 </div>
 <div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
 <a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-subglacial-features" data-video-preview>
-<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-subglacial-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-subglacial-preview.jpg" preload="metadata" muted autoplay loop playsinline webkit-playsinline aria-hidden="true">
 <source src="/tools/media/3d-ice/antarctica-subglacial-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
@@ -107,7 +107,7 @@ image:
 </div>
 <div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
 <a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-ocean-circulations" data-video-preview>
-<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-ocean-streamlines-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/antarctica-ocean-streamlines-preview.jpg" preload="metadata" muted autoplay loop playsinline webkit-playsinline aria-hidden="true">
 <source src="/tools/media/3d-ice/antarctica-ocean-streamlines-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
@@ -132,7 +132,7 @@ image:
 </div>
 <div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
 <a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-velocity-flowlines" data-video-preview>
-<video class="explorer-feature-video" poster="/tools/media/3d-ice/greenland-velocity-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/greenland-velocity-preview.jpg" preload="metadata" muted autoplay loop playsinline webkit-playsinline aria-hidden="true">
 <source src="/tools/media/3d-ice/greenland-velocity-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
@@ -148,7 +148,7 @@ image:
 </div>
 <div class="explorer-video-media explorer-video-media--interactive explorer-video-media--video-preview">
 <a class="explorer-preview-link explorer-preview-link--video" href="/tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-ocean-circulations" data-video-preview>
-<video class="explorer-feature-video" poster="/tools/media/3d-ice/greenland-ocean-circulations-preview.jpg" preload="metadata" muted loop playsinline aria-hidden="true">
+<video class="explorer-feature-video" poster="/tools/media/3d-ice/greenland-ocean-circulations-preview.jpg" preload="metadata" muted autoplay loop playsinline webkit-playsinline aria-hidden="true">
 <source src="/tools/media/3d-ice/greenland-ocean-circulations-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">

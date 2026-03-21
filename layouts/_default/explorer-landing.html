@@ -130,6 +130,18 @@
           link.classList.add("is-video-playing");
         };
 
+        const primeVideoPreview = (video) => {
+          if (!video) return;
+          video.defaultMuted = true;
+          video.muted = true;
+          video.playsInline = true;
+          video.autoplay = true;
+          video.setAttribute("muted", "");
+          video.setAttribute("playsinline", "");
+          video.setAttribute("webkit-playsinline", "");
+          video.setAttribute("autoplay", "");
+        };
+
         if (previewLinks.length) {
           for (const link of previewLinks) {
             link.addEventListener("mouseenter", () => {
@@ -157,18 +169,18 @@
           for (const link of videoPreviewLinks) {
             const video = link.querySelector("video");
             if (!video) continue;
-            video.defaultMuted = true;
-            video.muted = true;
-            video.playsInline = true;
-            video.autoplay = true;
-            video.setAttribute("autoplay", "");
+            primeVideoPreview(video);
             const startAutoplay = () => {
               startVideoPreview(link);
             };
-            if (video.readyState >= 2) {
+            if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) {
+              video.load();
+            }
+            if (video.readyState >= 1) {
               startAutoplay();
             } else {
-              video.addEventListener("loadeddata", startAutoplay, { once: true });
+              video.addEventListener("loadedmetadata", startAutoplay, { once: true });
+              video.addEventListener("canplay", startAutoplay, { once: true });
             }
           }
         }
