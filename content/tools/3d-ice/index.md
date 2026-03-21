@@ -30,15 +30,18 @@ image:
 <p class="explorer-ice-lead">Explore Antarctica and Greenland like never before.</p>
 <p class="explorer-summary">3D ICE is an Interactive Cryosphere Explorer designed to turn state-of-the-art Antarctica and Greenland datasets into an intuitive browser-based experience for glaciology research, teaching, and public engagement.</p>
 <div class="explorer-actions explorer-actions--hero-grid">
-<a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
-<a class="explorer-button explorer-button--ghost" href="#antarctica-features">Antarctica Features</a>
-<a class="explorer-button explorer-button--ghost" href="#source-data">Source Data</a>
-<a class="explorer-button explorer-button--ghost" href="#greenland-features">Greenland Features</a>
+<a class="explorer-button explorer-button--primary explorer-button--hero-launch" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
+<a class="explorer-button explorer-button--ghost explorer-button--hero-antarctica" href="#antarctica-features">Antarctica Features</a>
+<a class="explorer-button explorer-button--ghost explorer-button--hero-source" href="#source-data">Source Data</a>
+<a class="explorer-button explorer-button--ghost explorer-button--hero-greenland" href="#greenland-features">Greenland Features</a>
 </div>
 </div>
 <div class="explorer-showcase-breakout explorer-showcase-breakout--hero">
-<div class="explorer-showcase-frame">
-<iframe title="3D ICE interactive Antarctica showcase" src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase&preset=tools-hero" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></iframe>
+<div class="explorer-showcase-frame explorer-showcase-frame--mobile-linkout">
+<iframe title="3D ICE interactive Antarctica showcase" src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase&preset=tools-hero&mobileLinkout=1" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></iframe>
+<a class="explorer-showcase-mobile-link" href="/tools/3D-interactive-cryosphere-explorer.html" aria-label="Open the full 3D ICE interface">
+<span class="explorer-showcase-mobile-link-badge">Tap for full 3D ICE interface</span>
+</a>
 </div>
 </div>
 </section>
@@ -60,7 +63,7 @@ image:
 <source src="/tools/media/3d-ice/antarctica-velocity-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - Click to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
 </div>
 </a>
 </div>
@@ -76,7 +79,7 @@ image:
 <source src="/tools/media/3d-ice/antarctica-basin-boundary-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - Click to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
 </div>
 </a>
 </div>
@@ -92,7 +95,7 @@ image:
 <source src="/tools/media/3d-ice/antarctica-subglacial-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - Click to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
 </div>
 </a>
 </div>
@@ -108,7 +111,7 @@ image:
 <source src="/tools/media/3d-ice/antarctica-ocean-streamlines-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - Click to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
 </div>
 </a>
 </div>
@@ -133,7 +136,7 @@ image:
 <source src="/tools/media/3d-ice/greenland-velocity-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - Click to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
 </div>
 </a>
 </div>
@@ -149,7 +152,7 @@ image:
 <source src="/tools/media/3d-ice/greenland-ocean-circulations-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - Click to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
 </div>
 </a>
 </div>

@@ -674,6 +674,28 @@ html.dark .explorer-page-shell--ice {
   display: block;
 }
 
+.explorer-page-shell--ice .explorer-showcase-mobile-link {
+  display: none;
+}
+
+.explorer-page-shell--ice .explorer-showcase-mobile-link-badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: min(100%, 18rem);
+  padding: 0.72rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(191, 234, 255, 0.56);
+  background: rgba(4, 18, 28, 0.8);
+  box-shadow: 0 14px 28px rgba(5, 22, 34, 0.28);
+  color: #f4fbff;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+}
+
 .explorer-page-shell--ice .explorer-showcase-note {
   width: 100%;
   max-width: none;
@@ -1009,6 +1031,10 @@ html.dark .explorer-page-shell--ice {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+}
+
+.explorer-page-shell--ice .explorer-video-badge-tap {
+  display: none;
 }
 
 .explorer-page-shell--ice .explorer-video-overlay strong {
@@ -1577,6 +1603,47 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 
   .explorer-page-shell--ice .explorer-actions.explorer-actions--hero-grid {
     grid-template-columns: 1fr;
+  }
+
+  .explorer-page-shell--ice .explorer-showcase-frame--mobile-linkout iframe {
+    pointer-events: none;
+  }
+
+  .explorer-page-shell--ice .explorer-showcase-frame--mobile-linkout .explorer-showcase-mobile-link {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 1rem;
+    background: linear-gradient(180deg, rgba(4, 18, 28, 0) 0%, rgba(4, 18, 28, 0.18) 100%);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .explorer-page-shell--ice .explorer-video-badge-click {
+    display: none;
+  }
+
+  .explorer-page-shell--ice .explorer-video-badge-tap {
+    display: inline;
+  }
+
+  .explorer-page-shell--ice .explorer-button--hero-launch {
+    order: 1;
+  }
+
+  .explorer-page-shell--ice .explorer-button--hero-antarctica {
+    order: 2;
+  }
+
+  .explorer-page-shell--ice .explorer-button--hero-greenland {
+    order: 3;
+  }
+
+  .explorer-page-shell--ice .explorer-button--hero-source {
+    order: 4;
   }
 
   .explorer-page-shell--ice .explorer-video-grid {
