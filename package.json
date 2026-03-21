@@ -5,8 +5,9 @@
   "packageManager": "pnpm@10.14.0",
   "description": "Academic CV starter template for Hugo Blox with Tailwind CSS v4",
   "scripts": {
-    "dev": "hugo server --disableFastRender",
-    "build": "hugo --minify"
+    "sync:3d-ice": "node scripts/sync_3d_ice_bundle.mjs",
+    "dev": "node scripts/sync_3d_ice_bundle.mjs && hugo server --disableFastRender",
+    "build": "node scripts/sync_3d_ice_bundle.mjs && hugo --minify"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.12",

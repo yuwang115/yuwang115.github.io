@@ -1,0 +1,23 @@
+{{ if or (eq .RelPermalink "/") (eq .RelPermalink "/tools/") (eq .RelPermalink "/tools/3d-ice/") }}
+<script>
+  (() => {
+    const MESSAGE_TYPE = "3d-ice:showcase-scroll";
+
+    function isKnown3dIceFrame(sourceWindow) {
+      if (!sourceWindow) return false;
+      const frames = Array.from(document.querySelectorAll('iframe[src*="3D-interactive-cryosphere-explorer.html"]'));
+      return frames.some((frame) => frame.contentWindow === sourceWindow);
+    }
+
+    window.addEventListener("message", (event) => {
+      const data = event.data || {};
+      if (data.type !== MESSAGE_TYPE) return;
+      if (!isKnown3dIceFrame(event.source)) return;
+
+      const deltaX = Number(data.deltaX) || 0;
+      const deltaY = Number(data.deltaY) || 0;
+      window.scrollBy({ left: deltaX, top: deltaY, behavior: "auto" });
+    });
+  })();
+</script>
+{{ end }}

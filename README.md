@@ -16,6 +16,14 @@ Easily write technical content with plain text Markdown, LaTeX math, diagrams, R
 
 The integrated [**Hugo Blox Builder**](https://hugoblox.com) and CMS makes it easy to create a beautiful website for free. Edit your site in the CMS (or your favorite editor), generate it with [Hugo](https://github.com/gohugoio/hugo), and deploy with GitHub or Netlify. Customize anything on your site with widgets, light/dark themes, and language packs.
 
+## 3D ICE bundle sync
+
+The 3D ICE runtime, large data assets, preview media, and preparation scripts now live in the standalone sibling repository `../3d-ice`.
+
+- This repo keeps the site-facing shells and links, including `/tools/3d-ice/`, the homepage showcase, and the Tools page embed.
+- `node scripts/sync_3d_ice_bundle.mjs` pulls a versioned compatibility bundle into `generated/3d-ice-compat/` before Hugo builds.
+- Local builds prefer the sibling repo bundle in `../3d-ice/dist/`; once `https://github.com/yuwang115/3d-ice` is created and releases are published, the same script can fall back to GitHub release assets.
+
 - 👉 [**Get Started**](https://hugoblox.com/templates/)
 - 📚 [View the **documentation**](https://docs.hugoblox.com/)
 - 💬 [Chat with the **Hugo Blox Builder community**](https://discord.gg/z8wNYzb) or [**Hugo community**](https://discourse.gohugo.io)

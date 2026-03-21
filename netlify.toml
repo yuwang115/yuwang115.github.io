@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm install && hugo --gc --minify -b $URL && pnpm dlx pagefind --source 'public'"
+  command = "corepack enable && pnpm install && node scripts/sync_3d_ice_bundle.mjs && hugo --gc --minify -b $URL && pnpm dlx pagefind --source 'public'"
   publish = "public"
 
 [build.environment]
@@ -11,10 +11,10 @@
   HUGO_ENV = "production"
 
 [context.deploy-preview]
-  command = "pnpm install && hugo --gc --minify --buildFuture -b $DEPLOY_PRIME_URL && pnpm dlx pagefind --source 'public'"
+  command = "corepack enable && pnpm install && node scripts/sync_3d_ice_bundle.mjs && hugo --gc --minify --buildFuture -b $DEPLOY_PRIME_URL && pnpm dlx pagefind --source 'public'"
 
 [context.branch-deploy]
-  command = "pnpm install && hugo --gc --minify -b $DEPLOY_PRIME_URL && pnpm dlx pagefind --source 'public'"
+  command = "corepack enable && pnpm install && node scripts/sync_3d_ice_bundle.mjs && hugo --gc --minify -b $DEPLOY_PRIME_URL && pnpm dlx pagefind --source 'public'"
 
 [[plugins]]
   package = "netlify-plugin-hugo-cache-resources"
