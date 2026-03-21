@@ -3,7 +3,7 @@ title: "3D ICE: Hold the Polar World in Your Hands"
 breadcrumb_title: "3D ICE"
 seo:
   title: "3D ICE: Interactive 3D Cryosphere Explorer | Yu Wang"
-summary: "3D ICE is an interactive 3D cryosphere explorer for Antarctica and Greenland, built for glaciology research, teaching, and public outreach. Explore ice velocity, flowlines, ocean circulation, subglacial hydrology, and linked source datasets directly in the browser."
+summary: "3D ICE is an Interactive Cryosphere Explorer for Antarctica and Greenland, designed to transform complex, state-of-the-art cryosphere datasets into an intuitive 3D experience, seamlessly bridging the gap between rigorous glaciological research and public curiosity."
 date: 2026-03-09
 lastmod: 2026-03-20
 layout: explorer-landing
@@ -28,7 +28,7 @@ image:
 <img class="explorer-ice-logo" src="/tools/3d-ice-logo-light.jpg" alt="3D ICE logo" loading="eager" />
 </div>
 <p class="explorer-ice-lead">Explore Antarctica and Greenland like never before.</p>
-<p class="explorer-summary">3D ICE is an interactive 3D cryosphere explorer designed to turn state-of-the-art Antarctica and Greenland datasets into an intuitive browser-based experience for glaciology research, teaching, and public engagement.</p>
+<p class="explorer-summary">3D ICE is an Interactive Cryosphere Explorer designed to turn state-of-the-art Antarctica and Greenland datasets into an intuitive browser-based experience for glaciology research, teaching, and public engagement.</p>
 <div class="explorer-actions explorer-actions--hero-grid">
 <a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
 <a class="explorer-button explorer-button--ghost" href="#antarctica-features">Antarctica Features</a>
