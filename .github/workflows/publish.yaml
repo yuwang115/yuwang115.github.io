@@ -36,6 +36,10 @@ jobs:
       with:
         hugo-version: ${{ env.WC_HUGO_VERSION }}
         extended: true
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
     - uses: actions/cache@v3
       with:
         path: /tmp/hugo_cache_runner/
@@ -45,6 +49,8 @@ jobs:
     - name: Setup Pages
       id: pages
       uses: actions/configure-pages@v5
+    - name: Sync 3D ICE compatibility bundle
+      run: node scripts/sync_3d_ice_bundle.mjs
     - name: Build with Hugo
       env:
         HUGO_ENVIRONMENT: production
