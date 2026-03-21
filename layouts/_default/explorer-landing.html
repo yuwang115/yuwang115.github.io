@@ -160,38 +160,15 @@
             video.defaultMuted = true;
             video.muted = true;
             video.playsInline = true;
-
-            if (canUseHoverPreview) {
-              video.autoplay = false;
-              video.removeAttribute("autoplay");
-
-              link.addEventListener("mouseenter", () => {
-                startVideoPreview(link);
-              });
-
-              link.addEventListener("mouseleave", () => {
-                stopVideoPreview(link);
-              });
-
-              link.addEventListener("focusin", () => {
-                startVideoPreview(link);
-              });
-
-              link.addEventListener("focusout", (event) => {
-                if (link.contains(event.relatedTarget)) return;
-                stopVideoPreview(link);
-              });
+            video.autoplay = true;
+            video.setAttribute("autoplay", "");
+            const startAutoplay = () => {
+              startVideoPreview(link);
+            };
+            if (video.readyState >= 2) {
+              startAutoplay();
             } else {
-              video.autoplay = true;
-              video.setAttribute("autoplay", "");
-              const startAutoplay = () => {
-                startVideoPreview(link);
-              };
-              if (video.readyState >= 2) {
-                startAutoplay();
-              } else {
-                video.addEventListener("loadeddata", startAutoplay, { once: true });
-              }
+              video.addEventListener("loadeddata", startAutoplay, { once: true });
             }
           }
         }

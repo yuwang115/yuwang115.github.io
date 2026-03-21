@@ -48,7 +48,7 @@ image:
 <section id="antarctica-features" class="explorer-section explorer-region">
 <div class="explorer-region-intro">
 <p class="explorer-region-label">Antarctica</p>
-<h2>Feature walkthroughs for the Antarctic ice sheet</h2>
+<h2>Discover Key Features of the Antarctic Ice Sheet</h2>
 <p>A vast, frozen desert at the bottom of the Earth, Antarctica holds 90% of the world's ice and hides a dynamic, hidden landscape of subglacial lakes and rivers that shape our future coastlines.</p>
 </div>
 <div class="explorer-video-grid explorer-video-grid--antarctica">
@@ -63,7 +63,7 @@ image:
 <source src="/tools/media/3d-ice/antarctica-velocity-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click&nbsp;</span><span class="explorer-video-badge-tap">tap&nbsp;</span>to start</span>
 </div>
 </a>
 </div>
@@ -79,7 +79,7 @@ image:
 <source src="/tools/media/3d-ice/antarctica-basin-boundary-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click&nbsp;</span><span class="explorer-video-badge-tap">tap&nbsp;</span>to start</span>
 </div>
 </a>
 </div>
@@ -95,7 +95,7 @@ image:
 <source src="/tools/media/3d-ice/antarctica-subglacial-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click&nbsp;</span><span class="explorer-video-badge-tap">tap&nbsp;</span>to start</span>
 </div>
 </a>
 </div>
@@ -111,7 +111,7 @@ image:
 <source src="/tools/media/3d-ice/antarctica-ocean-streamlines-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click&nbsp;</span><span class="explorer-video-badge-tap">tap&nbsp;</span>to start</span>
 </div>
 </a>
 </div>
@@ -121,7 +121,7 @@ image:
 <section id="greenland-features" class="explorer-section explorer-region">
 <div class="explorer-region-intro">
 <p class="explorer-region-label">Greenland</p>
-<h2>Greenland views in the same 3D ICE workflow</h2>
+<h2>Seamlessly Transition to Greenland in One Unified 3D Environment</h2>
 <p>Serving as the Arctic's climate sentinel, the Greenland Ice Sheet is a rapidly transforming giant whose accelerating melt directly drives global sea-level rise and influences ocean circulation.</p>
 </div>
 <div class="explorer-video-grid explorer-video-grid--greenland">
@@ -136,7 +136,7 @@ image:
 <source src="/tools/media/3d-ice/greenland-velocity-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click&nbsp;</span><span class="explorer-video-badge-tap">tap&nbsp;</span>to start</span>
 </div>
 </a>
 </div>
@@ -152,7 +152,7 @@ image:
 <source src="/tools/media/3d-ice/greenland-ocean-circulations-preview.mp4" type="video/mp4" />
 </video>
 <div class="explorer-video-overlay">
-<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click</span><span class="explorer-video-badge-tap">tap</span> to start</span>
+<span class="explorer-video-badge">Loop Preview - <span class="explorer-video-badge-click">Click&nbsp;</span><span class="explorer-video-badge-tap">tap&nbsp;</span>to start</span>
 </div>
 </a>
 </div>
