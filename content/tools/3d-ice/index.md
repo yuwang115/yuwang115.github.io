@@ -2,7 +2,7 @@
 title: "3D ICE: Hold the Polar World in Your Hands"
 breadcrumb_title: "3D ICE"
 seo:
-  title: "3D ICE: Interactive 3D Cryosphere Explorer | Yu Wang"
+  title: "3D ICE: Interactive Cryosphere Explorer"
 summary: "3D ICE is an Interactive Cryosphere Explorer for Antarctica and Greenland, designed to transform complex, state-of-the-art cryosphere datasets into an intuitive 3D experience, seamlessly bridging the gap between rigorous glaciological research and public curiosity."
 date: 2026-03-09
 lastmod: 2026-03-20
@@ -38,7 +38,7 @@ image:
 </div>
 <div class="explorer-showcase-breakout explorer-showcase-breakout--hero">
 <div class="explorer-showcase-frame explorer-showcase-frame--mobile-linkout">
-<iframe title="3D ICE interactive Antarctica showcase" src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase&preset=tools-hero&mobileLinkout=1&desktopInteractive=1" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></iframe>
+<iframe title="3D ICE interactive Antarctica showcase" src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase&preset=tools-hero&mobileLinkout=1&recording=1&recordingSpeed=0.60&recordingZoomAmount=10" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></iframe>
 <a class="explorer-showcase-mobile-link" href="/tools/3D-interactive-cryosphere-explorer.html" aria-label="Open the full 3D ICE interface">
 <span class="explorer-showcase-mobile-link-badge">Tap for full 3D ICE interface</span>
 </a>
