@@ -38,7 +38,7 @@ image:
 </div>
 <div class="explorer-showcase-breakout explorer-showcase-breakout--hero">
 <div class="explorer-showcase-frame explorer-showcase-frame--mobile-linkout">
-<iframe title="3D ICE interactive Antarctica showcase" src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase&preset=tools-hero&mobileLinkout=1&recording=1&recordingSpeed=0.60&recordingZoomAmount=10" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></iframe>
+<iframe title="3D ICE interactive Antarctica showcase" src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase&preset=tools-hero&mobileLinkout=1&desktopInteractive=1&recording=1&recordingSpeed=0.60&recordingZoomAmount=10" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></iframe>
 <a class="explorer-showcase-mobile-link" href="/tools/3D-interactive-cryosphere-explorer.html" aria-label="Open the full 3D ICE interface">
 <span class="explorer-showcase-mobile-link-badge">Tap for full 3D ICE interface</span>
 </a>
