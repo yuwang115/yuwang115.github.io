@@ -40,6 +40,11 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
+    - name: Checkout 3D ICE source
+      uses: actions/checkout@v4
+      with:
+        repository: yuwang115/3d-ice
+        path: 3d-ice-source
     - uses: actions/cache@v3
       with:
         path: /tmp/hugo_cache_runner/
@@ -49,7 +54,12 @@ jobs:
     - name: Setup Pages
       id: pages
       uses: actions/configure-pages@v5
+    - name: Build 3D ICE compatibility bundle
+      working-directory: ./3d-ice-source
+      run: npm run bundle:compat
     - name: Sync 3D ICE compatibility bundle
+      env:
+        THREED_ICE_LOCAL_REPO: ./3d-ice-source
       run: node scripts/sync_3d_ice_bundle.mjs
     - name: Build with Hugo
       env:
