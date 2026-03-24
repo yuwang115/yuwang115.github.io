@@ -90,8 +90,8 @@ sections:
     content:
       title: ""   # 可留空；如果要标题就写在这里
       text: |
-        <div style="position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; height:100svh; min-height:100vh; overflow:hidden;">
-          <video style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; object-position:center;"
+        <div class="home-loop-video">
+          <video class="home-loop-video__media"
                  autoplay
                  muted
                  loop

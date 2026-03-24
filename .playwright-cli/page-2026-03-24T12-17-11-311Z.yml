@@ -1,0 +1,305 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e4]:
+    - navigation [ref=e5]:
+      - link "Yu Wang" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - list [ref=e8]:
+        - listitem [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e11]:
+          - link "Research" [ref=e12] [cursor=pointer]:
+            - /url: /#papers
+        - listitem [ref=e13]:
+          - link "Experience" [ref=e14] [cursor=pointer]:
+            - /url: /experience/
+        - listitem [ref=e15]:
+          - link "Gallery" [ref=e16] [cursor=pointer]:
+            - /url: /gallery/
+        - listitem [ref=e17]:
+          - link "Tools" [ref=e18] [cursor=pointer]:
+            - /url: /tools/
+      - generic [ref=e19]:
+        - button "toggle search" [ref=e20] [cursor=pointer]:
+          - img [ref=e21]
+        - button "appearance" [ref=e24] [cursor=pointer]:
+          - img [ref=e25]
+  - generic [ref=e27]:
+    - generic [ref=e30]:
+      - generic [ref=e32]:
+        - img "Yu (Eddie) Wang" [ref=e34]
+        - generic [ref=e35]:
+          - generic [ref=e36]: Yu (Eddie) Wang
+          - heading "PhD Candidate" [level=3] [ref=e37]
+          - link "Institute for Marine and Antarctic Studies (IMAS), University of Tasmania" [ref=e39] [cursor=pointer]:
+            - /url: https://www.utas.edu.au/imas
+            - generic [ref=e40]: Institute for Marine and Antarctic Studies (IMAS), University of Tasmania
+          - link "Australian Antarctic Program Partnership (AAPP)" [ref=e42] [cursor=pointer]:
+            - /url: https://aappartnership.org.au/
+            - generic [ref=e43]: Australian Antarctic Program Partnership (AAPP)
+        - list [ref=e44]:
+          - listitem [ref=e45]:
+            - link "at-symbol" [ref=e46] [cursor=pointer]:
+              - /url: mailto:yu.wang0@utas.edu.au
+              - img [ref=e47]
+          - listitem [ref=e49]:
+            - link "phone" [ref=e50] [cursor=pointer]:
+              - /url: tel:+61412699321
+              - img [ref=e51]
+          - listitem [ref=e53]:
+            - link "academicons/orcid" [ref=e54] [cursor=pointer]:
+              - /url: https://orcid.org/0000-0001-9070-6004
+              - img [ref=e55]
+          - listitem [ref=e57]:
+            - link "academicons/google-scholar" [ref=e58] [cursor=pointer]:
+              - /url: https://scholar.google.com.au/citations?user=NP-y_qUAAAAJ&hl=en
+              - img [ref=e59]
+          - listitem [ref=e61]:
+            - link "academicons/researchgate" [ref=e62] [cursor=pointer]:
+              - /url: https://www.researchgate.net/profile/Yu_Wang815?ev=hdr_xprf
+              - img [ref=e63]
+          - listitem [ref=e65]:
+            - link "brands/linkedin" [ref=e66] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/yu-wang-eddie/
+              - img [ref=e67]
+          - listitem [ref=e69]:
+            - link "brands/github" [ref=e70] [cursor=pointer]:
+              - /url: https://github.com/yuwang115
+              - img [ref=e71]
+          - listitem [ref=e73]:
+            - link "brands/instagram" [ref=e74] [cursor=pointer]:
+              - /url: https://www.instagram.com/eddiewang115/
+              - img [ref=e75]
+      - generic [ref=e77]:
+        - generic [ref=e79]:
+          - heading "About Me" [level=2] [ref=e80]
+          - paragraph [ref=e81]: Yu Wang (王禹) is a fourth-year PhD candidate in glaciology at the Institute for Marine and Antarctic Studies, University of Tasmania, and a member of the Australian Antarctic Program Partnership. My research uses numerical models to investigate Antarctic ice dynamics, subglacial hydrology, and ice–ocean interactions, with the goal of improving projections of future sea-level rise.
+          - paragraph [ref=e82]: Originally from China, I now call Tasmania—Australia’s heart-shaped southern island—home while I study the frozen south. During weekdays, I model ice sheets on supercomputers; on weekends, you’ll often find me outdoors on hiking trails, climbing routes, badminton courts, or by the shoreline with a camera (or a fishing rod).
+        - link "Download CV" [ref=e83] [cursor=pointer]:
+          - /url: uploads/resume.pdf
+          - img [ref=e84]
+          - text: Download CV
+        - generic [ref=e87]:
+          - generic [ref=e88]:
+            - generic [ref=e89]: Interests
+            - list [ref=e90]:
+              - listitem [ref=e91]: Antarctic ice dynamics
+              - listitem [ref=e92]: Ice sheet / ice shelf modelling
+              - listitem [ref=e93]: Subglacial hydrology
+              - listitem [ref=e94]: Glacial climate intervention
+              - listitem [ref=e95]: Climate and sea-level change
+              - listitem [ref=e96]: Ice–ocean interactions
+          - generic [ref=e97]:
+            - generic [ref=e98]: Education
+            - list [ref=e99]:
+              - listitem [ref=e100]:
+                - img [ref=e101]
+                - generic [ref=e103]:
+                  - paragraph [ref=e104]: PhD (Marine and Antarctic Studies)
+                  - paragraph [ref=e105]: Institute for Marine and Antarctic Studies, University of Tasmania, AU
+              - listitem [ref=e106]:
+                - img [ref=e107]
+                - generic [ref=e109]:
+                  - paragraph [ref=e110]: BSc (Hons) (Marine and Antarctic Science)
+                  - paragraph [ref=e111]: Institute for Marine and Antarctic Studies, University of Tasmania, AU
+              - listitem [ref=e112]:
+                - img [ref=e113]
+                - generic [ref=e115]:
+                  - paragraph [ref=e116]: BSc (Marine Science)
+                  - paragraph [ref=e117]: College of Oceanic and Atmospheric Sciences, Ocean University of China, Qingdao, CN
+    - generic [ref=e120]:
+      - generic [ref=e121]:
+        - text: Hold Antarctica in your hands with
+        - link "3D ICE" [ref=e122] [cursor=pointer]:
+          - /url: /tools/3d-ice/
+        - text: ❄️
+      - generic [ref=e124]:
+        - iframe [ref=e126]:
+          - generic [ref=f1e3] [cursor=pointer]:
+            - generic:
+              - generic:
+                - generic: Core terrain ready
+                - generic:
+                  - generic: 100%
+                  - generic: Progressive loading enabled
+            - text: Click to interact
+        - paragraph [ref=e127]:
+          - text: Open the
+          - link "Tools page" [ref=e128] [cursor=pointer]:
+            - /url: /tools/
+          - text: to explore more.
+    - generic [ref=e129]:
+      - generic [ref=e132]: Featured Publications 📑
+      - generic [ref=e135]:
+        - generic [ref=e136] [cursor=pointer]:
+          - link "Sensitivity of the future evolution of the Wilkes Subglacial Basin ice sheet to grounding-line melt parameterizations" [ref=e138]:
+            - /url: /publication/cryosphere-2024-wsb-melt-param/
+            - img "Sensitivity of the future evolution of the Wilkes Subglacial Basin ice sheet to grounding-line melt parameterizations" [ref=e139]
+          - generic [ref=e141]:
+            - link "Wilkes Subglacial Basin" [ref=e143]:
+              - /url: /tags/wilkes-subglacial-basin/
+              - generic [ref=e144]: Wilkes Subglacial Basin
+            - heading "Sensitivity of the future evolution of the Wilkes Subglacial Basin ice sheet to grounding-line melt parameterizations" [level=2] [ref=e145]:
+              - link "Sensitivity of the future evolution of the Wilkes Subglacial Basin ice sheet to grounding-line melt parameterizations" [ref=e146]:
+                - /url: /publication/cryosphere-2024-wsb-melt-param/
+            - paragraph [ref=e148]:
+              - link "Quantifies how grounding-line melt parameterizations control long‑term evolution of the Wilkes Subglacial Basin and its sea‑level contribution; provides practical guidance for choosing melt schemes in projections." [ref=e149]:
+                - /url: /publication/cryosphere-2024-wsb-melt-param/
+            - generic [ref=e151]:
+              - generic [ref=e152]:
+                - img "avatar" [ref=e154]
+                - generic [ref=e155]: Yu (Eddie) Wang
+              - generic [ref=e156]: •
+              - time [ref=e157]: Jan 1, 2024
+        - generic [ref=e158] [cursor=pointer]:
+          - link "Thermal structure of the Amery Ice Shelf from borehole observations and simulations" [ref=e160]:
+            - /url: /publication/cryosphere-2022-amery/
+            - img "Thermal structure of the Amery Ice Shelf from borehole observations and simulations" [ref=e161]
+          - generic [ref=e163]:
+            - link "Amery Ice Shelf" [ref=e165]:
+              - /url: /tags/amery-ice-shelf/
+              - generic [ref=e166]: Amery Ice Shelf
+            - heading "Thermal structure of the Amery Ice Shelf from borehole observations and simulations" [level=2] [ref=e167]:
+              - link "Thermal structure of the Amery Ice Shelf from borehole observations and simulations" [ref=e168]:
+                - /url: /publication/cryosphere-2022-amery/
+            - paragraph [ref=e170]:
+              - link "Open-borehole observations and 3D/1D Elmer/Ice simulations reveal a near‑isothermal basal marine‑ice layer and strong basal temperature gradients; we quantify how basal mass balance patterns control shelf rheology and dynamics." [ref=e171]:
+                - /url: /publication/cryosphere-2022-amery/
+            - generic [ref=e173]:
+              - generic [ref=e174]:
+                - img "avatar" [ref=e176]
+                - generic [ref=e177]: Yu (Eddie) Wang
+              - generic [ref=e178]: •
+              - time [ref=e179]: Jan 1, 2022
+    - generic [ref=e184]: 您的浏览器不支持 HTML5 视频。
+    - generic [ref=e185]:
+      - generic [ref=e187]:
+        - generic [ref=e188]: Co-authored Publications 📝
+        - paragraph
+      - generic [ref=e191]:
+        - generic [ref=e192]:
+          - generic [ref=e193]: Johanna Beckmann, Ronja Reese, Felicity S. McCormack, Sue Cook, Lawrence Bird, Dawid Gwyther, Daniel Richards, Matthias Scheiter, Yu (Eddie) Wang, Helene Seroussi, Ayako Abe-Ouchi, ..., Chen Zhao, Thomas Zwinger
+          - text: (2025).
+          - link "Disentangling uncertainty in ISMIP6 Antarctic sub-shelf melting and 2300 sea level rise projections" [ref=e194] [cursor=pointer]:
+            - /url: /publication/egusphere-2025-ismip6-uncertainty/
+          - text: . EGUsphere preprint.
+          - generic [ref=e195]:
+            - link "PDF" [ref=e196] [cursor=pointer]:
+              - /url: https://egusphere.copernicus.org/preprints/2025/egusphere-2025-4069/egusphere-2025-4069.pdf
+              - img [ref=e197]
+              - text: PDF
+            - link "Source Document" [ref=e199] [cursor=pointer]:
+              - /url: https://egusphere.copernicus.org/preprints/2025/egusphere-2025-4069/
+              - img [ref=e200]
+              - text: Source Document
+            - link "DOI" [ref=e202] [cursor=pointer]:
+              - /url: https://doi.org/10.5194/egusphere-2025-4069
+        - generic [ref=e203]:
+          - generic [ref=e204]: Chen Zhao, Rupert Gladstone, Thomas Zwinger, Florent Gillet-Chaulet, Yu (Eddie) Wang, Joris Caillet, Pierre Mathiot, Lauri Saraste, Eliot Jager, Ben K. Galton-Fenzi, Poul Christoffersen, Matt A. King
+          - text: (2025).
+          - link "Subglacial water amplifies Antarctic contributions to sea-level rise" [ref=e205] [cursor=pointer]:
+            - /url: /publication/natcomm-2025-subglacial-water/
+          - text: . Nat. Commun..
+          - generic [ref=e206]:
+            - link "PDF" [ref=e207] [cursor=pointer]:
+              - /url: https://www.nature.com/articles/s41467-025-58375-4.pdf
+              - img [ref=e208]
+              - text: PDF
+            - link "DOI" [ref=e210] [cursor=pointer]:
+              - /url: https://doi.org/10.1038/s41467-025-58375-4
+        - generic [ref=e211]:
+          - generic [ref=e212]: Hélène Seroussi, Thibaut Pelle, William H. Lipscomb, Ayako Abe-Ouchi, Thomas Albrecht, Jorge Alvarez-Solas, ..., Yu (Eddie) Wang, Thomas Zwinger
+          - text: (2024).
+          - link "Evolution of the Antarctic Ice Sheet over the next three centuries from an ISMIP6 model ensemble" [ref=e213] [cursor=pointer]:
+            - /url: /publication/earths-future-2024-ismip6/
+          - text: . Earth’s Future.
+          - generic [ref=e214]:
+            - link "PDF" [ref=e215] [cursor=pointer]:
+              - /url: https://agupubs.onlinelibrary.wiley.com/doi/pdf/10.1029/2024EF004561
+              - img [ref=e216]
+              - text: PDF
+            - link "Cite" [ref=e218] [cursor=pointer]:
+              - /url: /publication/earths-future-2024-ismip6/cite.bib
+              - img [ref=e219]
+              - text: Cite
+            - link "DOI" [ref=e221] [cursor=pointer]:
+              - /url: https://doi.org/10.1029/2024EF004561
+    - generic [ref=e222]:
+      - generic [ref=e225]: Photography Gallery 📷
+      - generic [ref=e228]:
+        - generic [ref=e229] [cursor=pointer]:
+          - link "Cinematic Sydney" [ref=e231]:
+            - /url: /gallery/sydney2025/
+            - img "Cinematic Sydney" [ref=e232]
+          - generic [ref=e234]:
+            - heading "Cinematic Sydney" [level=2] [ref=e235]:
+              - link "Cinematic Sydney" [ref=e236]:
+                - /url: /gallery/sydney2025/
+            - paragraph [ref=e238]:
+              - link "A city of sun, sea, and style — Sydney feels like stepping into a film." [ref=e239]:
+                - /url: /gallery/sydney2025/
+            - time [ref=e242]: Aug 30, 2025
+        - generic [ref=e243] [cursor=pointer]:
+          - link "Brisbane, Wrapped in Warmth" [ref=e245]:
+            - /url: /gallery/brisbane2025/
+            - img "Brisbane, Wrapped in Warmth" [ref=e246]
+          - generic [ref=e248]:
+            - heading "Brisbane, Wrapped in Warmth" [level=2] [ref=e249]:
+              - link "Brisbane, Wrapped in Warmth" [ref=e250]:
+                - /url: /gallery/brisbane2025/
+            - paragraph [ref=e252]:
+              - link "About art, sunshine, and love." [ref=e253]:
+                - /url: /gallery/brisbane2025/
+            - time [ref=e256]: Jul 8, 2025
+        - generic [ref=e257] [cursor=pointer]:
+          - link "Xue Long 2 🇨🇳" [ref=e259]:
+            - /url: /gallery/xuelong-2/
+            - img "Xue Long 2 🇨🇳" [ref=e260]
+          - generic [ref=e262]:
+            - heading "Xue Long 2 🇨🇳" [level=2] [ref=e263]:
+              - link "Xue Long 2 🇨🇳" [ref=e264]:
+                - /url: /gallery/xuelong-2/
+            - paragraph [ref=e266]:
+              - link "Aboard China’s most advanced icebreaker" [ref=e267]:
+                - /url: /gallery/xuelong-2/
+            - time [ref=e270]: Apr 27, 2025
+        - generic [ref=e271] [cursor=pointer]:
+          - link "Summer in Italy" [ref=e273]:
+            - /url: /gallery/italy2024/
+            - img "Summer in Italy" [ref=e274]
+          - generic [ref=e276]:
+            - heading "Summer in Italy" [level=2] [ref=e277]:
+              - link "Summer in Italy" [ref=e278]:
+                - /url: /gallery/italy2024/
+            - paragraph [ref=e280]:
+              - link "Rome — Florence — Bologna — Venice — Milan" [ref=e281]:
+                - /url: /gallery/italy2024/
+            - time [ref=e284]: May 14, 2024
+        - generic [ref=e285] [cursor=pointer]:
+          - 'link "Tasmania: My Second Homeland" [ref=e287]':
+            - /url: /gallery/tas/
+            - 'img "Tasmania: My Second Homeland" [ref=e288]'
+          - generic [ref=e290]:
+            - 'heading "Tasmania: My Second Homeland" [level=2] [ref=e291]':
+              - 'link "Tasmania: My Second Homeland" [ref=e292]':
+                - /url: /gallery/tas/
+            - paragraph [ref=e294]:
+              - link "A land of lovely scenery, creatures, and souls" [ref=e295]:
+                - /url: /gallery/tas/
+            - time [ref=e298]: Nov 5, 2023
+  - contentinfo [ref=e300]:
+    - paragraph [ref=e301]:
+      - text: © 2026 Yu Wang. This work is licensed under
+      - link "CC BY NC ND 4.0" [ref=e302] [cursor=pointer]:
+        - /url: https://creativecommons.org/licenses/by-nc-nd/4.0
+    - paragraph:
+      - link "Creative Commons":
+        - /url: https://creativecommons.org/licenses/by-nc-nd/4.0
+    - paragraph [ref=e303]:
+      - text: Published with
+      - link "Hugo Blox Builder" [ref=e304] [cursor=pointer]:
+        - /url: https://hugoblox.com/?utm_campaign=poweredby
+      - text: — the free,
+      - link "open source" [ref=e305] [cursor=pointer]:
+        - /url: https://github.com/HugoBlox/hugo-blox-builder
+      - text: website builder that empowers creators.
