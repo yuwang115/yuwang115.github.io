@@ -1,0 +1,254 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e4]:
+    - navigation [ref=e5]:
+      - link "Yu Wang" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - list [ref=e8]:
+        - listitem [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e11]:
+          - link "Research" [ref=e12] [cursor=pointer]:
+            - /url: /#papers
+        - listitem [ref=e13]:
+          - link "Experience" [ref=e14] [cursor=pointer]:
+            - /url: /experience/
+        - listitem [ref=e15]:
+          - link "Gallery" [ref=e16] [cursor=pointer]:
+            - /url: /gallery/
+        - listitem [ref=e17]:
+          - link "Tools" [ref=e18] [cursor=pointer]:
+            - /url: /tools/
+      - generic [ref=e19]:
+        - button "toggle search" [ref=e20] [cursor=pointer]:
+          - img [ref=e21]
+        - button "appearance" [ref=e24] [cursor=pointer]:
+          - img [ref=e25]
+  - article [ref=e29]:
+    - navigation "Breadcrumb" [ref=e30]:
+      - link "Tools" [ref=e31] [cursor=pointer]:
+        - /url: /tools/
+      - generic [ref=e32]: /
+      - generic [ref=e33]: 3D ICE
+    - generic [ref=e34]:
+      - paragraph [ref=e35]: Interactive Cryosphere Explorer
+      - 'heading "3D ICE: Hold the Polar World in Your Hands" [level=1] [ref=e36]'
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - img "3D ICE logo" [ref=e42]
+          - paragraph [ref=e43]: Explore Antarctica and Greenland like never before.
+          - paragraph [ref=e44]: 3D ICE is an Interactive Cryosphere Explorer designed to turn state-of-the-art Antarctica and Greenland datasets into an intuitive browser-based experience for glaciology research, teaching, and public engagement.
+          - generic [ref=e45]:
+            - link "Launch Explorer" [ref=e46] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html
+            - link "Antarctica Features" [ref=e47] [cursor=pointer]:
+              - /url: "#antarctica-features"
+            - link "Source Data" [ref=e48] [cursor=pointer]:
+              - /url: "#source-data"
+            - link "Greenland Features" [ref=e49] [cursor=pointer]:
+              - /url: "#greenland-features"
+        - iframe [ref=e52]:
+          - generic [ref=f1e3] [cursor=pointer]: Click to interact
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - paragraph [ref=e55]: Antarctica
+          - heading "Discover Key Features of the Antarctic Ice Sheet" [level=2] [ref=e56]
+          - paragraph [ref=e57]: A vast, frozen desert at the bottom of the Earth, Antarctica holds 90% of the world's ice and hides a dynamic, hidden landscape of subglacial lakes and rivers that shape our future coastlines.
+        - generic [ref=e58]:
+          - article [ref=e59]:
+            - generic [ref=e60]:
+              - heading "Antarctic ice velocity and flowlines" [level=3] [ref=e61]
+              - paragraph [ref=e62]: Watch how fast-flowing ice streams and drainage patterns connect the deep continental interior to outlet glaciers and massive ice shelves across Antarctica.
+            - link "Loop Preview - Click to start" [ref=e64] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-velocity-flowlines
+              - generic:
+                - generic:
+                  - text: Loop Preview -
+                  - generic: Click
+                  - text: to start
+          - article [ref=e66]:
+            - generic [ref=e67]:
+              - heading "Basin boundaries" [level=3] [ref=e68]
+              - paragraph [ref=e69]: Visualize distinct catchment outlines to see exactly how the ice sheet is partitioned, highlighting why regional ice loss must be interpreted within its specific basin context.
+            - link "Loop Preview - Click to start" [ref=e71] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-basin-boundary
+              - generic:
+                - generic:
+                  - text: Loop Preview -
+                  - generic: Click
+                  - text: to start
+          - article [ref=e73]:
+            - generic [ref=e74]:
+              - heading "Subglacial features" [level=3] [ref=e75]
+              - paragraph [ref=e76]: Reveal the hidden world. Map effective pressure and subglacial channels beneath miles of ice.
+            - link "Loop Preview - Click to start" [ref=e78] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-subglacial-features
+              - generic:
+                - generic:
+                  - text: Loop Preview -
+                  - generic: Click
+                  - text: to start
+          - article [ref=e80]:
+            - generic [ref=e81]:
+              - heading "Ocean circulations" [level=3] [ref=e82]
+              - paragraph [ref=e83]: Dive into the ever-changing circulation of the Southern Ocean and reveal its critical interactions with Antarctic ice shelves.
+            - link "Loop Preview - Click to start" [ref=e85] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=antarctica&preset=antarctica-ocean-circulations
+              - generic:
+                - generic:
+                  - text: Loop Preview -
+                  - generic: Click
+                  - text: to start
+      - generic [ref=e87]:
+        - generic [ref=e88]:
+          - paragraph [ref=e89]: Greenland
+          - heading "Seamlessly Transition to Greenland in One Unified 3D Environment" [level=2] [ref=e90]
+          - paragraph [ref=e91]: Serving as the Arctic's climate sentinel, the Greenland Ice Sheet is a rapidly transforming giant whose accelerating melt directly drives global sea-level rise and influences ocean circulation.
+        - generic [ref=e92]:
+          - article [ref=e93]:
+            - generic [ref=e94]:
+              - heading "Greenland ice velocity and flowlines" [level=3] [ref=e95]
+              - paragraph [ref=e96]: Focus on a complex network of outlet glaciers and fast-flow structures, visualizing how ice is swiftly routed from high-altitude interior catchments down to the coast.
+            - link "Loop Preview - Click to start" [ref=e98] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-velocity-flowlines
+              - generic:
+                - generic:
+                  - text: Loop Preview -
+                  - generic: Click
+                  - text: to start
+          - article [ref=e100]:
+            - generic [ref=e101]:
+              - heading "Ocean circulations" [level=3] [ref=e102]
+              - paragraph [ref=e103]: Examine how surrounding ocean currents interact with Greenland’s deep fjords, providing crucial context for the behavior and retreat of marine-terminating glaciers.
+            - link "Loop Preview - Click to start" [ref=e105] [cursor=pointer]:
+              - /url: /tools/3D-interactive-cryosphere-explorer.html?region=greenland&preset=greenland-ocean-circulations
+              - generic:
+                - generic:
+                  - text: Loop Preview -
+                  - generic: Click
+                  - text: to start
+      - generic [ref=e107]:
+        - generic [ref=e108]:
+          - paragraph [ref=e109]: Key Features
+          - heading "Four capabilities that define the 3D ICE experience" [level=2] [ref=e110]
+        - generic [ref=e111]:
+          - article [ref=e112]:
+            - heading "Fully Interactive 3D Experience" [level=3] [ref=e113]
+            - paragraph [ref=e114]: Freely rotate, zoom, and change your viewpoint. Explore the ice sheets as if you were examining a physical model right in your hands.
+          - article [ref=e115]:
+            - heading "Comprehensive & Customisable Data" [level=3] [ref=e116]
+            - paragraph [ref=e117]: Available for both Antarctica and Greenland. Seamlessly visualise continental-scale land data alongside simulated ocean circulations. Layer and combine them in any way you desire to uncover new insights.
+          - article [ref=e118]:
+            - heading "Direct Gateway to Source Data" [level=3] [ref=e119]
+            - paragraph [ref=e120]: Built as a systematic data platform for professional researchers. First, visualise the latest state-of-the-art datasets in 3D, then simply click to jump directly to the source data you need.
+          - article [ref=e121]:
+            - heading "Optimised Cross-Platform Performance" [level=3] [ref=e122]
+            - paragraph [ref=e123]: Features a balanced resolution preset for smooth exploration on mobile touchscreens. For the ultimate experience, switch to the stunning HD Option (4km resolution for Antarctica, 1km for Greenland), highly recommended for large desktop screens.
+      - generic [ref=e124]:
+        - generic [ref=e125]:
+          - paragraph [ref=e126]: Source Data
+          - heading "A direct gateway to the datasets behind 3D ICE" [level=2] [ref=e127]
+          - paragraph [ref=e128]: Built as a systematic data platform for professional researchers. First, visualise the latest state-of-the-art datasets in 3D, then simply click to jump directly to the source data you need.
+        - generic [ref=e129]:
+          - article [ref=e130]:
+            - heading "Antarctica" [level=3] [ref=e131]
+            - list [ref=e132]:
+              - listitem [ref=e133]:
+                - link "MEaSUREs BedMachine Antarctica, Version 4" [ref=e134] [cursor=pointer]:
+                  - /url: https://nsidc.org/data/NSIDC-0756/versions/4
+              - listitem [ref=e135]:
+                - link "MEaSUREs Antarctic Boundaries for IPY 2007-2009 from Satellite Radar, Version 2" [ref=e136] [cursor=pointer]:
+                  - /url: https://nsidc.org/data/NSIDC-0709/versions/2
+              - listitem [ref=e137]:
+                - link "MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1" [ref=e138] [cursor=pointer]:
+                  - /url: https://nsidc.org/data/NSIDC-0754/versions/1
+              - listitem [ref=e139]:
+                - link "Antarctic Ice-Sheet Basal Friction from Elmer/Ice Inversions" [ref=e140] [cursor=pointer]:
+                  - /url: https://essopenarchive.org/doi/full/10.22541/essoar.177099457.70593031
+              - listitem [ref=e141]:
+                - link "GlaDS Simulated Antarctic Wide Subglacial Hydrology" [ref=e142] [cursor=pointer]:
+                  - /url: https://zenodo.org/records/12738170
+              - listitem [ref=e143]:
+                - link "WAOM2 Annual-Mean Antarctic Ocean Circulation Fields" [ref=e144] [cursor=pointer]:
+                  - /url: https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2023.1027704/full
+              - listitem [ref=e145]:
+                - link "Multi-Model Estimate of Antarctic Ice-Shelf Basal Melting and Ocean Drivers" [ref=e146] [cursor=pointer]:
+                  - /url: https://data.aad.gov.au/metadata/RISE
+          - article [ref=e147]:
+            - heading "Greenland" [level=3] [ref=e148]
+            - list [ref=e149]:
+              - listitem [ref=e150]:
+                - link "IceBridge BedMachine Greenland, Version 6" [ref=e151] [cursor=pointer]:
+                  - /url: https://nsidc.org/data/idbmg4/versions/6
+              - listitem [ref=e152]:
+                - link "MEaSUREs ITS_LIVE Regional Glacier and Ice Sheet Surface Velocities, Version 2" [ref=e153] [cursor=pointer]:
+                  - /url: https://nsidc.org/data/NSIDC-0776/versions/2
+              - listitem [ref=e154]:
+                - link "Greenland Basal Friction Ensemble Inversion Reference" [ref=e155] [cursor=pointer]:
+                  - /url: https://essopenarchive.org/doi/full/10.22541/essoar.177099472.28419248
+              - listitem [ref=e156]:
+                - link "Copernicus Marine Arctic Ocean Physics Analysis and Forecast" [ref=e157] [cursor=pointer]:
+                  - /url: https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description
+      - generic [ref=e159]:
+        - generic [ref=e160]:
+          - paragraph [ref=e161]: Community
+          - heading "Let’s Build the Ultimate Cryosphere Hub Together" [level=2] [ref=e162]
+          - paragraph [ref=e163]: 3D ICE is continually evolving, and I’d love to hear feedback from the glaciology community to help me improve it further.
+          - list [ref=e164]:
+            - listitem [ref=e165]:
+              - strong [ref=e166]: Have data to share?
+              - text: If you have Antarctic or Greenland datasets you’d like me to integrate into 3D ICE, please reach out.
+            - listitem [ref=e167]:
+              - strong [ref=e168]: "Spread the word:"
+              - text: If you find this tool useful for your research, teaching, or outreach, please feel free to share it with your network.
+        - generic [ref=e172]:
+          - generic [ref=e174]: If you have ideas, datasets, bug reports, or usability feedback for 3D ICE, send a quick note here. English or Chinese is welcome.
+          - generic [ref=e175]:
+            - generic:
+              - text: Leave this field empty
+              - textbox
+            - generic [ref=e176]:
+              - generic [ref=e177]:
+                - generic [ref=e178]: Tool
+                - combobox "Tool" [ref=e179]:
+                  - option "Select a tool" [disabled]
+                  - 'option "3D ICE: Hold the Polar Worlds in Your Hands" [selected]'
+                  - option "Regularised Coulomb Sliding Law demo"
+                  - option "Marine Ice Sheet Flowline Lab"
+                  - option "General tools/site feedback"
+              - generic [ref=e180]:
+                - generic [ref=e181]:
+                  - text: Email
+                  - generic [ref=e182]: Optional, if you'd like a reply
+                - textbox "Email Optional, if you'd like a reply" [ref=e183]:
+                  - /placeholder: you@example.com
+              - generic [ref=e184]:
+                - generic [ref=e185]: Message
+                - textbox "Message" [ref=e186]:
+                  - /placeholder: Tell me what worked, what felt confusing, what broke, or what you'd like me to add.
+            - generic [ref=e188]:
+              - button "Send feedback" [ref=e189] [cursor=pointer]
+              - link "Email instead" [ref=e190] [cursor=pointer]:
+                - /url: mailto:yu.wang0@utas.edu.au
+      - generic [ref=e192]:
+        - link "Launch Explorer" [ref=e193] [cursor=pointer]:
+          - /url: /tools/3D-interactive-cryosphere-explorer.html
+        - link "Browse all research tools" [ref=e194] [cursor=pointer]:
+          - /url: /tools/#tools-demo
+  - contentinfo [ref=e196]:
+    - paragraph [ref=e197]:
+      - text: © 2026 Yu Wang. This work is licensed under
+      - link "CC BY NC ND 4.0" [ref=e198] [cursor=pointer]:
+        - /url: https://creativecommons.org/licenses/by-nc-nd/4.0
+    - paragraph:
+      - link "Creative Commons":
+        - /url: https://creativecommons.org/licenses/by-nc-nd/4.0
+    - paragraph [ref=e199]:
+      - text: Published with
+      - link "Hugo Blox Builder" [ref=e200] [cursor=pointer]:
+        - /url: https://hugoblox.com/?utm_campaign=poweredby
+      - text: — the free,
+      - link "open source" [ref=e201] [cursor=pointer]:
+        - /url: https://github.com/HugoBlox/hugo-blox-builder
+      - text: website builder that empowers creators.

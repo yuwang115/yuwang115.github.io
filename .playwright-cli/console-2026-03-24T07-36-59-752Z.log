@@ -1,0 +1,4 @@
+[  195476ms] [WARNING] Allow attribute will take precedence over 'allowfullscreen'. @ http://localhost:1313/tools/:1379
+[  196392ms] [WARNING] Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently @ https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js:7
+[  208732ms] [WARNING] Allow attribute will take precedence over 'allowfullscreen'. @ http://localhost:1313/tools/:1379
+[  209198ms] [WARNING] Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently @ https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js:7
