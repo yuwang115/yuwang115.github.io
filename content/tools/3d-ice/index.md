@@ -5,7 +5,7 @@ seo:
   title: "3D ICE: Interactive Cryosphere Explorer"
 summary: "3D ICE is an Interactive Cryosphere Explorer for Antarctica and Greenland, designed to transform complex, state-of-the-art cryosphere datasets into an intuitive 3D experience, seamlessly bridging the gap between rigorous glaciological research and public curiosity."
 date: 2026-03-09
-lastmod: 2026-03-20
+lastmod: 2026-03-26
 layout: explorer-landing
 type: page
 slug: 3d-ice
