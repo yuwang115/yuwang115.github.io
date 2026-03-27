@@ -501,7 +501,7 @@ html.dark .explorer-page-shell--ice {
 
 .explorer-page-shell--ice .explorer-page-title {
   margin: 0;
-  max-width: none;
+  max-width: 18ch;
   color: var(--ice-ink);
   font-size: clamp(2.55rem, 4vw, 4.6rem);
   line-height: 0.98;
@@ -1726,7 +1726,7 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
   }
 
   .explorer-page-shell--ice .explorer-page-title {
-    max-width: none;
+    max-width: 18ch;
   }
 
   .explorer-page-shell--ice .explorer-summary,
