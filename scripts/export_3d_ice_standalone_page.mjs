@@ -24,10 +24,37 @@ function rewriteStandaloneHtml(html) {
 
   nextHtml = replaceRequired(
     nextHtml,
-    /(<div class="page-header sticky top-0 z-30">)<header[\s\S]*?<\/header>/,
+    /(<div class="page-header sticky top-0 z-30">)\s*<header[\s\S]*?<\/header>/,
     "$1",
     "top navigation header"
   );
+
+  if (!nextHtml.includes("homeLocaleSwitcher")) {
+    nextHtml = replaceRequired(
+      nextHtml,
+      /(<nav class="?explorer-page-breadcrumb"?[\s\S]*?<\/nav>)\s*(<header>)/,
+      '<div class="explorer-page-topbar">$1<div id=homeLocaleSwitcher class=explorer-home-locale-switcher></div></div>$2',
+      "home locale switcher mount"
+    );
+  }
+
+  if (!nextHtml.includes("3d-ice-home.css")) {
+    nextHtml = replaceRequired(
+      nextHtml,
+      /<\/head>/,
+      '<link href=./css/3d-ice-home.css rel=stylesheet></head>',
+      "standalone locale stylesheet"
+    );
+  }
+
+  if (!nextHtml.includes("3d-ice-locale.js")) {
+    nextHtml = replaceRequired(
+      nextHtml,
+      /<\/head>/,
+      '<script src=./js/3d-ice-locale.js></script></head>',
+      "standalone locale script"
+    );
+  }
 
   nextHtml = nextHtml.replace(
     /<link rel=alternate hreflang=en-us href=https:\/\/yuwang\.blog\/tools\/3d-ice\/>/,
@@ -63,6 +90,15 @@ function rewriteStandaloneHtml(html) {
     /"url":"https:\/\/yuwang\.blog\/tools\/3d-ice\/"/g,
     `"url":"${STANDALONE_SITE_URL}"`
   );
+
+  if (!nextHtml.includes('initPage({locale:"en-US",switchers:["#homeLocaleSwitcher"]})')) {
+    nextHtml = replaceRequired(
+      nextHtml,
+      /<\/body>/,
+      '<script>(()=>{const e=()=>{const l=window.__3dIceLocale;if(!l)return;l.initPage({locale:"en-US",switchers:["#homeLocaleSwitcher"]})};document.readyState==="loading"?document.addEventListener("DOMContentLoaded",e,{once:!0}):e()})()</script></body>',
+      "standalone locale init"
+    );
+  }
 
   return nextHtml;
 }

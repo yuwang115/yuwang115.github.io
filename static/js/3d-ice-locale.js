@@ -13,6 +13,10 @@
       "en-US": "/",
       "zh-CN": "/zh/",
     },
+    landing: {
+      "en-US": "/tools/3d-ice/",
+      "zh-CN": "/zh/tools/3d-ice/",
+    },
     explorer: {
       "en-US": "/tools/3D-interactive-cryosphere-explorer.html",
       "zh-CN": "/zh/tools/3D-interactive-cryosphere-explorer.html",
@@ -652,6 +656,14 @@
     const normalized = normalizePathname(pathname);
     if (normalized === "" || normalized === "/" || normalized === "/index.html" || normalized === "/zh" || normalized === "/zh/index.html") {
       return "home";
+    }
+    if (
+      normalized === "/tools/3d-ice" ||
+      normalized === "/tools/3d-ice/index.html" ||
+      normalized === "/zh/tools/3d-ice" ||
+      normalized === "/zh/tools/3d-ice/index.html"
+    ) {
+      return "landing";
     }
     if (
       normalized === "/tools/3D-interactive-cryosphere-explorer.html" ||

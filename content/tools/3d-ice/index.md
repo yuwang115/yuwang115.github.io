@@ -1,5 +1,5 @@
 ---
-title: "3D ICE: Hold the Polar World in Your Hands"
+title: "3D ICE: The Polar World at Your Fingertips"
 breadcrumb_title: "3D ICE"
 seo:
   title: "3D ICE: Interactive Cryosphere Explorer"
@@ -229,7 +229,7 @@ image:
   identifier="faq-feedback-3d-ice"
   title=""
   text="If you have ideas, datasets, bug reports, or usability feedback for 3D ICE, send a quick note here. English or Chinese is welcome."
-  default_tool="3D ICE: Hold the Polar Worlds in Your Hands"
+  default_tool="3D ICE: The Polar World at Your Fingertips"
   source_page="/tools/3d-ice/"
   source_section="tools-feedback"
   root_class="tool-feedback-root--inline tool-feedback-root--untitled"

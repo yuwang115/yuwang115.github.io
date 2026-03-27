@@ -1,11 +1,27 @@
 {{ define "main" }}
+{{ $is3dIceLanding := or (eq .RelPermalink "/tools/3d-ice/") (eq .RelPermalink "/zh/tools/3d-ice/") }}
+{{ $landingLocale := "en-US" }}
+{{ if eq .RelPermalink "/zh/tools/3d-ice/" }}
+  {{ $landingLocale = "zh-CN" }}
+{{ end }}
 <div class="explorer-page-shell{{ with .Params.explorer_theme }} explorer-page-shell--{{ . }}{{ end }}">
   <article>
+    {{ if $is3dIceLanding }}
+    <div class="explorer-page-topbar">
+      <nav class="explorer-page-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ "/tools/" | relLangURL }}">Tools</a>
+        <span>/</span>
+        <span>{{ .Params.breadcrumb_title | default .Title }}</span>
+      </nav>
+      <div id="homeLocaleSwitcher" class="explorer-home-locale-switcher"></div>
+    </div>
+    {{ else }}
     <nav class="explorer-page-breadcrumb" aria-label="Breadcrumb">
       <a href="{{ "/tools/" | relLangURL }}">Tools</a>
       <span>/</span>
       <span>{{ .Params.breadcrumb_title | default .Title }}</span>
     </nav>
+    {{ end }}
     <header>
       <p class="explorer-page-kicker">{{ .Params.explorer_kicker | default "Interactive polar data visualization" }}</p>
       <h1 class="explorer-page-title">{{ .Title }}</h1>
@@ -13,7 +29,24 @@
     <div class="explorer-page-content">
       {{ .Content }}
     </div>
-    {{ if eq .RelPermalink "/tools/3d-ice/" }}
+    {{ if $is3dIceLanding }}
+    <script src="/js/3d-ice-locale.js"></script>
+    <script>
+      (() => {
+        const initLocaleSwitcher = () => {
+          const localeApi = window.__3dIceLocale;
+          if (!localeApi) return;
+          localeApi.initPage({ locale: "{{ $landingLocale }}", switchers: ["#homeLocaleSwitcher"] });
+        };
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initLocaleSwitcher, { once: true });
+          return;
+        }
+
+        initLocaleSwitcher();
+      })();
+    </script>
     <script>
       (() => {
         const logoEl = document.querySelector(".explorer-ice-logo");
