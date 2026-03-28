@@ -3,11 +3,13 @@
 {{ $copyright_license := .Params.copyright.license | default site.Params.footer.copyright.license }}
 {{ $notice := .Params.copyright.notice | default site.Params.footer.copyright.notice }}
 
-{{ if eq .RelPermalink "/tools/3d-ice/" }}
+{{ if or (eq .RelPermalink "/tools/3d-ice/") (eq .RelPermalink "/zh/tools/3d-ice/") }}
   <div class="explorer-footer-logos" role="group" aria-label="IMAS and AAPP logos">
     <div class="explorer-footer-logo explorer-footer-logo--imas">
       <img
         src="/logos/imas-utas.png"
+        data-light-src="/logos/imas-utas.png"
+        data-dark-src="/logos/imas-utas-dark.png"
         alt="Institute for Marine and Antarctic Studies, University of Tasmania"
         width="494"
         height="230"
@@ -18,6 +20,8 @@
     <div class="explorer-footer-logo explorer-footer-logo--aapp">
       <img
         src="/logos/aapp.png"
+        data-light-src="/logos/aapp.png"
+        data-dark-src="/logos/aapp-dark.png"
         alt="Australian Antarctic Program Partnership"
         width="922"
         height="418"
