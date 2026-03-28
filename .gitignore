@@ -8,3 +8,9 @@ resources/_gen/
 hugo_stats.json
 generated/
 .cache/
+
+# Dependencies
+node_modules/
+
+# Build/video artifacts
+output/
