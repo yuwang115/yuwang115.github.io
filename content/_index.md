@@ -83,7 +83,7 @@ sections:
       view: article-grid
       columns: 2
       spacing:
-        padding: ["10rem", 0, 0, 0]  # 移除底部padding
+        padding: ["4rem", 0, 0, 0]
 
   - block: markdown
     id: loop-video

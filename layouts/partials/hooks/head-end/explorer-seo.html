@@ -1,4 +1,6 @@
-{{ if eq .RelPermalink "/tools/3d-ice/" }}
+{{ $is3dIceLanding := or (eq .RelPermalink "/tools/3d-ice/") (eq .RelPermalink "/zh/tools/3d-ice/") }}
+{{ if $is3dIceLanding }}
+  {{ $isChinese := eq .RelPermalink "/zh/tools/3d-ice/" }}
   {{ $featured := (.Resources.ByType "image").GetMatch "*featured*" }}
   {{ $image := "" }}
   {{ if $featured }}
@@ -6,26 +8,15 @@
   {{ else }}
     {{ $image = (partial "functions/get_site_icon" 512).Permalink }}
   {{ end }}
-  {{ $app := dict
-    "@context" "https://schema.org"
-    "@type" "WebApplication"
-    "name" .Title
-    "url" .Permalink
-    "description" (.Params.summary | plainify)
-    "applicationCategory" "EducationalApplication"
-    "operatingSystem" "Any"
-    "browserRequirements" "Requires a modern WebGL-enabled browser."
-    "image" $image
-    "thumbnailUrl" $image
-    "author" (dict "@type" "Person" "name" "Yu Wang" "url" site.Home.Permalink)
-    "publisher" (dict "@type" "Organization" "name" "Yu Wang" "url" site.Home.Permalink)
-    "offers" (dict "@type" "Offer" "price" "0" "priceCurrency" "USD")
-    "featureList" (slice
-      "Fully interactive 3D experience"
-      "Comprehensive and customisable Antarctica and Greenland data"
-      "Direct gateway to source datasets"
-      "Balanced and HD cryosphere presets across devices")
-    "inLanguage" (site.LanguageCode | default "en-us")
+  {{ $appName := "3D ICE" }}
+  {{ $appAlternateName := "Interactive Cryosphere Explorer" }}
+  {{ $appDescription := (.Params.summary | plainify) }}
+  {{ $browserRequirements := "Requires a modern WebGL-enabled browser." }}
+  {{ $featureList := slice
+    "Fully interactive 3D experience"
+    "Comprehensive and customisable Antarctica and Greenland data"
+    "Direct gateway to source datasets"
+    "Balanced and HD cryosphere presets across devices"
   }}
   {{ $faq := dict
     "@context" "https://schema.org"
@@ -48,6 +39,64 @@
         "name" "Can I contribute data or feedback?"
         "acceptedAnswer" (dict "@type" "Answer" "text" "Yes. 3D ICE is continually evolving and welcomes feedback, as well as suggestions for Antarctic or Greenland datasets to integrate.")))
   }}
+  {{ if $isChinese }}
+    {{ $appName = "3D ICE：冰冻圈交互探索平台" }}
+    {{ $appDescription = "3D ICE 是为南极洲与格陵兰所打造的交互式探索平台，旨在把错综复杂的前沿冰冻圈数据转化为直观的 3D 沉浸体验，让严谨的冰川科研，真正走进大众视野。" }}
+    {{ $browserRequirements = "需要支持 WebGL 的现代浏览器。" }}
+    {{ $featureList = slice
+      "完整可交互的 3D 体验"
+      "覆盖南极与格陵兰且可自定义组合的数据"
+      "直达源数据的数据入口"
+      "适配多设备的标准与高清冰冻圈预设"
+    }}
+    {{ $faq = dict
+      "@context" "https://schema.org"
+      "@type" "FAQPage"
+      "mainEntity" (slice
+        (dict
+          "@type" "Question"
+          "name" "什么是 3D ICE？"
+          "acceptedAnswer" (dict "@type" "Answer" "text" "3D ICE 是一个交互式冰冻圈平台，通过可探索的南极与格陵兰 3D 视图，让专业冰冻圈数据更直观、更生动，也更易获取。"))
+        (dict
+          "@type" "Question"
+          "name" "3D ICE 面向哪些人？"
+          "acceptedAnswer" (dict "@type" "Answer" "text" "3D ICE 面向研究传播、课堂教学，以及围绕变化中的地球开展更广泛的公众参与。"))
+        (dict
+          "@type" "Question"
+          "name" "我可以在 3D ICE 中探索哪些数据？"
+          "acceptedAnswer" (dict "@type" "Answer" "text" "3D ICE 同时支持南极洲与格陵兰，结合大陆尺度陆地数据与模拟海洋环流，并根据设备提供标准与高清浏览选项。"))
+        (dict
+          "@type" "Question"
+          "name" "我可以贡献数据或反馈吗？"
+          "acceptedAnswer" (dict "@type" "Answer" "text" "可以。3D ICE 仍在持续演进，欢迎反馈，也欢迎推荐希望整合的南极或格陵兰数据集。")))
+    }}
+  {{ end }}
+  {{ $app := dict
+    "@context" "https://schema.org"
+    "@type" "WebApplication"
+    "name" $appName
+    "alternateName" $appAlternateName
+    "url" .Permalink
+    "description" $appDescription
+    "applicationCategory" "EducationalApplication"
+    "operatingSystem" "Any"
+    "browserRequirements" $browserRequirements
+    "image" $image
+    "thumbnailUrl" $image
+    "author" (dict "@type" "Person" "name" "Yu Wang" "url" site.Home.Permalink)
+    "publisher" (dict "@type" "Organization" "name" "Yu Wang" "url" site.Home.Permalink)
+    "offers" (dict "@type" "Offer" "price" "0" "priceCurrency" "USD")
+    "featureList" $featureList
+    "inLanguage" (site.LanguageCode | default "en-us")
+  }}
+  {{ $website := dict
+    "@context" "https://schema.org"
+    "@type" "WebSite"
+    "name" "3D ICE"
+    "alternateName" (slice $appAlternateName)
+    "url" .Permalink
+  }}
 <script type="application/ld+json">{{ $app | jsonify | safeJS }}</script>
+<script type="application/ld+json">{{ $website | jsonify | safeJS }}</script>
 <script type="application/ld+json">{{ $faq | jsonify | safeJS }}</script>
 {{ end }}
