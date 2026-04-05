@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SLIDE 3D Surface Showcase</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: transparent; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// --- Physics ---
+const C = 0.50, As = 2400, n = 3.0;
+
+function tauB(N, u) {
+  if (u <= 0 || N <= 0) return 0;
+  const denom = Math.pow(C, n) * Math.pow(N, n) * As + u;
+  if (denom <= 0) return 0;
+  return C * N * Math.pow(u / denom, 1 / n);
+}
+
+// --- Grid sampling ---
+const NU = 80, NN = 50;
+const uMin = 1, uMax = 3000;
+const nMin = 0.02, nMax = 4.0;
+
+function sampleVelocities(count, min, max) {
+  // Mixed log+linear for detail near origin
+  const vals = [];
+  const logMin = Math.log10(min), logMax = Math.log10(max);
+  for (let i = 0; i < count; i++) {
+    const t = i / (count - 1);
+    const logVal = Math.pow(10, logMin + t * (logMax - logMin));
+    const linVal = min + t * (max - min);
+    // Blend: more log near start, more linear toward end
+    vals.push(logVal * (1 - t * 0.6) + linVal * t * 0.6);
+  }
+  return vals;
+}
+
+function samplePressures(count, min, max) {
+  const vals = [];
+  for (let i = 0; i < count; i++) {
+    vals.push(min + (i / (count - 1)) * (max - min));
+  }
+  return vals;
+}
+
+const uVals = sampleVelocities(NU, uMin, uMax);
+const nVals = samplePressures(NN, nMin, nMax);
+
+// Compute surface data and find ranges
+let tauMin = Infinity, tauMax = -Infinity;
+const tauGrid = [];
+for (let j = 0; j < NN; j++) {
+  const row = [];
+  for (let i = 0; i < NU; i++) {
+    const val = tauB(nVals[j], uVals[i]);
+    if (val < tauMin) tauMin = val;
+    if (val > tauMax) tauMax = val;
+    row.push(val);
+  }
+  tauGrid.push(row);
+}
+
+// --- Scene setup ---
+const scene = new THREE.Scene();
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000, 0);
+document.body.appendChild(renderer.domElement);
+
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(4.2, 3.6, 3.8);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.35;
+controls.enablePan = false;
+controls.minDistance = 2.5;
+controls.maxDistance = 12;
+controls.target.set(0, 0.6, 0);
+
+// Respect reduced motion
+const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+function applyMotionPref() { controls.autoRotate = !motionQuery.matches; }
+applyMotionPref();
+motionQuery.addEventListener('change', applyMotionPref);
+
+// --- Build surface geometry ---
+const sceneScale = { x: 3.0, y: 2.4, z: 2.5 };
+
+function normalize(val, min, max) { return (val - min) / (max - min); }
+
+const positions = new Float32Array(NU * NN * 3);
+const colors = new Float32Array(NU * NN * 3);
+const indices = [];
+
+// Color palette: deep indigo → blue → teal → green → bright mint
+const colorStops = [
+  { t: 0.0,  r: 8/255,   g: 24/255,  b: 58/255  },
+  { t: 0.15, r: 15/255,  g: 60/255,  b: 130/255 },
+  { t: 0.35, r: 15/255,  g: 130/255, b: 171/255 },
+  { t: 0.55, r: 20/255,  g: 175/255, b: 155/255 },
+  { t: 0.75, r: 50/255,  g: 210/255, b: 160/255 },
+  { t: 1.0,  r: 160/255, g: 250/255, b: 220/255 },
+];
+
+function lerpColor(t) {
+  t = Math.max(0, Math.min(1, t));
+  let i = 0;
+  while (i < colorStops.length - 2 && colorStops[i + 1].t < t) i++;
+  const a = colorStops[i], b = colorStops[i + 1];
+  const f = (t - a.t) / (b.t - a.t);
+  return {
+    r: a.r + f * (b.r - a.r),
+    g: a.g + f * (b.g - a.g),
+    b: a.b + f * (b.b - a.b),
+  };
+}
+
+for (let j = 0; j < NN; j++) {
+  for (let i = 0; i < NU; i++) {
+    const idx = j * NU + i;
+    const x = normalize(uVals[i], uMin, uMax) * sceneScale.x - sceneScale.x / 2;
+    const z = normalize(nVals[j], nMin, nMax) * sceneScale.z - sceneScale.z / 2;
+    const y = normalize(tauGrid[j][i], tauMin, tauMax) * sceneScale.y;
+
+    positions[idx * 3] = x;
+    positions[idx * 3 + 1] = y;
+    positions[idx * 3 + 2] = z;
+
+    // sqrt to spread color range across the curved surface
+    const col = lerpColor(Math.sqrt(normalize(tauGrid[j][i], tauMin, tauMax)));
+    colors[idx * 3] = col.r;
+    colors[idx * 3 + 1] = col.g;
+    colors[idx * 3 + 2] = col.b;
+
+    if (i < NU - 1 && j < NN - 1) {
+      const a = idx, b = idx + 1, c = idx + NU, d = idx + NU + 1;
+      indices.push(a, b, c);
+      indices.push(b, d, c);
+    }
+  }
+}
+
+const geometry = new THREE.BufferGeometry();
+geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+geometry.setIndex(indices);
+geometry.computeVertexNormals();
+
+// Surface material — MeshStandardMaterial for PBR with vertex colors
+const surfaceMat = new THREE.MeshStandardMaterial({
+  vertexColors: true,
+  side: THREE.DoubleSide,
+  metalness: 0.1,
+  roughness: 0.55,
+  transparent: true,
+  opacity: 0.93,
+});
+const surfaceMesh = new THREE.Mesh(geometry, surfaceMat);
+scene.add(surfaceMesh);
+
+// Wireframe overlay for grid lines
+const wireMat = new THREE.MeshBasicMaterial({
+  color: 0xffffff,
+  wireframe: true,
+  transparent: true,
+  opacity: 0.06,
+});
+const wireMesh = new THREE.Mesh(geometry, wireMat);
+scene.add(wireMesh);
+
+// --- Lighting ---
+const ambientLight = new THREE.AmbientLight(0xc0dde8, 1.2);
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.8);
+dirLight.position.set(3, 6, 2);
+scene.add(dirLight);
+
+const fillLight = new THREE.DirectionalLight(0x40c8b0, 0.6);
+fillLight.position.set(-3, 2, -4);
+scene.add(fillLight);
+
+const rimLight = new THREE.DirectionalLight(0x88bbdd, 0.5);
+rimLight.position.set(-1, 4, 5);
+scene.add(rimLight);
+
+// --- Axis labels ---
+function makeTextSprite(text, fontSize, color) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 512;
+  canvas.height = 128;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.font = `${fontSize}px sans-serif`;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.7 });
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(1.6, 0.4, 1);
+  return sprite;
+}
+
+const labelU = makeTextSprite('Sliding velocity  u_b  (m/yr)', 38, '#b8dce8');
+labelU.position.set(0, -0.35, -sceneScale.z / 2 - 0.55);
+scene.add(labelU);
+
+const labelN = makeTextSprite('Effective pressure  N  (MPa)', 38, '#b8dce8');
+labelN.position.set(sceneScale.x / 2 + 0.6, -0.35, 0);
+scene.add(labelN);
+
+const labelTau = makeTextSprite('Basal shear stress  \u03C4_b  (MPa)', 38, '#b8dce8');
+labelTau.position.set(-sceneScale.x / 2 - 0.65, sceneScale.y / 2, 0);
+labelTau.scale.set(1.6, 0.4, 1);
+scene.add(labelTau);
+
+// --- Base grid ---
+const gridSize = Math.max(sceneScale.x, sceneScale.z);
+const gridHelper = new THREE.GridHelper(gridSize, 12, 0x1a5a6a, 0x0e3848);
+gridHelper.position.y = -0.01;
+gridHelper.material.transparent = true;
+gridHelper.material.opacity = 0.3;
+scene.add(gridHelper);
+
+// --- Axis lines ---
+const axisMat = new THREE.LineBasicMaterial({ color: 0x4a8fa0, transparent: true, opacity: 0.5 });
+
+function makeAxisLine(from, to) {
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...from), new THREE.Vector3(...to)]);
+  return new THREE.Line(geo, axisMat);
+}
+
+scene.add(makeAxisLine([-sceneScale.x/2, 0, -sceneScale.z/2], [sceneScale.x/2, 0, -sceneScale.z/2]));
+scene.add(makeAxisLine([-sceneScale.x/2, 0, -sceneScale.z/2], [-sceneScale.x/2, 0, sceneScale.z/2]));
+scene.add(makeAxisLine([-sceneScale.x/2, 0, -sceneScale.z/2], [-sceneScale.x/2, sceneScale.y, -sceneScale.z/2]));
+
+// --- Animate ---
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// --- Resize ---
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

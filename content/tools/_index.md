@@ -197,50 +197,169 @@ sections:
     design:
       columns: "1"
   - block: markdown
-    id: tools-demo
+    id: glacio-sliding-demo
     content:
-      title: "Interact with the “best” ice sliding law 🧊 (demo)"
+      title: ""
       text: |
         <style>
-          #tools-demo .max-w-prose {
-            max-width: none;
-            width: 100%;
-          }
-          #tools-demo .tools-embed {
-            width: 100%;
-            height: clamp(780px, 104dvh, 1120px);
-            min-height: 780px;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
+          #glacio-sliding-demo .text-3xl { display: none; }
+          #glacio-sliding-demo .max-w-prose { max-width: none; width: 100%; }
+          #glacio-sliding-demo > div { max-width: none; }
+          #glacio-sliding-demo .flex { max-width: min(1180px, calc(100% - 2rem)); }
+          #glacio-sliding-demo .prose { font-size: 16px; line-height: 1.5; }
+
+          .slide-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            gap: clamp(1.4rem, 2.6vw, 2rem);
+            align-items: stretch;
+            padding: clamp(1.35rem, 3vw, 2.5rem);
+            border-radius: 30px;
             overflow: hidden;
-            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
-            position: relative;
-            background: linear-gradient(160deg, #f6fbfe 0%, #edf6fb 100%);
+            border: 1px solid #c1dfe8;
+            box-shadow: 0 18px 40px rgba(8, 38, 48, 0.08);
+            background:
+              radial-gradient(circle at 12% 18%, rgba(15, 130, 171, 0.20), transparent 28%),
+              radial-gradient(circle at 92% 86%, rgba(25, 168, 143, 0.16), transparent 26%),
+              linear-gradient(160deg, #f5fbfd 0%, #ecf6f4 54%, #f7fbfc 100%);
           }
-          #tools-demo .tools-embed iframe {
+
+          html.dark .slide-hero {
+            border-color: rgba(15, 130, 171, 0.28);
+            box-shadow: 0 22px 46px rgba(2, 10, 13, 0.42);
+            background:
+              radial-gradient(circle at 12% 18%, rgba(15, 130, 171, 0.34), transparent 30%),
+              radial-gradient(circle at 92% 86%, rgba(25, 168, 143, 0.24), transparent 28%),
+              linear-gradient(160deg, rgba(4, 16, 22, 0.98) 0%, rgba(6, 24, 30, 0.96) 54%, rgba(6, 18, 24, 0.98) 100%);
+          }
+
+          .slide-hero-copy {
+            display: grid;
+            gap: 1.1rem;
+            align-content: start;
+          }
+
+          .slide-hero-brand { margin-bottom: 0; }
+
+          .slide-hero-logo {
+            width: 100%;
+            max-width: 420px;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 14px 32px rgba(8, 38, 48, 0.14));
+          }
+
+          .slide-hero-summary {
+            max-width: 420px;
+            margin: 0;
+            color: #1e4a58;
+            font-size: 1.08rem;
+            line-height: 1.78;
+          }
+          html.dark .slide-hero-summary { color: #a8d4cc; }
+
+          .slide-hero-actions {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 0.85rem;
+            margin-top: 1.45rem;
+            max-width: 420px;
+          }
+
+          .slide-hero-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0.82rem 1.3rem;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+          }
+          .slide-hero-btn:hover,
+          .slide-hero-btn:focus-visible { transform: translateY(-1px); }
+
+          .slide-hero-btn--primary {
+            background: linear-gradient(135deg, #0f82ab 0%, #19a88f 100%);
+            color: #f7fdff;
+            box-shadow: 0 16px 28px rgba(15, 130, 171, 0.24);
+          }
+
+          .slide-hero-btn--ghost {
+            background: #f0f8f6;
+            border-color: #bdddd4;
+            color: #1a5249;
+          }
+          html.dark .slide-hero-btn--ghost {
+            background: rgba(6, 20, 26, 0.92);
+            border-color: rgba(25, 168, 143, 0.24);
+            color: #b0e0d6;
+          }
+
+          .slide-hero-showcase {
+            display: grid;
+            align-content: stretch;
+            align-self: stretch;
+            justify-self: end;
+            width: min(100%, 760px);
+            height: 100%;
+          }
+
+          .slide-hero-frame {
+            width: 100%;
+            height: 100%;
+            min-height: 520px;
+            border: 1px solid #b8d9d1;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 22px 50px rgba(6, 34, 42, 0.16);
+            position: relative;
+            background: linear-gradient(160deg, #062a35 0%, #0c4a53 58%, #15615b 100%);
+          }
+          html.dark .slide-hero-frame {
+            border-color: rgba(25, 168, 143, 0.28);
+            box-shadow: 0 28px 60px rgba(2, 10, 13, 0.56);
+            background: linear-gradient(160deg, #021610 0%, #073830 58%, #0d5048 100%);
+          }
+
+          .slide-hero-frame iframe {
             width: 100%;
             height: 100%;
             border: 0;
             display: block;
           }
-          @media (max-width: 768px) {
-            #tools-demo .tools-embed {
-              height: 90dvh;
-              min-height: 0;
-              border-radius: 12px;
+
+          @media (max-width: 900px) {
+            .slide-hero {
+              grid-template-columns: 1fr;
+            }
+            .slide-hero-showcase {
+              width: 100%;
+              justify-self: auto;
+            }
+            .slide-hero-frame {
+              min-height: 400px;
+              aspect-ratio: 1.6 / 1;
             }
           }
         </style>
-        <div class="tools-embed">
-          <iframe
-            title="Regularised Coulomb Sliding Law interactive demo"
-            src="/tools/rCoulomb_demo_YW.html"
-            loading="eager"
-            fetchpriority="high"
-            referrerpolicy="no-referrer"
-            allow="fullscreen"
-            allowfullscreen
-          ></iframe>
+        <div class="slide-hero not-prose">
+          <div class="slide-hero-copy">
+            <div class="slide-hero-brand">
+              <img class="slide-hero-logo" src="/tools/SLIDE_logo.jpg" alt="SLIDE logo" loading="eager" />
+            </div>
+            <p class="slide-hero-summary">Explore how sliding velocity, effective pressure, and the sliding coefficient govern basal dynamics within a unified, state-of-the-art ice sliding law.</p>
+            <div class="slide-hero-actions">
+              <a class="slide-hero-btn slide-hero-btn--primary" href="/tools/SLIDE.html">Launch Explorer</a>
+            </div>
+          </div>
+          <div class="slide-hero-showcase">
+            <div class="slide-hero-frame">
+              <iframe title="SLIDE interactive preview" src="/tools/SLIDE_3d_showcase.html" loading="lazy" referrerpolicy="no-referrer"></iframe>
+            </div>
+          </div>
         </div>
     design:
       columns: "1"

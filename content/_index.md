@@ -68,20 +68,6 @@ sections:
       spacing:
         padding: ["5rem", 0, "2.5rem", 0]
 
-  - block: collection
-    id: papers
-    content:
-      title:  Featured Publications 📑
-      filters:
-        folders:
-          - publication
-        featured_only: true
-    design:
-      view: article-grid
-      columns: 2
-      spacing:
-        padding: ["4rem", 0, 0, 0]
-
   - block: markdown
     id: loop-video
     content:
@@ -103,7 +89,19 @@ sections:
       spacing:
         padding: [0, 0, 0, 0]
 
-
+  - block: collection
+    id: papers
+    content:
+      title:  Featured Publications 📑
+      filters:
+        folders:
+          - publication
+        featured_only: true
+    design:
+      view: article-grid
+      columns: 2
+      spacing:
+        padding: ["4rem", 0, 0, 0]
 
   - block: collection
     id: coauthored-publications

@@ -1026,28 +1026,28 @@
       <div class="eyebrow">Regularised Coulomb law explorer</div>
       <h1>GlacioSliding</h1>
       <p class="subtitle">
-        Explore how sliding velocity, effective pressure, and bed roughness move the law from
+        Explore how sliding velocity, effective pressure, and the sliding coefficient move the law from
         Weertman-like drag toward Coulomb-limited resistance.
       </p>
 
       <section class="section">
         <h2 class="section-title">Story Presets</h2>
         <div class="preset-grid" id="presetGrid">
-          <button class="preset-card" type="button" data-preset="reference">
-            <strong>Reference</strong>
-            <span>Benchmark the transition near 1 MPa effective pressure with a moderate bed.</span>
+          <button class="preset-card" type="button" data-preset="alpine">
+            <strong>Alpine glacier</strong>
+            <span>Hard-bedrock mountain glacier with a well-drained subglacial system — sits firmly in the Weertman regime.</span>
           </button>
-          <button class="preset-card" type="button" data-preset="low-pressure">
-            <strong>Low pressure</strong>
-            <span>Watch the transition collapse toward lower velocities as effective pressure falls.</span>
+          <button class="preset-card" type="button" data-preset="outlet">
+            <strong>Outlet glacier</strong>
+            <span>Moderate marine-terminating outlet with balanced conditions near the transition threshold.</span>
           </button>
-          <button class="preset-card" type="button" data-preset="rough-bed">
-            <strong>Rough bed</strong>
-            <span>Shift the transition ridge rightward by increasing bed roughness.</span>
+          <button class="preset-card" type="button" data-preset="ice-stream">
+            <strong>Ice stream</strong>
+            <span>Fast flow on deformable till near flotation — deeply Coulomb-limited with very low effective pressure.</span>
           </button>
-          <button class="preset-card" type="button" data-preset="strong-friction">
-            <strong>Strong friction</strong>
-            <span>Raise both the limit stress and the transition threshold with a larger C.</span>
+          <button class="preset-card" type="button" data-preset="tidewater">
+            <strong>Tidewater surge</strong>
+            <span>Lubricated marine bed with rapid sliding well past the transition ridge.</span>
           </button>
         </div>
       </section>
@@ -1057,18 +1057,20 @@
         <div class="control-grid">
           <div class="control">
             <label for="sliderC">
-              <span>Friction coefficient <span class="var">C</span></span>
+              <span>Max. friction coefficient <span class="var">C</span></span>
               <span id="valueC" class="mono">0.50</span>
             </label>
             <input id="sliderC" type="range" min="0.1" max="1" step="0.01" value="0.5" />
+            <small>Coulomb limit τ<sub>b</sub>/N. Typical range: 0.17–0.5.</small>
           </div>
 
           <div class="control">
             <label for="sliderAs">
-              <span>Bed roughness <span class="var">As</span></span>
+              <span>Sliding coefficient <span class="var">A<sub>s</sub></span></span>
               <span id="valueAs" class="mono">2400</span>
             </label>
-            <input id="sliderAs" type="range" min="0" max="20000" step="100" value="2400" />
+            <input id="sliderAs" type="range" min="10" max="20000" step="10" value="2400" />
+            <small>Units: m yr⁻¹ MPa⁻ⁿ. Higher A<sub>s</sub> means easier sliding.</small>
           </div>
 
           <div class="control">
@@ -1077,6 +1079,7 @@
               <span id="valuen" class="mono">3.0</span>
             </label>
             <input id="slidern" type="range" min="1" max="6" step="0.1" value="3" />
+            <small>Standard value: n = 3 (Glen's flow law).</small>
           </div>
 
           <div class="control">
@@ -1084,13 +1087,13 @@
               <span>Effective pressure <span class="var">N</span></span>
               <span id="valueN" class="mono">1.0 MPa</span>
             </label>
-            <input id="sliderN" type="range" min="0.1" max="4" step="0.1" value="1" />
+            <input id="sliderN" type="range" min="0.01" max="4" step="0.01" value="1" />
             <small>Sets the active 2D slice and the highlighted cross-section on the 3D regime surface.</small>
           </div>
 
           <div class="control">
             <label for="sliderU">
-              <span>Probe velocity <span class="var">u</span></span>
+              <span>Probe velocity <span class="var">u<sub>b</sub></span></span>
               <span id="valueU" class="mono">300 m/yr</span>
             </label>
             <input id="sliderU" type="range" min="0" max="3000" step="10" value="300" />
@@ -1181,7 +1184,7 @@
               the active <span class="var">N</span> slice and probe velocity.
             </div>
             <div id="hoverReadout" class="chip mono">
-              Hover surface: u 300 m/yr | N 1.00 MPa | tau 0.397 MPa
+              Hover surface: u_b 300 m/yr | N 1.00 MPa | τ_b 0.397 MPa
             </div>
           </div>
         </section>
@@ -1201,9 +1204,9 @@
 
           <div class="snapshot-grid">
             <div class="snapshot-banner">
-              <div id="snapshotPresetPill" class="pill">Reference</div>
-              <div id="snapshotRatioPill" class="pill">u / u0 = 1.00</div>
-              <div id="snapshotDomainWarning" class="domain-warning" hidden>u0 exceeds display cap</div>
+              <div id="snapshotPresetPill" class="pill">Outlet glacier</div>
+              <div id="snapshotRatioPill" class="pill">τ_b/CN = 79%</div>
+              <div id="snapshotDomainWarning" class="domain-warning" hidden>u₀ exceeds display cap</div>
             </div>
 
             <div class="equation-card equation-card-inline">
@@ -1217,8 +1220,8 @@
               <div class="summary-card snapshot-lead">
                 <div class="summary-label">Current interpretation</div>
                 <div id="snapshotSummary" class="summary-copy">
-                  The probe sits close to the transition threshold, where the law departs from purely viscous drag
-                  but has not yet fully saturated at the Coulomb limit.
+                  The probe sits near the transition threshold, where the regularisation bends the response away
+                  from power-law drag and toward the Coulomb limit.
                 </div>
               </div>
 
@@ -1245,7 +1248,7 @@
                 <div class="note-label">State details</div>
                 <ul id="snapshotDetails" class="meta-list">
                   <li><strong>Current slice:</strong> N = 1.00 MPa.</li>
-                  <li><strong>Probe marker:</strong> u = 300 m/yr and tau = 0.397 MPa.</li>
+                  <li><strong>Probe marker:</strong> u_b = 300 m/yr and τ_b = 0.397 MPa.</li>
                   <li><strong>Display domain:</strong> 0 to 3000 m/yr.</li>
                   <li><strong>Shortcut keys:</strong> 1-4 presets, R reset, F fullscreen.</li>
                 </ul>
@@ -1270,16 +1273,27 @@
       return As * Math.pow(C * N, n);
     }
 
+    function velocityAtStressFraction(C, As, n, N, fraction) {
+      // Invert tau_b = C*N*(u/(C^n*N^n*As + u))^(1/n) for u given tau_b = fraction*C*N
+      // fraction = (u/(C^n*N^n*As + u))^(1/n)
+      // fraction^n = u/(C^n*N^n*As + u)
+      // u = fraction^n * C^n * N^n * As / (1 - fraction^n)
+      if (fraction <= 0) return 0;
+      if (fraction >= 1) return Infinity;
+      const fn = Math.pow(fraction, n);
+      return fn * Math.pow(C * N, n) * As / (1 - fn);
+    }
+
     const LIMITS = {
       C: { min: 0.1, max: 1, step: 0.01, digits: 2 },
-      As: { min: 0, max: 20000, step: 100, digits: 0 },
+      As: { min: 10, max: 20000, step: 10, digits: 0 },
       n: { min: 1, max: 6, step: 0.1, digits: 1 },
-      N: { min: 0.1, max: 4, step: 0.1, digits: 1 },
-      uProbe: { min: 0, max: 50000, step: 10, digits: 0 }
+      N: { min: 0.01, max: 4, step: 0.01, digits: 2 },
+      uProbe: { min: 0, max: 20000, step: 10, digits: 0 }
     };
 
     const DISPLAY_MIN = 3000;
-    const DISPLAY_CAP = 50000;
+    const DISPLAY_CAP = 20000;
     const THREE_D_DEBOUNCE_MS = 140;
     const PRESET_ANIMATION_MS = 320;
     const PRESET_PLOT_REFRESH_MS = 72;
@@ -1294,25 +1308,25 @@
     const mobileMediaQuery = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
 
     const PRESETS = {
-      reference: {
-        label: "Reference",
-        values: { C: 0.5, As: 2400, n: 3.0, N: 1.0, uProbe: 300 },
-        description: "A balanced reference case where the probe sits near the transition threshold."
+      alpine: {
+        label: "Alpine glacier",
+        values: { C: 0.40, As: 500, n: 3.0, N: 1.5, uProbe: 50 },
+        description: "Hard-bedrock mountain glacier with a well-drained subglacial system — sits firmly in the Weertman regime."
       },
-      "low-pressure": {
-        label: "Low pressure",
-        values: { C: 0.5, As: 2400, n: 3.0, N: 0.6, uProbe: 65 },
-        description: "Lower effective pressure compresses the transition to lower velocities."
+      outlet: {
+        label: "Outlet glacier",
+        values: { C: 0.50, As: 2400, n: 3.0, N: 1.0, uProbe: 300 },
+        description: "Moderate marine-terminating outlet with balanced conditions near the transition threshold."
       },
-      "rough-bed": {
-        label: "Rough bed",
-        values: { C: 0.5, As: 10000, n: 3.0, N: 1.0, uProbe: 1250 },
-        description: "Increasing As delays the transition and pushes the ridge to larger velocities."
+      "ice-stream": {
+        label: "Ice stream",
+        values: { C: 0.30, As: 8000, n: 3.0, N: 0.15, uProbe: 500 },
+        description: "Fast flow on deformable till near flotation — deeply Coulomb-limited with very low effective pressure."
       },
-      "strong-friction": {
-        label: "Strong friction",
-        values: { C: 0.8, As: 2400, n: 3.0, N: 1.0, uProbe: 1200 },
-        description: "A stronger friction coefficient raises both the limiting stress and the transition speed."
+      tidewater: {
+        label: "Tidewater surge",
+        values: { C: 0.50, As: 5000, n: 3.0, N: 0.3, uProbe: 2000 },
+        description: "Lubricated marine bed with rapid sliding well past the transition ridge."
       }
     };
 
@@ -1370,12 +1384,12 @@
     };
 
     const state = {
-      C: PRESETS.reference.values.C,
-      As: PRESETS.reference.values.As,
-      n: PRESETS.reference.values.n,
-      N: PRESETS.reference.values.N,
-      uProbe: PRESETS.reference.values.uProbe,
-      presetKey: "reference",
+      C: PRESETS.outlet.values.C,
+      As: PRESETS.outlet.values.As,
+      n: PRESETS.outlet.values.n,
+      N: PRESETS.outlet.values.N,
+      uProbe: PRESETS.outlet.values.uProbe,
+      presetKey: "outlet",
       camera: cloneCamera(DEFAULT_CAMERA),
       hoverPoint: null,
       fallback3d: false,
@@ -1420,8 +1434,8 @@
     }
 
     function formatParamValue(key, value) {
-      if (key === "As") return `${Math.round(value)}`;
-      if (key === "N") return `${value.toFixed(1)} MPa`;
+      if (key === "As") return `${Math.round(value)} m/yr/MPaⁿ`;
+      if (key === "N") return `${value.toFixed(2)} MPa`;
       if (key === "uProbe") return `${Math.round(value)} m/yr`;
       return value.toFixed(LIMITS[key].digits);
     }
@@ -1488,7 +1502,7 @@
     }
 
     function buildPressureSamples() {
-      const samples = [];
+      const samples = [0.01, 0.02, 0.05];
       for (let pressure = 0.1; pressure <= 4.0001; pressure += 0.15) {
         samples.push(Number(pressure.toFixed(2)));
       }
@@ -1521,7 +1535,7 @@
       const displayMax = clamp(rawDisplayMax, DISPLAY_MIN, DISPLAY_CAP);
       const transitionExceedsDisplay = safeU0 > displayMax;
       const transitionExceedsCap = safeU0 > DISPLAY_CAP;
-      const regime = getRegimeFromRatio(ratio);
+      const regime = getRegimeFromStressFraction(tauProbe, tauMax);
       return {
         u0,
         tauMax,
@@ -1534,28 +1548,37 @@
       };
     }
 
-    function getRegimeFromRatio(ratio) {
-      if (ratio < 0.6) {
+    function getRegimeFromStressFraction(tauProbe, tauMax) {
+      if (tauMax <= 0) {
         return {
           key: "weertman-like",
           label: "Weertman-like",
           summary:
-            "The probe velocity remains well below u0, so the law behaves close to the viscous-Weertman branch and shear stress still rises rapidly with velocity."
+            "Effective pressure is near zero, so the Coulomb limit vanishes and the law reduces to the power-law Weertman branch."
         };
       }
-      if (ratio <= 1.6) {
+      const fraction = tauProbe / tauMax;
+      if (fraction < 0.75) {
+        return {
+          key: "weertman-like",
+          label: "Weertman-like",
+          summary:
+            "Basal shear stress remains well below the Coulomb limit, so the law behaves close to the power-law Weertman branch and stress still rises rapidly with velocity."
+        };
+      }
+      if (fraction <= 0.90) {
         return {
           key: "transition-regime",
           label: "Transition regime",
           summary:
-            "The probe sits around u0, where the regularisation bends the response away from purely viscous drag and toward the Coulomb limit."
+            "The probe sits near the transition threshold, where the regularisation bends the response away from power-law drag and toward the Coulomb limit."
         };
       }
       return {
         key: "coulomb-limited",
         label: "Coulomb-limited",
         summary:
-          "The probe has moved beyond the transition ridge, so additional velocity produces only modest stress growth as the law saturates toward the Coulomb limit."
+          "Basal shear stress has approached the Coulomb limit CN, so additional velocity produces only modest stress growth as the law saturates."
       };
     }
 
@@ -1569,8 +1592,9 @@
         ? `${preset.label} preset: ${preset.description}`
         : "Custom state: manually tuned controls are overriding the closest preset.";
       const ratioText = Number.isFinite(metrics.ratio) ? metrics.ratio.toFixed(2) : "inf";
+      const stressFractionText = metrics.tauMax > 0 ? (metrics.tauProbe / metrics.tauMax * 100).toFixed(0) : "0";
       const pressureText = `${state.N.toFixed(2)} MPa`;
-      return `${presetLead} ${metrics.regime.summary} At N = ${pressureText}, the probe sits at u / u0 = ${ratioText}.`;
+      return `${presetLead} ${metrics.regime.summary} At N = ${pressureText}, τ_b reaches ${stressFractionText}% of the Coulomb limit (u_b/u₀ = ${ratioText}).`;
     }
 
     function updateControlDisplays(metrics) {
@@ -1608,8 +1632,8 @@
       const tauValues = velocities.map((velocity) => calculateTauB(state.C, state.As, state.n, state.N, velocity));
       const tauAtU0Visible = calculateTauB(state.C, state.As, state.n, state.N, Math.min(metrics.u0, domainMax));
       const visibleTransitionX = Math.min(metrics.u0, domainMax);
-      const viscousBoundary = clamp(Math.min(metrics.u0 * 0.6, domainMax), 0, domainMax);
-      const transitionBoundary = clamp(Math.min(metrics.u0 * 1.6, domainMax), 0, domainMax);
+      const viscousBoundary = clamp(Math.min(velocityAtStressFraction(state.C, state.As, state.n, state.N, 0.75), domainMax), 0, domainMax);
+      const transitionBoundary = clamp(Math.min(velocityAtStressFraction(state.C, state.As, state.n, state.N, 0.90), domainMax), 0, domainMax);
       const yMax = Math.max(metrics.tauMax * 1.18, metrics.tauProbe * 1.14, 0.08);
       const showLegend = !options.compact;
 
@@ -1620,7 +1644,7 @@
         mode: "lines",
         name: "Friction curve",
         line: { color: "#2784c6", width: options.compact ? 3 : 3.4 },
-        hovertemplate: "u %{x:.0f} m/yr<br>tau %{y:.3f} MPa<extra>slice</extra>"
+        hovertemplate: "u_b %{x:.0f} m/yr<br>τ_b %{y:.3f} MPa<extra>slice</extra>"
       };
 
       const limitTrace = {
@@ -1645,8 +1669,8 @@
           line: { color: "#ffffff", width: 1.5 }
         },
         hovertemplate: metrics.transitionExceedsDisplay
-          ? "u0 exceeds display cap<extra>transition</extra>"
-          : "u0 %{x:.0f} m/yr<br>tau %{y:.3f} MPa<extra>transition</extra>"
+          ? "u₀ exceeds display cap<extra>transition</extra>"
+          : "u₀ %{x:.0f} m/yr<br>τ_b %{y:.3f} MPa<extra>transition</extra>"
       };
 
       const probeTrace = {
@@ -1661,7 +1685,7 @@
           symbol: "circle",
           line: { color: "#ffffff", width: 1.5 }
         },
-        hovertemplate: "Probe u %{x:.0f} m/yr<br>tau %{y:.3f} MPa<extra>probe</extra>"
+        hovertemplate: "Probe u_b %{x:.0f} m/yr<br>τ_b %{y:.3f} MPa<extra>probe</extra>"
       };
 
       const annotations = [];
@@ -1697,7 +1721,7 @@
         annotations.push({
           x: domainMax * 0.98,
           y: yMax * 0.76,
-          text: "u0 exceeds display cap",
+          text: "u₀ exceeds display cap",
           xanchor: "right",
           showarrow: false,
           font: { size: 11, color: "#9a6608" },
@@ -1746,13 +1770,13 @@
       const layout = {
         margin: options.compact ? { l: 54, r: 18, t: 18, b: 54 } : { l: 62, r: 20, t: 18, b: 58 },
         xaxis: {
-          title: "Sliding velocity, u (m/yr)",
+          title: "Sliding velocity, u_b (m/yr)",
           range: [0, domainMax],
           gridcolor: "rgba(145, 184, 201, 0.25)",
           zeroline: false
         },
         yaxis: {
-          title: "Basal shear stress, tau_b (MPa)",
+          title: "Basal shear stress, τ_b (MPa)",
           range: [0, yMax],
           gridcolor: "rgba(145, 184, 201, 0.25)",
           zeroline: false
@@ -1895,7 +1919,7 @@
           uirevision: "glaciosliding-camera",
           aspectratio: { x: 1.6, y: 0.85, z: 0.82 },
           xaxis: {
-            title: "Sliding velocity u (m/yr)",
+            title: "Sliding velocity u_b (m/yr)",
             range: [0, metrics.displayMax],
             tick0: 0,
             dtick: velocityGridStep,
@@ -1914,7 +1938,7 @@
           },
           yaxis: {
             title: "Effective pressure N (MPa)",
-            range: [0.1, 4],
+            range: [0.01, 4],
             tick0: 0,
             dtick: 0.5,
             gridcolor: sceneGridColor,
@@ -1931,7 +1955,7 @@
             color: sceneTextColor
           },
           zaxis: {
-            title: "Basal shear stress tau_b (MPa)",
+            title: "Basal shear stress τ_b (MPa)",
             range: [0, zMax],
             tick0: 0,
             dtick: stressGridStep,
@@ -2021,9 +2045,9 @@
       const point = state.hoverPoint;
       const metrics = getMetrics();
       if (point) {
-        dom.hoverReadout.textContent = `Hover preview: u ${Math.round(point.u)} m/yr | N ${point.N.toFixed(2)} MPa | tau ${point.tau.toFixed(3)} MPa`;
+        dom.hoverReadout.textContent = `Hover preview: u_b ${Math.round(point.u)} m/yr | N ${point.N.toFixed(2)} MPa | τ_b ${point.tau.toFixed(3)} MPa`;
       } else {
-        dom.hoverReadout.textContent = `Probe state: u ${Math.round(state.uProbe)} m/yr | N ${state.N.toFixed(2)} MPa | tau ${metrics.tauProbe.toFixed(3)} MPa`;
+        dom.hoverReadout.textContent = `Probe state: u_b ${Math.round(state.uProbe)} m/yr | N ${state.N.toFixed(2)} MPa | τ_b ${metrics.tauProbe.toFixed(3)} MPa`;
       }
     }
 
@@ -2061,7 +2085,8 @@
       dom.snapshotRegimePill.textContent = metrics.regime.label;
       dom.snapshotPresetPill.textContent = activePreset ? activePreset.label : "Custom state";
       const ratioText = Number.isFinite(metrics.ratio) ? metrics.ratio.toFixed(2) : "inf";
-      dom.snapshotRatioPill.textContent = `u / u0 = ${ratioText}`;
+      const stressPct = metrics.tauMax > 0 ? (metrics.tauProbe / metrics.tauMax * 100).toFixed(0) : "0";
+      dom.snapshotRatioPill.textContent = `τ_b/CN = ${stressPct}%`;
       dom.snapshotU0.textContent = metrics.transitionExceedsCap
         ? `${formatVelocity(DISPLAY_CAP)}+`
         : formatVelocity(metrics.u0);
@@ -2078,7 +2103,7 @@
 
       dom.snapshotDetails.innerHTML = `
         <li><strong>Current slice:</strong> N = ${state.N.toFixed(2)} MPa with a Coulomb limit of ${formatTau(metrics.tauMax)}.</li>
-        <li><strong>Probe marker:</strong> u = ${formatVelocity(state.uProbe)} and tau = ${formatTau(metrics.tauProbe)}.</li>
+        <li><strong>Probe marker:</strong> u_b = ${formatVelocity(state.uProbe)} and τ_b = ${formatTau(metrics.tauProbe)}.</li>
         <li><strong>Display domain:</strong> ${getDisplayDomainLabel(metrics)}.</li>
         <li><strong>Shortcut keys:</strong> 1-4 presets, R reset view, F fullscreen, Esc close drawer/fullscreen.</li>
       `;
@@ -2158,7 +2183,7 @@
 
     function updateUrl() {
       const params = new URLSearchParams();
-      params.set("preset", state.presetKey === "custom" ? "reference" : state.presetKey);
+      params.set("preset", state.presetKey === "custom" ? "outlet" : state.presetKey);
       params.set("C", state.C.toFixed(2));
       params.set("As", String(Math.round(state.As)));
       params.set("n", state.n.toFixed(1));
@@ -2245,7 +2270,7 @@
     function parseInitialState() {
       const params = new URLSearchParams(window.location.search);
       const presetParam = params.get("preset");
-      const presetKey = PRESETS[presetParam] ? presetParam : "reference";
+      const presetKey = PRESETS[presetParam] ? presetParam : "outlet";
       const nextValues = { ...PRESETS[presetKey].values };
 
       if (params.has("C")) nextValues.C = sanitizeValue("C", params.get("C"));
@@ -2563,7 +2588,7 @@
             toggleFullscreen();
           } else if (/^[1-4]$/.test(event.key)) {
             event.preventDefault();
-            const presetKeys = ["reference", "low-pressure", "rough-bed", "strong-friction"];
+            const presetKeys = ["alpine", "outlet", "ice-stream", "tidewater"];
             startPresetTransition(presetKeys[Number(event.key) - 1]);
           }
         }
