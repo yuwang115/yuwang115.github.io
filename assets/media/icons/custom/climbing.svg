@@ -1,15 +1,18 @@
-<!-- assets/media/icons/custom/climbing.svg -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
      fill="none" stroke="currentColor" stroke-width="1.5"
      stroke-linecap="round" stroke-linejoin="round">
   <!-- head -->
-  <circle cx="9" cy="5" r="1.6"/>
-  <!-- reaching for hold -->
-  <path d="M12 8l3 1 3-3"/>
-  <!-- torso & arm -->
-  <path d="M8 10l2-2"/>
-  <!-- hips & legs -->
-  <path d="M7 14l3-4 3 2 3 5"/>
-  <!-- rock/slope hint -->
-  <path d="M2 21l8-5 6-8 6-3"/>
+  <circle cx="12" cy="4" r="1.8"/>
+  <!-- torso -->
+  <path d="M12 5.8V13"/>
+  <!-- reaching arm up-right -->
+  <path d="M12 8l4-2.5"/>
+  <!-- arm to left hold -->
+  <path d="M12 10l-3.5-1"/>
+  <!-- right leg bent on foothold -->
+  <path d="M12 13l3 3.5v3"/>
+  <!-- left leg extended down -->
+  <path d="M12 13l-2.5 4-1.5 3"/>
+  <!-- rock surface hint -->
+  <path d="M20 2v20" stroke-dasharray="2 2" opacity="0.4"/>
 </svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="1.5"
+     stroke-linecap="round" stroke-linejoin="round">
+  <!-- vertical axis -->
+  <line x1="12" y1="2" x2="12" y2="22"/>
+  <!-- top branch -->
+  <polyline points="9,5 12,2 15,5"/>
+  <!-- bottom branch -->
+  <polyline points="9,19 12,22 15,19"/>
+  <!-- upper-left to lower-right axis -->
+  <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+  <polyline points="4.93,8.47 4.93,4.93 8.47,4.93"/>
+  <polyline points="19.07,15.53 19.07,19.07 15.53,19.07"/>
+  <!-- upper-right to lower-left axis -->
+  <line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/>
+  <polyline points="15.53,4.93 19.07,4.93 19.07,8.47"/>
+  <polyline points="8.47,19.07 4.93,19.07 4.93,15.53"/>
+</svg>

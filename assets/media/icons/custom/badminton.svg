@@ -1,15 +1,16 @@
-<!-- assets/media/icons/custom/badminton.svg -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
      fill="none" stroke="currentColor" stroke-width="1.5"
      stroke-linecap="round" stroke-linejoin="round">
-  <!-- Racket head -->
-  <circle cx="8" cy="8" r="4.25"/>
-  <!-- Handle -->
-  <path d="M10.7 10.7L15.3 15.3"/>
-  <!-- Grip (small rotated block at the end of handle) -->
-  <rect x="15.8" y="15.3" width="3.8" height="2" rx="0.6" transform="rotate(45 17.7 16.3)"/>
-  <!-- Shuttlecock cork -->
-  <circle cx="19" cy="6" r="1"/>
-  <!-- Shuttlecock feathers -->
-  <path d="M18.2 6.8L15.6 8M18.8 6.4L16 6M18.2 5.2L16 4.2"/>
+  <!-- racket head -->
+  <ellipse cx="8.5" cy="7.5" rx="4" ry="5"/>
+  <!-- racket strings -->
+  <line x1="8.5" y1="2.5" x2="8.5" y2="12.5"/>
+  <line x1="4.5" y1="7.5" x2="12.5" y2="7.5"/>
+  <!-- handle -->
+  <path d="M11.5 11.5l3.5 3.5"/>
+  <!-- grip -->
+  <path d="M15 15l2.8 2.8" stroke-width="2.5"/>
+  <!-- shuttlecock -->
+  <circle cx="19.5" cy="4.5" r="1"/>
+  <path d="M18.8 5.3l-1.5 1.5M19.5 5.5l-0.5 2M20.2 5.3l1.2 1.2"/>
 </svg>

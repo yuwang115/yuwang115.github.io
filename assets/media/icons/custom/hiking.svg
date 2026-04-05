@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="1.5"
+     stroke-linecap="round" stroke-linejoin="round">
+  <!-- head -->
+  <circle cx="12" cy="3.5" r="1.8"/>
+  <!-- backpack hint -->
+  <path d="M13.5 8.5v4a1 1 0 01-1 1h-1"/>
+  <!-- torso -->
+  <path d="M12 5.3V13"/>
+  <!-- walking stick -->
+  <line x1="16" y1="7" x2="18.5" y2="21"/>
+  <!-- arm holding stick -->
+  <path d="M12 8.5l4-1.5"/>
+  <!-- left arm -->
+  <path d="M12 9l-3 2"/>
+  <!-- front leg stepping -->
+  <path d="M12 13l3 4 1.5 4"/>
+  <!-- back leg -->
+  <path d="M12 13l-2 5-2.5 3"/>
+</svg>

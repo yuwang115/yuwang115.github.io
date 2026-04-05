@@ -97,7 +97,7 @@ skills:
       - name: Elmer/Ice
         description: ''
         percent: 85
-        icon: custom/snowflake-solid-full
+        icon: custom/snowflake
       - name: MATLAB
         description: ''
         percent: 90
@@ -113,7 +113,7 @@ skills:
       - name: ParaView
         description: ''
         percent: 85
-        icon: custom/expand-solid-full
+        icon: custom/paraview
       - name: QGIS
         description: ''
         percent: 60
@@ -143,11 +143,11 @@ skills:
       - name: Fitness
        # description: 'Strength & conditioning to stay injury‑free and climb stronger.'
         percent: 80
-        icon: custom/dumbbell-solid-full
+        icon: custom/dumbbell
       - name: Hiking
         #description: 'Alpine trails and coastal walks across Tasmania.'
         percent: 60
-        icon: custom/person-hiking-solid-full
+        icon: custom/hiking
       - name: Badminton
        # description: 'Club‑level doubles—great footwork and fast rallies.'
         percent: 70
@@ -155,7 +155,7 @@ skills:
       - name: Guitar
        # description: 'Fingerstyle practice and the occasional campfire classic.'
         percent: 50
-        icon: custom/guitar-solid-full
+        icon: custom/guitar
 
 # languages:
 #   - name: English
