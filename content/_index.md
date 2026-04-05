@@ -62,9 +62,6 @@ sections:
               referrerpolicy="no-referrer"
             ></iframe>
           </div>
-          <p class="showcase-note">
-            Open the <a href="/tools/">Tools page</a> to explore more.
-          </p>
         </div>
     design:
       columns: "1"
