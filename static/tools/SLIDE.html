@@ -531,6 +531,14 @@
       font-size: 0.74rem;
     }
 
+    #hoverReadout {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 4;
+      pointer-events: none;
+    }
+
     .card {
       min-width: 0;
       background: rgba(255, 255, 255, 0.84);
@@ -919,6 +927,11 @@
         align-items: flex-start;
       }
 
+      body.mobile-drawer #hoverReadout {
+        top: calc(env(safe-area-inset-top, 0px) + 12px);
+        right: calc(env(safe-area-inset-right, 0px) + 12px);
+      }
+
       body.mobile-drawer .chip {
         max-width: min(100%, 420px);
       }
@@ -1109,13 +1122,13 @@
             </div>
           </div>
 
+          <div id="hoverReadout" class="chip mono">
+            Hover surface: u_b 300 m/yr | N 1.00 MPa | τ_b 0.397 MPa
+          </div>
           <div class="hud">
             <div id="interactionHint" class="chip">
               <strong>3D interaction:</strong> orbit to read the surface, hover for preview, and click to set
               the active <span class="var">N</span> slice and probe velocity.
-            </div>
-            <div id="hoverReadout" class="chip mono">
-              Hover surface: u_b 300 m/yr | N 1.00 MPa | τ_b 0.397 MPa
             </div>
           </div>
         </section>
@@ -1192,7 +1205,7 @@
                   <li><strong>Current slice:</strong> N = 1.00 MPa.</li>
                   <li><strong>Probe marker:</strong> u_b = 300 m/yr and τ_b = 0.397 MPa.</li>
                   <li><strong>Display domain:</strong> 0 to 3000 m/yr.</li>
-                  <li><strong>Shortcut keys:</strong> 1-4 presets, F fullscreen.</li>
+
                 </ul>
               </div>
             </div>
@@ -1846,10 +1859,10 @@
         hoverinfo: "none"
       };
 
-      const sceneGridColor = "rgba(140,180,200,0.18)";
-      const sceneAxisColor = "rgba(180,210,225,0.45)";
-      const scenePlaneColor = "rgba(140,200,230,0.18)";
-      const sceneTextColor = "rgba(210,235,248,0.88)";
+      const sceneGridColor = "rgba(160,200,220,0.22)";
+      const sceneAxisColor = "rgba(170,210,230,0.50)";
+      const scenePlaneColor = "rgba(0,0,0,0)";
+      const sceneTextColor = "rgba(200,230,245,0.90)";
 
       const layout = {
         margin: { l: 0, r: 0, t: 0, b: 0 },
@@ -1915,7 +1928,7 @@
         },
         paper_bgcolor: "rgba(0,0,0,0)",
         showlegend: false,
-        font: { family: "Space Grotesk, sans-serif", color: "#dff5ff" }
+        font: { family: "Space Grotesk, sans-serif", color: "#c8e8f5" }
       };
 
       const config = {
@@ -2041,7 +2054,7 @@
         <li><strong>Current slice:</strong> N = ${state.N.toFixed(2)} MPa with a Coulomb limit of ${formatTau(metrics.tauMax)}.</li>
         <li><strong>Probe marker:</strong> u_b = ${formatVelocity(state.uProbe)} and τ_b = ${formatTau(metrics.tauProbe)}.</li>
         <li><strong>Display domain:</strong> ${getDisplayDomainLabel(metrics)}.</li>
-        <li><strong>Shortcut keys:</strong> 1-4 presets, R reset view, F fullscreen, Esc close drawer/fullscreen.</li>
+
       `;
     }
 
@@ -2452,19 +2465,6 @@
       }
 
       window.addEventListener("keydown", (event) => {
-        const activeTag = document.activeElement?.tagName || "";
-        const interactive = /INPUT|SELECT|TEXTAREA|BUTTON/.test(activeTag);
-        if (!interactive) {
-          if (event.key === "f" || event.key === "F") {
-            event.preventDefault();
-            toggleFullscreen();
-          } else if (/^[1-4]$/.test(event.key)) {
-            event.preventDefault();
-            const presetKeys = ["alpine", "outlet", "ice-stream", "tidewater"];
-            startPresetTransition(presetKeys[Number(event.key) - 1]);
-          }
-        }
-
         if (event.key === "Escape") {
           if (document.fullscreenElement === dom.viewerShell) {
             document.exitFullscreen?.();

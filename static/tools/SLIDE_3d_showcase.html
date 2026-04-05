@@ -7,273 +7,200 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 100%; height: 100%; overflow: hidden; background: transparent; }
-  canvas { display: block; width: 100%; height: 100%; }
+  #plot {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
 </style>
 </head>
 <body>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+<div id="plot"></div>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script>
+(function () {
+  // --- Physics (matches SLIDE.html) ---
+  const C = 0.50, As = 2400, n = 3.0;
+
+  function calculateTauB(C, As, n, N, u) {
+    if (u <= 0) return 0;
+    const denominator = Math.pow(C, n) * Math.pow(N, n) * As + u;
+    if (!Number.isFinite(denominator) || denominator <= 0) return 0;
+    return C * N * Math.pow(u / denominator, 1 / n);
   }
-}
-</script>
-<script type="module">
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// --- Physics ---
-const C = 0.50, As = 2400, n = 3.0;
-
-function tauB(N, u) {
-  if (u <= 0 || N <= 0) return 0;
-  const denom = Math.pow(C, n) * Math.pow(N, n) * As + u;
-  if (denom <= 0) return 0;
-  return C * N * Math.pow(u / denom, 1 / n);
-}
-
-// --- Grid sampling ---
-const NU = 80, NN = 50;
-const uMin = 1, uMax = 3000;
-const nMin = 0.02, nMax = 4.0;
-
-function sampleVelocities(count, min, max) {
-  // Mixed log+linear for detail near origin
-  const vals = [];
-  const logMin = Math.log10(min), logMax = Math.log10(max);
-  for (let i = 0; i < count; i++) {
-    const t = i / (count - 1);
-    const logVal = Math.pow(10, logMin + t * (logMax - logMin));
-    const linVal = min + t * (max - min);
-    // Blend: more log near start, more linear toward end
-    vals.push(logVal * (1 - t * 0.6) + linVal * t * 0.6);
+  // --- Grid sampling (matches SLIDE.html) ---
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
   }
-  return vals;
-}
 
-function samplePressures(count, min, max) {
-  const vals = [];
-  for (let i = 0; i < count; i++) {
-    vals.push(min + (i / (count - 1)) * (max - min));
-  }
-  return vals;
-}
-
-const uVals = sampleVelocities(NU, uMin, uMax);
-const nVals = samplePressures(NN, nMin, nMax);
-
-// Compute surface data and find ranges
-let tauMin = Infinity, tauMax = -Infinity;
-const tauGrid = [];
-for (let j = 0; j < NN; j++) {
-  const row = [];
-  for (let i = 0; i < NU; i++) {
-    const val = tauB(nVals[j], uVals[i]);
-    if (val < tauMin) tauMin = val;
-    if (val > tauMax) tauMax = val;
-    row.push(val);
-  }
-  tauGrid.push(row);
-}
-
-// --- Scene setup ---
-const scene = new THREE.Scene();
-
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x000000, 0);
-document.body.appendChild(renderer.domElement);
-
-const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(4.2, 3.6, 3.8);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.06;
-controls.autoRotate = true;
-controls.autoRotateSpeed = 0.35;
-controls.enablePan = false;
-controls.minDistance = 2.5;
-controls.maxDistance = 12;
-controls.target.set(0, 0.6, 0);
-
-// Respect reduced motion
-const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-function applyMotionPref() { controls.autoRotate = !motionQuery.matches; }
-applyMotionPref();
-motionQuery.addEventListener('change', applyMotionPref);
-
-// --- Build surface geometry ---
-const sceneScale = { x: 3.0, y: 2.4, z: 2.5 };
-
-function normalize(val, min, max) { return (val - min) / (max - min); }
-
-const positions = new Float32Array(NU * NN * 3);
-const colors = new Float32Array(NU * NN * 3);
-const indices = [];
-
-// Color palette: deep indigo → blue → teal → green → bright mint
-const colorStops = [
-  { t: 0.0,  r: 8/255,   g: 24/255,  b: 58/255  },
-  { t: 0.15, r: 15/255,  g: 60/255,  b: 130/255 },
-  { t: 0.35, r: 15/255,  g: 130/255, b: 171/255 },
-  { t: 0.55, r: 20/255,  g: 175/255, b: 155/255 },
-  { t: 0.75, r: 50/255,  g: 210/255, b: 160/255 },
-  { t: 1.0,  r: 160/255, g: 250/255, b: 220/255 },
-];
-
-function lerpColor(t) {
-  t = Math.max(0, Math.min(1, t));
-  let i = 0;
-  while (i < colorStops.length - 2 && colorStops[i + 1].t < t) i++;
-  const a = colorStops[i], b = colorStops[i + 1];
-  const f = (t - a.t) / (b.t - a.t);
-  return {
-    r: a.r + f * (b.r - a.r),
-    g: a.g + f * (b.g - a.g),
-    b: a.b + f * (b.b - a.b),
-  };
-}
-
-for (let j = 0; j < NN; j++) {
-  for (let i = 0; i < NU; i++) {
-    const idx = j * NU + i;
-    const x = normalize(uVals[i], uMin, uMax) * sceneScale.x - sceneScale.x / 2;
-    const z = normalize(nVals[j], nMin, nMax) * sceneScale.z - sceneScale.z / 2;
-    const y = normalize(tauGrid[j][i], tauMin, tauMax) * sceneScale.y;
-
-    positions[idx * 3] = x;
-    positions[idx * 3 + 1] = y;
-    positions[idx * 3 + 2] = z;
-
-    // sqrt to spread color range across the curved surface
-    const col = lerpColor(Math.sqrt(normalize(tauGrid[j][i], tauMin, tauMax)));
-    colors[idx * 3] = col.r;
-    colors[idx * 3 + 1] = col.g;
-    colors[idx * 3 + 2] = col.b;
-
-    if (i < NU - 1 && j < NN - 1) {
-      const a = idx, b = idx + 1, c = idx + NU, d = idx + NU + 1;
-      indices.push(a, b, c);
-      indices.push(b, d, c);
+  function buildVelocitySamples(maxU) {
+    const safeMax = Math.max(3000, maxU);
+    const samples = new Set([0, safeMax]);
+    const lowBand = Math.min(safeMax * 0.22, 1200);
+    const linearCount = 28;
+    const logCount = 40;
+    for (let i = 0; i <= linearCount; i++) {
+      samples.add((lowBand * i) / linearCount);
     }
+    const start = Math.max(1, lowBand || safeMax / 40);
+    const ratio = safeMax / start;
+    for (let i = 0; i <= logCount; i++) {
+      const t = i / logCount;
+      samples.add(start * Math.pow(Math.max(1, ratio), t));
+    }
+    return Array.from(samples)
+      .map(function (v) { return clamp(v, 0, safeMax); })
+      .sort(function (a, b) { return a - b; });
   }
-}
 
-const geometry = new THREE.BufferGeometry();
-geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-geometry.setIndex(indices);
-geometry.computeVertexNormals();
+  function buildPressureSamples() {
+    const samples = [0.01, 0.02, 0.05];
+    for (let p = 0.1; p <= 4.0001; p += 0.15) {
+      samples.push(Number(p.toFixed(2)));
+    }
+    if (samples[samples.length - 1] !== 4) samples.push(4);
+    return samples;
+  }
 
-// Surface material — MeshStandardMaterial for PBR with vertex colors
-const surfaceMat = new THREE.MeshStandardMaterial({
-  vertexColors: true,
-  side: THREE.DoubleSide,
-  metalness: 0.1,
-  roughness: 0.55,
-  transparent: true,
-  opacity: 0.93,
-});
-const surfaceMesh = new THREE.Mesh(geometry, surfaceMat);
-scene.add(surfaceMesh);
+  // --- Build surface data ---
+  const displayMax = 3000;
+  const xValues = buildVelocitySamples(displayMax);
+  const yValues = buildPressureSamples();
+  const zValues = yValues.map(function (pressure) {
+    return xValues.map(function (velocity) {
+      return calculateTauB(C, As, n, pressure, velocity);
+    });
+  });
 
-// Wireframe overlay for grid lines
-const wireMat = new THREE.MeshBasicMaterial({
-  color: 0xffffff,
-  wireframe: true,
-  transparent: true,
-  opacity: 0.06,
-});
-const wireMesh = new THREE.Mesh(geometry, wireMat);
-scene.add(wireMesh);
+  const zMax = Math.max.apply(null, zValues.map(function (row) {
+    return Math.max.apply(null, row);
+  })) * 1.05;
 
-// --- Lighting ---
-const ambientLight = new THREE.AmbientLight(0xc0dde8, 1.2);
-scene.add(ambientLight);
+  // --- Plotly surface trace (matches SLIDE.html styling) ---
+  const surface = {
+    x: xValues,
+    y: yValues,
+    z: zValues,
+    type: "surface",
+    showscale: false,
+    hoverinfo: "skip",
+    opacity: 0.92,
+    colorscale: [
+      [0,    "rgba(224,245,255,0.92)"],
+      [0.15, "rgba(163,218,244,0.94)"],
+      [0.35, "rgba(80,185,220,0.95)"],
+      [0.55, "rgba(22,148,194,0.96)"],
+      [0.75, "rgba(16,108,158,0.97)"],
+      [1,    "rgba(8,60,99,0.98)"]
+    ],
+    contours: {
+      z: {
+        show: true,
+        highlight: false,
+        usecolormap: false,
+        project: { z: false },
+        color: "rgba(255,255,255,0.12)",
+        width: 1
+      }
+    },
+    lighting: {
+      ambient: 0.88,
+      diffuse: 0.58,
+      roughness: 0.42,
+      specular: 0.45,
+      fresnel: 0.35
+    },
+    lightposition: { x: 800, y: 1200, z: 1400 }
+  };
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 1.8);
-dirLight.position.set(3, 6, 2);
-scene.add(dirLight);
+  // --- Scene layout: no axis titles, no tick labels ---
+  const sceneGridColor = "rgba(160,200,220,0.22)";
+  const sceneAxisColor = "rgba(170,210,230,0.50)";
 
-const fillLight = new THREE.DirectionalLight(0x40c8b0, 0.6);
-fillLight.position.set(-3, 2, -4);
-scene.add(fillLight);
+  const axisCommon = {
+    title: "",
+    showticklabels: false,
+    gridcolor: sceneGridColor,
+    gridwidth: 1,
+    zeroline: false,
+    showspikes: false,
+    showline: true,
+    linecolor: sceneAxisColor,
+    linewidth: 1.5,
+    showbackground: true,
+    backgroundcolor: "rgba(0,0,0,0)"
+  };
 
-const rimLight = new THREE.DirectionalLight(0x88bbdd, 0.5);
-rimLight.position.set(-1, 4, 5);
-scene.add(rimLight);
+  // --- Initial camera (matches SLIDE.html DEFAULT_CAMERA) ---
+  const R_EYE = Math.sqrt(1.7 * 1.7 + 1.16 * 1.16); // orbital radius in xz
+  const EYE_Y = 1.48;
+  let theta = Math.atan2(1.16, 1.7); // initial angle
 
-// --- Axis labels ---
-function makeTextSprite(text, fontSize, color) {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = 512;
-  canvas.height = 128;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.font = `${fontSize}px sans-serif`;
-  ctx.fillStyle = color;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+  function cameraAt(angle) {
+    return {
+      eye: { x: R_EYE * Math.cos(angle), y: EYE_Y, z: R_EYE * Math.sin(angle) },
+      center: { x: 0.04, y: 0.02, z: -0.04 },
+      up: { x: 0, y: 0, z: 1 }
+    };
+  }
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.minFilter = THREE.LinearFilter;
-  const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.7 });
-  const sprite = new THREE.Sprite(mat);
-  sprite.scale.set(1.6, 0.4, 1);
-  return sprite;
-}
+  const layout = {
+    margin: { l: 0, r: 0, t: 0, b: 0 },
+    scene: {
+      camera: cameraAt(theta),
+      aspectratio: { x: 1.6, y: 0.85, z: 0.82 },
+      xaxis: Object.assign({}, axisCommon, { range: [0, displayMax] }),
+      yaxis: Object.assign({}, axisCommon, { range: [0.01, 4] }),
+      zaxis: Object.assign({}, axisCommon, { range: [0, zMax] }),
+      bgcolor: "rgba(0,0,0,0)"
+    },
+    paper_bgcolor: "rgba(0,0,0,0)",
+    showlegend: false,
+    font: { family: "sans-serif", color: "#c8e8f5" }
+  };
 
-const labelU = makeTextSprite('Sliding velocity  u_b  (m/yr)', 38, '#b8dce8');
-labelU.position.set(0, -0.35, -sceneScale.z / 2 - 0.55);
-scene.add(labelU);
+  const config = {
+    responsive: true,
+    displayModeBar: false,
+    scrollZoom: false
+  };
 
-const labelN = makeTextSprite('Effective pressure  N  (MPa)', 38, '#b8dce8');
-labelN.position.set(sceneScale.x / 2 + 0.6, -0.35, 0);
-scene.add(labelN);
+  const div = document.getElementById("plot");
 
-const labelTau = makeTextSprite('Basal shear stress  \u03C4_b  (MPa)', 38, '#b8dce8');
-labelTau.position.set(-sceneScale.x / 2 - 0.65, sceneScale.y / 2, 0);
-labelTau.scale.set(1.6, 0.4, 1);
-scene.add(labelTau);
+  Plotly.newPlot(div, [surface], layout, config).then(function () {
+    // --- Slow auto-rotation via requestAnimationFrame ---
+    var autoRotate = true;
 
-// --- Base grid ---
-const gridSize = Math.max(sceneScale.x, sceneScale.z);
-const gridHelper = new THREE.GridHelper(gridSize, 12, 0x1a5a6a, 0x0e3848);
-gridHelper.position.y = -0.01;
-gridHelper.material.transparent = true;
-gridHelper.material.opacity = 0.3;
-scene.add(gridHelper);
+    // Respect prefers-reduced-motion
+    var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    function applyMotionPref() { autoRotate = !motionQuery.matches; }
+    applyMotionPref();
+    motionQuery.addEventListener("change", applyMotionPref);
 
-// --- Axis lines ---
-const axisMat = new THREE.LineBasicMaterial({ color: 0x4a8fa0, transparent: true, opacity: 0.5 });
+    // Rotation speed: ~0.35 rad/min ≈ 0.00583 rad/s
+    var SPEED = 0.35 / 60; // rad per second
+    var lastTime = null;
 
-function makeAxisLine(from, to) {
-  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...from), new THREE.Vector3(...to)]);
-  return new THREE.Line(geo, axisMat);
-}
+    function animate(timestamp) {
+      requestAnimationFrame(animate);
+      if (!autoRotate) { lastTime = null; return; }
+      if (lastTime === null) { lastTime = timestamp; return; }
 
-scene.add(makeAxisLine([-sceneScale.x/2, 0, -sceneScale.z/2], [sceneScale.x/2, 0, -sceneScale.z/2]));
-scene.add(makeAxisLine([-sceneScale.x/2, 0, -sceneScale.z/2], [-sceneScale.x/2, 0, sceneScale.z/2]));
-scene.add(makeAxisLine([-sceneScale.x/2, 0, -sceneScale.z/2], [-sceneScale.x/2, sceneScale.y, -sceneScale.z/2]));
+      var dt = (timestamp - lastTime) / 1000;
+      lastTime = timestamp;
 
-// --- Animate ---
-function animate() {
-  requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
-}
-animate();
+      // Cap dt to avoid large jumps on tab switch
+      if (dt > 0.5) dt = 0.016;
 
-// --- Resize ---
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+      theta += SPEED * dt;
+
+      Plotly.relayout(div, { "scene.camera": cameraAt(theta) });
+    }
+
+    requestAnimationFrame(animate);
+  });
+})();
 </script>
 </body>
 </html>

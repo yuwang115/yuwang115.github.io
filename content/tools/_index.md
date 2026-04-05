@@ -10,6 +10,12 @@ sections:
       title: ""
       text: |
         <style>
+          /* Reduce inter-section spacing on tools page */
+          #antarctica-3d-demo.hbb-section { padding-top: 48px; padding-bottom: 48px; }
+          #glacio-sliding-demo.hbb-section { padding-top: 48px; padding-bottom: 48px; }
+          #sl-ice-demo.hbb-section { padding-top: 48px; padding-bottom: 48px; }
+          #tool-feedback.hbb-section { padding-top: 48px; padding-bottom: 48px; }
+
           #antarctica-3d-demo .text-3xl { display: none; }
           #antarctica-3d-demo .max-w-prose { max-width: none; width: 100%; }
           #antarctica-3d-demo > div { max-width: none; }
@@ -727,7 +733,7 @@ sections:
     content:
       title: "Tools feedback"
       text: |
-        if one of these demos was helpful, confusing, or a little annoying, send me a quick note here. I use this inbox to collect bug reports, usability feedback, and ideas for what to improve next😉!
+        Love it? Confused by it? Found a bug? Drop me a quick note! I rely on this inbox for bug reports, usability tweaks, and your ideas on how to improve these tools. 😉
     design:
       columns: "1"
 ---
