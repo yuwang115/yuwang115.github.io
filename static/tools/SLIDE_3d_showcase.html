@@ -4,13 +4,15 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>SLIDE 3D Surface Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 100%; height: 100%; overflow: hidden; background: transparent; }
   #plot {
     width: 100%;
     height: 100%;
-    pointer-events: none;
   }
 </style>
 </head>
@@ -19,8 +21,9 @@
 <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
 <script>
 (function () {
-  // --- Physics (matches SLIDE.html) ---
+  // --- Physics (verbatim from SLIDE.html) ---
   const C = 0.50, As = 2400, n = 3.0;
+  const N = 1.00, uProbe = 300;
 
   function calculateTauB(C, As, n, N, u) {
     if (u <= 0) return 0;
@@ -29,11 +32,32 @@
     return C * N * Math.pow(u / denominator, 1 / n);
   }
 
-  // --- Grid sampling (matches SLIDE.html) ---
+  function calculateTransitionVelocity(C, As, n, N) {
+    return As * Math.pow(C * N, n);
+  }
+
+  // --- Utilities (verbatim from SLIDE.html) ---
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
   }
 
+  function getAxisStep(maxValue, targetSteps) {
+    if (targetSteps === undefined) targetSteps = 6;
+    if (!Number.isFinite(maxValue) || maxValue <= 0) return 1;
+    const rawStep = maxValue / Math.max(1, targetSteps);
+    const exponent = Math.floor(Math.log10(rawStep));
+    const power = Math.pow(10, exponent);
+    const normalized = rawStep / power;
+    let nice = 1;
+    if (normalized <= 1) nice = 1;
+    else if (normalized <= 2) nice = 2;
+    else if (normalized <= 2.5) nice = 2.5;
+    else if (normalized <= 5) nice = 5;
+    else nice = 10;
+    return nice * power;
+  }
+
+  // --- Grid sampling (verbatim from SLIDE.html) ---
   function buildVelocitySamples(maxU) {
     const safeMax = Math.max(3000, maxU);
     const samples = new Set([0, safeMax]);
@@ -63,26 +87,52 @@
     return samples;
   }
 
-  // --- Build surface data ---
+  // --- Build all trace data (mirrors SLIDE.html build3DTraces) ---
   const displayMax = 3000;
   const xValues = buildVelocitySamples(displayMax);
   const yValues = buildPressureSamples();
+
   const zValues = yValues.map(function (pressure) {
     return xValues.map(function (velocity) {
       return calculateTauB(C, As, n, pressure, velocity);
     });
   });
 
-  const zMax = Math.max.apply(null, zValues.map(function (row) {
-    return Math.max.apply(null, row);
-  })) * 1.05;
+  // Transition ridge line
+  const transitionLineX = [];
+  const transitionLineY = [];
+  const transitionLineZ = [];
+  yValues.forEach(function (pressure) {
+    const transitionVelocity = calculateTransitionVelocity(C, As, n, pressure);
+    const visibleX = Math.min(displayMax, transitionVelocity);
+    transitionLineX.push(visibleX);
+    transitionLineY.push(pressure);
+    transitionLineZ.push(calculateTauB(C, As, n, pressure, visibleX));
+  });
 
-  // --- Plotly surface trace (matches SLIDE.html styling) ---
+  // Current N slice line
+  const currentSliceZ = xValues.map(function (velocity) {
+    return calculateTauB(C, As, n, N, velocity);
+  });
+
+  // Probe marker
+  const tauProbe = calculateTauB(C, As, n, N, uProbe);
+  const tauMax = C * N;
+
+  const zMax = zValues.reduce(function (m, row) {
+    return row.reduce(function (rm, v) { return Math.max(rm, v); }, m);
+  }, Math.max(tauProbe, tauMax, 0.08)) * 1.05;
+
+  const velocityGridStep = getAxisStep(displayMax, 6);
+  const stressGridStep = getAxisStep(zMax, 6);
+
+  // --- Traces (identical to SLIDE.html) ---
   const surface = {
     x: xValues,
     y: yValues,
     z: zValues,
     type: "surface",
+    name: "Regime surface",
     showscale: false,
     hoverinfo: "skip",
     opacity: 0.92,
@@ -114,91 +164,250 @@
     lightposition: { x: 800, y: 1200, z: 1400 }
   };
 
-  // --- Scene layout: no axis titles, no tick labels ---
-  const sceneGridColor = "rgba(160,200,220,0.22)";
-  const sceneAxisColor = "rgba(170,210,230,0.50)";
-
-  const axisCommon = {
-    title: "",
-    showticklabels: false,
-    gridcolor: sceneGridColor,
-    gridwidth: 1,
-    zeroline: false,
-    showspikes: false,
-    showline: true,
-    linecolor: sceneAxisColor,
-    linewidth: 1.5,
-    showbackground: true,
-    backgroundcolor: "rgba(0,0,0,0)"
+  const currentSlice = {
+    type: "scatter3d",
+    mode: "lines",
+    name: "Current N slice",
+    x: xValues,
+    y: xValues.map(function () { return N; }),
+    z: currentSliceZ,
+    line: {
+      color: "rgba(125,227,255,0.75)",
+      width: 5
+    },
+    hoverinfo: "skip"
   };
 
-  // --- Initial camera (matches SLIDE.html DEFAULT_CAMERA) ---
-  const R_EYE = Math.sqrt(1.7 * 1.7 + 1.16 * 1.16); // orbital radius in xz
-  const EYE_Y = 1.48;
-  let theta = Math.atan2(1.16, 1.7); // initial angle
+  const transitionRidge = {
+    type: "scatter3d",
+    mode: "lines",
+    name: "Transition ridge",
+    x: transitionLineX,
+    y: transitionLineY,
+    z: transitionLineZ,
+    line: {
+      color: "rgba(255,191,73,0.85)",
+      width: 6
+    },
+    hoverinfo: "skip"
+  };
 
-  function cameraAt(angle) {
-    return {
-      eye: { x: R_EYE * Math.cos(angle), y: EYE_Y, z: R_EYE * Math.sin(angle) },
-      center: { x: 0.04, y: 0.02, z: -0.04 },
-      up: { x: 0, y: 0, z: 1 }
-    };
-  }
+  const probeMarker = {
+    type: "scatter3d",
+    mode: "markers",
+    name: "Probe marker",
+    x: [uProbe],
+    y: [N],
+    z: [tauProbe],
+    marker: {
+      color: "rgba(45,229,167,0.9)",
+      size: 8,
+      line: { color: "rgba(255,255,255,0.7)", width: 2 }
+    },
+    hoverinfo: "skip"
+  };
+
+  // --- Layout (identical axis styling to SLIDE.html) ---
+  const sceneGridColor = "rgba(160,200,220,0.22)";
+  const sceneAxisColor = "rgba(170,210,230,0.50)";
+  const scenePlaneColor = "rgba(0,0,0,0)";
+  const sceneTextColor = "rgba(200,230,245,0.90)";
 
   const layout = {
     margin: { l: 0, r: 0, t: 0, b: 0 },
     scene: {
-      camera: cameraAt(theta),
+      camera: null, // set below
       aspectratio: { x: 1.6, y: 0.85, z: 0.82 },
-      xaxis: Object.assign({}, axisCommon, { range: [0, displayMax] }),
-      yaxis: Object.assign({}, axisCommon, { range: [0.01, 4] }),
-      zaxis: Object.assign({}, axisCommon, { range: [0, zMax] }),
+      xaxis: {
+        title: "Sliding velocity u_b (m/yr)",
+        range: [0, displayMax],
+        tick0: 0,
+        dtick: velocityGridStep,
+        gridcolor: sceneGridColor,
+        gridwidth: 1,
+        zeroline: false,
+        showspikes: false,
+        showline: true,
+        linecolor: sceneAxisColor,
+        linewidth: 1.5,
+        showbackground: true,
+        backgroundcolor: scenePlaneColor,
+        tickcolor: sceneAxisColor,
+        tickwidth: 1,
+        color: sceneTextColor
+      },
+      yaxis: {
+        title: "Effective pressure N (MPa)",
+        range: [0.01, 4],
+        tick0: 0,
+        dtick: 0.5,
+        gridcolor: sceneGridColor,
+        gridwidth: 1,
+        zeroline: false,
+        showspikes: false,
+        showline: true,
+        linecolor: sceneAxisColor,
+        linewidth: 1.5,
+        showbackground: true,
+        backgroundcolor: scenePlaneColor,
+        tickcolor: sceneAxisColor,
+        tickwidth: 1,
+        color: sceneTextColor
+      },
+      zaxis: {
+        title: "Basal shear stress \u03C4_b (MPa)",
+        range: [0, zMax],
+        tick0: 0,
+        dtick: stressGridStep,
+        gridcolor: sceneGridColor,
+        gridwidth: 1,
+        zeroline: false,
+        showspikes: false,
+        showline: true,
+        linecolor: sceneAxisColor,
+        linewidth: 1.5,
+        showbackground: true,
+        backgroundcolor: scenePlaneColor,
+        tickcolor: sceneAxisColor,
+        tickwidth: 1,
+        color: sceneTextColor
+      },
       bgcolor: "rgba(0,0,0,0)"
     },
     paper_bgcolor: "rgba(0,0,0,0)",
     showlegend: false,
-    font: { family: "sans-serif", color: "#c8e8f5" }
+    font: { family: "Space Grotesk, sans-serif", color: "#c8e8f5" }
   };
+
+  // --- Camera orbit state (mutable — updated from user interaction) ---
+  let orbitRadius = Math.sqrt(1.7 * 1.7 + 1.16 * 1.16);
+  let orbitEyeY = 1.48;
+  let orbitCenter = { x: 0.04, y: 0.02, z: -0.04 };
+  let orbitUp = { x: 0, y: 0, z: 1 };
+  let theta = Math.atan2(1.16, 1.7);
+
+  function cameraAt(angle) {
+    return {
+      eye: { x: orbitRadius * Math.cos(angle), y: orbitEyeY, z: orbitRadius * Math.sin(angle) },
+      center: { x: orbitCenter.x, y: orbitCenter.y, z: orbitCenter.z },
+      up: { x: orbitUp.x, y: orbitUp.y, z: orbitUp.z }
+    };
+  }
+
+  /** Read camera eye from Plotly and update all orbit parameters to match. */
+  function syncOrbitFromCamera(cam) {
+    if (!cam || !cam.eye) return;
+    const ex = cam.eye.x, ey = cam.eye.y, ez = cam.eye.z;
+    orbitRadius = Math.sqrt(ex * ex + ez * ez);
+    orbitEyeY = ey;
+    theta = Math.atan2(ez, ex);
+    if (cam.center) {
+      orbitCenter.x = cam.center.x;
+      orbitCenter.y = cam.center.y;
+      orbitCenter.z = cam.center.z;
+    }
+    if (cam.up) {
+      orbitUp.x = cam.up.x;
+      orbitUp.y = cam.up.y;
+      orbitUp.z = cam.up.z;
+    }
+  }
+
+  layout.scene.camera = cameraAt(theta);
 
   const config = {
     responsive: true,
     displayModeBar: false,
-    scrollZoom: false
+    scrollZoom: true
   };
 
   const div = document.getElementById("plot");
 
-  Plotly.newPlot(div, [surface], layout, config).then(function () {
-    // --- Slow auto-rotation via requestAnimationFrame ---
-    var autoRotate = true;
+  // Disable pan (right-click drag) — only allow rotate (left-drag) and zoom (scroll)
+  div.addEventListener("contextmenu", function (e) { e.preventDefault(); });
 
-    // Respect prefers-reduced-motion
-    var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    function applyMotionPref() { autoRotate = !motionQuery.matches; }
-    applyMotionPref();
-    motionQuery.addEventListener("change", applyMotionPref);
-
-    // Rotation speed: ~0.35 rad/min ≈ 0.00583 rad/s
-    var SPEED = 0.35 / 60; // rad per second
-    var lastTime = null;
+  Plotly.newPlot(div, [surface, currentSlice, transitionRidge, probeMarker], layout, config).then(function () {
+    // --- Auto-rotation: ~3 rad/min ≈ one revolution every ~2 min ---
+    const SPEED = 3.0 / 60; // rad per second
+    const IDLE_RESUME_MS = 2000; // resume auto-rotate after 2s of no interaction
+    let lastTime = null;
+    let rafId = null;
+    let userInteracting = false;
+    let idleTimer = null;
+    let lastUserCamera = null; // latest camera from plotly_relayout during interaction
 
     function animate(timestamp) {
-      requestAnimationFrame(animate);
-      if (!autoRotate) { lastTime = null; return; }
-      if (lastTime === null) { lastTime = timestamp; return; }
+      if (userInteracting) {
+        lastTime = null;
+        rafId = requestAnimationFrame(animate);
+        return;
+      }
 
-      var dt = (timestamp - lastTime) / 1000;
+      if (lastTime === null) { lastTime = timestamp; rafId = requestAnimationFrame(animate); return; }
+
+      let dt = (timestamp - lastTime) / 1000;
       lastTime = timestamp;
-
-      // Cap dt to avoid large jumps on tab switch
       if (dt > 0.5) dt = 0.016;
 
       theta += SPEED * dt;
-
       Plotly.relayout(div, { "scene.camera": cameraAt(theta) });
+
+      rafId = requestAnimationFrame(animate);
     }
 
-    requestAnimationFrame(animate);
+    function startLoop() {
+      if (rafId !== null) return;
+      lastTime = null;
+      rafId = requestAnimationFrame(animate);
+    }
+
+    function stopLoop() {
+      if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+    }
+
+    // --- Pause auto-rotation during user interaction, resume after idle ---
+    function onInteractionStart() {
+      userInteracting = true;
+      if (idleTimer !== null) { clearTimeout(idleTimer); idleTimer = null; }
+    }
+
+    function onInteractionEnd() {
+      if (idleTimer !== null) clearTimeout(idleTimer);
+      idleTimer = setTimeout(function () {
+        // Sync full orbit parameters from wherever the user left the camera
+        if (lastUserCamera) {
+          syncOrbitFromCamera(lastUserCamera);
+          lastUserCamera = null;
+        }
+        userInteracting = false;
+        lastTime = null;
+      }, IDLE_RESUME_MS);
+    }
+
+    div.addEventListener("mousedown", onInteractionStart);
+    div.addEventListener("wheel", function () {
+      onInteractionStart();
+      onInteractionEnd();
+    });
+    window.addEventListener("mouseup", onInteractionEnd);
+    div.addEventListener("touchstart", onInteractionStart, { passive: true });
+    window.addEventListener("touchend", onInteractionEnd);
+
+    // Capture every camera change during user interaction
+    div.on("plotly_relayout", function (event) {
+      var cam = event && event["scene.camera"];
+      if (cam && cam.eye) {
+        lastUserCamera = cam;
+      }
+    });
+
+    // Respect prefers-reduced-motion
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    motionQuery.addEventListener("change", function () {
+      if (motionQuery.matches) stopLoop(); else startLoop();
+    });
+
+    if (!motionQuery.matches) startLoop();
   });
 })();
 </script>
