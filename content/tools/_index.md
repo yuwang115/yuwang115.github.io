@@ -208,30 +208,37 @@ sections:
           #glacio-sliding-demo .flex { max-width: min(1180px, calc(100% - 2rem)); }
           #glacio-sliding-demo .prose { font-size: 16px; line-height: 1.5; }
 
+          @keyframes contour-drift {
+            0%   { background-position: 0 0, 0 0; }
+            100% { background-position: 24px -12px, 0 0; }
+          }
+
           .slide-hero {
             display: grid;
-            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
             gap: clamp(1.4rem, 2.6vw, 2rem);
             align-items: stretch;
             padding: clamp(1.35rem, 3vw, 2.5rem);
-            border-radius: 30px;
+            border-radius: 16px;
             overflow: hidden;
-            border: 1px solid #c1dfe8;
-            box-shadow: 0 18px 40px rgba(8, 38, 48, 0.08);
+            border: 1px solid #c8d4de;
+            box-shadow: 0 20px 50px rgba(20, 28, 45, 0.10);
             background:
-              radial-gradient(circle at 12% 18%, rgba(15, 130, 171, 0.20), transparent 28%),
-              radial-gradient(circle at 92% 86%, rgba(25, 168, 143, 0.16), transparent 26%),
-              linear-gradient(160deg, #f5fbfd 0%, #ecf6f4 54%, #f7fbfc 100%);
+              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cpath d='M-20,60 C80,30 180,90 280,55 S440,25 620,70' fill='none' stroke='%235a7a8f' stroke-width='1.2' opacity='0.12'/%3E%3Cpath d='M-20,120 C60,90 170,150 270,110 S420,80 620,130' fill='none' stroke='%235a7a8f' stroke-width='0.9' opacity='0.09'/%3E%3Cpath d='M-20,180 C90,150 160,210 260,175 S410,145 620,190' fill='none' stroke='%235a7a8f' stroke-width='1.4' opacity='0.14'/%3E%3Cpath d='M-20,240 C50,215 150,270 250,235 S400,205 620,250' fill='none' stroke='%237a99ad' stroke-width='1.0' opacity='0.10'/%3E%3Cpath d='M-20,300 C80,275 180,330 280,295 S430,265 620,310' fill='none' stroke='%235a7a8f' stroke-width='0.8' opacity='0.08'/%3E%3Cpath d='M-20,355 C70,335 160,375 260,345 S410,325 620,365' fill='none' stroke='%237a99ad' stroke-width='1.1' opacity='0.10'/%3E%3Cg opacity='0.07' stroke='%235a7a8f' stroke-width='0.6'%3E%3Cline x1='147' y1='152' x2='153' y2='152'/%3E%3Cline x1='150' y1='149' x2='150' y2='155'/%3E%3Cline x1='347' y1='232' x2='353' y2='232'/%3E%3Cline x1='350' y1='229' x2='350' y2='235'/%3E%3Cline x1='497' y1='102' x2='503' y2='102'/%3E%3Cline x1='500' y1='99' x2='500' y2='105'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat,
+              linear-gradient(160deg, #f4f6f9 0%, #e8ecf2 54%, #f4f6f9 100%);
+            animation: contour-drift 28s linear infinite;
+            transition: border-color 400ms ease;
           }
+          .slide-hero:hover { border-color: #a8b8c8; }
 
           html.dark .slide-hero {
-            border-color: rgba(15, 130, 171, 0.28);
-            box-shadow: 0 22px 46px rgba(2, 10, 13, 0.42);
+            border-color: rgba(0, 229, 200, 0.20);
+            box-shadow: 0 22px 50px rgba(10, 15, 30, 0.50);
             background:
-              radial-gradient(circle at 12% 18%, rgba(15, 130, 171, 0.34), transparent 30%),
-              radial-gradient(circle at 92% 86%, rgba(25, 168, 143, 0.24), transparent 28%),
-              linear-gradient(160deg, rgba(4, 16, 22, 0.98) 0%, rgba(6, 24, 30, 0.96) 54%, rgba(6, 18, 24, 0.98) 100%);
+              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cpath d='M-20,60 C80,30 180,90 280,55 S440,25 620,70' fill='none' stroke='%2300e5c8' stroke-width='1.2' opacity='0.25'/%3E%3Cpath d='M-20,120 C60,90 170,150 270,110 S420,80 620,130' fill='none' stroke='%2300e5c8' stroke-width='0.9' opacity='0.18'/%3E%3Cpath d='M-20,180 C90,150 160,210 260,175 S410,145 620,190' fill='none' stroke='%2300e5c8' stroke-width='1.4' opacity='0.30'/%3E%3Cpath d='M-20,240 C50,215 150,270 250,235 S400,205 620,250' fill='none' stroke='%2300b8a0' stroke-width='1.0' opacity='0.22'/%3E%3Cpath d='M-20,300 C80,275 180,330 280,295 S430,265 620,310' fill='none' stroke='%2300e5c8' stroke-width='0.8' opacity='0.15'/%3E%3Cpath d='M-20,355 C70,335 160,375 260,345 S410,325 620,365' fill='none' stroke='%2300b8a0' stroke-width='1.1' opacity='0.20'/%3E%3Cg opacity='0.10' stroke='%2300e5c8' stroke-width='0.6'%3E%3Cline x1='147' y1='152' x2='153' y2='152'/%3E%3Cline x1='150' y1='149' x2='150' y2='155'/%3E%3Cline x1='347' y1='232' x2='353' y2='232'/%3E%3Cline x1='350' y1='229' x2='350' y2='235'/%3E%3Cline x1='497' y1='102' x2='503' y2='102'/%3E%3Cline x1='500' y1='99' x2='500' y2='105'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat,
+              linear-gradient(160deg, #141824 0%, #1e2538 54%, #1a1f2e 100%);
           }
+          html.dark .slide-hero:hover { border-color: rgba(0, 229, 200, 0.35); }
 
           .slide-hero-copy {
             display: grid;
@@ -246,17 +253,21 @@ sections:
             max-width: 420px;
             height: auto;
             display: block;
-            filter: drop-shadow(0 14px 32px rgba(8, 38, 48, 0.14));
+            filter: drop-shadow(0 14px 32px rgba(20, 28, 45, 0.14));
+          }
+          html.dark .slide-hero-logo {
+            filter: brightness(1.05) drop-shadow(0 0 20px rgba(0, 229, 200, 0.15));
           }
 
           .slide-hero-summary {
             max-width: 420px;
             margin: 0;
-            color: #1e4a58;
+            color: #1a2633;
             font-size: 1.08rem;
             line-height: 1.78;
+            letter-spacing: 0.02em;
           }
-          html.dark .slide-hero-summary { color: #a8d4cc; }
+          html.dark .slide-hero-summary { color: #b8ccd8; }
 
           .slide-hero-actions {
             display: grid;
@@ -272,30 +283,47 @@ sections:
             justify-content: center;
             min-height: 48px;
             padding: 0.82rem 1.3rem;
-            border-radius: 999px;
+            border-radius: 6px;
             border: 1px solid transparent;
             font-weight: 700;
+            font-size: 0.88rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
             text-decoration: none;
-            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+            transition: box-shadow 200ms ease, filter 200ms ease, border-color 200ms ease, background 200ms ease, color 200ms ease;
           }
-          .slide-hero-btn:hover,
-          .slide-hero-btn:focus-visible { transform: translateY(-1px); }
 
           .slide-hero-btn--primary {
-            background: linear-gradient(135deg, #0f82ab 0%, #19a88f 100%);
-            color: #f7fdff;
-            box-shadow: 0 16px 28px rgba(15, 130, 171, 0.24);
+            background: #1e3a4f;
+            color: #f0f8ff;
+            box-shadow: 0 8px 20px rgba(30, 58, 79, 0.22);
+          }
+          .slide-hero-btn--primary:hover,
+          .slide-hero-btn--primary:focus-visible {
+            filter: brightness(1.15);
+            box-shadow: 0 8px 24px rgba(30, 58, 79, 0.30);
+          }
+
+          html.dark .slide-hero-btn--primary {
+            background: #00e5c8;
+            color: #0d1117;
+            box-shadow: 0 8px 20px rgba(0, 229, 200, 0.18);
+          }
+          html.dark .slide-hero-btn--primary:hover,
+          html.dark .slide-hero-btn--primary:focus-visible {
+            filter: brightness(1.1);
+            box-shadow: 0 0 16px rgba(0, 229, 200, 0.30), 0 8px 24px rgba(0, 229, 200, 0.22);
           }
 
           .slide-hero-btn--ghost {
-            background: #f0f8f6;
-            border-color: #bdddd4;
-            color: #1a5249;
+            background: #edf1f5;
+            border-color: #c0ccd6;
+            color: #2a3f50;
           }
           html.dark .slide-hero-btn--ghost {
-            background: rgba(6, 20, 26, 0.92);
-            border-color: rgba(25, 168, 143, 0.24);
-            color: #b0e0d6;
+            background: rgba(20, 24, 36, 0.92);
+            border-color: rgba(0, 229, 200, 0.20);
+            color: #a0c8c0;
           }
 
           .slide-hero-showcase {
@@ -311,17 +339,17 @@ sections:
             width: 100%;
             height: 100%;
             min-height: 520px;
-            border: 1px solid #b8d9d1;
-            border-radius: 24px;
+            border: 1px solid #b8c8d6;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 22px 50px rgba(6, 34, 42, 0.16);
+            box-shadow: 0 20px 50px rgba(15, 22, 38, 0.16);
             position: relative;
-            background: linear-gradient(160deg, #062a35 0%, #0c4a53 58%, #15615b 100%);
+            background: linear-gradient(160deg, #141824 0%, #1a2235 58%, #1e2840 100%);
           }
           html.dark .slide-hero-frame {
-            border-color: rgba(25, 168, 143, 0.28);
-            box-shadow: 0 28px 60px rgba(2, 10, 13, 0.56);
-            background: linear-gradient(160deg, #021610 0%, #073830 58%, #0d5048 100%);
+            border-color: rgba(0, 229, 200, 0.25);
+            box-shadow: inset 0 0 30px rgba(0, 229, 200, 0.04), 0 24px 56px rgba(5, 10, 20, 0.55);
+            background: linear-gradient(160deg, #0c1018 0%, #141c2a 58%, #181f30 100%);
           }
 
           .slide-hero-frame iframe {
@@ -364,48 +392,333 @@ sections:
     design:
       columns: "1"
   - block: markdown
-    id: misi-flowline-demo
+    id: sl-ice-demo
     content:
-      title: "1D Marine Ice Sheet Flowline Lab 🥶 (unfinished demo)"
+      title: ""
       text: |
         <style>
-          #misi-flowline-demo .max-w-prose {
-            max-width: none;
-            width: 100%;
-          }
-          #misi-flowline-demo .tools-embed {
-            width: 100%;
-            height: 88vh;
-            min-height: 680px;
-            border: 1px solid #c9e0ea;
-            border-radius: 16px;
+          @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Nunito:wght@400;600;700;800&display=swap');
+          #sl-ice-demo .text-3xl { display: none; }
+          #sl-ice-demo .max-w-prose { max-width: none; width: 100%; }
+          #sl-ice-demo > div { max-width: none; }
+          #sl-ice-demo .flex { max-width: min(1180px, calc(100% - 2rem)); }
+          #sl-ice-demo .prose { font-size: 16px; line-height: 1.5; }
+          .slice-hero .slice-hero-logo { margin: 0; }
+
+          .slice-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            gap: clamp(1.4rem, 2.6vw, 2rem);
+            align-items: stretch;
+            padding: clamp(1.35rem, 3vw, 2.5rem);
+            border-radius: 30px;
             overflow: hidden;
-            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
             position: relative;
-            background: linear-gradient(160deg, #edf8fd 0%, #d8ebf3 100%);
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            border: 1px solid #d6cfc4;
+            box-shadow: 0 18px 40px rgba(45, 24, 16, 0.08);
+            background:
+              radial-gradient(circle at 12% 18%, rgba(74, 144, 168, 0.14), transparent 28%),
+              radial-gradient(circle at 92% 86%, rgba(61, 139, 110, 0.10), transparent 26%),
+              linear-gradient(160deg, #f8f5f0 0%, #efe9e0 54%, #f6f3ee 100%);
+            transition: border-color 400ms ease;
           }
-          #misi-flowline-demo .tools-embed iframe {
+          .slice-hero:hover { border-color: #c4bab0; }
+
+          html.dark .slice-hero {
+            border-color: rgba(90, 172, 224, 0.22);
+            box-shadow: 0 22px 46px rgba(2, 8, 13, 0.42);
+            background:
+              radial-gradient(circle at 12% 18%, rgba(90, 172, 224, 0.16), transparent 30%),
+              radial-gradient(circle at 92% 86%, rgba(77, 191, 160, 0.12), transparent 28%),
+              linear-gradient(160deg, rgba(6, 18, 27, 0.98) 0%, rgba(8, 23, 33, 0.96) 54%, rgba(8, 19, 28, 0.98) 100%);
+          }
+          html.dark .slice-hero:hover { border-color: rgba(90, 172, 224, 0.35); }
+
+          .slice-hero-copy {
+            display: grid;
+            gap: 1.1rem;
+            align-content: start;
+          }
+
+          .slice-hero-brand { margin-bottom: 0; }
+
+          .slice-hero-logo {
+            width: min(100%, 480px);
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 14px 32px rgba(45, 24, 16, 0.12));
+          }
+          .slice-hero-logo--dark  { display: none; }
+          html.dark .slice-hero-logo--light { display: none; }
+          html.dark .slice-hero-logo--dark  { display: block; }
+          html.dark .slice-hero-logo {
+            filter: drop-shadow(0 0 24px rgba(90, 172, 224, 0.12));
+          }
+
+          .slice-hero-lead {
+            margin: 0.8rem 0;
+            width: 100%;
+            color: #2d1810;
+            font-size: clamp(1.25rem, 1.9vw, 1.72rem);
+            line-height: 1.22;
+            font-weight: 750;
+          }
+          html.dark .slice-hero-lead { color: #e8dfd0; }
+
+          a.slice-hero-brand,
+          a.slice-hero-lead {
+            text-decoration: none;
+            color: inherit;
+          }
+          a.slice-hero-brand:hover,
+          a.slice-hero-lead:hover { opacity: 0.85; }
+
+          .slice-hero-summary {
+            max-width: 74ch;
+            margin: 0;
+            color: #4a3828;
+            font-size: 1.08rem;
+            line-height: 1.78;
+          }
+          html.dark .slice-hero-summary { color: #b7c8d6; }
+
+          .slice-hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            margin-top: 1.45rem;
+          }
+
+          .slice-hero-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0.82rem 1.5rem;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+          }
+          .slice-hero-btn:hover,
+          .slice-hero-btn:focus-visible { transform: translateY(-1px); }
+
+          .slice-hero-btn--primary {
+            background: linear-gradient(135deg, #3d8b6e 0%, #4a90a8 100%);
+            color: #f7fdff;
+            box-shadow: 0 16px 28px rgba(61, 139, 110, 0.24);
+          }
+
+          .slice-hero-btn--ghost {
+            background: #f3efe9;
+            border-color: #d6cfc4;
+            color: #4a3828;
+          }
+          html.dark .slice-hero-btn--ghost {
+            background: rgba(8, 20, 29, 0.92);
+            border-color: rgba(121, 186, 214, 0.24);
+            color: #c6d8e8;
+          }
+
+          .slice-hero-showcase {
+            display: grid;
+            align-content: stretch;
+            align-self: stretch;
+            justify-self: end;
+            width: min(100%, 760px);
+            height: 100%;
+          }
+
+          .slice-hero-frame {
             width: 100%;
             height: 100%;
-            border: 0;
-            display: block;
+            min-height: 420px;
+            border: 1px solid #c4bab0;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 22px 50px rgba(45, 24, 16, 0.12);
+            position: relative;
+            background: linear-gradient(160deg, #061f31 0%, #0c3a53 58%, #15536b 100%);
           }
-          @media (max-width: 768px) {
-            #misi-flowline-demo .tools-embed {
-              height: 90dvh;
-              min-height: 0;
-              border-radius: 12px;
+          html.dark .slice-hero-frame {
+            border-color: rgba(116, 175, 205, 0.28);
+            box-shadow: 0 28px 60px rgba(2, 8, 13, 0.56);
+            background: linear-gradient(160deg, #03111c 0%, #092437 58%, #0d3550 100%);
+          }
+
+          .slice-hero-chrome-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(100, 160, 200, 0.15);
+            background: rgba(10, 20, 35, 0.6);
+          }
+
+          .slice-hero-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+          }
+
+          .slice-hero-url {
+            margin-left: 10px;
+            flex: 1;
+            height: 24px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            background: rgba(6, 14, 24, 0.5);
+            color: #6a8a9a;
+          }
+
+          .slice-hero-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            aspect-ratio: 4 / 3;
+            position: relative;
+            text-decoration: none;
+            background: linear-gradient(135deg, #0a1a3a 0%, #0d2847 30%, #0f3355 60%, #1a4a6e 100%);
+          }
+
+          .slice-hero-svg {
+            width: 80%;
+            max-width: 400px;
+            opacity: 0.75;
+          }
+
+          .slice-hero-caption {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+          }
+
+          .slice-hero-play {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 300ms ease;
+          }
+          .slice-hero-preview:hover .slice-hero-play { opacity: 1; }
+
+          .slice-hero-play-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(74, 144, 168, 0.9);
+            box-shadow: 0 0 30px rgba(74, 144, 168, 0.4);
+          }
+
+          .slice-hero-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            color: rgba(255, 255, 255, 0.7);
+          }
+
+          .slice-hero-wip {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 2;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+            background: rgba(210, 160, 60, 0.15);
+            color: #a07020;
+            border: 1px solid rgba(210, 160, 60, 0.3);
+          }
+          html.dark .slice-hero-wip {
+            background: rgba(232, 168, 96, 0.12);
+            color: #e8a860;
+            border-color: rgba(232, 168, 96, 0.25);
+          }
+
+          @media (max-width: 900px) {
+            .slice-hero {
+              grid-template-columns: 1fr;
+            }
+            .slice-hero-showcase {
+              width: 100%;
+              justify-self: auto;
+            }
+            .slice-hero-frame {
+              min-height: 320px;
+            }
+            .slice-hero-preview {
+              aspect-ratio: 1.6 / 1;
             }
           }
         </style>
-        <div class="tools-embed">
-          <iframe
-            title="Marine ice sheet flowline simulator"
-            src="/tools/marine-ice-sheet-flowline.html"
-            loading="lazy"
-            fetchpriority="low"
-            referrerpolicy="no-referrer"
-          ></iframe>
+        <div class="slice-hero not-prose">
+          <span class="slice-hero-wip">unfinished demo</span>
+          <div class="slice-hero-copy">
+            <a class="slice-hero-brand" href="/tools/sl-ice/">
+              <img class="slice-hero-logo slice-hero-logo--light" src="/tools/sl-ice-logo-dark.png" alt="SL-ICE logo" loading="lazy" />
+              <img class="slice-hero-logo slice-hero-logo--dark" src="/tools/sl-ice-logo-light.png" alt="SL-ICE logo" loading="lazy" />
+            </a>
+            <a class="slice-hero-lead" href="/tools/sl-ice/">Explore Real Ice Sheet Physics</a>
+            <p class="slice-hero-summary">SL-ICE brings Antarctic glaciology to life with a real-time Blatter&ndash;Pattyn simulator. Adjust climate parameters, watch ice flow, and understand the science behind sea-level rise &mdash; all in your browser.</p>
+            <div class="slice-hero-actions">
+              <a class="slice-hero-btn slice-hero-btn--primary" href="/tools/sl-ice/">Launch Simulator</a>
+              <a class="slice-hero-btn slice-hero-btn--ghost" href="/tools/sl-ice/landing.html#challenges">View Challenges</a>
+            </div>
+          </div>
+          <div class="slice-hero-showcase">
+            <div class="slice-hero-frame">
+              <div class="slice-hero-chrome-bar">
+                <div class="slice-hero-dot" style="background:#ff5f57"></div>
+                <div class="slice-hero-dot" style="background:#febc2e"></div>
+                <div class="slice-hero-dot" style="background:#28c840"></div>
+                <div class="slice-hero-url">sl-ice.app</div>
+              </div>
+              <a href="/tools/sl-ice/" class="slice-hero-preview">
+                <svg viewBox="0 0 800 300" class="slice-hero-svg">
+                  <path d="M0 280 Q100 260 200 250 Q300 220 400 230 Q500 210 600 240 Q700 255 800 270 L800 300 L0 300 Z" fill="#3a2820" />
+                  <path d="M0 120 Q100 100 200 110 Q300 80 400 90 Q500 70 550 100 L550 250 Q500 210 400 230 Q300 220 200 250 Q100 260 0 280 Z" fill="#6bb8d6" opacity="0.8" />
+                  <path d="M550 100 Q600 80 700 90 Q750 95 800 100 L800 270 Q700 255 600 240 Q550 230 550 250 Z" fill="#1a5a80" opacity="0.6" />
+                  <line x1="550" y1="100" x2="550" y2="250" stroke="#e06868" stroke-width="2" stroke-dasharray="6 3" />
+                  <circle cx="80" cy="40" r="2" fill="white" opacity="0.5" />
+                  <circle cx="150" cy="48" r="2" fill="white" opacity="0.5" />
+                  <circle cx="250" cy="56" r="2" fill="white" opacity="0.5" />
+                  <circle cx="350" cy="64" r="2" fill="white" opacity="0.5" />
+                  <circle cx="420" cy="72" r="2" fill="white" opacity="0.5" />
+                  <circle cx="180" cy="80" r="2" fill="white" opacity="0.5" />
+                  <circle cx="300" cy="88" r="2" fill="white" opacity="0.5" />
+                </svg>
+                <span class="slice-hero-caption">Real-time ice sheet simulation</span>
+                <div class="slice-hero-play">
+                  <div class="slice-hero-play-circle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="8,5 20,12 8,19" /></svg>
+                  </div>
+                </div>
+                <div class="slice-hero-badge">Click to launch</div>
+              </a>
+            </div>
+          </div>
         </div>
     design:
       columns: "1"
