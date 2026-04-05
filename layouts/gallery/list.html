@@ -1,0 +1,45 @@
+{{ define "main" }}
+
+<div class="gallery-listing-header">
+  <h1>{{ .Title }}</h1>
+  {{ with .Params.summary }}<p>{{ . }}</p>{{ end }}
+  {{ .Content }}
+</div>
+
+{{ $paginator := .Paginate .Pages.ByDate.Reverse }}
+
+<div class="gallery-grid">
+  {{ range $paginator.Pages }}
+    {{ $resource := partial "functions/get_featured_image.html" . }}
+    {{ $anchor := .Params.image.focal_point | default "Center" }}
+    {{ $link := .RelPermalink }}
+
+    <a href="{{ $link }}" class="gallery-card">
+      {{ with $resource }}
+        {{ $image := .Fill (printf "960x540 %s" $anchor) }}
+        {{ if ne $image.MediaType.SubType "gif" }}{{ $image = $image.Process "webp" }}{{ end }}
+        <div class="gallery-card-img">
+          <img src="{{ $image.RelPermalink }}"
+               alt="{{ $.Title | plainify }}"
+               width="{{ $image.Width }}"
+               height="{{ $image.Height }}"
+               loading="lazy"
+               decoding="async">
+        </div>
+      {{ end }}
+      <div class="gallery-card-body">
+        <h2 class="gallery-card-title"><span>{{ .Title }}</span></h2>
+        {{ with (.Params.summary | default .Summary) }}
+          <p class="gallery-card-summary">{{ . | plainify | htmlUnescape | chomp }}</p>
+        {{ end }}
+        <p class="gallery-card-date">
+          {{- .Date | time.Format (site.Params.locale.date_format | default ":date_long") -}}
+        </p>
+      </div>
+    </a>
+  {{ end }}
+</div>
+
+{{ partial "components/paginator" . }}
+
+{{ end }}
