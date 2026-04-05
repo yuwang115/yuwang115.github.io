@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GlacioSliding | Sliding Regime Explorer</title>
+  <title>SLIDE | Sliding Regime Explorer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -150,18 +150,10 @@
       text-transform: uppercase;
     }
 
-    h1 {
-      margin: 4px 0 0;
-      font-size: 1.6rem;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-    }
-
-    .subtitle {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.94rem;
-      line-height: 1.55;
+    .brand-logo {
+      width: 100%;
+      border-radius: 14px;
+      object-fit: contain;
     }
 
     .section {
@@ -305,20 +297,6 @@
       border: 2px solid #ffffff;
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
       box-shadow: 0 2px 8px rgba(10, 48, 68, 0.22);
-    }
-
-    .panel-note {
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(10, 95, 135, 0.07);
-      border: 1px solid rgba(134, 184, 207, 0.45);
-      color: #385a70;
-      font-size: 0.82rem;
-      line-height: 1.48;
-    }
-
-    .panel-note strong {
-      color: #103249;
     }
 
     .mobile-analysis {
@@ -478,7 +456,6 @@
     }
 
     .viewer-toolbar,
-    .status,
     .hud {
       position: absolute;
       z-index: 4;
@@ -521,35 +498,6 @@
       filter: none;
     }
 
-    .status {
-      top: 14px;
-      right: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(168, 215, 235, 0.38);
-      background: rgba(4, 17, 25, 0.72);
-      color: #e7f7ff;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.74rem;
-      line-height: 1;
-      pointer-events: none;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #78d9ff;
-      box-shadow: 0 0 0 6px rgba(120, 217, 255, 0.12);
-    }
-
-    .status.is-fallback .status-dot {
-      background: #f7b63b;
-      box-shadow: 0 0 0 6px rgba(247, 182, 59, 0.12);
-    }
 
     .hud {
       left: 14px;
@@ -721,9 +669,9 @@
 
     .equation-card.equation-card-inline {
       display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 10px 14px;
+      flex-direction: column;
+      gap: 8px;
+      padding: 18px 20px;
     }
 
     .equation-card-inline .equation-label {
@@ -732,8 +680,22 @@
     }
 
     .equation-card-inline .equation-body {
-      font-size: 0.92rem;
-      line-height: 1.3;
+      font-size: 1.3rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .equation-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .snapshot-description {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .equation-label,
@@ -820,10 +782,6 @@
       clip: rect(0, 0, 0, 0);
       border: 0;
       white-space: nowrap;
-    }
-
-    .copied-state {
-      color: #7de3ff;
     }
 
     @media (max-width: 1320px) {
@@ -953,12 +911,6 @@
         right: calc(env(safe-area-inset-right, 0px) + 12px);
       }
 
-      body.mobile-drawer .status {
-        top: calc(env(safe-area-inset-top, 0px) + 58px);
-        right: calc(env(safe-area-inset-right, 0px) + 12px);
-        max-width: calc(100% - 24px);
-      }
-
       body.mobile-drawer .hud {
         left: calc(env(safe-area-inset-left, 0px) + 12px);
         right: calc(env(safe-area-inset-right, 0px) + 12px);
@@ -987,10 +939,6 @@
         font-size: 0.73rem;
       }
 
-      .status {
-        font-size: 0.72rem;
-      }
-
       .snapshot-metrics,
       .fallback-metrics {
         grid-template-columns: 1fr;
@@ -998,6 +946,10 @@
 
       .snapshot-layout,
       .snapshot-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .equation-row {
         grid-template-columns: 1fr;
       }
 
@@ -1023,12 +975,7 @@
         <button id="panelCloseButton" class="panel-close-btn" type="button">Done</button>
       </div>
 
-      <div class="eyebrow">Regularised Coulomb law explorer</div>
-      <h1>GlacioSliding</h1>
-      <p class="subtitle">
-        Explore how sliding velocity, effective pressure, and the sliding coefficient move the law from
-        Weertman-like drag toward Coulomb-limited resistance.
-      </p>
+      <img src="SLIDE_logo.jpg" alt="SLIDE — Subglacial Law Interactive Dynamics Explorer" class="brand-logo" />
 
       <section class="section">
         <h2 class="section-title">Story Presets</h2>
@@ -1103,15 +1050,6 @@
       </section>
 
       <section class="section">
-        <h2 class="section-title">Guide</h2>
-        <div class="panel-note">
-          <strong>How to read the explorer.</strong>
-          Drag sliders for immediate 2D updates, then inspect the 3D surface after the short debounce.
-          Click the 3D surface to jump the current <span class="var">N</span> slice and probe point together.
-        </div>
-      </section>
-
-      <section class="section">
         <h2 class="section-title">Mobile Analysis</h2>
         <div id="mobileAnalysisMount" class="mobile-analysis"></div>
       </section>
@@ -1138,14 +1076,7 @@
 
         <section class="viewer-shell" id="viewerShell" aria-label="3D sliding regime explorer">
           <div class="viewer-toolbar">
-            <button id="resetViewButton" class="tool-btn" type="button">Reset View</button>
             <button id="fullscreenButton" class="tool-btn" type="button">Enter Fullscreen</button>
-            <button id="copyLinkButton" class="tool-btn" type="button">Copy Link</button>
-          </div>
-
-          <div id="viewerStatus" class="status">
-            <span class="status-dot" aria-hidden="true"></span>
-            <span id="viewerStatusText">3D regime surface ready</span>
           </div>
 
           <div class="viewer-surface">
@@ -1194,9 +1125,9 @@
         <section id="snapshotCard" class="card">
           <div class="card-header">
             <div class="card-title-wrap">
-              <h2 class="card-title">Regime Snapshot</h2>
+              <h2 class="card-title">Sliding Law Dashboard</h2>
               <div class="card-subtitle">
-                The current probe state, the active preset, and a concise physical interpretation.
+                Real-time diagnosis of the regularised Coulomb sliding law across parameter space.
               </div>
             </div>
             <div id="snapshotRegimePill" class="pill transition-regime">Transition regime</div>
@@ -1209,10 +1140,21 @@
               <div id="snapshotDomainWarning" class="domain-warning" hidden>u₀ exceeds display cap</div>
             </div>
 
-            <div class="equation-card equation-card-inline">
-              <div class="equation-label">Governing equation</div>
-              <div class="equation-body">
-                \( \tau_b = C N \left( \frac{u_b}{C^n N^n A_s + u_b} \right)^{1/n} \)
+            <div class="equation-row">
+              <div class="summary-card snapshot-description">
+                <div class="summary-label">About this explorer</div>
+                <div class="summary-copy">
+                  Explore how sliding velocity, effective pressure, and the sliding coefficient move the law from
+                  Weertman-like drag toward Coulomb-limited resistance.
+                  Drag sliders for real-time updates; click the 3D surface to set the
+                  <span class="var">N</span> slice and probe point.
+                </div>
+              </div>
+              <div class="equation-card equation-card-inline">
+                <div class="equation-label">Governing equation</div>
+                <div class="equation-body">
+                  \( \tau_b = C N \left( \frac{u_b}{C^n N^n A_s + u_b} \right)^{1/n} \)
+                </div>
               </div>
             </div>
 
@@ -1250,7 +1192,7 @@
                   <li><strong>Current slice:</strong> N = 1.00 MPa.</li>
                   <li><strong>Probe marker:</strong> u_b = 300 m/yr and τ_b = 0.397 MPa.</li>
                   <li><strong>Display domain:</strong> 0 to 3000 m/yr.</li>
-                  <li><strong>Shortcut keys:</strong> 1-4 presets, R reset, F fullscreen.</li>
+                  <li><strong>Shortcut keys:</strong> 1-4 presets, F fullscreen.</li>
                 </ul>
               </div>
             </div>
@@ -1294,7 +1236,7 @@
 
     const DISPLAY_MIN = 3000;
     const DISPLAY_CAP = 20000;
-    const THREE_D_DEBOUNCE_MS = 140;
+
     const PRESET_ANIMATION_MS = 320;
     const PRESET_PLOT_REFRESH_MS = 72;
     const MOBILE_BREAKPOINT = 960;
@@ -1341,13 +1283,9 @@
       plotFallback: document.getElementById("plotFallback"),
       viewerShell: document.getElementById("viewerShell"),
       viewerFallback: document.getElementById("viewerFallback"),
-      viewerStatus: document.getElementById("viewerStatus"),
-      viewerStatusText: document.getElementById("viewerStatusText"),
       interactionHint: document.getElementById("interactionHint"),
       hoverReadout: document.getElementById("hoverReadout"),
-      resetViewButton: document.getElementById("resetViewButton"),
       fullscreenButton: document.getElementById("fullscreenButton"),
-      copyLinkButton: document.getElementById("copyLinkButton"),
       sliceDock: document.getElementById("sliceDock"),
       snapshotDock: document.getElementById("snapshotDock"),
       mobileAnalysisMount: document.getElementById("mobileAnalysisMount"),
@@ -1404,8 +1342,7 @@
       animationFrame: null,
       lastAnimationStamp: null,
       lastAnimationPlotRenderMs: null,
-      pending3DTimer: null,
-      copyFeedbackTimer: null,
+      pending3DFrame: null,
       renderQueues: {
         plot2d: { inFlight: false, pendingTask: null, activePromise: null },
         plotFallback: { inFlight: false, pendingTask: null, activePromise: null },
@@ -1837,31 +1774,33 @@
         name: "Regime surface",
         showscale: false,
         hoverinfo: "none",
-        opacity: 0.98,
+        opacity: 0.92,
         colorscale: [
-          [0, "#c9e8f9"],
-          [0.25, "#84c2e7"],
-          [0.55, "#2f8fca"],
-          [0.8, "#145e91"],
-          [1, "#083c63"]
+          [0, "rgba(224,245,255,0.92)"],
+          [0.15, "rgba(163,218,244,0.94)"],
+          [0.35, "rgba(80,185,220,0.95)"],
+          [0.55, "rgba(22,148,194,0.96)"],
+          [0.75, "rgba(16,108,158,0.97)"],
+          [1, "rgba(8,60,99,0.98)"]
         ],
         contours: {
           z: {
             show: true,
             highlight: false,
-            usecolormap: true,
-            project: { z: true },
-            color: "rgba(255,255,255,0.2)",
+            usecolormap: false,
+            project: { z: false },
+            color: "rgba(255,255,255,0.12)",
             width: 1
           }
         },
         lighting: {
-          ambient: 0.8,
-          diffuse: 0.7,
-          roughness: 0.95,
-          specular: 0.18
+          ambient: 0.88,
+          diffuse: 0.58,
+          roughness: 0.42,
+          specular: 0.45,
+          fresnel: 0.35
         },
-        lightposition: { x: 1200, y: 800, z: 800 }
+        lightposition: { x: 800, y: 1200, z: 1400 }
       };
 
       const currentSlice = {
@@ -1872,8 +1811,8 @@
         y: xValues.map(() => state.N),
         z: currentSliceZ,
         line: {
-          color: "#7de3ff",
-          width: 7
+          color: "rgba(125,227,255,0.75)",
+          width: 5
         },
         hoverinfo: "none"
       };
@@ -1886,8 +1825,8 @@
         y: transitionLineY,
         z: transitionLineZ,
         line: {
-          color: "#ffbf49",
-          width: 8
+          color: "rgba(255,191,73,0.85)",
+          width: 6
         },
         hoverinfo: "none"
       };
@@ -1900,23 +1839,23 @@
         y: [state.N],
         z: [metrics.tauProbe],
         marker: {
-          color: "#2de5a7",
-          size: 7,
-          line: { color: "#ffffff", width: 2 }
+          color: "rgba(45,229,167,0.9)",
+          size: 8,
+          line: { color: "rgba(255,255,255,0.7)", width: 2 }
         },
         hoverinfo: "none"
       };
 
-      const sceneGridColor = "rgba(150, 156, 163, 0.68)";
-      const sceneAxisColor = "rgba(205, 210, 214, 0.88)";
-      const scenePlaneColor = "rgba(246, 248, 250, 0.18)";
-      const sceneTextColor = "#ebf0f3";
+      const sceneGridColor = "rgba(140,180,200,0.18)";
+      const sceneAxisColor = "rgba(180,210,225,0.45)";
+      const scenePlaneColor = "rgba(140,200,230,0.18)";
+      const sceneTextColor = "rgba(210,235,248,0.88)";
 
       const layout = {
         margin: { l: 0, r: 0, t: 0, b: 0 },
         scene: {
           camera: cloneCamera(state.camera),
-          uirevision: "glaciosliding-camera",
+          uirevision: "slide-camera",
           aspectratio: { x: 1.6, y: 0.85, z: 0.82 },
           xaxis: {
             title: "Sliding velocity u_b (m/yr)",
@@ -1929,11 +1868,11 @@
             showspikes: false,
             showline: true,
             linecolor: sceneAxisColor,
-            linewidth: 3,
+            linewidth: 1.5,
             showbackground: true,
             backgroundcolor: scenePlaneColor,
             tickcolor: sceneAxisColor,
-            tickwidth: 2.5,
+            tickwidth: 1,
             color: sceneTextColor
           },
           yaxis: {
@@ -1947,11 +1886,11 @@
             showspikes: false,
             showline: true,
             linecolor: sceneAxisColor,
-            linewidth: 3,
+            linewidth: 1.5,
             showbackground: true,
             backgroundcolor: scenePlaneColor,
             tickcolor: sceneAxisColor,
-            tickwidth: 2.5,
+            tickwidth: 1,
             color: sceneTextColor
           },
           zaxis: {
@@ -1965,11 +1904,11 @@
             showspikes: false,
             showline: true,
             linecolor: sceneAxisColor,
-            linewidth: 3,
+            linewidth: 1.5,
             showbackground: true,
             backgroundcolor: scenePlaneColor,
             tickcolor: sceneAxisColor,
-            tickwidth: 2.5,
+            tickwidth: 1,
             color: sceneTextColor
           },
           bgcolor: "rgba(0,0,0,0)"
@@ -2055,12 +1994,9 @@
       state.fallback3d = enabled;
       state.fallbackReason = reason;
       dom.viewerShell.classList.toggle("is-fallback", enabled);
-      dom.viewerStatus.classList.toggle("is-fallback", enabled);
-      dom.viewerStatusText.textContent = enabled ? "Fallback 2D slice active" : "3D regime surface ready";
       dom.interactionHint.innerHTML = enabled
         ? "<strong>Fallback mode:</strong> the main stage is using the interactive 2D slice because WebGL surface rendering is unavailable."
         : "<strong>3D interaction:</strong> orbit to read the surface, hover for preview, and click to set the active <span class=\"var\">N</span> slice and probe velocity.";
-      dom.resetViewButton.disabled = enabled;
     }
 
     function render3DPlot(metrics) {
@@ -2166,17 +2102,17 @@
     }
 
     function schedule3DUpdate() {
-      if (state.pending3DTimer) window.clearTimeout(state.pending3DTimer);
-      state.pending3DTimer = window.setTimeout(() => {
-        state.pending3DTimer = null;
-        renderFromState({ update3D: true, force3D: true });
-      }, THREE_D_DEBOUNCE_MS);
+      if (state.pending3DFrame) return;
+      state.pending3DFrame = requestAnimationFrame(() => {
+        state.pending3DFrame = null;
+        renderFromState({ update3D: true, force3D: true, update2D: false, syncUrl: false });
+      });
     }
 
     function flush3DUpdate() {
-      if (state.pending3DTimer) {
-        window.clearTimeout(state.pending3DTimer);
-        state.pending3DTimer = null;
+      if (state.pending3DFrame) {
+        cancelAnimationFrame(state.pending3DFrame);
+        state.pending3DFrame = null;
       }
       renderFromState({ update3D: true, force3D: true });
     }
@@ -2203,10 +2139,7 @@
       updateInteractionHint(metrics);
 
       if (update2D) {
-        render2DPlot(metrics)
-          .then(() => resizeAllPlots())
-          .catch(() => {});
-
+        render2DPlot(metrics).catch(() => {});
         renderFallbackPlot(metrics).catch(() => {});
       }
 
@@ -2218,53 +2151,6 @@
 
       if (syncUrl) updateUrl();
       return metrics;
-    }
-
-    function setCopyFeedback(active) {
-      if (state.copyFeedbackTimer) {
-        window.clearTimeout(state.copyFeedbackTimer);
-        state.copyFeedbackTimer = null;
-      }
-
-      if (active) {
-        dom.copyLinkButton.textContent = "Link Copied";
-        dom.copyLinkButton.classList.add("copied-state");
-        state.copyFeedbackTimer = window.setTimeout(() => {
-          dom.copyLinkButton.textContent = "Copy Link";
-          dom.copyLinkButton.classList.remove("copied-state");
-          state.copyFeedbackTimer = null;
-        }, 1400);
-        return;
-      }
-
-      dom.copyLinkButton.textContent = "Copy Link";
-      dom.copyLinkButton.classList.remove("copied-state");
-    }
-
-    async function copyCurrentLink() {
-      const currentUrl = window.location.href;
-      try {
-        if (navigator.clipboard?.writeText) {
-          await navigator.clipboard.writeText(currentUrl);
-        } else {
-          const textarea = document.createElement("textarea");
-          textarea.value = currentUrl;
-          textarea.setAttribute("readonly", "readonly");
-          textarea.style.position = "absolute";
-          textarea.style.left = "-9999px";
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand("copy");
-          textarea.remove();
-        }
-        setCopyFeedback(true);
-      } catch (error) {
-        setCopyFeedback(false);
-        dom.viewerStatusText.textContent = "Copy failed";
-        window.setTimeout(() => {
-          dom.viewerStatusText.textContent = state.fallback3d ? "Fallback 2D slice active" : "3D regime surface ready";
-        }, 1200);
-      }
     }
 
     function parseInitialState() {
@@ -2307,9 +2193,9 @@
         window.cancelAnimationFrame(state.animationFrame);
         state.animationFrame = null;
       }
-      if (state.pending3DTimer) {
-        window.clearTimeout(state.pending3DTimer);
-        state.pending3DTimer = null;
+      if (state.pending3DFrame) {
+        cancelAnimationFrame(state.pending3DFrame);
+        state.pending3DFrame = null;
       }
     }
 
@@ -2534,14 +2420,6 @@
       dom.viewerShell.requestFullscreen?.();
     }
 
-    function resetView() {
-      if (state.fallback3d) return;
-      state.camera = cloneCamera(DEFAULT_CAMERA);
-      state.hoverPoint = null;
-      updateHoverReadout();
-      flush3DUpdate();
-    }
-
     function bindControls() {
       for (const [key, slider] of Object.entries(dom.sliders)) {
         slider.addEventListener("input", () => {
@@ -2549,7 +2427,6 @@
           state[key] = sanitizeValue(key, slider.value);
           state.presetKey = detectActivePresetKey(state);
           renderFromState({ update3D: false });
-          schedule3DUpdate();
         });
         slider.addEventListener("change", () => flush3DUpdate());
         slider.addEventListener("pointerup", () => flush3DUpdate());
@@ -2560,9 +2437,7 @@
         button.addEventListener("click", () => startPresetTransition(button.dataset.preset));
       });
 
-      dom.resetViewButton.addEventListener("click", resetView);
       dom.fullscreenButton.addEventListener("click", toggleFullscreen);
-      dom.copyLinkButton.addEventListener("click", copyCurrentLink);
 
       document.addEventListener("fullscreenchange", handleFullscreenChange);
       window.addEventListener("resize", () => {
@@ -2580,10 +2455,7 @@
         const activeTag = document.activeElement?.tagName || "";
         const interactive = /INPUT|SELECT|TEXTAREA|BUTTON/.test(activeTag);
         if (!interactive) {
-          if (event.key === "r" || event.key === "R") {
-            event.preventDefault();
-            resetView();
-          } else if (event.key === "f" || event.key === "F") {
+          if (event.key === "f" || event.key === "F") {
             event.preventDefault();
             toggleFullscreen();
           } else if (/^[1-4]$/.test(event.key)) {
