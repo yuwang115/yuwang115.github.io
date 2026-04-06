@@ -365,6 +365,38 @@ sections:
             display: block;
           }
 
+          .slide-hero-hint {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            color: rgba(200, 220, 240, 0.72);
+            background: rgba(15, 20, 32, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(160, 200, 220, 0.12);
+            border-radius: 6px;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+          }
+          .slide-hero-hint.is-hidden {
+            opacity: 0;
+          }
+          .slide-hero-hint svg {
+            width: 13px;
+            height: 13px;
+            opacity: 0.7;
+            flex-shrink: 0;
+          }
+
           @media (max-width: 900px) {
             .slide-hero {
               grid-template-columns: 1fr;
@@ -391,10 +423,34 @@ sections:
           </div>
           <div class="slide-hero-showcase">
             <div class="slide-hero-frame">
+              <span class="slide-hero-hint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 15l-2 5L9 9l11 4-5 2z"/><path d="M5 3L3 5"/><path d="M2 12H4"/><path d="M12 2v2"/><path d="M4.93 4.93l1.41 1.41"/></svg>
+                Click to interact
+              </span>
               <iframe title="SLIDE interactive preview" src="/tools/SLIDE_3d_showcase.html" loading="lazy" referrerpolicy="no-referrer"></iframe>
             </div>
           </div>
         </div>
+        <script>
+          (function () {
+            var hint = document.querySelector('.slide-hero-hint');
+            if (!hint) return;
+            var frame = hint.closest('.slide-hero-frame');
+            function hide() {
+              hint.classList.add('is-hidden');
+              frame.removeEventListener('pointerdown', hide);
+              window.removeEventListener('blur', onBlur);
+            }
+            function onBlur() {
+              if (document.activeElement && document.activeElement.tagName === 'IFRAME' &&
+                  frame.contains(document.activeElement)) {
+                hide();
+              }
+            }
+            frame.addEventListener('pointerdown', hide);
+            window.addEventListener('blur', onBlur);
+          })();
+        </script>
     design:
       columns: "1"
   - block: markdown
