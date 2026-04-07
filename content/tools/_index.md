@@ -489,7 +489,7 @@ sections:
             <p class="slice-hero-summary">SL-ICE brings Antarctic glaciology to life with a real-time Blatter&ndash;Pattyn simulator. Adjust climate parameters, watch ice flow, and understand the science behind sea-level rise &mdash; all in your browser.</p>
             <div class="slice-hero-actions">
               <a class="slice-hero-btn slice-hero-btn--primary" href="/tools/sl-ice/">Launch Simulator</a>
-              <a class="slice-hero-btn slice-hero-btn--ghost" href="/tools/sl-ice/landing.html#challenges">View Challenges</a>
+              <a class="slice-hero-btn slice-hero-btn--ghost" href="/tools/sl-ice/landing.html">Guide &amp; Learn</a>
             </div>
           </div>
           <div class="slice-hero-showcase">
@@ -589,7 +589,7 @@ sections:
 
           .slide-hero-actions {
             display: grid;
-            grid-template-columns: minmax(0, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 0.85rem;
             margin-top: 1.45rem;
             max-width: 420px;
@@ -731,6 +731,7 @@ sections:
             <p class="slide-hero-summary">Explore how sliding velocity, effective pressure, and the sliding coefficient govern basal dynamics within a unified, state-of-the-art ice sliding law.</p>
             <div class="slide-hero-actions">
               <a class="slide-hero-btn slide-hero-btn--primary" href="/tools/SLIDE.html">Launch Explorer</a>
+              <a class="slide-hero-btn slide-hero-btn--ghost" href="/tools/slide-guide/">Guide &amp; Learn</a>
             </div>
           </div>
           <div class="slide-hero-showcase">
