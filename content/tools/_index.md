@@ -216,6 +216,28 @@ sections:
           #sl-ice-demo .prose { font-size: 16px; line-height: 1.5; }
           .slice-hero .slice-hero-logo { margin: 0; }
 
+          /* ── Ghibli Keyframes ────────────────────────── */
+          @keyframes slice-snow-drift {
+            0%   { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 40px 140px, -25px 180px, 35px 220px; }
+          }
+          @keyframes slice-subtle-float {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-4px); }
+          }
+          @keyframes slice-gentle-glow {
+            0%, 100% { box-shadow: 0 22px 50px rgba(45, 24, 16, 0.12); }
+            50%      { box-shadow: 0 22px 50px rgba(45, 24, 16, 0.12), 0 0 40px rgba(74, 144, 168, 0.06); }
+          }
+          @keyframes slice-play-pulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(74, 144, 168, 0.4), 0 0 0 0 rgba(74, 144, 168, 0.3); }
+            50%      { box-shadow: 0 0 30px rgba(74, 144, 168, 0.4), 0 0 0 12px rgba(74, 144, 168, 0); }
+          }
+          @keyframes slice-btn-shimmer {
+            0%   { transform: translateX(-100%) skewX(-15deg); }
+            100% { transform: translateX(200%) skewX(-15deg); }
+          }
+
           .slice-hero {
             display: grid;
             grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
@@ -236,6 +258,22 @@ sections:
           }
           .slice-hero:hover { border-color: #c4bab0; }
 
+          /* Snow-drift overlay */
+          .slice-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background:
+              radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,0.4), transparent),
+              radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.3), transparent),
+              radial-gradient(1.2px 1.2px at 80% 20%, rgba(255,255,255,0.25), transparent);
+            background-size: 80px 100px, 120px 130px, 100px 110px;
+            animation: slice-snow-drift 14s linear infinite;
+            opacity: 0.5;
+          }
+
           html.dark .slice-hero {
             border-color: rgba(90, 172, 224, 0.22);
             box-shadow: 0 22px 46px rgba(2, 8, 13, 0.42);
@@ -244,12 +282,22 @@ sections:
               radial-gradient(circle at 92% 86%, rgba(77, 191, 160, 0.12), transparent 28%),
               linear-gradient(160deg, rgba(6, 18, 27, 0.98) 0%, rgba(8, 23, 33, 0.96) 54%, rgba(8, 19, 28, 0.98) 100%);
           }
+          html.dark .slice-hero::after {
+            background:
+              radial-gradient(1.5px 1.5px at 20% 30%, rgba(170,210,240,0.2), transparent),
+              radial-gradient(1px 1px at 60% 70%, rgba(170,210,240,0.15), transparent),
+              radial-gradient(1.2px 1.2px at 80% 20%, rgba(170,210,240,0.12), transparent);
+            background-size: 80px 100px, 120px 130px, 100px 110px;
+            opacity: 0.4;
+          }
           html.dark .slice-hero:hover { border-color: rgba(90, 172, 224, 0.35); }
 
           .slice-hero-copy {
             display: grid;
             gap: 1.1rem;
             align-content: start;
+            position: relative;
+            z-index: 2;
           }
 
           .slice-hero-brand { margin-bottom: 0; }
@@ -259,6 +307,10 @@ sections:
             height: auto;
             display: block;
             filter: drop-shadow(0 14px 32px rgba(45, 24, 16, 0.12));
+            transition: transform 0.4s ease;
+          }
+          .slice-hero-brand:hover .slice-hero-logo {
+            animation: slice-subtle-float 2s ease-in-out infinite;
           }
           .slice-hero-logo--dark  { display: none; }
           html.dark .slice-hero-logo--light { display: none; }
@@ -312,6 +364,8 @@ sections:
             font-weight: 700;
             text-decoration: none;
             transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+            position: relative;
+            overflow: hidden;
           }
           .slice-hero-btn:hover,
           .slice-hero-btn:focus-visible { transform: translateY(-1px); }
@@ -320,6 +374,21 @@ sections:
             background: linear-gradient(135deg, #3d8b6e 0%, #4a90a8 100%);
             color: #f7fdff;
             box-shadow: 0 16px 28px rgba(61, 139, 110, 0.24);
+          }
+          /* Shimmer sweep on hover */
+          .slice-hero-btn--primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+            transform: translateX(-100%) skewX(-15deg);
+            pointer-events: none;
+          }
+          .slice-hero-btn--primary:hover::before {
+            animation: slice-btn-shimmer 0.65s ease forwards;
           }
 
           .slice-hero-btn--ghost {
@@ -340,6 +409,8 @@ sections:
             justify-self: end;
             width: min(100%, 760px);
             height: 100%;
+            position: relative;
+            z-index: 2;
           }
 
           .slice-hero-frame {
@@ -352,6 +423,7 @@ sections:
             box-shadow: 0 22px 50px rgba(45, 24, 16, 0.12);
             position: relative;
             background: linear-gradient(160deg, #061f31 0%, #0c3a53 58%, #15536b 100%);
+            animation: slice-gentle-glow 6s ease-in-out infinite;
           }
           html.dark .slice-hero-frame {
             border-color: rgba(116, 175, 205, 0.28);
@@ -404,7 +476,9 @@ sections:
             height: 100%;
             object-fit: cover;
             display: block;
+            transition: transform 0.4s ease;
           }
+          .slice-hero-preview:hover .slice-hero-img { transform: scale(1.02); }
 
           .slice-hero-play {
             position: absolute;
@@ -418,14 +492,16 @@ sections:
           .slice-hero-preview:hover .slice-hero-play { opacity: 1; }
 
           .slice-hero-play-circle {
-            width: 56px;
-            height: 56px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(74, 144, 168, 0.9);
+            background: rgba(74, 144, 168, 0.92);
             box-shadow: 0 0 30px rgba(74, 144, 168, 0.4);
+            animation: slice-play-pulse 2.5s ease-in-out infinite;
+            backdrop-filter: blur(4px);
           }
 
           .slice-hero-badge {
@@ -476,6 +552,13 @@ sections:
             .slice-hero-preview {
               aspect-ratio: 1.6 / 1;
             }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .slice-hero::after, .slice-hero-btn--primary::before { animation: none !important; display: none; }
+            .slice-hero-frame { animation: none !important; }
+            .slice-hero-play-circle { animation: none !important; }
+            .slice-hero-brand:hover .slice-hero-logo { animation: none !important; }
           }
         </style>
         <div class="slice-hero not-prose">

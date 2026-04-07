@@ -27,8 +27,181 @@
     <link rel="modulepreload" crossorigin href="./assets/jsx-runtime-19ABzchM.js">
     <link rel="modulepreload" crossorigin href="./assets/globals-Bv6N0P3K.js">
     <link rel="stylesheet" crossorigin href="./assets/globals-CBsFuZej.css">
+
+    <!-- Ghibli loading screen + atmospheric vignette -->
+    <style>
+      /* ── Loading Screen ─────────────────────────────── */
+      @keyframes loader-fade-in {
+        0%   { opacity: 0; transform: translateY(10px) scale(0.98); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      @keyframes loader-snow {
+        0%   { opacity: 0; transform: translateY(-8px); }
+        10%  { opacity: 0.6; }
+        90%  { opacity: 0.2; }
+        100% { opacity: 0; transform: translateY(80px) translateX(12px); }
+      }
+      @keyframes loader-fade-out {
+        to { opacity: 0; pointer-events: none; }
+      }
+
+      .ghibli-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Nunito', sans-serif;
+        background:
+          radial-gradient(ellipse at 30% 25%, rgba(74, 144, 168, 0.08), transparent 50%),
+          radial-gradient(ellipse at 70% 70%, rgba(61, 139, 110, 0.06), transparent 45%),
+          #f5efe6;
+        transition: opacity 0.6s ease;
+      }
+      [data-theme=dark] .ghibli-loader {
+        background:
+          radial-gradient(ellipse at 30% 25%, rgba(90, 172, 224, 0.06), transparent 50%),
+          radial-gradient(ellipse at 70% 70%, rgba(77, 191, 160, 0.04), transparent 45%),
+          #0f1729;
+      }
+
+      /* Mountain silhouette band */
+      .ghibli-loader-mountains {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 120px;
+        pointer-events: none;
+      }
+      .ghibli-loader-mountain {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+      .ghibli-loader-mountain:nth-child(1) {
+        height: 100px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'%3E%3Cpath d='M0 100 L50 55 L120 70 L200 30 L300 60 L400 20 L500 50 L600 15 L700 45 L800 25 L900 55 L1000 35 L1100 60 L1200 40 L1200 100Z' fill='%234a90a8' opacity='0.12'/%3E%3C/svg%3E") no-repeat bottom / 100% auto;
+      }
+      .ghibli-loader-mountain:nth-child(2) {
+        height: 70px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 70' preserveAspectRatio='none'%3E%3Cpath d='M0 70 L80 40 L180 55 L280 25 L400 45 L520 18 L640 38 L760 22 L880 42 L1000 28 L1120 48 L1200 35 L1200 70Z' fill='%233d8b6e' opacity='0.10'/%3E%3C/svg%3E") no-repeat bottom / 100% auto;
+      }
+      .ghibli-loader-mountain:nth-child(3) {
+        height: 40px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 40 L100 28 L250 35 L400 22 L550 32 L700 20 L850 30 L1000 24 L1200 32 L1200 40Z' fill='%23d4853a' opacity='0.06'/%3E%3C/svg%3E") no-repeat bottom / 100% auto;
+      }
+      [data-theme=dark] .ghibli-loader-mountain:nth-child(1) { opacity: 0.7; }
+      [data-theme=dark] .ghibli-loader-mountain:nth-child(2) { opacity: 0.6; }
+      [data-theme=dark] .ghibli-loader-mountain:nth-child(3) { opacity: 0.5; }
+
+      /* Snow particles in loader */
+      .ghibli-loader-snow {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(74, 144, 168, 0.3);
+        animation: loader-snow linear infinite;
+        pointer-events: none;
+      }
+      [data-theme=dark] .ghibli-loader-snow { background: rgba(170, 210, 240, 0.2); }
+
+      .ghibli-loader-title {
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        font-weight: 800;
+        color: #2d1810;
+        letter-spacing: 0.04em;
+        animation: loader-fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+      }
+      [data-theme=dark] .ghibli-loader-title { color: #e8dfd0; }
+
+      .ghibli-loader-sub {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #5a4a3a;
+        margin-top: 0.6rem;
+        animation: loader-fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+        opacity: 0;
+      }
+      [data-theme=dark] .ghibli-loader-sub { color: #b0a898; }
+
+      .ghibli-loader.hidden {
+        animation: loader-fade-out 0.5s ease forwards;
+      }
+
+      /* ── Atmospheric Vignette ───────────────────────── */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9998;
+        box-shadow: inset 0 0 90px rgba(245, 239, 230, 0.25);
+      }
+      [data-theme=dark] body::after {
+        box-shadow: inset 0 0 80px rgba(15, 23, 41, 0.3);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ghibli-loader { display: none; }
+        .ghibli-loader-snow { display: none; }
+      }
+    </style>
   </head>
   <body>
+    <!-- Ghibli loading screen -->
+    <div class="ghibli-loader" id="ghibli-loader" aria-label="Loading SL-ICE simulator">
+      <div class="ghibli-loader-title">SL-ICE</div>
+      <div class="ghibli-loader-sub">Preparing the ice sheet&hellip;</div>
+      <div class="ghibli-loader-mountains">
+        <div class="ghibli-loader-mountain"></div>
+        <div class="ghibli-loader-mountain"></div>
+        <div class="ghibli-loader-mountain"></div>
+      </div>
+    </div>
+
     <div id="root"></div>
+
+    <script>
+      /* Generate loader snowflakes */
+      (function () {
+        var loader = document.getElementById('ghibli-loader');
+        if (!loader || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        for (var i = 0; i < 8; i++) {
+          var s = document.createElement('div');
+          s.className = 'ghibli-loader-snow';
+          var size = 3 + Math.random() * 3;
+          s.style.cssText =
+            'width:' + size + 'px;height:' + size + 'px;' +
+            'left:' + (10 + Math.random() * 80) + '%;' +
+            'top:' + (10 + Math.random() * 50) + '%;' +
+            'animation-duration:' + (3 + Math.random() * 4) + 's;' +
+            'animation-delay:-' + (Math.random() * 5) + 's;';
+          loader.appendChild(s);
+        }
+      })();
+
+      /* Hide loader when React renders */
+      (function () {
+        var root = document.getElementById('root');
+        var loader = document.getElementById('ghibli-loader');
+        if (!root || !loader) return;
+        var obs = new MutationObserver(function () {
+          if (root.children.length > 0) {
+            obs.disconnect();
+            loader.classList.add('hidden');
+            setTimeout(function () { loader.remove(); }, 600);
+          }
+        });
+        obs.observe(root, { childList: true });
+        /* Fallback: remove after 6s even if React is slow */
+        setTimeout(function () {
+          if (loader.parentNode) { loader.classList.add('hidden'); setTimeout(function () { loader.remove(); }, 600); }
+        }, 6000);
+      })();
+    </script>
   </body>
 </html>

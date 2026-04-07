@@ -37,23 +37,113 @@
          Inherits theme via [data-theme] on <html> set by the React app.
          ═══════════════════════════════════════════════════════════ -->
     <style>
+      /* ══════════════════════════════════════════════════
+         Ghibli Atmosphere — Landing Page Styles
+         ══════════════════════════════════════════════════ */
+
+      /* ── Keyframes ──────────────────────────────────── */
+      @keyframes cloud-drift {
+        0%   { transform: translateX(-140%); }
+        100% { transform: translateX(calc(100vw + 140%)); }
+      }
+      @keyframes snowfall {
+        0%   { opacity: 0; transform: translateY(-10px) translateX(0); }
+        8%   { opacity: 0.6; }
+        85%  { opacity: 0.25; }
+        100% { opacity: 0; transform: translateY(100vh) translateX(30px); }
+      }
+      @keyframes aurora-shift {
+        0%   { transform: translateX(-8%) scaleY(1); opacity: 0.5; }
+        50%  { transform: translateX(8%) scaleY(1.15); opacity: 0.8; }
+        100% { transform: translateX(-8%) scaleY(1); opacity: 0.5; }
+      }
+      @keyframes breathe-ring {
+        0%, 100% { transform: scale(1); opacity: 0.18; }
+        50%      { transform: scale(1.08); opacity: 0.35; }
+      }
+      @keyframes section-reveal {
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Atmosphere wrapper ─────────────────────────── */
+      .ghibli-atmosphere {
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(ellipse at 15% 10%, rgba(74, 144, 168, 0.06), transparent 45%),
+          radial-gradient(ellipse at 85% 30%, rgba(61, 139, 110, 0.05), transparent 40%),
+          radial-gradient(ellipse at 50% 80%, rgba(212, 133, 58, 0.03), transparent 50%);
+      }
+      [data-theme=dark] .ghibli-atmosphere {
+        background:
+          radial-gradient(ellipse at 15% 10%, rgba(90, 172, 224, 0.04), transparent 45%),
+          radial-gradient(ellipse at 85% 30%, rgba(77, 191, 160, 0.03), transparent 40%),
+          radial-gradient(ellipse at 50% 80%, rgba(232, 168, 96, 0.02), transparent 50%);
+      }
+
+      /* ── Floating clouds ────────────────────────────── */
+      .ghibli-cloud {
+        position: absolute;
+        pointer-events: none;
+        z-index: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+        filter: blur(2px);
+        animation: cloud-drift linear infinite;
+      }
+      .ghibli-cloud::before,
+      .ghibli-cloud::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: inherit;
+      }
+      .ghibli-cloud::before { width: 140%; height: 70%; top: -30%; left: -20%; }
+      .ghibli-cloud::after  { width: 100%; height: 60%; top: -15%; right: -30%; }
+
+      .ghibli-cloud--1 { width: 90px; height: 32px; top: 8%; animation-duration: 45s; opacity: 0.35; }
+      .ghibli-cloud--2 { width: 120px; height: 40px; top: 28%; animation-duration: 60s; animation-delay: -20s; opacity: 0.2; }
+      .ghibli-cloud--3 { width: 70px; height: 26px; top: 55%; animation-duration: 38s; animation-delay: -10s; opacity: 0.28; }
+
+      [data-theme=dark] .ghibli-cloud { background: rgba(90, 172, 224, 0.06); filter: blur(3px); }
+
+      /* ── Snowfall particles ─────────────────────────── */
+      .ghibli-snow {
+        position: fixed;
+        pointer-events: none;
+        z-index: 1;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        animation: snowfall linear infinite;
+      }
+      [data-theme=dark] .ghibli-snow { background: rgba(170, 210, 240, 0.2); }
+
+      /* ── Base layout ────────────────────────────────── */
       .guide-wrap {
+        position: relative;
+        z-index: 2;
         max-width: 1080px;
         margin: 0 auto;
         font-family: 'Nunito', sans-serif;
       }
       .guide-section {
         padding: 4rem 1.5rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
       }
+      .guide-section.revealed { opacity: 1; transform: translateY(0); }
       @media (min-width: 768px) { .guide-section { padding: 5rem 2.5rem; } }
 
       .guide-label {
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        font-size: 0.75rem;
         font-weight: 700;
         color: var(--accent);
         margin: 0 0 0.6rem;
+        text-align: center;
       }
       .guide-heading {
         font-size: clamp(1.5rem, 3vw, 2rem);
@@ -61,41 +151,66 @@
         color: var(--text-primary);
         margin: 0 0 0.5rem;
         line-height: 1.25;
+        text-align: center;
       }
       .guide-intro {
         color: var(--text-secondary);
         font-size: 1.05rem;
         line-height: 1.7;
         max-width: 64ch;
-        margin: 0 0 2rem;
+        margin: 0 auto 2rem;
+        text-align: center;
       }
 
       /* ── Card grid ─────────────────────────────────── */
       .guide-grid {
         display: grid;
-        gap: 1rem;
+        gap: 1.1rem;
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       }
       .guide-grid--3 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
 
       .guide-card {
-        background: var(--bg-card);
+        position: relative;
+        background:
+          radial-gradient(circle at 90% 10%, rgba(74, 144, 168, 0.04), transparent 60%),
+          var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 1.5rem;
+        border-top: 3px solid var(--accent);
+        border-radius: 4px 4px 16px 16px;
+        padding: 1.6rem;
+        overflow: hidden;
         transition: all var(--transition);
       }
       .guide-card:hover {
-        background: var(--bg-card-hover);
+        background:
+          radial-gradient(circle at 90% 10%, rgba(74, 144, 168, 0.07), transparent 60%),
+          var(--bg-card-hover);
         border-color: var(--border-hover);
-        transform: translateY(-2px);
+        border-top-color: var(--accent-teal);
+        transform: translateY(-3px);
         box-shadow: var(--shadow-md);
       }
+
+      /* Accent color per card in Background section */
+      #guide-background .guide-card:nth-child(1) { border-top-color: var(--accent); }
+      #guide-background .guide-card:nth-child(2) { border-top-color: var(--accent-warm); }
+      #guide-background .guide-card:nth-child(3) { border-top-color: var(--accent-teal); }
+      #guide-background .guide-card:nth-child(4) { border-top-color: var(--accent-danger, #c45050); }
+
+      /* Staggered card reveal */
+      .revealed .guide-card {
+        transition-delay: calc(var(--card-i, 0) * 0.08s);
+      }
+
       .guide-card h3 {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
         font-size: 1.08rem;
         font-weight: 700;
         color: var(--text-primary);
-        margin: 0 0 0.5rem;
+        margin: 0 0 0.55rem;
       }
       .guide-card p {
         color: var(--text-secondary);
@@ -112,35 +227,98 @@
         color: var(--accent);
         text-decoration: none;
         gap: 0.3em;
-        transition: gap var(--transition);
+        transition: gap var(--transition), color var(--transition);
       }
-      .guide-card .guide-card-cta:hover { gap: 0.6em; }
+      .guide-card .guide-card-cta:hover { gap: 0.6em; color: var(--accent-teal); }
+
+      /* ── Card icons ─────────────────────────────────── */
+      .guide-card-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+        border-radius: 8px;
+        background: var(--card-accent-blue, rgba(74, 144, 168, 0.1));
+      }
+      .guide-card-icon svg {
+        width: 18px;
+        height: 18px;
+        stroke: var(--accent);
+        stroke-width: 1.8;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      #guide-background .guide-card:nth-child(2) .guide-card-icon { background: var(--card-accent-amber, rgba(212, 133, 58, 0.1)); }
+      #guide-background .guide-card:nth-child(2) .guide-card-icon svg { stroke: var(--accent-warm); }
+      #guide-background .guide-card:nth-child(3) .guide-card-icon { background: var(--card-accent-teal, rgba(61, 139, 110, 0.1)); }
+      #guide-background .guide-card:nth-child(3) .guide-card-icon svg { stroke: var(--accent-teal); }
+      #guide-background .guide-card:nth-child(4) .guide-card-icon { background: var(--card-accent-red, rgba(196, 80, 80, 0.1)); }
+      #guide-background .guide-card:nth-child(4) .guide-card-icon svg { stroke: var(--accent-danger, #c45050); }
+
+      /* ── Scenario card silhouettes ──────────────────── */
+      .guide-grid--3 .guide-card {
+        padding-bottom: 3.5rem;
+        background-repeat: no-repeat;
+        background-position: bottom center;
+        background-size: 100% auto;
+      }
+      .guide-grid--3 .guide-card:nth-child(1) {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 40' preserveAspectRatio='none'%3E%3Cpath d='M0 40 L30 22 L60 30 L100 12 L140 24 L170 8 L210 20 L240 14 L280 28 L280 40Z' fill='%234a90a8' opacity='0.05'/%3E%3C/svg%3E");
+      }
+      .guide-grid--3 .guide-card:nth-child(2) {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 40' preserveAspectRatio='none'%3E%3Cpath d='M0 15 Q70 18 140 28 Q210 38 280 40 L280 40 L0 40Z' fill='%23d4853a' opacity='0.05'/%3E%3Cpath d='M0 30 Q70 26 140 32 Q210 36 280 40 L280 40 L0 40Z' fill='%234a90a8' opacity='0.04'/%3E%3C/svg%3E");
+      }
+      .guide-grid--3 .guide-card:nth-child(3) {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 40' preserveAspectRatio='none'%3E%3Crect x='0' y='28' width='280' height='12' fill='%234a90a8' opacity='0.04'/%3E%3Cpath d='M40 28 L100 28 L100 20 L90 18 L80 20 L70 16 L60 19 L50 17 L40 20Z' fill='%23e8dfd0' opacity='0.08'/%3E%3Cpath d='M160 28 L240 28 L240 22 L220 19 L200 22 L180 18 L160 22Z' fill='%23e8dfd0' opacity='0.06'/%3E%3C/svg%3E");
+      }
+      .guide-grid--3 .guide-card:hover {
+        background-size: 102% auto;
+      }
 
       /* ── Steps ─────────────────────────────────────── */
       .guide-steps {
         display: grid;
         gap: 1.5rem;
         max-width: 720px;
+        margin: 0 auto;
       }
       .guide-step {
         display: grid;
-        grid-template-columns: 2.4rem 1fr;
+        grid-template-columns: 2.6rem 1fr;
         gap: 1rem;
         align-items: start;
       }
       .guide-step-num {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 2.4rem;
-        height: 2.4rem;
+        width: 2.6rem;
+        height: 2.6rem;
         border-radius: 50%;
         font-weight: 800;
         font-size: 1rem;
         color: #fff;
         background: linear-gradient(135deg, var(--accent) 0%, var(--accent-teal) 100%);
         flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(74, 144, 168, 0.28);
       }
+      .guide-step-num::after {
+        content: '';
+        position: absolute;
+        inset: -5px;
+        border-radius: 50%;
+        border: 2px dashed rgba(74, 144, 168, 0.2);
+        animation: breathe-ring 4s ease-in-out infinite;
+      }
+      .guide-step:nth-child(2) .guide-step-num::after { animation-delay: -0.8s; }
+      .guide-step:nth-child(3) .guide-step-num::after { animation-delay: -1.6s; }
+      .guide-step:nth-child(4) .guide-step-num::after { animation-delay: -2.4s; }
+      .guide-step:nth-child(5) .guide-step-num::after { animation-delay: -3.2s; }
+
       .guide-step > div > strong:first-child {
         display: block;
         color: var(--text-primary);
@@ -161,14 +339,24 @@
       /* ── FAQ ────────────────────────────────────────── */
       .guide-faq {
         max-width: 720px;
+        margin: 0 auto;
       }
       .guide-faq details {
-        padding: 1rem 0;
-        border-top: 1px solid var(--border);
+        padding: 1rem 0.6rem;
+        border-top: 1px dashed var(--border);
+        border-radius: 8px;
+        margin: 0 -0.6rem;
+        transition: background 0.3s ease;
       }
       .guide-faq details:first-child {
-        padding-top: 0;
+        padding-top: 0.6rem;
         border-top: 0;
+      }
+      .guide-faq details[open] {
+        background: radial-gradient(ellipse at 0% 0%, rgba(74, 144, 168, 0.04), transparent 70%);
+      }
+      [data-theme=dark] .guide-faq details[open] {
+        background: radial-gradient(ellipse at 0% 0%, rgba(90, 172, 224, 0.03), transparent 70%);
       }
       .guide-faq summary {
         cursor: pointer;
@@ -179,23 +367,32 @@
         display: flex;
         align-items: center;
         gap: 0.6rem;
+        transition: color var(--transition);
       }
+      .guide-faq summary:hover { color: var(--accent); }
       .guide-faq summary::-webkit-details-marker { display: none; }
       .guide-faq summary::before {
-        content: '\25B6';
-        font-size: 0.6em;
-        color: var(--accent);
-        transition: transform 0.2s ease;
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
         flex-shrink: 0;
+        border-radius: 50%;
+        background: var(--accent);
+        opacity: 0.4;
+        transition: transform 0.25s ease, opacity 0.25s ease, background 0.25s ease;
       }
       .guide-faq details[open] > summary::before {
-        transform: rotate(90deg);
+        transform: scale(1.3);
+        opacity: 0.8;
+        background: var(--accent-teal);
       }
-      .guide-faq details p {
+      .guide-faq details .guide-faq-answer {
         color: var(--text-secondary);
         font-size: 0.95rem;
         line-height: 1.7;
-        margin: 0.6rem 0 0 1.2rem;
+        margin: 0.6rem 0 0 1.6rem;
+        animation: section-reveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
       .guide-faq details a {
         color: var(--accent);
@@ -203,18 +400,105 @@
         text-underline-offset: 2px;
       }
 
-      /* ── Divider ────────────────────────────────────── */
-      .guide-divider {
-        width: 60px;
-        height: 3px;
-        background: var(--accent);
-        opacity: 0.5;
-        border-radius: 2px;
+      /* ── Illustration images ──────────────────────────── */
+      .guide-panorama {
+        width: 100%;
+        max-width: 1080px;
         margin: 0 auto;
+        padding: 0 1.5rem;
+        position: relative;
+        z-index: 2;
+      }
+      .guide-panorama img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 20px;
+        box-shadow: 0 12px 36px rgba(45, 24, 16, 0.10);
+        mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+      }
+      .guide-panorama img.guide-panorama-dark { display: none; }
+      [data-theme=dark] .guide-panorama img.guide-panorama-light { display: none; }
+      [data-theme=dark] .guide-panorama img.guide-panorama-dark { display: block; }
+      [data-theme=dark] .guide-panorama img {
+        box-shadow: 0 12px 36px rgba(5, 10, 30, 0.30);
       }
 
+      .guide-watercolor-section {
+        position: relative;
+      }
+      .guide-watercolor-section::after {
+        content: '';
+        position: absolute;
+        inset: -1rem;
+        z-index: 0;
+        background: url('./images/ghibli-ice-watercolor-bg.jpg') center / cover no-repeat;
+        opacity: 0.22;
+        border-radius: 24px;
+        pointer-events: none;
+      }
+      [data-theme=dark] .guide-watercolor-section::after { opacity: 0.08; }
+      .guide-watercolor-section > * { position: relative; z-index: 1; }
+
+      .guide-cross-section {
+        max-width: 720px;
+        margin: 2rem auto 0;
+      }
+      .guide-cross-section img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm, 0 4px 12px rgba(120, 100, 70, 0.08));
+      }
+      .guide-cross-section figcaption {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.82rem;
+        margin-top: 0.6rem;
+        font-style: italic;
+      }
+
+      /* ── Divider — Mountain Silhouette ───────────────── */
+      .guide-divider {
+        width: 100%;
+        max-width: 420px;
+        height: 28px;
+        margin: 0 auto;
+        opacity: 0.2;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 28'%3E%3Cpath d='M0 28 L20 18 L45 22 L70 10 L95 16 L120 6 L150 14 L175 4 L200 12 L225 8 L250 14 L280 6 L310 16 L335 10 L360 18 L385 12 L420 20 L420 28Z' fill='%234a90a8'/%3E%3Cpath d='M0 28 L30 20 L60 24 L90 16 L130 22 L160 12 L190 18 L220 14 L260 20 L290 14 L330 22 L360 16 L400 24 L420 22 L420 28Z' fill='%233d8b6e' opacity='0.5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+      }
+      [data-theme=dark] .guide-divider { opacity: 0.1; }
+
       /* ── More tools row ─────────────────────────────── */
+      .guide-more-section {
+        position: relative;
+        overflow: hidden;
+      }
+      .guide-more-section::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 10%;
+        right: 10%;
+        height: 120px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-teal), var(--accent-warm));
+        opacity: 0.06;
+        filter: blur(40px);
+        animation: aurora-shift 10s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 0;
+      }
+      [data-theme=dark] .guide-more-section::before { opacity: 0.04; }
+
       .guide-tools-row {
+        position: relative;
+        z-index: 1;
         display: flex;
         flex-wrap: wrap;
         gap: 0.8rem;
@@ -235,38 +519,70 @@
         color: #fff;
         box-shadow: 0 8px 20px rgba(74, 144, 168, 0.22);
       }
-      .guide-tool-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(74, 144, 168, 0.30); }
+      .guide-tool-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(74, 144, 168, 0.30); }
       .guide-tool-ghost {
         border: 1px solid var(--border);
         color: var(--text-secondary);
         background: transparent;
       }
       .guide-tool-ghost:hover { border-color: var(--border-hover); color: var(--text-primary); background: var(--bg-card); }
+
+      /* ── Reduced motion ─────────────────────────────── */
+      @media (prefers-reduced-motion: reduce) {
+        .ghibli-cloud, .ghibli-snow { display: none !important; }
+        .guide-section { opacity: 1; transform: none; transition: none; }
+        .guide-step-num::after { animation: none; }
+        .guide-more-section::before { animation: none; }
+        .guide-faq details .guide-faq-answer { animation: none; }
+      }
     </style>
+
+    <div class="ghibli-atmosphere">
+      <!-- Floating clouds -->
+      <div class="ghibli-cloud ghibli-cloud--1" aria-hidden="true"></div>
+      <div class="ghibli-cloud ghibli-cloud--2" aria-hidden="true"></div>
+      <div class="ghibli-cloud ghibli-cloud--3" aria-hidden="true"></div>
+
+    <!-- Ghibli panorama banner -->
+    <div class="guide-panorama">
+      <img class="guide-panorama-light" src="./images/ghibli-glacier-panorama.jpg" alt="Ghibli-style panoramic Antarctic glacier landscape with penguins" loading="lazy" />
+      <img class="guide-panorama-dark" src="./images/ghibli-glacier-panorama-dark.jpg" alt="Ghibli-style nighttime Antarctic landscape with aurora borealis" loading="lazy" />
+    </div>
 
     <div class="guide-wrap">
 
       <!-- ── Why Ice Sheets Matter ──────────────────── -->
-      <div class="guide-divider"></div>
-      <section class="guide-section" id="guide-background">
+      <section class="guide-section guide-watercolor-section" id="guide-background">
         <p class="guide-label">Background</p>
         <h2 class="guide-heading">Why Ice Sheets Matter</h2>
         <p class="guide-intro">Understanding ice sheets is essential to predicting our planet's future. Here's what you need to know before diving in.</p>
         <div class="guide-grid">
-          <div class="guide-card">
-            <h3>Earth's Largest Freshwater Reservoirs</h3>
+          <div class="guide-card" style="--card-i:0">
+            <h3>
+              <span class="guide-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 20 L7 10 L12 14 L17 6 L22 12 L22 20Z"/></svg></span>
+              Earth's Largest Freshwater Reservoirs
+            </h3>
             <p>Antarctica holds about 26.5 million km&sup3; of ice &mdash; enough to raise global sea level by roughly 58 metres. Greenland adds another 7 metres. Together, they store over 99% of the planet's freshwater ice.</p>
           </div>
-          <div class="guide-card">
-            <h3>The Sea-Level Wild Card</h3>
+          <div class="guide-card" style="--card-i:1">
+            <h3>
+              <span class="guide-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 18 C6 14 10 20 14 14 C16 11 18 16 22 12"/><path d="M2 20 L22 20"/></svg></span>
+              The Sea-Level Wild Card
+            </h3>
             <p>Even a small percentage of ice loss translates into metres of sea-level rise, threatening hundreds of millions of people in coastal cities. Ice sheets are the single largest uncertainty in future sea-level projections.</p>
           </div>
-          <div class="guide-card">
-            <h3>A Living, Flowing System</h3>
+          <div class="guide-card" style="--card-i:2">
+            <h3>
+              <span class="guide-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12 L8 12 M16 12 L20 12"/><path d="M12 4 L12 8 M12 16 L12 20"/><circle cx="12" cy="12" r="3"/><path d="M7 7 L9 9 M15 15 L17 17"/></svg></span>
+              A Living, Flowing System
+            </h3>
             <p>Ice sheets are not static blocks &mdash; they flow like extremely thick honey, driven by gravity. Snow accumulates in the interior, compresses into ice, and flows outward toward the coast, where it calves into icebergs or melts into the ocean.</p>
           </div>
-          <div class="guide-card">
-            <h3>Sensitive to Climate Change</h3>
+          <div class="guide-card" style="--card-i:3">
+            <h3>
+              <span class="guide-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2 L12 14"/><circle cx="12" cy="18" r="4"/><path d="M8 6 L12 2 L16 6"/></svg></span>
+              Sensitive to Climate Change
+            </h3>
             <p>Warmer ocean water erodes ice shelves from below, warmer air melts the surface, and changing snowfall patterns shift the balance. Small changes in climate can trigger large, irreversible responses.</p>
           </div>
         </div>
@@ -345,44 +661,48 @@
         <p class="guide-label">Learn</p>
         <h2 class="guide-heading">Key Concepts Explained</h2>
         <p class="guide-intro">New to glaciology? These concise explanations cover everything you need to understand what you're seeing in the simulator.</p>
+        <figure class="guide-cross-section">
+          <img src="./images/ghibli-ice-cross-section.jpg" alt="Ghibli-style cross-section illustration showing ice sheet, ice shelf, bedrock, and grounding line" loading="lazy" />
+          <figcaption>Ice sheet anatomy: ice flows from the interior toward the coast, transitioning to a floating ice shelf at the grounding line.</figcaption>
+        </figure>
         <div class="guide-faq">
           <details>
             <summary>What is an ice sheet?</summary>
-            <p>A continent-sized mass of glacial ice that sits on land. Earth has two: Antarctica (14 million km&sup2;, up to 4.8 km thick) and Greenland (1.7 million km&sup2;, up to 3.4 km thick). Think of them as enormous, slowly flowing reservoirs of frozen freshwater that have built up over hundreds of thousands of years.</p>
+            <p class="guide-faq-answer">A continent-sized mass of glacial ice that sits on land. Earth has two: Antarctica (14 million km&sup2;, up to 4.8 km thick) and Greenland (1.7 million km&sup2;, up to 3.4 km thick). Think of them as enormous, slowly flowing reservoirs of frozen freshwater that have built up over hundreds of thousands of years.</p>
           </details>
           <details>
             <summary>How does ice flow?</summary>
-            <p>Ice deforms under its own weight, flowing from high elevations toward the coast like extremely thick honey. Two mechanisms drive this: <strong>internal deformation</strong> (ice crystals slowly creeping past each other) and <strong>basal sliding</strong> (the ice sliding over the bedrock beneath it, lubricated by meltwater). In fast-flowing glaciers, basal sliding dominates.</p>
+            <p class="guide-faq-answer">Ice deforms under its own weight, flowing from high elevations toward the coast like extremely thick honey. Two mechanisms drive this: <strong>internal deformation</strong> (ice crystals slowly creeping past each other) and <strong>basal sliding</strong> (the ice sliding over the bedrock beneath it, lubricated by meltwater). In fast-flowing glaciers, basal sliding dominates.</p>
           </details>
           <details>
             <summary>What is the grounding line?</summary>
-            <p>The boundary where a glacier transitions from resting on bedrock to floating on the ocean. It's the most important line in ice sheet science &mdash; its position controls how much ice is discharged into the ocean. When the grounding line retreats, the ice sheet loses mass and sea level rises.</p>
+            <p class="guide-faq-answer">The boundary where a glacier transitions from resting on bedrock to floating on the ocean. It's the most important line in ice sheet science &mdash; its position controls how much ice is discharged into the ocean. When the grounding line retreats, the ice sheet loses mass and sea level rises.</p>
           </details>
           <details>
             <summary>What is an ice shelf?</summary>
-            <p>The floating extension of an ice sheet that hangs over the ocean. Ice shelves don't directly raise sea level when they melt (they're already floating, like an ice cube in a drink). But they act as a &ldquo;cork in the bottle&rdquo; &mdash; they buttress the grounded ice behind them. Remove the shelf, and the inland ice speeds up dramatically.</p>
+            <p class="guide-faq-answer">The floating extension of an ice sheet that hangs over the ocean. Ice shelves don't directly raise sea level when they melt (they're already floating, like an ice cube in a drink). But they act as a &ldquo;cork in the bottle&rdquo; &mdash; they buttress the grounded ice behind them. Remove the shelf, and the inland ice speeds up dramatically.</p>
           </details>
           <details>
             <summary>What is Marine Ice Sheet Instability (MISI)?</summary>
-            <p>A self-reinforcing feedback that can cause rapid ice sheet collapse. If ice rests on bedrock that slopes downward toward the interior (a &ldquo;retrograde slope&rdquo;), any retreat of the grounding line exposes a thicker cross-section of ice to the ocean. The thicker ice flows faster, driving more retreat, which exposes even thicker ice &mdash; a runaway process. Much of West Antarctica sits on retrograde slopes, making MISI a major concern.</p>
+            <p class="guide-faq-answer">A self-reinforcing feedback that can cause rapid ice sheet collapse. If ice rests on bedrock that slopes downward toward the interior (a &ldquo;retrograde slope&rdquo;), any retreat of the grounding line exposes a thicker cross-section of ice to the ocean. The thicker ice flows faster, driving more retreat, which exposes even thicker ice &mdash; a runaway process. Much of West Antarctica sits on retrograde slopes, making MISI a major concern.</p>
           </details>
           <details>
             <summary>What is the Blatter&ndash;Pattyn model?</summary>
-            <p>A mathematical framework that describes how ice flows by balancing gravitational driving stress against internal resistance and friction at the bed. It's called a &ldquo;higher-order&rdquo; model because it captures stress transfer along the flow &mdash; crucial for modelling ice streams and grounding lines. SL-ICE solves these equations in real time so you can experiment interactively.</p>
+            <p class="guide-faq-answer">A mathematical framework that describes how ice flows by balancing gravitational driving stress against internal resistance and friction at the bed. It's called a &ldquo;higher-order&rdquo; model because it captures stress transfer along the flow &mdash; crucial for modelling ice streams and grounding lines. SL-ICE solves these equations in real time so you can experiment interactively.</p>
           </details>
           <details>
             <summary>What is basal sliding?</summary>
-            <p>The motion of ice sliding over the surface beneath it, as opposed to internal deformation within the ice. Basal sliding depends on water pressure, bed roughness, and sediment type. A glacier on a well-lubricated soft bed can slide hundreds of metres per year, while one frozen to hard bedrock barely moves at the base. The <a href="/tools/SLIDE.html">SLIDE explorer</a> lets you investigate this in detail.</p>
+            <p class="guide-faq-answer">The motion of ice sliding over the surface beneath it, as opposed to internal deformation within the ice. Basal sliding depends on water pressure, bed roughness, and sediment type. A glacier on a well-lubricated soft bed can slide hundreds of metres per year, while one frozen to hard bedrock barely moves at the base. The <a href="/tools/SLIDE.html">SLIDE explorer</a> lets you investigate this in detail.</p>
           </details>
           <details>
             <summary>How do ice sheets contribute to sea-level rise?</summary>
-            <p>When grounded ice flows into the ocean faster than snowfall replaces it, the ice sheet shrinks and sea level rises. This happens through two main pathways: <strong>surface melting</strong> (dominant in Greenland) and <strong>ocean-driven melting of ice shelves</strong> (dominant in Antarctica), which removes buttressing and accelerates ice discharge.</p>
+            <p class="guide-faq-answer">When grounded ice flows into the ocean faster than snowfall replaces it, the ice sheet shrinks and sea level rises. This happens through two main pathways: <strong>surface melting</strong> (dominant in Greenland) and <strong>ocean-driven melting of ice shelves</strong> (dominant in Antarctica), which removes buttressing and accelerates ice discharge.</p>
           </details>
         </div>
       </section>
 
       <!-- ── Explore More Tools ─────────────────────── -->
-      <section class="guide-section" id="guide-more" style="text-align:center;">
+      <section class="guide-section guide-more-section" id="guide-more" style="text-align:center;">
         <p class="guide-label">Explore More</p>
         <h2 class="guide-heading" style="max-width:none;">Part of the Interactive Cryosphere Suite</h2>
         <p class="guide-intro" style="margin-left:auto;margin-right:auto;">SL-ICE is one of three tools for exploring ice sheet science. Each offers a different window into the cryosphere.</p>
@@ -395,5 +715,42 @@
       </section>
 
     </div>
+    </div><!-- /.ghibli-atmosphere -->
+
+    <!-- ── Snowfall + Scroll Reveal ─────────────────── -->
+    <script>
+      /* Snowfall particles */
+      (function () {
+        var atm = document.querySelector('.ghibli-atmosphere');
+        if (!atm || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        for (var i = 0; i < 15; i++) {
+          var s = document.createElement('div');
+          s.className = 'ghibli-snow';
+          s.setAttribute('aria-hidden', 'true');
+          var size = 3 + Math.random() * 3;
+          s.style.cssText =
+            'width:' + size + 'px;height:' + size + 'px;' +
+            'left:' + (Math.random() * 100) + '%;' +
+            'animation-duration:' + (10 + Math.random() * 12) + 's;' +
+            'animation-delay:-' + (Math.random() * 18) + 's;' +
+            'opacity:' + (0.15 + Math.random() * 0.25);
+          atm.appendChild(s);
+        }
+      })();
+
+      /* Scroll-triggered section reveal */
+      (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.querySelectorAll('.guide-section').forEach(function (s) { s.classList.add('revealed'); });
+          return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.guide-section').forEach(function (s) { io.observe(s); });
+      })();
+    </script>
   </body>
 </html>
