@@ -203,6 +203,318 @@ sections:
     design:
       columns: "1"
   - block: markdown
+    id: sl-ice-demo
+    content:
+      title: ""
+      text: |
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Nunito:wght@400;600;700;800&display=swap');
+          #sl-ice-demo .text-3xl { display: none; }
+          #sl-ice-demo .max-w-prose { max-width: none; width: 100%; }
+          #sl-ice-demo > div { max-width: none; }
+          #sl-ice-demo .flex { max-width: min(1180px, calc(100% - 2rem)); }
+          #sl-ice-demo .prose { font-size: 16px; line-height: 1.5; }
+          .slice-hero .slice-hero-logo { margin: 0; }
+
+          .slice-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            gap: clamp(1.4rem, 2.6vw, 2rem);
+            align-items: stretch;
+            padding: clamp(1.35rem, 3vw, 2.5rem);
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            border: 1px solid #d6cfc4;
+            box-shadow: 0 18px 40px rgba(45, 24, 16, 0.08);
+            background:
+              radial-gradient(circle at 12% 18%, rgba(74, 144, 168, 0.14), transparent 28%),
+              radial-gradient(circle at 92% 86%, rgba(61, 139, 110, 0.10), transparent 26%),
+              linear-gradient(160deg, #f8f5f0 0%, #efe9e0 54%, #f6f3ee 100%);
+            transition: border-color 400ms ease;
+          }
+          .slice-hero:hover { border-color: #c4bab0; }
+
+          html.dark .slice-hero {
+            border-color: rgba(90, 172, 224, 0.22);
+            box-shadow: 0 22px 46px rgba(2, 8, 13, 0.42);
+            background:
+              radial-gradient(circle at 12% 18%, rgba(90, 172, 224, 0.16), transparent 30%),
+              radial-gradient(circle at 92% 86%, rgba(77, 191, 160, 0.12), transparent 28%),
+              linear-gradient(160deg, rgba(6, 18, 27, 0.98) 0%, rgba(8, 23, 33, 0.96) 54%, rgba(8, 19, 28, 0.98) 100%);
+          }
+          html.dark .slice-hero:hover { border-color: rgba(90, 172, 224, 0.35); }
+
+          .slice-hero-copy {
+            display: grid;
+            gap: 1.1rem;
+            align-content: start;
+          }
+
+          .slice-hero-brand { margin-bottom: 0; }
+
+          .slice-hero-logo {
+            width: min(100%, 480px);
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 14px 32px rgba(45, 24, 16, 0.12));
+          }
+          .slice-hero-logo--dark  { display: none; }
+          html.dark .slice-hero-logo--light { display: none; }
+          html.dark .slice-hero-logo--dark  { display: block; }
+          html.dark .slice-hero-logo {
+            filter: drop-shadow(0 0 24px rgba(90, 172, 224, 0.12));
+          }
+
+          .slice-hero-lead {
+            margin: 0.8rem 0;
+            width: 100%;
+            color: #2d1810;
+            font-size: clamp(1.25rem, 1.9vw, 1.72rem);
+            line-height: 1.22;
+            font-weight: 750;
+          }
+          html.dark .slice-hero-lead { color: #e8dfd0; }
+
+          a.slice-hero-brand,
+          a.slice-hero-lead {
+            text-decoration: none;
+            color: inherit;
+          }
+          a.slice-hero-brand:hover,
+          a.slice-hero-lead:hover { opacity: 0.85; }
+
+          .slice-hero-summary {
+            max-width: 74ch;
+            margin: 0;
+            color: #4a3828;
+            font-size: 1.08rem;
+            line-height: 1.78;
+          }
+          html.dark .slice-hero-summary { color: #b7c8d6; }
+
+          .slice-hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            margin-top: 1.45rem;
+          }
+
+          .slice-hero-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0.82rem 1.5rem;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+          }
+          .slice-hero-btn:hover,
+          .slice-hero-btn:focus-visible { transform: translateY(-1px); }
+
+          .slice-hero-btn--primary {
+            background: linear-gradient(135deg, #3d8b6e 0%, #4a90a8 100%);
+            color: #f7fdff;
+            box-shadow: 0 16px 28px rgba(61, 139, 110, 0.24);
+          }
+
+          .slice-hero-btn--ghost {
+            background: #f3efe9;
+            border-color: #d6cfc4;
+            color: #4a3828;
+          }
+          html.dark .slice-hero-btn--ghost {
+            background: rgba(8, 20, 29, 0.92);
+            border-color: rgba(121, 186, 214, 0.24);
+            color: #c6d8e8;
+          }
+
+          .slice-hero-showcase {
+            display: grid;
+            align-content: stretch;
+            align-self: stretch;
+            justify-self: end;
+            width: min(100%, 760px);
+            height: 100%;
+          }
+
+          .slice-hero-frame {
+            width: 100%;
+            height: 100%;
+            min-height: 420px;
+            border: 1px solid #c4bab0;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 22px 50px rgba(45, 24, 16, 0.12);
+            position: relative;
+            background: linear-gradient(160deg, #061f31 0%, #0c3a53 58%, #15536b 100%);
+          }
+          html.dark .slice-hero-frame {
+            border-color: rgba(116, 175, 205, 0.28);
+            box-shadow: 0 28px 60px rgba(2, 8, 13, 0.56);
+            background: linear-gradient(160deg, #03111c 0%, #092437 58%, #0d3550 100%);
+          }
+
+          .slice-hero-chrome-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(100, 160, 200, 0.15);
+            background: rgba(10, 20, 35, 0.6);
+          }
+
+          .slice-hero-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+          }
+
+          .slice-hero-url {
+            margin-left: 10px;
+            flex: 1;
+            height: 24px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            background: rgba(6, 14, 24, 0.5);
+            color: #6a8a9a;
+          }
+
+          .slice-hero-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            position: relative;
+            text-decoration: none;
+            overflow: hidden;
+          }
+
+          .slice-hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
+
+          .slice-hero-play {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 300ms ease;
+          }
+          .slice-hero-preview:hover .slice-hero-play { opacity: 1; }
+
+          .slice-hero-play-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(74, 144, 168, 0.9);
+            box-shadow: 0 0 30px rgba(74, 144, 168, 0.4);
+          }
+
+          .slice-hero-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            color: rgba(255, 255, 255, 0.7);
+          }
+
+          .slice-hero-wip {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 2;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+            background: rgba(210, 160, 60, 0.15);
+            color: #a07020;
+            border: 1px solid rgba(210, 160, 60, 0.3);
+          }
+          html.dark .slice-hero-wip {
+            background: rgba(232, 168, 96, 0.12);
+            color: #e8a860;
+            border-color: rgba(232, 168, 96, 0.25);
+          }
+
+          @media (max-width: 900px) {
+            .slice-hero {
+              grid-template-columns: 1fr;
+            }
+            .slice-hero-showcase {
+              width: 100%;
+              justify-self: auto;
+            }
+            .slice-hero-frame {
+              min-height: 320px;
+            }
+            .slice-hero-preview {
+              aspect-ratio: 1.6 / 1;
+            }
+          }
+        </style>
+        <div class="slice-hero not-prose">
+          <span class="slice-hero-wip">unfinished demo</span>
+          <div class="slice-hero-copy">
+            <a class="slice-hero-brand" href="/tools/sl-ice/">
+              <img class="slice-hero-logo slice-hero-logo--light" src="/tools/sl-ice-logo-light.png" alt="SL-ICE logo" loading="lazy" />
+              <img class="slice-hero-logo slice-hero-logo--dark" src="/tools/sl-ice-logo-dark.png" alt="SL-ICE logo" loading="lazy" />
+            </a>
+            <a class="slice-hero-lead" href="/tools/sl-ice/">Explore Real Ice Sheet Physics</a>
+            <p class="slice-hero-summary">SL-ICE brings Antarctic glaciology to life with a real-time Blatter&ndash;Pattyn simulator. Adjust climate parameters, watch ice flow, and understand the science behind sea-level rise &mdash; all in your browser.</p>
+            <div class="slice-hero-actions">
+              <a class="slice-hero-btn slice-hero-btn--primary" href="/tools/sl-ice/">Launch Simulator</a>
+              <a class="slice-hero-btn slice-hero-btn--ghost" href="/tools/sl-ice/landing.html#challenges">View Challenges</a>
+            </div>
+          </div>
+          <div class="slice-hero-showcase">
+            <div class="slice-hero-frame">
+              <div class="slice-hero-chrome-bar">
+                <div class="slice-hero-dot" style="background:#ff5f57"></div>
+                <div class="slice-hero-dot" style="background:#febc2e"></div>
+                <div class="slice-hero-dot" style="background:#28c840"></div>
+                <div class="slice-hero-url">sl-ice.app</div>
+              </div>
+              <a href="/tools/sl-ice/" class="slice-hero-preview">
+                <img class="slice-hero-img" src="/tools/slice_demo.png" alt="SL-ICE simulator demo — real-time ice sheet cross-section" loading="lazy" />
+                <div class="slice-hero-play">
+                  <div class="slice-hero-play-circle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="8,5 20,12 8,19" /></svg>
+                  </div>
+                </div>
+                <div class="slice-hero-badge">Click to launch</div>
+              </a>
+            </div>
+          </div>
+        </div>
+    design:
+      columns: "1"
+  - block: markdown
     id: glacio-sliding-demo
     content:
       title: ""
@@ -451,337 +763,6 @@ sections:
             window.addEventListener('blur', onBlur);
           })();
         </script>
-    design:
-      columns: "1"
-  - block: markdown
-    id: sl-ice-demo
-    content:
-      title: ""
-      text: |
-        <style>
-          @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Nunito:wght@400;600;700;800&display=swap');
-          #sl-ice-demo .text-3xl { display: none; }
-          #sl-ice-demo .max-w-prose { max-width: none; width: 100%; }
-          #sl-ice-demo > div { max-width: none; }
-          #sl-ice-demo .flex { max-width: min(1180px, calc(100% - 2rem)); }
-          #sl-ice-demo .prose { font-size: 16px; line-height: 1.5; }
-          .slice-hero .slice-hero-logo { margin: 0; }
-
-          .slice-hero {
-            display: grid;
-            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-            gap: clamp(1.4rem, 2.6vw, 2rem);
-            align-items: stretch;
-            padding: clamp(1.35rem, 3vw, 2.5rem);
-            border-radius: 30px;
-            overflow: hidden;
-            position: relative;
-            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            border: 1px solid #d6cfc4;
-            box-shadow: 0 18px 40px rgba(45, 24, 16, 0.08);
-            background:
-              radial-gradient(circle at 12% 18%, rgba(74, 144, 168, 0.14), transparent 28%),
-              radial-gradient(circle at 92% 86%, rgba(61, 139, 110, 0.10), transparent 26%),
-              linear-gradient(160deg, #f8f5f0 0%, #efe9e0 54%, #f6f3ee 100%);
-            transition: border-color 400ms ease;
-          }
-          .slice-hero:hover { border-color: #c4bab0; }
-
-          html.dark .slice-hero {
-            border-color: rgba(90, 172, 224, 0.22);
-            box-shadow: 0 22px 46px rgba(2, 8, 13, 0.42);
-            background:
-              radial-gradient(circle at 12% 18%, rgba(90, 172, 224, 0.16), transparent 30%),
-              radial-gradient(circle at 92% 86%, rgba(77, 191, 160, 0.12), transparent 28%),
-              linear-gradient(160deg, rgba(6, 18, 27, 0.98) 0%, rgba(8, 23, 33, 0.96) 54%, rgba(8, 19, 28, 0.98) 100%);
-          }
-          html.dark .slice-hero:hover { border-color: rgba(90, 172, 224, 0.35); }
-
-          .slice-hero-copy {
-            display: grid;
-            gap: 1.1rem;
-            align-content: start;
-          }
-
-          .slice-hero-brand { margin-bottom: 0; }
-
-          .slice-hero-logo {
-            width: min(100%, 480px);
-            height: auto;
-            display: block;
-            filter: drop-shadow(0 14px 32px rgba(45, 24, 16, 0.12));
-          }
-          .slice-hero-logo--dark  { display: none; }
-          html.dark .slice-hero-logo--light { display: none; }
-          html.dark .slice-hero-logo--dark  { display: block; }
-          html.dark .slice-hero-logo {
-            filter: drop-shadow(0 0 24px rgba(90, 172, 224, 0.12));
-          }
-
-          .slice-hero-lead {
-            margin: 0.8rem 0;
-            width: 100%;
-            color: #2d1810;
-            font-size: clamp(1.25rem, 1.9vw, 1.72rem);
-            line-height: 1.22;
-            font-weight: 750;
-          }
-          html.dark .slice-hero-lead { color: #e8dfd0; }
-
-          a.slice-hero-brand,
-          a.slice-hero-lead {
-            text-decoration: none;
-            color: inherit;
-          }
-          a.slice-hero-brand:hover,
-          a.slice-hero-lead:hover { opacity: 0.85; }
-
-          .slice-hero-summary {
-            max-width: 74ch;
-            margin: 0;
-            color: #4a3828;
-            font-size: 1.08rem;
-            line-height: 1.78;
-          }
-          html.dark .slice-hero-summary { color: #b7c8d6; }
-
-          .slice-hero-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.85rem;
-            margin-top: 1.45rem;
-          }
-
-          .slice-hero-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 48px;
-            padding: 0.82rem 1.5rem;
-            border-radius: 999px;
-            border: 1px solid transparent;
-            font-weight: 700;
-            text-decoration: none;
-            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
-          }
-          .slice-hero-btn:hover,
-          .slice-hero-btn:focus-visible { transform: translateY(-1px); }
-
-          .slice-hero-btn--primary {
-            background: linear-gradient(135deg, #3d8b6e 0%, #4a90a8 100%);
-            color: #f7fdff;
-            box-shadow: 0 16px 28px rgba(61, 139, 110, 0.24);
-          }
-
-          .slice-hero-btn--ghost {
-            background: #f3efe9;
-            border-color: #d6cfc4;
-            color: #4a3828;
-          }
-          html.dark .slice-hero-btn--ghost {
-            background: rgba(8, 20, 29, 0.92);
-            border-color: rgba(121, 186, 214, 0.24);
-            color: #c6d8e8;
-          }
-
-          .slice-hero-showcase {
-            display: grid;
-            align-content: stretch;
-            align-self: stretch;
-            justify-self: end;
-            width: min(100%, 760px);
-            height: 100%;
-          }
-
-          .slice-hero-frame {
-            width: 100%;
-            height: 100%;
-            min-height: 420px;
-            border: 1px solid #c4bab0;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 22px 50px rgba(45, 24, 16, 0.12);
-            position: relative;
-            background: linear-gradient(160deg, #061f31 0%, #0c3a53 58%, #15536b 100%);
-          }
-          html.dark .slice-hero-frame {
-            border-color: rgba(116, 175, 205, 0.28);
-            box-shadow: 0 28px 60px rgba(2, 8, 13, 0.56);
-            background: linear-gradient(160deg, #03111c 0%, #092437 58%, #0d3550 100%);
-          }
-
-          .slice-hero-chrome-bar {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 14px;
-            border-bottom: 1px solid rgba(100, 160, 200, 0.15);
-            background: rgba(10, 20, 35, 0.6);
-          }
-
-          .slice-hero-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-          }
-
-          .slice-hero-url {
-            margin-left: 10px;
-            flex: 1;
-            height: 24px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
-            display: flex;
-            align-items: center;
-            padding: 0 10px;
-            background: rgba(6, 14, 24, 0.5);
-            color: #6a8a9a;
-          }
-
-          .slice-hero-preview {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            aspect-ratio: 4 / 3;
-            position: relative;
-            text-decoration: none;
-            background: linear-gradient(135deg, #0a1a3a 0%, #0d2847 30%, #0f3355 60%, #1a4a6e 100%);
-          }
-
-          .slice-hero-svg {
-            width: 80%;
-            max-width: 400px;
-            opacity: 0.75;
-          }
-
-          .slice-hero-caption {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.75rem;
-            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
-          }
-
-          .slice-hero-play {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 300ms ease;
-          }
-          .slice-hero-preview:hover .slice-hero-play { opacity: 1; }
-
-          .slice-hero-play-circle {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(74, 144, 168, 0.9);
-            box-shadow: 0 0 30px rgba(74, 144, 168, 0.4);
-          }
-
-          .slice-hero-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
-            background: rgba(0, 0, 0, 0.5);
-            color: rgba(255, 255, 255, 0.7);
-          }
-
-          .slice-hero-wip {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            z-index: 2;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            font-family: 'IBM Plex Mono', 'SF Mono', monospace;
-            background: rgba(210, 160, 60, 0.15);
-            color: #a07020;
-            border: 1px solid rgba(210, 160, 60, 0.3);
-          }
-          html.dark .slice-hero-wip {
-            background: rgba(232, 168, 96, 0.12);
-            color: #e8a860;
-            border-color: rgba(232, 168, 96, 0.25);
-          }
-
-          @media (max-width: 900px) {
-            .slice-hero {
-              grid-template-columns: 1fr;
-            }
-            .slice-hero-showcase {
-              width: 100%;
-              justify-self: auto;
-            }
-            .slice-hero-frame {
-              min-height: 320px;
-            }
-            .slice-hero-preview {
-              aspect-ratio: 1.6 / 1;
-            }
-          }
-        </style>
-        <div class="slice-hero not-prose">
-          <span class="slice-hero-wip">unfinished demo</span>
-          <div class="slice-hero-copy">
-            <a class="slice-hero-brand" href="/tools/sl-ice/">
-              <img class="slice-hero-logo slice-hero-logo--light" src="/tools/sl-ice-logo-dark.png" alt="SL-ICE logo" loading="lazy" />
-              <img class="slice-hero-logo slice-hero-logo--dark" src="/tools/sl-ice-logo-light.png" alt="SL-ICE logo" loading="lazy" />
-            </a>
-            <a class="slice-hero-lead" href="/tools/sl-ice/">Explore Real Ice Sheet Physics</a>
-            <p class="slice-hero-summary">SL-ICE brings Antarctic glaciology to life with a real-time Blatter&ndash;Pattyn simulator. Adjust climate parameters, watch ice flow, and understand the science behind sea-level rise &mdash; all in your browser.</p>
-            <div class="slice-hero-actions">
-              <a class="slice-hero-btn slice-hero-btn--primary" href="/tools/sl-ice/">Launch Simulator</a>
-              <a class="slice-hero-btn slice-hero-btn--ghost" href="/tools/sl-ice/landing.html#challenges">View Challenges</a>
-            </div>
-          </div>
-          <div class="slice-hero-showcase">
-            <div class="slice-hero-frame">
-              <div class="slice-hero-chrome-bar">
-                <div class="slice-hero-dot" style="background:#ff5f57"></div>
-                <div class="slice-hero-dot" style="background:#febc2e"></div>
-                <div class="slice-hero-dot" style="background:#28c840"></div>
-                <div class="slice-hero-url">sl-ice.app</div>
-              </div>
-              <a href="/tools/sl-ice/" class="slice-hero-preview">
-                <svg viewBox="0 0 800 300" class="slice-hero-svg">
-                  <path d="M0 280 Q100 260 200 250 Q300 220 400 230 Q500 210 600 240 Q700 255 800 270 L800 300 L0 300 Z" fill="#3a2820" />
-                  <path d="M0 120 Q100 100 200 110 Q300 80 400 90 Q500 70 550 100 L550 250 Q500 210 400 230 Q300 220 200 250 Q100 260 0 280 Z" fill="#6bb8d6" opacity="0.8" />
-                  <path d="M550 100 Q600 80 700 90 Q750 95 800 100 L800 270 Q700 255 600 240 Q550 230 550 250 Z" fill="#1a5a80" opacity="0.6" />
-                  <line x1="550" y1="100" x2="550" y2="250" stroke="#e06868" stroke-width="2" stroke-dasharray="6 3" />
-                  <circle cx="80" cy="40" r="2" fill="white" opacity="0.5" />
-                  <circle cx="150" cy="48" r="2" fill="white" opacity="0.5" />
-                  <circle cx="250" cy="56" r="2" fill="white" opacity="0.5" />
-                  <circle cx="350" cy="64" r="2" fill="white" opacity="0.5" />
-                  <circle cx="420" cy="72" r="2" fill="white" opacity="0.5" />
-                  <circle cx="180" cy="80" r="2" fill="white" opacity="0.5" />
-                  <circle cx="300" cy="88" r="2" fill="white" opacity="0.5" />
-                </svg>
-                <span class="slice-hero-caption">Real-time ice sheet simulation</span>
-                <div class="slice-hero-play">
-                  <div class="slice-hero-play-circle">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="8,5 20,12 8,19" /></svg>
-                  </div>
-                </div>
-                <div class="slice-hero-badge">Click to launch</div>
-              </a>
-            </div>
-          </div>
-        </div>
     design:
       columns: "1"
   - block: tools-feedback
