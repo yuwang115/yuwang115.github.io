@@ -41,6 +41,34 @@
          Ghibli Atmosphere — Landing Page Styles
          ══════════════════════════════════════════════════ */
 
+      /* ── Fix: unlayered * { margin:0; padding:0 } in globals CSS
+             overrides @layer utilities. Re-declare at unlayered scope
+             so class specificity (0,1,0) wins over * (0,0,0). ────── */
+      .mx-auto  { margin-inline: auto; }
+      .mt-1  { margin-top: 0.25rem; }
+      .mt-4  { margin-top: 1rem; }
+      .mt-5  { margin-top: 1.25rem; }
+      .mt-8  { margin-top: 2rem; }
+      .mb-1  { margin-bottom: 0.25rem; }
+      .mb-2  { margin-bottom: 0.5rem; }
+      .mb-3  { margin-bottom: 0.75rem; }
+      .mb-4  { margin-bottom: 1rem; }
+      .mb-5  { margin-bottom: 1.25rem; }
+      .mb-6  { margin-bottom: 1.5rem; }
+      .mb-8  { margin-bottom: 2rem; }
+      .mb-12 { margin-bottom: 3rem; }
+      .ml-3  { margin-left: 0.75rem; }
+      .p-5   { padding: 1.25rem; }
+      .p-6   { padding: 1.5rem; }
+      .p-8   { padding: 2rem; }
+      .px-2  { padding-inline: 0.5rem; }
+      .px-3  { padding-inline: 0.75rem; }
+      .px-6  { padding-inline: 1.5rem; }
+      .py-0\.5 { padding-block: 0.125rem; }
+      .py-1  { padding-block: 0.25rem; }
+      .py-8  { padding-block: 2rem; }
+
+
       /* ── Keyframes ──────────────────────────────────── */
       @keyframes cloud-drift {
         0%   { transform: translateX(-140%); }
@@ -135,6 +163,7 @@
       }
       .guide-section.revealed { opacity: 1; transform: translateY(0); }
       @media (min-width: 768px) { .guide-section { padding: 5rem 2.5rem; } }
+      @media (min-width: 1024px) { .guide-section { padding: 5.5rem 3rem; } }
 
       .guide-label {
         text-transform: uppercase;
@@ -166,9 +195,21 @@
       .guide-grid {
         display: grid;
         gap: 1.1rem;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        grid-template-columns: 1fr;
       }
-      .guide-grid--3 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+      @media (min-width: 560px) {
+        .guide-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (min-width: 960px) {
+        .guide-grid { grid-template-columns: repeat(4, 1fr); }
+      }
+      .guide-grid--3 { grid-template-columns: 1fr; }
+      @media (min-width: 560px) {
+        .guide-grid--3 { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (min-width: 860px) {
+        .guide-grid--3 { grid-template-columns: repeat(3, 1fr); }
+      }
 
       .guide-card {
         position: relative;
@@ -279,11 +320,14 @@
       }
 
       /* ── Steps ─────────────────────────────────────── */
+      .guide-content-narrow {
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto;
+      }
       .guide-steps {
         display: grid;
         gap: 1.5rem;
-        max-width: 720px;
-        margin: 0 auto;
       }
       .guide-step {
         display: grid;
@@ -338,8 +382,6 @@
 
       /* ── FAQ ────────────────────────────────────────── */
       .guide-faq {
-        max-width: 720px;
-        margin: 0 auto;
       }
       .guide-faq details {
         padding: 1rem 0.6rem;
@@ -400,11 +442,23 @@
         text-underline-offset: 2px;
       }
 
+      /* ── Hero title bridge ─────────────────────────── */
+      .guide-hero-title {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        text-align: center;
+      }
+      .guide-heading--hero {
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+        font-weight: 800;
+        color: var(--text-primary);
+        margin: 0 0 0.75rem;
+        line-height: 1.2;
+      }
+
       /* ── Illustration images ──────────────────────────── */
       .guide-panorama {
         width: 100%;
-        max-width: 1080px;
-        margin: 0 auto;
         padding: 0 1.5rem;
         position: relative;
         z-index: 2;
@@ -442,8 +496,7 @@
       .guide-watercolor-section > * { position: relative; z-index: 1; }
 
       .guide-cross-section {
-        max-width: 720px;
-        margin: 2rem auto 0;
+        margin: 2rem 0 0;
       }
       .guide-cross-section img {
         width: 100%;
@@ -479,6 +532,7 @@
       .guide-more-section {
         position: relative;
         overflow: hidden;
+        text-align: center;
       }
       .guide-more-section::before {
         content: '';
@@ -503,6 +557,7 @@
         flex-wrap: wrap;
         gap: 0.8rem;
         margin-top: 1rem;
+        justify-content: center;
       }
       .guide-tools-row a {
         display: inline-flex;
@@ -543,13 +598,21 @@
       <div class="ghibli-cloud ghibli-cloud--2" aria-hidden="true"></div>
       <div class="ghibli-cloud ghibli-cloud--3" aria-hidden="true"></div>
 
+    <div class="guide-wrap">
+
     <!-- Ghibli panorama banner -->
     <div class="guide-panorama">
       <img class="guide-panorama-light" src="./images/ghibli-glacier-panorama.jpg" alt="Ghibli-style panoramic Antarctic glacier landscape with penguins" loading="lazy" />
       <img class="guide-panorama-dark" src="./images/ghibli-glacier-panorama-dark.jpg" alt="Ghibli-style nighttime Antarctic landscape with aurora borealis" loading="lazy" />
     </div>
 
-    <div class="guide-wrap">
+      <!-- ── Hero Title ─────────────────────────────── -->
+      <section class="guide-section guide-hero-title" id="guide-hero">
+        <h1 class="guide-heading guide-heading--hero">Explore Ice Sheet Science</h1>
+        <p class="guide-intro">An interactive guide to understanding how ice sheets work, why they matter, and what happens when the climate changes.</p>
+      </section>
+
+      <div class="guide-divider" aria-hidden="true"></div>
 
       <!-- ── Why Ice Sheets Matter ──────────────────── -->
       <section class="guide-section guide-watercolor-section" id="guide-background">
@@ -588,11 +651,14 @@
         </div>
       </section>
 
+      <div class="guide-divider" aria-hidden="true"></div>
+
       <!-- ── Quick Start Guide ──────────────────────── -->
       <section class="guide-section" id="guide-quickstart">
         <p class="guide-label">Getting Started</p>
         <h2 class="guide-heading">Quick Start Guide</h2>
         <p class="guide-intro">Five steps to start exploring ice sheet physics.</p>
+        <div class="guide-content-narrow">
         <div class="guide-steps">
           <div class="guide-step">
             <span class="guide-step-num">1</span>
@@ -630,7 +696,10 @@
             </div>
           </div>
         </div>
+        </div>
       </section>
+
+      <div class="guide-divider" aria-hidden="true"></div>
 
       <!-- ── Scenarios ──────────────────────────────── -->
       <section class="guide-section" id="guide-scenarios">
@@ -656,11 +725,14 @@
         </div>
       </section>
 
+      <div class="guide-divider" aria-hidden="true"></div>
+
       <!-- ── Key Concepts ───────────────────────────── -->
       <section class="guide-section" id="guide-concepts">
         <p class="guide-label">Learn</p>
         <h2 class="guide-heading">Key Concepts Explained</h2>
         <p class="guide-intro">New to glaciology? These concise explanations cover everything you need to understand what you're seeing in the simulator.</p>
+        <div class="guide-content-narrow">
         <figure class="guide-cross-section">
           <img src="./images/ghibli-ice-cross-section.jpg" alt="Ghibli-style cross-section illustration showing ice sheet, ice shelf, bedrock, and grounding line" loading="lazy" />
           <figcaption>Ice sheet anatomy: ice flows from the interior toward the coast, transitioning to a floating ice shelf at the grounding line.</figcaption>
@@ -699,14 +771,15 @@
             <p class="guide-faq-answer">When grounded ice flows into the ocean faster than snowfall replaces it, the ice sheet shrinks and sea level rises. This happens through two main pathways: <strong>surface melting</strong> (dominant in Greenland) and <strong>ocean-driven melting of ice shelves</strong> (dominant in Antarctica), which removes buttressing and accelerates ice discharge.</p>
           </details>
         </div>
+        </div>
       </section>
 
       <!-- ── Explore More Tools ─────────────────────── -->
-      <section class="guide-section guide-more-section" id="guide-more" style="text-align:center;">
+      <section class="guide-section guide-more-section" id="guide-more">
         <p class="guide-label">Explore More</p>
-        <h2 class="guide-heading" style="max-width:none;">Part of the Interactive Cryosphere Suite</h2>
-        <p class="guide-intro" style="margin-left:auto;margin-right:auto;">SL-ICE is one of three tools for exploring ice sheet science. Each offers a different window into the cryosphere.</p>
-        <div class="guide-tools-row" style="justify-content:center;">
+        <h2 class="guide-heading">Part of the Interactive Cryosphere Suite</h2>
+        <p class="guide-intro">SL-ICE is one of three tools for exploring ice sheet science. Each offers a different window into the cryosphere.</p>
+        <div class="guide-tools-row">
           <a class="guide-tool-primary" href="./index.html">Launch Simulator</a>
           <a class="guide-tool-ghost" href="/tools/slide-guide/">SLIDE: Sliding Physics</a>
           <a class="guide-tool-ghost" href="/tools/3d-ice/">3D ICE: 3D Explorer</a>
