@@ -562,17 +562,17 @@ sections:
           }
         </style>
         <div class="slice-hero not-prose">
-          <span class="slice-hero-wip">unfinished demo</span>
+          <span class="slice-hero-wip">early access</span>
           <div class="slice-hero-copy">
             <a class="slice-hero-brand" href="/tools/sl-ice/">
               <img class="slice-hero-logo slice-hero-logo--light" src="/tools/sl-ice-logo-light.png" alt="SL-ICE logo" loading="lazy" />
               <img class="slice-hero-logo slice-hero-logo--dark" src="/tools/sl-ice-logo-dark.png" alt="SL-ICE logo" loading="lazy" />
             </a>
-            <a class="slice-hero-lead" href="/tools/sl-ice/">Explore Real Ice Sheet Physics</a>
-            <p class="slice-hero-summary">SL-ICE brings Antarctic glaciology to life with a real-time Blatter&ndash;Pattyn simulator. Adjust climate parameters, watch ice flow, and understand the science behind sea-level rise &mdash; all in your browser.</p>
+            <a class="slice-hero-lead" href="/tools/sl-ice/">Slice Off a Piece of Antarctica</a>
+            <p class="slice-hero-summary">SL-ICE &mdash; the <strong>S</strong>treamline <strong>L</strong>ab <strong>I</strong>nteractive <strong>C</strong>ryosphere <strong>E</strong>xplorer &mdash; lets you take a 2D slice through the real Antarctic ice sheet and run it, live, in your browser. Pick a flowline, warm the ocean, dial down the snow, and watch the glacier respond in real time &mdash; the same physics glaciologists use, now in your hands.</p>
             <div class="slice-hero-actions">
-              <a class="slice-hero-btn slice-hero-btn--primary" href="/tools/sl-ice/">Launch Simulator</a>
-              <a class="slice-hero-btn slice-hero-btn--ghost" href="/tools/sl-ice/landing.html">Guide &amp; Learn</a>
+              <a class="slice-hero-btn slice-hero-btn--primary" href="/tools/sl-ice/">Take a Slice</a>
+              <a class="slice-hero-btn slice-hero-btn--ghost" href="/tools/sl-ice/landing.html">Read the Guide</a>
             </div>
           </div>
           <div class="slice-hero-showcase">
