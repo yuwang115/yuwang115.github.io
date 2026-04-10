@@ -28,6 +28,79 @@
     <link rel="modulepreload" crossorigin href="./assets/globals-Bv6N0P3K.js">
     <link rel="stylesheet" crossorigin href="./assets/globals-CBsFuZej.css">
 
+    <!-- ═══════════════════════════════════════════════════════════
+         TEMPORARY PATCH — remove after rebuilding SL-ICE React source
+         ═══════════════════════════════════════════════════════════
+         Bug: clicking a flowline on the 3D Antarctica viewer expands
+         its info card in the right-side list, but React's useEffect
+         calls scrollIntoView({ block: 'nearest' }) BEFORE React commits
+         the expansion render. The browser scrolls based on the still-
+         collapsed (short) card, so after React expands it, the
+         Start Simulation button sits below the visible viewport.
+
+         Permanent fix lives in the SL-ICE React source — see the
+         FlowlineCatalog useEffect diff shipped alongside this patch.
+         Once that rebuild is deployed into static/tools/sl-ice/, this
+         whole <script> block should be deleted.
+    -->
+    <script>
+      (function () {
+        if (typeof Element === 'undefined') return;
+        var nativeScrollIntoView = Element.prototype.scrollIntoView;
+        if (!nativeScrollIntoView) return;
+
+        function isFlowlineCard(el) {
+          return !!(el && el.classList &&
+                    el.classList.contains('mb-1.5') &&
+                    el.classList.contains('rounded-xl') &&
+                    el.closest('[class*="overflow-y-auto"]'));
+        }
+
+        function smartScroll(el) {
+          var container = el.closest('[class*="overflow-y-auto"]');
+          if (!container) {
+            nativeScrollIntoView.call(el, { behavior: 'smooth', block: 'end' });
+            return;
+          }
+          var cardRect = el.getBoundingClientRect();
+          var containerRect = container.getBoundingClientRect();
+          var cardOffset = (cardRect.top - containerRect.top) + container.scrollTop;
+          var pad = 12;
+          var targetScroll;
+          if (cardRect.height + pad * 2 <= containerRect.height) {
+            // Card fits — align near the top with breathing room above
+            targetScroll = cardOffset - pad;
+          } else {
+            // Card taller than container — bottom-align so Start Simulation is visible
+            targetScroll = cardOffset + cardRect.height - containerRect.height + pad;
+          }
+          container.scrollTo({
+            top: Math.max(0, targetScroll),
+            behavior: 'smooth'
+          });
+        }
+
+        Element.prototype.scrollIntoView = function () {
+          try {
+            if (isFlowlineCard(this)) {
+              var self = this;
+              // Wait for React to commit the expansion re-render before measuring.
+              // Two rAFs is the standard way to land after a React flush.
+              requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                  smartScroll(self);
+                });
+              });
+              return;
+            }
+          } catch (e) {
+            // Fall through to native behavior on any error
+          }
+          return nativeScrollIntoView.apply(this, arguments);
+        };
+      })();
+    </script>
+
     <!-- Ghibli loading screen + atmospheric vignette -->
     <style>
       /* ── Loading Screen ─────────────────────────────── */
