@@ -15,6 +15,7 @@ show_breadcrumb: false
 hide_date: true
 reading_time: false
 explorer_theme: ice
+explorer_style: slide-tools
 explorer_kicker: "Sliding Regime Explorer"
 image:
   alt_text: "SLIDE explorer showing a 3D surface of the unified sliding law."

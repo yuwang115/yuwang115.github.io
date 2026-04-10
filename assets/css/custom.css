@@ -2260,3 +2260,441 @@ html.dark .gallery-card-summary {
 html.dark .gallery-card-date {
   color: #5a7a8d;
 }
+
+/* ==========================================================================
+   SLIDE-TOOLS STYLE OVERRIDES — applied when explorer_style: slide-tools
+   in front matter. Mirrors the SLIDE hero card from /tools/ landing page:
+   silvery-navy light palette + deep-space dark palette, bright cyan (#00e5c8)
+   dark accent, glaciology contour-line SVG background, uppercase tracked
+   buttons (sci-instrument vibe). Scope: .explorer-page-shell--ice[data-style="slide-tools"]
+   — does NOT touch 3D ICE or any other page using the same layout.
+   ========================================================================== */
+
+/* Contour line drift animation from Tools SLIDE card */
+@keyframes slide-tools-contour-drift {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 24px -12px, 0 0; }
+}
+
+/* --- Light mode token overrides --- */
+.explorer-page-shell--ice[data-style="slide-tools"] {
+  --ice-ink: #1a2633;
+  --ice-text: #2a3f50;
+  --ice-muted: #5a6d7f;
+  --ice-border: #c8d4de;
+  --ice-border-strong: #a8b8c8;
+  --ice-panel: #ffffff;
+  --ice-panel-soft: linear-gradient(160deg, #f4f6f9 0%, #e8ecf2 54%, #f4f6f9 100%);
+  --ice-panel-card: #ffffff;
+  --ice-panel-card-soft: #ffffff;
+  --ice-panel-card-sky: #ffffff;
+  --ice-panel-card-mint: #ffffff;
+  --ice-panel-card-frost: #ffffff;
+  --ice-panel-card-glacier: #ffffff;
+  --ice-panel-hero: linear-gradient(160deg, #f4f6f9 0%, #e8ecf2 54%, #f4f6f9 100%);
+  --ice-region-bg: linear-gradient(160deg, #f4f6f9 0%, #eef2f7 54%, #f4f6f9 100%);
+  --ice-feature-section-bg: linear-gradient(160deg, #edf1f5 0%, #e0e6ee 50%, #edf1f5 100%);
+  --ice-source-section-bg: linear-gradient(160deg, #f4f6f9 0%, #eef2f7 54%, #f4f6f9 100%);
+  --ice-feedback-only-bg: linear-gradient(160deg, #edf1f5 0%, #e0e6ee 50%, #edf1f5 100%);
+  --ice-community-section-bg: linear-gradient(160deg, #f4f6f9 0%, #eef2f7 54%, #f4f6f9 100%);
+  --ice-final-cta-bg: #ffffff;
+  --ice-shadow: 0 20px 50px rgba(20, 28, 45, 0.10);
+  --ice-shadow-strong: 0 24px 56px rgba(20, 28, 45, 0.18);
+  --ice-card-shadow: var(--ice-shadow);
+  --ice-card-shadow-soft: var(--ice-shadow);
+  --ice-card-shadow-strong: var(--ice-shadow-strong);
+  --ice-card-border: #c8d4de;
+  --ice-card-border-strong: #c8d4de;
+  --ice-card-border-hover: #a8b8c8;
+  --ice-card-sheen-feature: transparent;
+  --ice-card-sheen-video: transparent;
+  --ice-card-sheen-source: transparent;
+  --ice-card-sheen-link: transparent;
+  --ice-feature-heading: #1a2633;
+  --ice-video-heading: #1a2633;
+  --ice-source-heading: #1a2633;
+  --ice-faq-summary: #1a2633;
+  --ice-faq-border: #c8d4de;
+  --ice-showcase-border: #b8c8d6;
+  --ice-button-secondary-bg: #edf1f5;
+  --ice-button-secondary-text: #1a2633;
+  --ice-button-ghost-bg: #edf1f5;
+  --ice-button-ghost-border: #c0ccd6;
+  --ice-button-ghost-text: #2a3f50;
+  --ice-highlight-card-border: #c8d4de;
+  --ice-highlight-card-bg: #ffffff;
+  --ice-highlight-card-shadow: none;
+  --ice-community-item-border: #c8d4de;
+  --ice-community-item-bg: #ffffff;
+  --ice-community-item-shadow: none;
+  --ice-community-strong: #1a2633;
+  --ice-feedback-card-border: #c8d4de;
+  --ice-feedback-card-bg: #ffffff;
+  --ice-feedback-label: #1a2633;
+  --ice-feedback-input-border: #c0ccd6;
+  --ice-feedback-input-bg: #ffffff;
+  --ice-feedback-input-text: #1a2633;
+  --ice-feedback-input-placeholder: #8a99aa;
+  --ice-accent: #1e3a4f;
+  --ice-accent-2: #2a5670;
+  font-feature-settings: "lnum", "locl";
+}
+
+/* --- Dark mode token overrides: deep space + bright cyan accent --- */
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] {
+  --ice-ink: #e0f0ea;
+  --ice-text: #b8ccd8;
+  --ice-muted: #7a94a3;
+  --ice-border: rgba(0, 229, 200, 0.18);
+  --ice-border-strong: rgba(0, 229, 200, 0.32);
+  --ice-panel: #141824;
+  --ice-panel-soft: linear-gradient(160deg, #141824 0%, #1e2538 54%, #1a1f2e 100%);
+  --ice-panel-card: #181f30;
+  --ice-panel-card-soft: #181f30;
+  --ice-panel-card-sky: #181f30;
+  --ice-panel-card-mint: #181f30;
+  --ice-panel-card-frost: #181f30;
+  --ice-panel-card-glacier: #181f30;
+  --ice-panel-hero: linear-gradient(160deg, #141824 0%, #1e2538 54%, #1a1f2e 100%);
+  --ice-region-bg: linear-gradient(160deg, #0e121c 0%, #141824 54%, #121624 100%);
+  --ice-feature-section-bg: linear-gradient(160deg, #141824 0%, #1e2538 54%, #1a1f2e 100%);
+  --ice-source-section-bg: linear-gradient(160deg, #0e121c 0%, #141824 54%, #121624 100%);
+  --ice-feedback-only-bg: linear-gradient(160deg, #141824 0%, #1e2538 54%, #1a1f2e 100%);
+  --ice-community-section-bg: linear-gradient(160deg, #0e121c 0%, #141824 54%, #121624 100%);
+  --ice-final-cta-bg: #0e121c;
+  --ice-shadow: 0 22px 50px rgba(10, 15, 30, 0.50);
+  --ice-shadow-strong: 0 28px 64px rgba(5, 10, 20, 0.65);
+  --ice-card-shadow: var(--ice-shadow);
+  --ice-card-shadow-soft: var(--ice-shadow);
+  --ice-card-shadow-strong: var(--ice-shadow-strong);
+  --ice-card-border: rgba(0, 229, 200, 0.16);
+  --ice-card-border-strong: rgba(0, 229, 200, 0.20);
+  --ice-card-border-hover: rgba(0, 229, 200, 0.38);
+  --ice-feature-heading: #e0f0ea;
+  --ice-video-heading: #e0f0ea;
+  --ice-source-heading: #e0f0ea;
+  --ice-faq-summary: #e0f0ea;
+  --ice-faq-border: rgba(0, 229, 200, 0.14);
+  --ice-showcase-border: rgba(0, 229, 200, 0.25);
+  --ice-button-secondary-bg: rgba(20, 24, 36, 0.92);
+  --ice-button-secondary-text: #a0c8c0;
+  --ice-button-ghost-bg: rgba(20, 24, 36, 0.92);
+  --ice-button-ghost-border: rgba(0, 229, 200, 0.20);
+  --ice-button-ghost-text: #a0c8c0;
+  --ice-highlight-card-border: rgba(0, 229, 200, 0.14);
+  --ice-highlight-card-bg: #181f30;
+  --ice-community-item-border: rgba(0, 229, 200, 0.14);
+  --ice-community-item-bg: #181f30;
+  --ice-community-strong: #e0f0ea;
+  --ice-feedback-card-border: rgba(0, 229, 200, 0.16);
+  --ice-feedback-card-bg: #181f30;
+  --ice-feedback-label: #e0f0ea;
+  --ice-feedback-input-border: rgba(0, 229, 200, 0.18);
+  --ice-feedback-input-bg: #0e121c;
+  --ice-feedback-input-text: #e0f0ea;
+  --ice-feedback-input-placeholder: #7a94a3;
+  --ice-accent: #00e5c8;
+  --ice-accent-2: #00b8a0;
+}
+
+/* --- Typography: Inter + Notion compression --- */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-page-title {
+  letter-spacing: -0.0332em; /* -2.125px at 64px */
+  line-height: 1;
+  font-weight: 700;
+  font-feature-settings: "lnum", "locl";
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] h2 {
+  letter-spacing: -0.03125em; /* -1.5px at 48px */
+  line-height: 1.04;
+  font-weight: 700;
+  font-feature-settings: "lnum", "locl";
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] h3 {
+  letter-spacing: -0.0114em; /* -0.25px at 22px */
+  line-height: 1.27;
+  font-weight: 700;
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-ice-lead {
+  letter-spacing: -0.008em;
+  font-weight: 600;
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-summary,
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-section p,
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-section li {
+  line-height: 1.6;
+}
+
+/* --- Region label + page kicker: navy/cyan chip with uppercase tracking --- */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-region-label,
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-page-kicker {
+  display: inline-block;
+  padding: 0.32rem 0.78rem;
+  border-radius: 6px;
+  background: rgba(30, 58, 79, 0.08);
+  color: #1e3a4f;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  width: fit-content;
+  border: 1px solid rgba(30, 58, 79, 0.14);
+}
+
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-region-label,
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-page-kicker {
+  background: rgba(0, 229, 200, 0.10);
+  color: #00e5c8;
+  border-color: rgba(0, 229, 200, 0.24);
+}
+
+/* --- Sections: silvery-navy background, 16px radius, cool shadow --- */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-ice-hero,
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-section {
+  border: 1px solid var(--ice-border);
+  border-radius: 16px;
+  box-shadow: var(--ice-shadow);
+  overflow: hidden;
+}
+
+/* --- Hero: signature contour-line SVG background from Tools SLIDE card --- */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-ice-hero {
+  position: relative;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cpath d='M-20,60 C80,30 180,90 280,55 S440,25 620,70' fill='none' stroke='%235a7a8f' stroke-width='1.2' opacity='0.12'/%3E%3Cpath d='M-20,120 C60,90 170,150 270,110 S420,80 620,130' fill='none' stroke='%235a7a8f' stroke-width='0.9' opacity='0.09'/%3E%3Cpath d='M-20,180 C90,150 160,210 260,175 S410,145 620,190' fill='none' stroke='%235a7a8f' stroke-width='1.4' opacity='0.14'/%3E%3Cpath d='M-20,240 C50,215 150,270 250,235 S400,205 620,250' fill='none' stroke='%237a99ad' stroke-width='1.0' opacity='0.10'/%3E%3Cpath d='M-20,300 C80,275 180,330 280,295 S430,265 620,310' fill='none' stroke='%235a7a8f' stroke-width='0.8' opacity='0.08'/%3E%3Cpath d='M-20,355 C70,335 160,375 260,345 S410,325 620,365' fill='none' stroke='%237a99ad' stroke-width='1.1' opacity='0.10'/%3E%3Cg opacity='0.07' stroke='%235a7a8f' stroke-width='0.6'%3E%3Cline x1='147' y1='152' x2='153' y2='152'/%3E%3Cline x1='150' y1='149' x2='150' y2='155'/%3E%3Cline x1='347' y1='232' x2='353' y2='232'/%3E%3Cline x1='350' y1='229' x2='350' y2='235'/%3E%3Cline x1='497' y1='102' x2='503' y2='102'/%3E%3Cline x1='500' y1='99' x2='500' y2='105'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat,
+    linear-gradient(160deg, #f4f6f9 0%, #e8ecf2 54%, #f4f6f9 100%);
+  animation: slide-tools-contour-drift 28s linear infinite;
+  border-color: #c8d4de;
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-ice-hero:hover {
+  border-color: #a8b8c8;
+}
+
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-ice-hero {
+  border-color: rgba(0, 229, 200, 0.20);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cpath d='M-20,60 C80,30 180,90 280,55 S440,25 620,70' fill='none' stroke='%2300e5c8' stroke-width='1.2' opacity='0.25'/%3E%3Cpath d='M-20,120 C60,90 170,150 270,110 S420,80 620,130' fill='none' stroke='%2300e5c8' stroke-width='0.9' opacity='0.18'/%3E%3Cpath d='M-20,180 C90,150 160,210 260,175 S410,145 620,190' fill='none' stroke='%2300e5c8' stroke-width='1.4' opacity='0.30'/%3E%3Cpath d='M-20,240 C50,215 150,270 250,235 S400,205 620,250' fill='none' stroke='%2300b8a0' stroke-width='1.0' opacity='0.22'/%3E%3Cpath d='M-20,300 C80,275 180,330 280,295 S430,265 620,310' fill='none' stroke='%2300e5c8' stroke-width='0.8' opacity='0.15'/%3E%3Cpath d='M-20,355 C70,335 160,375 260,345 S410,325 620,365' fill='none' stroke='%2300b8a0' stroke-width='1.1' opacity='0.20'/%3E%3Cg opacity='0.10' stroke='%2300e5c8' stroke-width='0.6'%3E%3Cline x1='147' y1='152' x2='153' y2='152'/%3E%3Cline x1='150' y1='149' x2='150' y2='155'/%3E%3Cline x1='347' y1='232' x2='353' y2='232'/%3E%3Cline x1='497' y1='102' x2='503' y2='102'/%3E%3Cline x1='500' y1='99' x2='500' y2='105'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat,
+    linear-gradient(160deg, #141824 0%, #1e2538 54%, #1a1f2e 100%);
+}
+
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-ice-hero:hover {
+  border-color: rgba(0, 229, 200, 0.35);
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-ice-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explorer-page-shell--ice[data-style="slide-tools"] .explorer-ice-hero {
+    animation: none;
+  }
+}
+
+/* --- Feature cards: white/space, cool border, navy→cyan accent stripe --- */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card,
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card:nth-child(4n + 1),
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card:nth-child(4n + 2),
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card:nth-child(4n + 3),
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card:nth-child(4n + 4) {
+  --ice-card-bg: var(--ice-panel-card);
+  padding: 1.4rem 1.3rem 1.3rem;
+  border: 1px solid var(--ice-card-border);
+  border-radius: 10px;
+  background: var(--ice-panel-card);
+  box-shadow: var(--ice-shadow);
+}
+
+/* Kill the radial sheen from the base style */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card::before {
+  background: none;
+}
+
+/* Accent top stripe — deep navy → steel in light, cyan glow in dark */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #1e3a4f 0%, #2a5670 50%, #3a6a85 100%);
+  border-radius: 10px 10px 0 0;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 2;
+}
+
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card::after {
+  background: linear-gradient(90deg, #00e5c8 0%, #00b8a0 100%);
+  opacity: 0.7;
+  box-shadow: 0 0 10px rgba(0, 229, 200, 0.3);
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card:hover,
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card:focus-within {
+  transform: none;
+  border-color: var(--ice-card-border-hover);
+  box-shadow: var(--ice-shadow-strong);
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ice-ink);
+  margin: 0 0 0.55rem;
+}
+
+/* --- Buttons: sci-instrument style (uppercase, tracked, 6px radius) --- */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-button {
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-button:hover,
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-button:focus-visible {
+  transform: none;
+  filter: brightness(1.1);
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-button:active {
+  transform: scale(0.98);
+}
+
+/* Primary CTA: solid deep navy in light, bright cyan in dark (matches Tools) */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-button--primary {
+  background: #1e3a4f;
+  color: #f0f8ff;
+  box-shadow: 0 8px 20px rgba(30, 58, 79, 0.22);
+  border-color: transparent;
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-button--primary:hover,
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-button--primary:focus-visible {
+  filter: brightness(1.15);
+  box-shadow: 0 8px 24px rgba(30, 58, 79, 0.30);
+}
+
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-button--primary {
+  background: #00e5c8;
+  color: #0d1117;
+  box-shadow: 0 8px 20px rgba(0, 229, 200, 0.22);
+}
+
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-button--primary:hover,
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-button--primary:focus-visible {
+  filter: brightness(1.1);
+  box-shadow: 0 0 16px rgba(0, 229, 200, 0.30), 0 8px 24px rgba(0, 229, 200, 0.28);
+}
+
+/* Ghost buttons inside hero keep size; small-case on story preset cards */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card .explorer-button--ghost {
+  width: auto;
+  min-height: 0;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  background: rgba(30, 58, 79, 0.06);
+  border-color: rgba(30, 58, 79, 0.18);
+  color: #1e3a4f;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card .explorer-button--ghost {
+  background: rgba(0, 229, 200, 0.08);
+  border-color: rgba(0, 229, 200, 0.22);
+  color: #00e5c8;
+}
+
+/* --- Showcase iframe frame: deep navy / space backing + glow in dark --- */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-showcase-frame {
+  border-radius: 8px;
+  border: 1px solid #b8c8d6;
+  box-shadow: 0 20px 50px rgba(15, 22, 38, 0.16);
+  background: linear-gradient(160deg, #141824 0%, #1a2235 58%, #1e2840 100%);
+}
+
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-showcase-frame {
+  border-color: rgba(0, 229, 200, 0.25);
+  box-shadow:
+    inset 0 0 30px rgba(0, 229, 200, 0.04),
+    0 24px 56px rgba(5, 10, 20, 0.55);
+  background: linear-gradient(160deg, #0c1018 0%, #141c2a 58%, #181f30 100%);
+}
+
+/* --- FAQ: Notion toggle divider style --- */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-faq {
+  display: flex;
+  flex-direction: column;
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-faq details {
+  border: none;
+  border-top: 1px solid var(--ice-border);
+  border-radius: 0;
+  background: transparent;
+  padding: 1rem 0.25rem;
+  box-shadow: none;
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-faq details:last-child {
+  border-bottom: 1px solid var(--ice-border);
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-faq summary {
+  font-weight: 600;
+  color: var(--ice-ink);
+  font-size: 1rem;
+  letter-spacing: -0.005em;
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-faq p {
+  color: var(--ice-text);
+  line-height: 1.65;
+}
+
+/* --- Community + feedback whisper cards --- */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-community-list li {
+  border-radius: 10px;
+}
+
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-mission-audiences li,
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-ice-highlights li {
+  border-radius: 12px;
+  background: var(--ice-panel-card);
+  border: 1px solid var(--ice-border);
+  box-shadow: var(--ice-shadow);
+}
+
+/* Quick Start numbered step circles — navy in light, cyan in dark */
+.explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card span[style*="border-radius:50%"] {
+  background: linear-gradient(135deg, #1e3a4f 0%, #2a5670 100%) !important;
+  box-shadow: 0 4px 12px rgba(30, 58, 79, 0.22);
+  color: #f0f8ff !important;
+}
+
+html.dark .explorer-page-shell--ice[data-style="slide-tools"] .explorer-feature-card span[style*="border-radius:50%"] {
+  background: linear-gradient(135deg, #00e5c8 0%, #00b8a0 100%) !important;
+  box-shadow: 0 0 14px rgba(0, 229, 200, 0.30), 0 4px 12px rgba(0, 229, 200, 0.18);
+  color: #0d1117 !important;
+}
+
+/* --- Reduced motion fallback for button micro-interactions --- */
+@media (prefers-reduced-motion: reduce) {
+  .explorer-page-shell--ice[data-style="slide-tools"] .explorer-button:hover,
+  .explorer-page-shell--ice[data-style="slide-tools"] .explorer-button:focus-visible,
+  .explorer-page-shell--ice[data-style="slide-tools"] .explorer-button:active {
+    transform: none;
+  }
+}

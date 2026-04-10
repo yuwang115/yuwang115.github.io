@@ -4,7 +4,7 @@
 {{ if eq .RelPermalink "/zh/tools/3d-ice/" }}
   {{ $landingLocale = "zh-CN" }}
 {{ end }}
-<div class="explorer-page-shell{{ with .Params.explorer_theme }} explorer-page-shell--{{ . }}{{ end }}">
+<div class="explorer-page-shell{{ with .Params.explorer_theme }} explorer-page-shell--{{ . }}{{ end }}"{{ with .Params.explorer_style }} data-style="{{ . }}"{{ end }}>
   <article>
     {{ if $is3dIceLanding }}
     <div class="explorer-page-topbar">
