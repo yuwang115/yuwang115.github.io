@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="./fvicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>SL-ICE — Streamline Lab Interactive Cryosphere Explorer</title>
     <meta name="description" content="Slice off a piece of Antarctica. SL-ICE lets you take a 2D slice through the real Antarctic ice sheet and run it live in your browser — pick a flowline, warm the ocean, dial down the snow, and watch the glacier respond. The same physics glaciologists use, now in your hands." />
 
@@ -150,6 +150,207 @@
         .ghibli-loader-snow { display: none; }
       }
     </style>
+
+    <!-- ── Mobile Experience Optimization ─────────────── -->
+    <style id="mobile-opt">
+      /* Phase 6A: Orientation hint - hidden by default */
+      #orientation-hint { display: none; }
+
+      /* Phase 1A: Dynamic viewport height */
+      .h-screen {
+        height: 100vh;
+        height: 100dvh;
+      }
+
+      /* Phase 1B: Prevent browser scroll/zoom on canvas */
+      main[role="main"] canvas {
+        touch-action: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      @media (max-width: 767px) {
+        /* Phase 2A: Scale up small text */
+        .text-\[8px\]  { font-size: 10px !important; }
+        .text-\[9px\]  { font-size: 11px !important; }
+        .text-\[10px\] { font-size: 12px !important; }
+        .text-\[11px\] { font-size: 13px !important; }
+        .text-xs       { font-size: 13px !important; }
+
+        /* Phase 3A: Enlarge pill buttons */
+        .pill-btn {
+          padding: 8px 16px !important;
+          font-size: 13px !important;
+          min-height: 36px !important;
+          min-width: 36px !important;
+        }
+        .pill-btn svg {
+          width: 16px !important;
+          height: 16px !important;
+        }
+
+        /* Phase 3B: Enlarge slider track & thumb */
+        input[type=range] {
+          height: 8px !important;
+          margin: 8px 0 !important;
+        }
+        input[type=range]::-webkit-slider-thumb {
+          width: 24px !important;
+          height: 24px !important;
+          border-width: 3px !important;
+        }
+        input[type=range]::-moz-range-thumb {
+          width: 24px !important;
+          height: 24px !important;
+          border-width: 3px !important;
+        }
+
+        /* Phase 3C: Enlarge info tooltip triggers */
+        .group.relative.inline-flex.cursor-help > span:first-child {
+          width: 1.25rem !important;
+          height: 1.25rem !important;
+          font-size: 10px !important;
+        }
+        .group.relative.inline-flex.cursor-help {
+          position: relative;
+        }
+        .group.relative.inline-flex.cursor-help::before {
+          content: '';
+          position: absolute;
+          inset: -8px;
+        }
+
+        /* Phase 3D: Enlarge toggle switches */
+        .toggle-switch {
+          width: 44px !important;
+          height: 24px !important;
+        }
+        .toggle-switch::after {
+          width: 20px !important;
+          height: 20px !important;
+        }
+
+        /* Phase 4A: Sidebar width cap */
+        aside[role="complementary"] {
+          width: min(75vw, 260px) !important;
+          padding: 12px !important;
+        }
+
+        /* Explorer flowline list: bottom sheet on mobile */
+        .flex.flex-1.min-h-0 {
+          flex-direction: column !important;
+        }
+        .flex.flex-1.min-h-0 > .glass-panel {
+          width: 100% !important;
+          max-height: 40vh !important;
+          overflow-y: auto !important;
+          border-left: none !important;
+          border-top: 1px solid var(--border) !important;
+          border-radius: 12px 12px 0 0 !important;
+          flex-shrink: 0 !important;
+          order: 1 !important;
+        }
+        .flex.flex-1.min-h-0 > .flex-1.min-w-0 {
+          order: 0 !important;
+          min-height: 50vh !important;
+        }
+
+        /* Phase 4B: Dashboard as bottom sheet */
+        section[role="dialog"] {
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          top: auto !important;
+          width: 100% !important;
+          height: auto !important;
+          max-height: 45vh !important;
+          border-radius: 12px 12px 0 0 !important;
+          overflow-y: auto !important;
+          transition: transform 0.3s ease !important;
+        }
+        /* Hide resize handles on mobile */
+        section[role="dialog"] [style*="cursor: nw-resize"],
+        section[role="dialog"] [style*="cursor: ne-resize"],
+        section[role="dialog"] [style*="cursor: sw-resize"],
+        section[role="dialog"] [style*="cursor: se-resize"],
+        section[role="dialog"] [style*="cursor: n-resize"],
+        section[role="dialog"] [style*="cursor: s-resize"],
+        section[role="dialog"] [style*="cursor: e-resize"],
+        section[role="dialog"] [style*="cursor: w-resize"] {
+          display: none !important;
+        }
+
+        /* Phase 4C: Notification safe areas */
+        .fixed.top-4.left-1\/2 {
+          top: max(1rem, env(safe-area-inset-top, 1rem)) !important;
+        }
+        .absolute.bottom-20.left-1\/2 {
+          bottom: calc(5rem + env(safe-area-inset-bottom, 0px)) !important;
+        }
+
+        /* Phase 4D: Header toolbar compaction */
+        header[role="banner"] {
+          padding: 6px 8px !important;
+          gap: 4px !important;
+          flex-wrap: wrap !important;
+        }
+
+        /* Phase 6B: Safe area insets */
+        header[role="banner"] {
+          padding-top: max(6px, env(safe-area-inset-top, 6px)) !important;
+        }
+
+      }
+
+      /* Phase 5A: Tooltip tap support for touch devices */
+      @media (pointer: coarse) {
+        .group:hover > .group-hover\:opacity-100 {
+          opacity: 0 !important;
+        }
+        .touch-active > .pointer-events-none {
+          opacity: 1 !important;
+          pointer-events: auto !important;
+        }
+      }
+
+      /* Phase 6A: Orientation hint (portrait only) */
+      @media (max-width: 767px) and (orientation: portrait) {
+        #orientation-hint:not(.dismissed) {
+          display: flex !important;
+          position: fixed;
+          inset: 0;
+          z-index: 99998;
+          background: rgba(0, 0, 0, 0.55);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          gap: 1rem;
+          color: #e8dfd0;
+          font-family: 'Nunito', sans-serif;
+          font-size: 1.1rem;
+          font-weight: 600;
+          text-align: center;
+          padding: 2rem;
+          animation: orient-fade-in 0.4s ease-out;
+        }
+      }
+      @keyframes orient-fade-in {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+      @keyframes orient-rotate {
+        0%, 100% { transform: rotate(0deg); }
+        50%      { transform: rotate(-90deg); }
+      }
+      #orientation-hint .orient-icon {
+        width: 56px;
+        height: 56px;
+        animation: orient-rotate 2s ease-in-out infinite;
+      }
+    </style>
   </head>
   <body>
     <!-- Ghibli loading screen -->
@@ -161,6 +362,17 @@
         <div class="ghibli-loader-mountain"></div>
         <div class="ghibli-loader-mountain"></div>
       </div>
+    </div>
+
+    <!-- Phase 6A: Portrait orientation hint -->
+    <div id="orientation-hint">
+      <svg class="orient-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="2" width="16" height="20" rx="2"/>
+        <path d="M12 18h.01"/>
+        <path d="M15 1l2 2-2 2" opacity="0.7"/>
+      </svg>
+      <span>Rotate your device for the best experience</span>
+      <span style="font-size:0.8rem;opacity:0.6">Tap to dismiss</span>
     </div>
 
     <div id="root"></div>
@@ -182,6 +394,87 @@
             'animation-delay:-' + (Math.random() * 5) + 's;';
           loader.appendChild(s);
         }
+      })();
+
+      /* ── Mobile Optimization Patches ──────────────── */
+
+      /* Phase 5A: Tooltip tap-to-toggle on touch devices */
+      (function () {
+        if (!('ontouchstart' in window) && !navigator.maxTouchPoints) return;
+        document.addEventListener('click', function (e) {
+          var trigger = e.target.closest('.group.relative.inline-flex.cursor-help');
+          if (!trigger) {
+            document.querySelectorAll('.touch-active').forEach(function (el) {
+              el.classList.remove('touch-active');
+            });
+            return;
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          var wasActive = trigger.classList.contains('touch-active');
+          document.querySelectorAll('.touch-active').forEach(function (el) {
+            el.classList.remove('touch-active');
+          });
+          if (!wasActive) trigger.classList.add('touch-active');
+        }, true);
+      })();
+
+      /* Phase 5B+5C: Canvas touch-to-mouse bridge with double-tap */
+      (function () {
+        if (!('ontouchstart' in window) && !navigator.maxTouchPoints) return;
+        var lastTap = 0;
+        var observer = new MutationObserver(function () {
+          var canvas = document.querySelector('main[role="main"] canvas');
+          if (!canvas || canvas.__sliceTouchPatched) return;
+          canvas.__sliceTouchPatched = true;
+
+          function dispatch(type, touch) {
+            canvas.dispatchEvent(new MouseEvent(type, {
+              clientX: touch.clientX, clientY: touch.clientY,
+              button: 0, bubbles: true
+            }));
+          }
+          canvas.addEventListener('touchstart', function (e) {
+            if (e.touches.length > 1) return;
+            e.preventDefault();
+            dispatch('mousedown', e.changedTouches[0]);
+          }, { passive: false });
+          canvas.addEventListener('touchmove', function (e) {
+            if (e.touches.length > 1) return;
+            e.preventDefault();
+            dispatch('mousemove', e.changedTouches[0]);
+          }, { passive: false });
+          canvas.addEventListener('touchend', function (e) {
+            var touch = e.changedTouches[0];
+            dispatch('mouseup', touch);
+            var now = Date.now();
+            if (now - lastTap < 300) {
+              dispatch('dblclick', touch);
+              lastTap = 0;
+            } else {
+              dispatch('click', touch);
+              lastTap = now;
+            }
+          }, { passive: false });
+        });
+        var root = document.getElementById('root');
+        if (root) observer.observe(root, { childList: true, subtree: true });
+      })();
+
+      /* Phase 6A: Orientation hint - dismiss on tap, auto-dismiss 4s, once per session */
+      (function () {
+        var hint = document.getElementById('orientation-hint');
+        if (!hint) return;
+        if (sessionStorage.getItem('slice-orient-dismissed')) {
+          hint.classList.add('dismissed');
+          return;
+        }
+        function dismiss() {
+          hint.classList.add('dismissed');
+          sessionStorage.setItem('slice-orient-dismissed', '1');
+        }
+        hint.addEventListener('click', dismiss);
+        setTimeout(dismiss, 4000);
       })();
 
       /* Hide loader when React renders */
