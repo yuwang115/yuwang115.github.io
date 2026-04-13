@@ -2261,6 +2261,25 @@ html.dark .gallery-card-date {
   color: #5a7a8d;
 }
 
+@media (max-width: 480px) {
+  .gallery-grid {
+    gap: 1.25rem;
+    padding: 1rem 1rem 2rem;
+  }
+  .gallery-card {
+    border-radius: 14px;
+  }
+  .gallery-card-body {
+    padding: 0.85rem 1rem 1rem;
+  }
+  .gallery-card-title {
+    font-size: 1rem;
+  }
+  .gallery-card-summary {
+    font-size: 0.82rem;
+  }
+}
+
 /* ==========================================================================
    SLIDE-TOOLS STYLE OVERRIDES — applied when explorer_style: slide-tools
    in front matter. Mirrors the SLIDE hero card from /tools/ landing page:

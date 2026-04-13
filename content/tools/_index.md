@@ -16,6 +16,26 @@ sections:
           #sl-ice-demo.hbb-section { padding-top: 48px; padding-bottom: 48px; }
           #tool-feedback.hbb-section { padding-top: 48px; padding-bottom: 48px; }
 
+          @media (max-width: 640px) {
+            #antarctica-3d-demo.hbb-section,
+            #glacio-sliding-demo.hbb-section,
+            #sl-ice-demo.hbb-section,
+            #tool-feedback.hbb-section {
+              padding-top: 28px;
+              padding-bottom: 28px;
+            }
+          }
+
+          @media (max-width: 480px) {
+            #antarctica-3d-demo.hbb-section,
+            #glacio-sliding-demo.hbb-section,
+            #sl-ice-demo.hbb-section,
+            #tool-feedback.hbb-section {
+              padding-top: 20px;
+              padding-bottom: 20px;
+            }
+          }
+
           #antarctica-3d-demo .text-3xl { display: none; }
           #antarctica-3d-demo .max-w-prose { max-width: none; width: 100%; }
           #antarctica-3d-demo > div { max-width: none; }
@@ -176,6 +196,51 @@ sections:
             .ice-hero-frame {
               min-height: 400px;
               aspect-ratio: 1.6 / 1;
+            }
+          }
+
+          @media (max-width: 640px) {
+            .ice-hero {
+              padding: clamp(1rem, 2.5vw, 1.35rem);
+              border-radius: 20px;
+            }
+            .ice-hero-lead {
+              font-size: clamp(1.1rem, 4.5vw, 1.35rem);
+            }
+            .ice-hero-summary {
+              font-size: 0.95rem;
+              line-height: 1.65;
+            }
+            .ice-hero-actions {
+              grid-template-columns: 1fr;
+              gap: 0.6rem;
+            }
+            .ice-hero-frame {
+              min-height: 300px;
+              border-radius: 16px;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .ice-hero {
+              padding: 0.9rem;
+              border-radius: 16px;
+              gap: 1rem;
+            }
+            .ice-hero-lead {
+              font-size: 1.05rem;
+              margin: 0.4rem 0;
+            }
+            .ice-hero-summary {
+              font-size: 0.88rem;
+              line-height: 1.6;
+            }
+            .ice-hero-frame {
+              min-height: 240px;
+              border-radius: 12px;
+            }
+            .ice-hero-logo {
+              max-width: 260px;
             }
           }
         </style>
@@ -554,6 +619,57 @@ sections:
             }
           }
 
+          @media (max-width: 640px) {
+            .slice-hero {
+              padding: clamp(1rem, 2.5vw, 1.35rem);
+              border-radius: 20px;
+            }
+            .slice-hero-lead {
+              font-size: clamp(1.1rem, 4.5vw, 1.35rem);
+            }
+            .slice-hero-summary {
+              font-size: 0.95rem;
+              line-height: 1.65;
+            }
+            .slice-hero-actions {
+              flex-direction: column;
+            }
+            .slice-hero-btn {
+              width: 100%;
+            }
+            .slice-hero-frame {
+              min-height: 260px;
+            }
+            .slice-hero-wip {
+              top: 10px;
+              right: 10px;
+              font-size: 0.6rem;
+              padding: 3px 8px;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .slice-hero {
+              padding: 0.9rem;
+              border-radius: 16px;
+              gap: 1rem;
+            }
+            .slice-hero-lead {
+              font-size: 1.05rem;
+              margin: 0.4rem 0;
+            }
+            .slice-hero-summary {
+              font-size: 0.88rem;
+              line-height: 1.6;
+            }
+            .slice-hero-frame {
+              min-height: 220px;
+            }
+            .slice-hero-logo {
+              max-width: 240px;
+            }
+          }
+
           @media (prefers-reduced-motion: reduce) {
             .slice-hero::after, .slice-hero-btn--primary::before { animation: none !important; display: none; }
             .slice-hero-frame { animation: none !important; }
@@ -760,6 +876,74 @@ sections:
             display: block;
           }
 
+          /* Static preview (mobile-first, also shown as placeholder on desktop) */
+          .slide-hero-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-decoration: none;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+          }
+
+          .slide-hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+          }
+          .slide-hero-preview:hover .slide-hero-img { transform: scale(1.02); }
+
+          .slide-hero-play {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 300ms ease;
+          }
+          .slide-hero-preview:hover .slide-hero-play { opacity: 1; }
+          @media (pointer: coarse) {
+            .slide-hero-play { opacity: 1; }
+          }
+
+          .slide-hero-play-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 229, 200, 0.85);
+            box-shadow: 0 0 30px rgba(0, 229, 200, 0.4);
+          }
+
+          .slide-hero-badge {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 5px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+          }
+
+          #slide-hero-iframe-slot {
+            position: absolute;
+            inset: 0;
+          }
+
           .slide-hero-hint {
             position: absolute;
             top: 10px;
@@ -805,6 +989,48 @@ sections:
               aspect-ratio: 1.6 / 1;
             }
           }
+
+          @media (max-width: 640px) {
+            .slide-hero {
+              padding: clamp(1rem, 2.5vw, 1.35rem);
+              border-radius: 12px;
+            }
+            .slide-hero-summary {
+              font-size: 0.95rem;
+              line-height: 1.65;
+              max-width: none;
+            }
+            .slide-hero-actions {
+              grid-template-columns: 1fr;
+              max-width: none;
+              gap: 0.6rem;
+            }
+            .slide-hero-frame {
+              min-height: 300px;
+              border-radius: 6px;
+            }
+            .slide-hero-logo {
+              max-width: 280px;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .slide-hero {
+              padding: 0.9rem;
+              border-radius: 10px;
+              gap: 1rem;
+            }
+            .slide-hero-summary {
+              font-size: 0.88rem;
+              line-height: 1.6;
+            }
+            .slide-hero-frame {
+              min-height: 240px;
+            }
+            .slide-hero-logo {
+              max-width: 240px;
+            }
+          }
         </style>
         <div class="slide-hero not-prose">
           <div class="slide-hero-copy">
@@ -819,34 +1045,22 @@ sections:
           </div>
           <div class="slide-hero-showcase">
             <div class="slide-hero-frame">
-              <span class="slide-hero-hint">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 15l-2 5L9 9l11 4-5 2z"/><path d="M5 3L3 5"/><path d="M2 12H4"/><path d="M12 2v2"/><path d="M4.93 4.93l1.41 1.41"/></svg>
-                Click to interact
-              </span>
-              <iframe title="SLIDE interactive preview" src="/tools/SLIDE_3d_showcase.html" loading="lazy" referrerpolicy="no-referrer"></iframe>
+              <!-- Static preview — visible on mobile always; on desktop until iframe loads -->
+              <a href="/tools/SLIDE.html" class="slide-hero-preview" id="slide-hero-preview">
+                <img class="slide-hero-img" src="/tools/slide_demo.png" alt="SLIDE 3D surface preview — basal shear stress regime surface" loading="lazy" />
+                <div class="slide-hero-play">
+                  <div class="slide-hero-play-circle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="8,5 20,12 8,19" /></svg>
+                  </div>
+                </div>
+                <div class="slide-hero-badge">Click to launch</div>
+              </a>
+              <!-- Iframe slot — JS inserts the real iframe here on desktop only -->
+              <div id="slide-hero-iframe-slot"></div>
             </div>
           </div>
         </div>
-        <script>
-          (function () {
-            var hint = document.querySelector('.slide-hero-hint');
-            if (!hint) return;
-            var frame = hint.closest('.slide-hero-frame');
-            function hide() {
-              hint.classList.add('is-hidden');
-              frame.removeEventListener('pointerdown', hide);
-              window.removeEventListener('blur', onBlur);
-            }
-            function onBlur() {
-              if (document.activeElement && document.activeElement.tagName === 'IFRAME' &&
-                  frame.contains(document.activeElement)) {
-                hide();
-              }
-            }
-            frame.addEventListener('pointerdown', hide);
-            window.addEventListener('blur', onBlur);
-          })();
-        </script>
+        <script src="/js/slide-hero-loader.js" defer></script>
     design:
       columns: "1"
   - block: tools-feedback
