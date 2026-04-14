@@ -14,3 +14,31 @@ node_modules/
 
 # Build/video artifacts
 output/
+
+# SL-ICE 3D ICE interactive bundle — managed externally, not committed
+static/tools/sl-ice/3d-ice/
+
+# SL-ICE: stale build artifacts from previous builds (old hashed chunks)
+static/tools/sl-ice/assets/AntarcticaExplorer-BIrOUmTw.js
+static/tools/sl-ice/assets/AntarcticaExplorer-BjAQFJ2y.js
+static/tools/sl-ice/assets/AntarcticaExplorer-DHh8jGHR.js
+static/tools/sl-ice/assets/AntarcticaExplorer-Dy0cwLg1.js
+static/tools/sl-ice/assets/AntarcticaExplorer-l75pfM4F.js
+static/tools/sl-ice/assets/globals-B5THIiCG.js
+static/tools/sl-ice/assets/globals-DmOKYP-g.css
+static/tools/sl-ice/assets/jsx-runtime-Dpgk4liF.js
+static/tools/sl-ice/assets/landing-DrEbAEEL.js
+static/tools/sl-ice/assets/main-BIh1AcMr.js
+static/tools/sl-ice/assets/main-D1bAoZN5.js
+static/tools/sl-ice/assets/main-DYRUgaOJ.js
+static/tools/sl-ice/assets/main-Dh-SBBoT.js
+static/tools/sl-ice/assets/main-DxBm5IFT.js
+
+# SL-ICE: macOS file duplication artifacts (files with " 2" suffix)
+static/tools/sl-ice/assets/geometry.worker-BeWaVOGa 2.js
+static/tools/sl-ice/assets/globals-B5THIiCG 2.js
+static/tools/sl-ice/assets/globals-DmOKYP-g 2.css
+static/tools/sl-ice/assets/jsx-runtime-Dpgk4liF 2.js
+static/tools/sl-ice/assets/landing-2F0x1x8p 2.css
+static/tools/sl-ice/assets/landing-DrEbAEEL 2.js
+static/tools/sl-ice/assets/worker-CJo15hgP 2.js
