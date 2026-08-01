@@ -24,20 +24,22 @@ superuser: true
 highlight_name: true
 
 # Role/position/tagline
-role: PhD Candidate
+role: Postdoctoral Scholar
 
 # Organizations/Affiliations to display in Biography blox
 organizations:
-  - name: Institute for Marine and Antarctic Studies (IMAS), University of Tasmania
-    url: https://www.utas.edu.au/imas
-  - name: Australian Antarctic Program Partnership (AAPP)
-    url: https://aappartnership.org.au/
+  - name: Climate Systems Engineering initiative (CSEi),
+    url: https://climate.uchicago.edu/entities/csei/
+  - name: Institute for Climate and Sustainable Growth,
+    url: https://climate.uchicago.edu/
+  - name: The University of Chicago
+    url: https://www.uchicago.edu/
 
 # Social network links
 # Need to use another icon? Simply download the SVG icon to your `assets/media/icons/` folder.
 profiles:
   - icon: at-symbol
-    url: 'mailto:yu.wang0@utas.edu.au'
+    url: 'mailto:wangyu@uchicago.edu'
     label: E-mail Me
   - icon: phone
     url: 'tel:+61412699321'
@@ -63,13 +65,29 @@ interests:
   - Ice–ocean interactions
 
 
+work:
+  - position: Postdoctoral Scholar
+    company_name: Climate Systems Engineering initiative (CSEi), Institute for Climate and Sustainable Growth, The University of Chicago
+    company_url: 'https://climate.uchicago.edu/entities/csei/'
+    date_start: 2026-08-03
+    date_end: ''
+    summary: |
+      Modelling Antarctic ice-sheet and ice-shelf dynamics to assess proposed interventions aimed at slowing glacial ice loss, and to quantify their effectiveness, risks and consequences for long-term sea-level rise.
+  - position: Graduate Researcher
+    company_name: Institute for Marine and Antarctic Studies, University of Tasmania / Australian Antarctic Program Partnership
+    company_url: 'https://www.utas.edu.au/imas'
+    date_start: 2022-08-15
+    date_end: 2026-06-30
+    summary: |
+      Coupled ice-sheet, subglacial hydrology and ice–ocean modelling of the Wilkes Subglacial Basin, East Antarctica, using Elmer/Ice. Co-convenor of the WilkesMIP model intercomparison project.
+
 education:
   - area: PhD (Marine and Antarctic Studies)
     institution: Institute for Marine and Antarctic Studies, University of Tasmania, AU
     date_start: 2022-08-15
     date_end: ''
     summary: |
-      Thesis: Understanding the Future of the Wilkes Subglacial Basin, East Antarctica. Supervised by Dr. Chen Zhao, Dr. Rupert Gladstone, Dr. Ben Galton-Fenzi and Prof. Poul Christoffersen.
+      Thesis: Understanding the Future of the Wilkes Subglacial Basin, East Antarctica — submitted and currently under examination. Supervised by Dr. Chen Zhao, Dr. Rupert Gladstone, Dr. Ben Galton-Fenzi and Prof. Poul Christoffersen.
     # button:
     #   text: 'Read Thesis'
     #   url: 'https://example.com'
@@ -92,12 +110,22 @@ education:
 # Skills
 # Add your own SVG icons to `assets/media/icons/`
 skills:
-  - name: Programming & Tools
+  - name: Modelling
     items:
       - name: Elmer/Ice
-        description: ''
+        description: 'Ice flow'
         percent: 85
         icon: custom/snowflake
+      - name: GlaDS
+        description: 'Subglacial hydrology'
+        percent: 75
+        icon: hero/beaker
+      - name: ROMS
+        description: 'Ocean circulation'
+        percent: 50
+        icon: hero/globe-alt
+  - name: Computing
+    items:
       - name: MATLAB
         description: ''
         percent: 90
@@ -110,6 +138,24 @@ skills:
         description: ''
         percent: 65
         icon: devicon/fortran
+      - name: Linux Shell
+        description: ''
+        percent: 75
+        icon: devicon/linux
+      - name: High-Performance Computing
+        description: ''
+        percent: 80
+        icon: hero/server
+      - name: Git / GitHub
+        description: ''
+        percent: 70
+        icon: devicon/git
+      - name: HTML / CSS
+        description: 'Web development'
+        percent: 65
+        icon: devicon/html5
+  - name: Software
+    items:
       - name: ParaView
         description: ''
         percent: 85
@@ -118,16 +164,10 @@ skills:
         description: ''
         percent: 60
         icon: map
-  # - name: Modelling
-  #   items:
-  #     - name: Elmer/Ice
-  #       description: ''
-  #       percent: 60
-  #      # icon: file
-  #     - name: ROMS
-  #       description: ''
-  #       percent: 60
-  #      # icon: file
+      - name: Adobe Illustrator
+        description: ''
+        percent: 60
+        icon: hero/paint-brush
 
   - name: Interests
     items:
@@ -148,7 +188,7 @@ skills:
         #description: 'Alpine trails and coastal walks across Tasmania.'
         percent: 60
         icon: custom/hiking
-      - name: Badminton
+      - name: Badminton & Tennis
        # description: 'Club‑level doubles—great footwork and fast rallies.'
         percent: 70
         icon: custom/badminton
@@ -189,13 +229,13 @@ awards:
     date_start: '2022-01-01'
     awarder: Australian Antarctic Program Partnership
     summary: |
-      2022 - present.
+      2022 - 2026.
   - title: Tasmanian Graduate Research Scholarship
     date: '2022-01-01'
     date_start: '2022-01-01'
     awarder: University of Tasmania
     summary: |
-      2022 - present.
+      2022 - 2026.
   - title: Executive Dean's Honour Roll
     date: '2021-01-01'
     date_start: '2021-01-01'
@@ -243,6 +283,6 @@ publications:
 
 ## About Me
 
-Yu Wang (王禹) is a fourth-year PhD candidate in glaciology at the Institute for Marine and Antarctic Studies, University of Tasmania, and a member of the Australian Antarctic Program Partnership. My research uses numerical models to investigate Antarctic ice dynamics, subglacial hydrology, and ice–ocean interactions, with the goal of improving projections of future sea-level rise.
+Yu Wang (王禹) is a postdoctoral scholar in glaciology at The University of Chicago. My research uses numerical models to investigate Antarctic ice dynamics, subglacial hydrology, and ice–ocean interactions, and to assess proposed glacial climate interventions aimed at slowing ice loss and its contribution to sea-level rise.
 
-Originally from China, I now call Tasmania—Australia’s heart-shaped southern island—home while I study the frozen south. During weekdays, I model ice sheets on supercomputers; on weekends, you’ll often find me outdoors on hiking trails, climbing routes, badminton courts, or by the shoreline with a camera (or a fishing rod).
+During weekdays, I model ice sheets on supercomputers; on weekends, you’ll often find me outdoors on hiking trails, climbing routes, badminton and tennis courts, or by the shoreline with a camera (or a fishing rod).

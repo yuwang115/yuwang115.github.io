@@ -104,10 +104,10 @@ sections:
     content:
       title: "Teaching Experience"
       text: |
-        - **Teaching Assistant - Ice Sheets, Climate & Sea Level Rise**, 
+        - **Teaching Assistant - Ice Sheets, Climate & Sea Level Rise**, UTAS,
           Sep 2025 - Oct 2025  
           Designed and led practicals; assisted students in analysing model results.
-        - **Lecturer - Kioloa Winter School: Antarctic Tipping Points**, 
+        - **Lecturer - Kioloa Winter School: Antarctic Tipping Points**, ANU,
           Jun 2025  
           Delivered lectures on tipping points and irreversibility within ice sheets.
   - block: markdown
@@ -115,8 +115,12 @@ sections:
     content:
       title: "Professional Service & Development"
       text: |
-        - **Peer Reviewer**, Apr 2025  
-          *Nature Communications*.
+        - **Asian Forum for Polar Sciences (AFoPS) Summer School**, Jul 2026  
+          Polar Research Institute of China, China.
+        - **Creator & Developer - [3D ICE](/tools/3d-ice/)**, Feb 2026  
+          Interactive 3D visualisation for Antarctica and Greenland.
+        - **Peer Reviewer**, Apr 2025 - present  
+          *Nature Communications*, *Journal of Glaciology*, *Communications Earth & Environment*.
         - **Co-convenor - WilkesMIP Project**, Jan 2025 - present  
           Coordinating an international model intercomparison project.
         - **Organiser and Host - UTAS Ice Sheets Group Meeting**, Jun 2023 - Aug 2024  
@@ -134,10 +138,15 @@ sections:
     content:
       title: "Presentations"
       text: |
+        - **Invited Seminar**, School of Oceanography, Shanghai Jiao Tong University (Jul 2026)
+        - **Oral Presentation**, Asia Early Career Polar Forum 2026, Zhuhai (Jun 2026)
+        - **Oral Presentation**, Antarctic Research Centre, Victoria University of Wellington (Feb 2026)
+        - **Oral Presentation**, Climate and Cryosphere Conference 2026, Wellington (Feb 2026)
         - **Oral Presentation**, Antarctica Day Symposium, Hobart (Dec 2025)
         - **Oral Presentation**, FRISP - Southern Hemisphere Workshop, Queensland (Jul 2025)
         - **Invited Seminar**, School of Oceanography, Shanghai Jiao Tong University (Dec 2024)
         - **Poster**, Australian Antarctic Research Conference, Hobart (Nov 2024)
+        - **Oral Presentation**, IMAS HDR Conference, Hobart (Nov 2024)
         - **Invited Seminar**, ICEMAP Antarctic Modelling Workshop, Rovaniemi (May 2024)
         - **Poster**, European Geosciences Union (EGU) General Assembly, Vienna (Apr 2024)
         - **Poster**, AAPP Symposium, Hobart (Oct 2023)

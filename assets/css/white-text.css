@@ -32,7 +32,7 @@ html.dark .home-section[data-wg="about"] :where(a){
   text-decoration: underline;
 }
 
-/* 4) “Yu (Eddie) Wang / PhD Candidate”等英雄区文字兜底 */
+/* 4) “Yu (Eddie) Wang / Postdoctoral Scholar”等英雄区文字兜底 */
 html .home-section[data-wg="about"] .hero-title,
 html .home-section[data-wg="about"] .hero-lead{
   color: #fff !important;

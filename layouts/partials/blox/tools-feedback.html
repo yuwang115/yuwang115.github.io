@@ -10,7 +10,7 @@
 {{ $title := $title_raw | emojify | $page.RenderString }}
 {{ $text := $block.content.text | emojify | $page.RenderString | safeHTML }}
 {{ $form_action := site.Params.feedback.tools_form_endpoint | default ($block.content.action | default "") }}
-{{ $email := site.Params.feedback.fallback_email | default "yu.wang0@utas.edu.au" }}
+{{ $email := site.Params.feedback.fallback_email | default "wangyu@uchicago.edu" }}
 {{ $source_page := $block.content.source_page | default "/tools/" }}
 {{ $source_section_value := $block.content.source_section | default "tool-feedback" }}
 {{ $default_tool := $block.content.default_tool | default "" }}

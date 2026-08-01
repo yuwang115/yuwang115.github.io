@@ -14,8 +14,8 @@ marketing:
   seo:
     site_type: PersonalWebsite
     local_business_type: ''
-    org_name: 'Institute for Marine and Antarctic Studies, University of Tasmania'
-    description: 'Yu Wang (王禹) — PhD candidate in glaciology at IMAS, University of Tasmania. Research: Antarctic ice dynamics, subglacial hydrology, ice–ocean interactions, sea-level rise.'
+    org_name: 'Institute for Climate and Sustainable Growth, The University of Chicago'
+    description: 'Yu Wang (王禹) — postdoctoral scholar in glaciology at the Climate Systems Engineering initiative (CSEi), The University of Chicago. Research: Antarctic ice dynamics, subglacial hydrology, ice–ocean interactions, glacial climate intervention, sea-level rise.'
     twitter: ''
   analytics:
     google_analytics: 'G-TRPE0YG2GQ'
@@ -65,4 +65,4 @@ custom_css:
 
 feedback:
   tools_form_endpoint: 'https://usebasin.com/f/53e802e0991e'
-  fallback_email: 'yu.wang0@utas.edu.au'
+  fallback_email: 'wangyu@uchicago.edu'

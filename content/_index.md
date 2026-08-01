@@ -184,7 +184,7 @@ sections:
         I’m always keen to discuss Antarctic ice dynamics, subglacial hydrology, and modelling workflows. If you’d like to collaborate or invite a talk, feel free to reach out.
       button:
         text: Email Me
-        url: mailto:yu.wang0@utas.edu.au
+        url: mailto:wangyu@uchicago.edu
     design:
       card:
         # Card background color (CSS class)

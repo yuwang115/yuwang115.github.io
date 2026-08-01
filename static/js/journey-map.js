@@ -3,9 +3,16 @@
 
 const stops = [
   {
+    title: 'Chicago, USA — The University of Chicago (CSEi)',
+    coords: [41.7886, -87.5987], // 定位到芝加哥大学 Hyde Park 主校区
+    years: '2026–present',
+    summary:
+      'Postdoctoral scholar in the Climate Systems Engineering initiative, Institute for Climate and Sustainable Growth.',
+  },
+  {
     title: 'Hobart, Australia — IMAS/AAPP',
     coords: [-42.886, 147.3358], // 保持不变 (IMAS Waterfront)
-    years: '2022–present',
+    years: '2019–2026',
     summary: 'PhD and Honours work on East Antarctic ice dynamics at University of Tasmania.',
   },
   {
