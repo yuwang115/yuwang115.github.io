@@ -83,9 +83,10 @@ const stops = [
       worldCopyJump: true,
     }).setView([10, 20], 2);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      subdomains: 'abcd',
+    // Esri World Topo: keyless basemap. CARTO's basemaps now stamp
+    // "API KEY REQUIRED" over tiles requested without a key.
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
       maxZoom: 18,
     }).addTo(map);
 
