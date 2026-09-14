@@ -1,0 +1,222 @@
+{{ if and .IsHome (eq .Type "landing") }}
+<script>
+  /* Landing-page behaviour. Four jobs:
+       1. Activate the 3D ICE iframe — only where a live WebGL runtime is the
+          right trade, and only once the page itself has finished loading.
+       2. Cross-fade the iframe in when the EXPLORER is ready, not when the
+          iframe element fires load.
+       3. Invert the navbar while it floats over the dark hero.
+       4. Start the research-section video just before it scrolls into view. */
+  (() => {
+    const hero = document.querySelector("[data-ed-hero]");
+
+    /* --- 1. Iframe activation ------------------------------------------- */
+
+    const frame = hero && hero.querySelector("[data-ed-hero-frame]");
+    const wideAndPrecise = window.matchMedia("(min-width: 821px) and (pointer: fine)");
+
+    /* Skip the live runtime where it cannot pay for itself. Measured time to a
+       rotating model, with the payload gzipped as production serves it:
+       Fast 4G 4.8 s, Slow 4G 21 s, Fast 3G 42 s.
+
+       Deliberately calibrated on `downlink` rather than `effectiveType`: the
+       "3g" bucket spans roughly 0.7-2.7 Mbps, and a Slow 4G connection at
+       1.65 Mbps reports as "3g" too, so keying off the bucket would deny the
+       model to a large slice of ordinary desktop visitors. At 1.0 Mbps the
+       1.7 MB payload costs more than it returns, and the poster is the better
+       hero; above it the model arrives in the background while the page is
+       already read.
+
+       navigator.connection is Chromium-only; on Safari and Firefox this reads
+       as "no reason to skip", which is the right default. */
+    const SLOW_DOWNLINK_MBPS = 1.0;
+
+    const tooSlow = () => {
+      const c = navigator.connection;
+      if (!c) return false;
+      if (c.saveData) return true;
+      if (/^(slow-)?2g$/.test(c.effectiveType || "")) return true;
+      return typeof c.downlink === "number" && c.downlink > 0 && c.downlink < SLOW_DOWNLINK_MBPS;
+    };
+
+    /* The explorer paints its own "Click to interact" badge in the top-right
+       corner of showcase mode, which lands underneath the navbar. The iframe is
+       same-origin, so nudge the badge down to the hero's bottom edge rather
+       than hiding it — it is stateful, and disappears while the camera is being
+       driven. Silently skipped if the bundle is ever served cross-origin. */
+    const NUDGE_BADGE = `
+      body.showcase .viewer-shell.showcase-idle::after,
+      body.showcase .viewer-shell.showcase-desktop-idle::after {
+        top: auto !important;
+        bottom: 26px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%);
+      }
+    `;
+
+    const frameDoc = () => {
+      try {
+        return frame.contentDocument;
+      } catch {
+        return null; /* cross-origin */
+      }
+    };
+
+    const restyleFrame = () => {
+      const doc = frameDoc();
+      if (!doc) return;
+      const style = doc.createElement("style");
+      style.textContent = NUDGE_BADGE;
+      doc.head.appendChild(style);
+    };
+
+    /* --- 2. Cross-fade on explorer readiness ---------------------------- */
+
+    /* The iframe's load event fires when its subresources are done, which is
+       well before the explorer has decoded the terrain package and built its
+       meshes. Fading in on load meant the explorer's own loading overlay was
+       still painted underneath: 3.1 s of overlap on Fast 4G, 12.8 s on Slow 4G,
+       25.6 s on Fast 3G. Wait for the overlay to actually clear instead. */
+    const REVEAL_TIMEOUT_MS = 25000;
+
+    const revealWhenReady = () => {
+      let done = false;
+      const reveal = () => {
+        if (done) return;
+        done = true;
+        frame.classList.add("is-ready");
+      };
+
+      const doc = frameDoc();
+      const overlay = doc && doc.getElementById("loadingOverlay");
+
+      /* No overlay to watch — cross-origin, or the bundle changed shape. Do not
+         hold the poster hostage to an element that may never exist. */
+      if (!overlay) {
+        reveal();
+        return;
+      }
+      if (overlay.classList.contains("hidden")) {
+        reveal();
+        return;
+      }
+
+      const observer = new MutationObserver(() => {
+        if (!overlay.classList.contains("hidden")) return;
+        observer.disconnect();
+        reveal();
+      });
+      observer.observe(overlay, { attributes: true, attributeFilter: ["class"] });
+
+      /* A stalled download must not leave the poster up forever. */
+      setTimeout(() => {
+        observer.disconnect();
+        reveal();
+      }, REVEAL_TIMEOUT_MS);
+    };
+
+    const startFrame = () => {
+      if (!frame || frame.src || !wideAndPrecise.matches || tooSlow()) return;
+      frame.addEventListener("load", () => {
+        restyleFrame();
+        revealWhenReady();
+      }, { once: true });
+      frame.src = frame.dataset.src;
+    };
+
+    /* Deferred until after the page's own load event. Setting src at script
+       execution time — measured at ~16 ms, before first paint — put ~1.5 MB of
+       explorer payload ahead of the hero poster, which pushed the poster's
+       paint to 3.08 s on Slow 4G and 6.28 s on Fast 3G and left the hero an
+       empty dark plate until then. It also gated the parent's own load event
+       behind the explorer (456 ms instead of ~100 ms on loopback, 16.6 s on
+       Fast 3G). The hero is above the fold, so this is a delay, not a
+       viewport-gated load: every desktop visitor still gets the live model. */
+    const scheduleFrame = () => {
+      if (!frame || frame.src) return;
+      const go = () => {
+        if ("requestIdleCallback" in window) {
+          requestIdleCallback(startFrame, { timeout: 1500 });
+        } else {
+          setTimeout(startFrame, 200);
+        }
+      };
+      if (document.readyState === "complete") go();
+      else window.addEventListener("load", go, { once: true });
+    };
+
+    scheduleFrame();
+    wideAndPrecise.addEventListener("change", scheduleFrame);
+
+    /* --- 3. Navbar over the hero ---------------------------------------- */
+
+    const root = document.documentElement;
+    const header = document.getElementById("site-header");
+
+    /* Read geometry directly rather than observing a sentinel on the hero's
+       bottom edge: that edge coincides with the viewport bottom at rest, so an
+       IntersectionObserver's verdict depended on whether its first callback ran
+       before or after the hero settled at 100svh. */
+    let queued = false;
+    const syncNav = () => {
+      queued = false;
+      if (!hero) return;
+      const navH = header?.getBoundingClientRect().height || 64;
+      const overHero = hero.getBoundingClientRect().bottom > navH;
+      root.setAttribute("data-ed-nav", overHero ? "over-hero" : "on-paper");
+    };
+
+    const requestSync = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(syncNav);
+    };
+
+    if (hero) {
+      syncNav();
+      window.addEventListener("scroll", requestSync, { passive: true });
+      window.addEventListener("resize", requestSync);
+      /* The hero's height depends on 100svh and on the poster's intrinsic size,
+         both of which can settle after this script runs. */
+      window.addEventListener("load", requestSync);
+    }
+
+    /* --- 4. Below-the-fold video ---------------------------------------- */
+
+    /* The markup ships preload="metadata" and no autoplay, so only the moov
+       atom and a first frame are fetched up front. Upgrade to a full download
+       and start playing shortly before the figure scrolls into view, and pause
+       once it leaves so an offscreen 40 s loop is not decoding for nothing. */
+    const videos = document.querySelectorAll("video[data-ed-lazy-video]");
+    if (videos.length && "IntersectionObserver" in window) {
+      const playObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target;
+          if (entry.isIntersecting) {
+            if (video.preload !== "auto") video.preload = "auto";
+            const attempt = video.play();
+            if (attempt && typeof attempt.catch === "function") {
+              attempt.catch(() => {
+                /* Autoplay policy or decode failure: the first frame stays up. */
+              });
+            }
+          } else if (!video.paused) {
+            video.pause();
+          }
+        });
+      }, { rootMargin: "400px 0px", threshold: 0 });
+
+      videos.forEach((video) => playObserver.observe(video));
+    } else {
+      /* No IntersectionObserver: fall back to eager playback rather than a
+         figure that never moves. */
+      videos.forEach((video) => {
+        video.preload = "auto";
+        const attempt = video.play();
+        if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
+      });
+    }
+  })();
+</script>
+{{ end }}

@@ -1,0 +1,143 @@
+/* --------------------------------------------------------------------------
+   Editorial design system — site chrome (navbar, footer)
+   Part 2 of 4. Concatenated in order by
+   layouts/partials/hooks/head-end/editorial-assets.html, which loads the
+   bundle after the theme's assets/css/custom.css so ordinary properties here
+   win without !important.
+   -------------------------------------------------------------------------- */
+
+/* ==========================================================================
+   2. Global typography and chrome
+   ========================================================================== */
+
+body.page-wrapper {
+  background-color: var(--ed-paper);
+  color: var(--ed-ink);
+  font-family: var(--ed-font-sans);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.page-wrapper #page-bg {
+  background-color: var(--ed-paper);
+}
+
+body.page-wrapper h1,
+body.page-wrapper h2,
+body.page-wrapper h3,
+body.page-wrapper h4 {
+  font-family: var(--ed-font-display);
+  letter-spacing: 0.005em;
+}
+
+/* Section headings on collection/markdown blox: the theme renders these as
+   `.text-3xl.font-bold` divs rather than real headings. */
+body.page-wrapper .hbb-section > div > .text-3xl,
+body.page-wrapper .hbb-section .text-3xl.font-bold {
+  font-family: var(--ed-font-display);
+  font-weight: 700;
+  font-size: var(--ed-h2);
+  line-height: 1.12;
+  letter-spacing: 0.005em;
+  color: var(--ed-ink);
+}
+
+/* --- Navbar ------------------------------------------------------------- */
+
+body.page-wrapper .page-header {
+  background-color: transparent;
+}
+
+/* Opaque, not glass. A translucent bar with a backdrop-filter renders a grey
+   rectangle wherever its backdrop contains its own compositing layer — the
+   <video> in the research section is exactly that case — and the seam tracks
+   that layer's bounds rather than anything on the page. */
+body.page-wrapper #site-header.header {
+  background-color: var(--ed-paper);
+  border-bottom: 0.5px solid var(--ed-rule);
+  transition: background-color 320ms var(--ed-ease),
+    border-color 320ms var(--ed-ease);
+}
+
+body.page-wrapper .navbar {
+  max-width: var(--ed-measure);
+  margin-inline: auto;
+  min-height: var(--ed-nav-h);
+  width: 100%;
+}
+
+body.page-wrapper .navbar-brand {
+  font-family: var(--ed-font-eyebrow);
+  font-weight: 400;
+  font-size: 1.0625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ed-ink);
+}
+
+body.page-wrapper .nav-link {
+  font-family: var(--ed-font-sans);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ed-ink-dim);
+  transition: color 200ms var(--ed-ease);
+}
+
+body.page-wrapper .nav-link:hover,
+body.page-wrapper .nav-link:focus-visible {
+  color: var(--ed-ink);
+}
+
+body.page-wrapper .nav-link.active {
+  color: var(--ed-ink);
+  font-weight: 500;
+}
+
+/* Over the dark 3D hero, the navbar loses its plate and inverts. The
+   `data-ed-nav` attribute is maintained by hooks/body-end/editorial-home.html. */
+html[data-ed-nav="over-hero"] body.page-wrapper #site-header.header {
+  background-color: transparent;
+  border-bottom-color: transparent;
+}
+
+html[data-ed-nav="over-hero"] body.page-wrapper .navbar-brand,
+html[data-ed-nav="over-hero"] body.page-wrapper .nav-link.active {
+  color: var(--ed-ice-paper);
+}
+
+html[data-ed-nav="over-hero"] body.page-wrapper .nav-link {
+  color: color-mix(in oklab, var(--ed-ice-paper) 72%, transparent);
+}
+
+html[data-ed-nav="over-hero"] body.page-wrapper .nav-link:hover,
+html[data-ed-nav="over-hero"] body.page-wrapper .nav-link:focus-visible {
+  color: var(--ed-ice-paper);
+}
+
+html[data-ed-nav="over-hero"] body.page-wrapper [data-search-toggle],
+html[data-ed-nav="over-hero"] body.page-wrapper .theme-toggle {
+  color: color-mix(in oklab, var(--ed-ice-paper) 80%, transparent);
+}
+
+/* The mobile nav drawer drops down over the hero, so it needs its own plate
+   even while the bar itself is transparent. */
+@media (max-width: 1023px) {
+  html[data-ed-nav="over-hero"] body.page-wrapper #nav-toggle:checked ~ #nav-menu {
+    background-color: color-mix(in oklab, var(--ed-ice-deep) 94%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 2px;
+    padding-inline: 1rem;
+  }
+}
+
+/* --- Footer ------------------------------------------------------------- */
+
+body.page-wrapper footer {
+  font-size: var(--ed-meta);
+  color: var(--ed-ink-dim);
+  border-top: 0.5px solid var(--ed-rule);
+}

@@ -1,0 +1,32 @@
+{{/*
+  Preload the hero poster.
+
+  Replaces the old preload-home-hero-bg hook, which went dead when the
+  resume-biography background photo was removed from the landing page.
+
+  Why this matters: the poster is the first pixel a visitor sees and it IS the
+  hero until the WebGL runtime is ready. Measured cold, it was arriving late on
+  real connections because it had to be discovered inside the blox markup while
+  competing with the explorer payload and the research-section video —
+  first-contentful-paint at 1.22 s but the poster not painted until 3.08 s on
+  Slow 4G, and 2.10 s / 6.28 s on Fast 3G. That gap is a blank dark hero.
+
+  Only the matching variant is fetched: `media` is honoured on preload links,
+  so a phone downloads the portrait capture and nothing else.
+*/}}
+
+{{- if and .IsHome (eq .Type "landing") -}}
+  {{- range .Params.sections -}}
+    {{- if eq (.block | default .blox | default "") "ice-hero" -}}
+      {{- $posters := partial "functions/hero_posters" (.content.explorer | default dict) -}}
+      {{- with $posters.wide }}
+        <link rel="preload" as="image" href="{{ .RelPermalink }}"
+              media="(min-width: 821px)" fetchpriority="high" />
+      {{- end }}
+      {{- with $posters.tall }}
+        <link rel="preload" as="image" href="{{ .RelPermalink }}"
+              media="(max-width: 820px)" fetchpriority="high" />
+      {{- end }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

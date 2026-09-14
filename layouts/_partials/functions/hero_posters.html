@@ -1,0 +1,28 @@
+{{/*
+  Resolve the hero poster images.
+
+  Single source of truth for the processing parameters, because two places need
+  to agree on the resulting URLs: _partials/blox/ice-hero.html renders the
+  <picture>, and hooks/head-end/preload-home-hero-poster.html preloads it. If
+  the .Fit arguments drifted between them, Hugo would emit two different derived
+  images and the preload would warm a URL the page never requests.
+
+  Input:  dict with optional "poster" and "poster_portrait" asset paths.
+  Output: dict with optional "wide" and "tall" image resources.
+*/}}
+
+{{- $out := dict -}}
+
+{{- with .poster -}}
+  {{- with resources.Get . -}}
+    {{- $out = merge $out (dict "wide" (.Fit "1800x1800 webp q78")) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- with .poster_portrait -}}
+  {{- with resources.Get . -}}
+    {{- $out = merge $out (dict "tall" (.Fit "1100x1900 webp q78")) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- return $out -}}

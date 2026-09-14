@@ -1,0 +1,32 @@
+{{/*
+  Editorial design system assets.
+
+  Fires at the very end of <head>, i.e. after the theme's own
+  assets/css/custom.css, so the editorial styles can override it without
+  !important.
+
+  The @font-face block is inlined rather than linked: it is ~5 KB, and a
+  separate request would delay font discovery by a full round trip. The woff2
+  files themselves live in static/fonts/ and are preloaded below.
+*/}}
+
+{{- with resources.Get "css/fonts.css" }}
+  {{- range slice "playfair-display-800-latin" "space-grotesk-400-latin" "cormorant-sc-300-latin" }}
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ printf "/fonts/%s.woff2" . | relURL }}" />
+  {{- end }}
+  <style>{{ .Content | safeCSS }}</style>
+{{- end }}
+
+{{/* assets/css/editorial/ is split into numbered layers; concatenate them in
+     filename order so the cascade matches the documented layer order. */}}
+{{- $layers := slice -}}
+{{- range (slice "01-tokens" "02-chrome" "03-hero" "04-sections") -}}
+  {{- with resources.Get (printf "css/editorial/%s.css" .) -}}
+    {{- $layers = $layers | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- with $layers }}
+  {{- $css := . | resources.Concat "css/editorial.css" | minify -}}
+  {{- if hugo.IsProduction }}{{ $css = $css | fingerprint "sha256" }}{{ end -}}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
+{{- end }}

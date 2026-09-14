@@ -1,0 +1,464 @@
+/* --------------------------------------------------------------------------
+   Editorial design system — landing-page sections
+   Part 4 of 4. Concatenated in order by
+   layouts/partials/hooks/head-end/editorial-assets.html, which loads the
+   bundle after the theme's assets/css/custom.css so ordinary properties here
+   win without !important.
+   -------------------------------------------------------------------------- */
+
+/* ==========================================================================
+   4. Landing page — sections below the hero
+   ========================================================================== */
+
+/* Full-bleed escape hatch for content that lives inside a markdown blox, whose
+   wrapper is a centred `max-w-prose` column. */
+.ed-bleed {
+  position: relative;
+  width: 100dvw;
+  max-width: 100dvw;
+  margin-inline: calc(50% - 50dvw);
+}
+
+/* Neutralise the markdown blox's centred `max-w-prose` wrapper around
+   full-bleed content. Deliberately not matched against `.ed-section`: that is
+   itself a direct div child of the section, so it would cancel its own width. */
+.hbb-section > div:has(> .prose > .ed-bleed) {
+  max-width: none;
+  width: 100%;
+  padding-inline: 0;
+  gap: 0;
+}
+
+.hbb-section .prose:has(> .ed-bleed) {
+  max-width: none;
+  width: 100%;
+  font-size: inherit;
+  color: inherit;
+}
+
+.ed-section {
+  width: min(var(--ed-measure), calc(100% - var(--ed-gutter) * 2));
+  margin-inline: auto;
+}
+
+/* --- Shared section header ---------------------------------------------- */
+
+.ed-section-head {
+  display: grid;
+  gap: clamp(14px, 2vw, 22px);
+  padding-block: 0 clamp(36px, 5vw, 62px);
+  border-top: 0.5px solid var(--ed-rule);
+  padding-top: clamp(22px, 3vw, 34px);
+}
+
+.ed-eyebrow {
+  margin: 0;
+  font-family: var(--ed-font-sans);
+  font-size: var(--ed-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ed-ink-faint);
+}
+
+.ed-section-title {
+  margin: 0;
+  font-family: var(--ed-font-display);
+  font-weight: 700;
+  font-size: var(--ed-h2);
+  line-height: 1.1;
+  letter-spacing: 0.005em;
+  color: var(--ed-ink);
+  text-wrap: balance;
+}
+
+.ed-lede {
+  margin: 0;
+  max-width: 44rem;
+  font-size: var(--ed-body);
+  line-height: 1.65;
+  color: var(--ed-ink-dim);
+}
+
+.ed-lede a,
+.ed-prose a {
+  color: var(--ed-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 0.5px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in oklab, var(--ed-accent) 42%, transparent);
+  transition: text-decoration-color 200ms var(--ed-ease);
+}
+
+.ed-lede a:hover,
+.ed-prose a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* --- Research threads --------------------------------------------------- */
+
+.ed-research__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 0;
+  border-top: 0.5px solid var(--ed-rule);
+  border-left: 0.5px solid var(--ed-rule);
+}
+
+.ed-research__box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: clamp(24px, 3vw, 38px);
+  border-right: 0.5px solid var(--ed-rule);
+  border-bottom: 0.5px solid var(--ed-rule);
+  background-color: transparent;
+  transition: background-color 320ms var(--ed-ease);
+}
+
+.ed-research__box:hover {
+  background-color: var(--ed-paper-sunk);
+}
+
+.ed-research__num {
+  font-family: var(--ed-font-sans);
+  font-size: var(--ed-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--ed-accent);
+}
+
+.ed-research__title {
+  margin: 0;
+  font-family: var(--ed-font-display);
+  font-weight: 700;
+  font-size: var(--ed-h3);
+  line-height: 1.22;
+  color: var(--ed-ink);
+}
+
+.ed-research__body {
+  margin: 0;
+  font-size: var(--ed-meta);
+  line-height: 1.7;
+  color: var(--ed-ink-dim);
+}
+
+.ed-research__tools {
+  margin-top: auto;
+  padding-top: 6px;
+  font-family: var(--ed-font-sans);
+  font-size: var(--ed-eyebrow);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ed-ink-faint);
+}
+
+/* --- Framed figure (the Wilkes Subglacial Basin loop) ------------------- */
+
+.ed-figure {
+  margin: clamp(44px, 6vw, 76px) 0 0;
+}
+
+/* No fixed aspect ratio: the framed media is a pre-rendered animation with its
+   own title and legends baked in, so letterboxing it into 16:9 would both crop
+   the labels and leave bars. The frame hugs whatever it is given. */
+.ed-figure__frame {
+  position: relative;
+  overflow: hidden;
+  border: 0.5px solid var(--ed-rule);
+  background-color: var(--ed-figure-bg, #ffffff);
+}
+
+.ed-figure__media {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ed-figure__caption {
+  display: grid;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: var(--ed-meta);
+  line-height: 1.65;
+  color: var(--ed-ink-dim);
+}
+
+.ed-figure__caption b {
+  font-weight: 500;
+  color: var(--ed-ink);
+}
+
+/* --- Biography: second screen, editorial two-column --------------------- */
+
+#about.hbb-section > .home-section-bg {
+  background-color: var(--ed-paper);
+  background-image: none;
+  filter: none;
+}
+
+#about .resume-biography {
+  width: min(var(--ed-measure), calc(100% - var(--ed-gutter) * 2));
+  margin-inline: auto;
+  padding-inline: 0;
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+
+#about .avatar-wrapper {
+  margin-top: 0;
+}
+
+/* The module pads #profile by 10px each side, which on a phone pushed the
+   portrait column past the viewport and widened the whole document. */
+#about #profile {
+  padding-inline: 0;
+}
+
+/* Size comes from `design.avatar.size` via the local blox override; the wrapper
+   carries the real size, so do not restate it here or the portrait will
+   overflow its wrapper and collide with the name beneath it. */
+#about img.avatar {
+  border-radius: 2px;
+  padding: 0;
+  background-color: var(--ed-paper-sunk);
+  /* Lift the module's 225px cap; the wrapper now carries the real size. */
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#about .portrait-title .text-3xl {
+  font-family: var(--ed-font-display);
+  font-weight: 700;
+  font-size: clamp(24px, 1.4vw + 18px, 32px);
+  color: var(--ed-ink);
+}
+
+#about .portrait-title h3 {
+  font-family: var(--ed-font-eyebrow);
+  font-weight: 400;
+  font-size: var(--ed-meta);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ed-ink-dim);
+}
+
+#about .portrait-title > div:not(.text-3xl),
+#about .portrait-title a {
+  font-size: var(--ed-meta);
+  line-height: 1.55;
+  color: var(--ed-ink-dim);
+  text-decoration: none;
+}
+
+#about .portrait-title a:hover {
+  color: var(--ed-accent);
+}
+
+#about ul.network-icon {
+  color: var(--ed-ink-dim);
+}
+
+#about .prose {
+  color: var(--ed-ink-dim);
+  font-size: var(--ed-body);
+}
+
+#about .prose h2,
+#about .prose h3 {
+  color: var(--ed-ink);
+}
+
+/* Section labels inside the biography blox (Interests / Education / …) */
+#about h2,
+#about h3.font-semibold {
+  color: var(--ed-ink);
+}
+
+/* --- Collections: publications, gallery --------------------------------
+   The collection blox renders a centred `max-w-prose` header followed by a
+   separate `items-center` body wrapper. Both are re-hung on the shared measure
+   and left-aligned, so section headings line up with the research grid above
+   rather than floating in the middle of the page. */
+
+.hbb-section.blox-collection > div:has(> .text-3xl) {
+  width: min(var(--ed-measure), calc(100% - var(--ed-gutter) * 2));
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 0;
+  align-items: flex-start;
+  text-align: left;
+  border-top: 0.5px solid var(--ed-rule);
+  padding-top: clamp(22px, 3vw, 34px);
+}
+
+.hbb-section.blox-collection > div:has(.container) {
+  padding-inline: 0;
+  align-items: stretch;
+}
+
+.hbb-section.blox-collection .container {
+  width: min(var(--ed-measure), calc(100% - var(--ed-gutter) * 2));
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 0;
+  margin-top: clamp(8px, 1.5vw, 18px);
+}
+
+/* Square off the theme's rounded cards to match the hairline grid. */
+.hbb-section.blox-collection .rounded-md,
+.hbb-section.blox-collection .rounded-lg,
+.hbb-section.blox-collection .rounded-xl,
+.hbb-section.blox-collection img {
+  border-radius: 2px;
+}
+
+.hbb-section.blox-collection .group h2 {
+  font-size: var(--ed-h3);
+  line-height: 1.25;
+  color: var(--ed-ink);
+}
+
+.hbb-section.blox-collection [class*="text-primary"] {
+  color: var(--ed-accent);
+}
+
+/* Citation list */
+.pub-list-item {
+  font-size: var(--ed-meta);
+  line-height: 1.7;
+  color: var(--ed-ink-dim);
+  padding-bottom: 1rem;
+  border-bottom: 0.5px solid var(--ed-rule-soft);
+}
+
+.pub-list-item .font-bold {
+  color: var(--ed-ink);
+}
+
+.pub-list-item a {
+  color: var(--ed-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 0.5px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: var(--ed-rule);
+}
+
+.pub-list-item a:hover {
+  text-decoration-color: currentColor;
+}
+
+.pub-list-item .btn-links a,
+.pub-list-item a.btn {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: var(--ed-eyebrow);
+}
+
+/* --- Closing call to action --------------------------------------------
+   The blox hard-codes `bg-primary-700` and a rounded card; keep the shape and
+   swap the fill for ink so the page closes on the same two-tone palette the
+   hero opens with. */
+
+.hbb-section.blox-cta-card > div:not(.home-section-bg) {
+  width: min(var(--ed-measure), calc(100% - var(--ed-gutter) * 2));
+  max-width: none;
+  border-radius: 2px;
+  background-color: var(--ed-ink) !important;
+  background-image: none !important;
+}
+
+html.dark .hbb-section.blox-cta-card > div:not(.home-section-bg) {
+  background-color: var(--ed-paper-sunk) !important;
+}
+
+.hbb-section.blox-cta-card h2 {
+  font-family: var(--ed-font-display);
+  font-weight: 700;
+  font-size: var(--ed-h2);
+  line-height: 1.12;
+  letter-spacing: 0.005em;
+  color: var(--ed-paper);
+  text-wrap: balance;
+}
+
+html.dark .hbb-section.blox-cta-card h2 {
+  color: var(--ed-ink);
+}
+
+.hbb-section.blox-cta-card .prose {
+  color: color-mix(in oklab, var(--ed-paper) 76%, transparent);
+  font-size: var(--ed-body);
+  line-height: 1.65;
+  max-width: 40rem;
+}
+
+html.dark .hbb-section.blox-cta-card .prose {
+  color: var(--ed-ink-dim);
+}
+
+.hbb-section.blox-cta-card a[href^="mailto"] {
+  border-radius: 999px;
+  border: 0.5px solid color-mix(in oklab, var(--ed-paper) 46%, transparent) !important;
+  background-color: transparent !important;
+  color: var(--ed-paper) !important;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--ed-meta);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: background-color 220ms var(--ed-ease), border-color 220ms var(--ed-ease);
+}
+
+.hbb-section.blox-cta-card a[href^="mailto"]:hover {
+  border-color: var(--ed-paper) !important;
+  background-color: color-mix(in oklab, var(--ed-paper) 12%, transparent) !important;
+}
+
+html.dark .hbb-section.blox-cta-card a[href^="mailto"] {
+  border-color: var(--ed-rule) !important;
+  color: var(--ed-ink) !important;
+}
+
+/* --- Biography details -------------------------------------------------- */
+
+/* Hairline above the portrait ties the section to the grids below it. */
+#about .resume-biography {
+  border-top: 0.5px solid var(--ed-rule);
+  padding-top: clamp(30px, 4vw, 52px);
+}
+
+/* "Interests" / "Education" labels, set to echo the "About Me" heading. */
+#about .section-subheading {
+  font-family: var(--ed-font-display);
+  font-weight: 700;
+  font-size: var(--ed-h3);
+  color: var(--ed-ink);
+}
+
+/* "Download CV" — the blox ships a Tailwind pill; make it a hairline button. */
+#about .flex-auto > a[href$=".pdf"] {
+  border-radius: 999px;
+  border: 0.5px solid var(--ed-rule);
+  background-color: transparent;
+  color: var(--ed-ink);
+  min-height: 44px;
+  padding-inline: 1.25rem;
+  font-size: var(--ed-meta);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: border-color 220ms var(--ed-ease), background-color 220ms var(--ed-ease);
+}
+
+#about .flex-auto > a[href$=".pdf"]:hover {
+  border-color: var(--ed-ink);
+  background-color: var(--ed-paper-sunk);
+  color: var(--ed-ink);
+}

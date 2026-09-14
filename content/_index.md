@@ -9,7 +9,48 @@ design:
   spacing: "6rem"
 
 sections:
+  # ---------------------------------------------------------------------------
+  # First screen: the 3D ICE model of Antarctica, auto-rotating and interactive.
+  # Rendered by layouts/_partials/blox/ice-hero.html
+  # ---------------------------------------------------------------------------
+  - block: ice-hero
+    id: hero
+    content:
+      name: "Yu Wang"
+      native_name: "王禹"
+      title_lines:
+        - "Modelling the ice"
+        - "that sets sea level"
+      affiliation_lines:
+        - "Climate Systems Engineering initiative"
+        - "The University of Chicago"
+      actions:
+        - text: "Research"
+          url: "#research"
+        - text: "Explore 3D ICE"
+          url: "/tools/3d-ice/"
+      explorer:
+        src: "/tools/3D-interactive-cryosphere-explorer.html?mode=showcase&preset=home-hero&desktopInteractive=1&mobileLinkout=1"
+        title: "3D ICE — interactive model of the Antarctic Ice Sheet"
+        poster: "media/hero-3d-ice.jpg"
+        poster_portrait: "media/hero-3d-ice-portrait.jpg"
+        poster_alt: "The Antarctic Ice Sheet and the bed beneath it, rendered in 3D from BedMachine topography"
+      info: |
+        Antarctic surface, ice base and bed topography, rendered live in your
+        browser from BedMachine Antarctica. Vertical relief is exaggerated.
+        Click the ice to take the camera; open the full explorer in
+        [3D ICE](/tools/3d-ice/).
+      cue: "About"
+    design:
+      spacing:
+        padding: [0, 0, 0, 0]
+
+  # ---------------------------------------------------------------------------
+  # Second screen: portrait, biography, interests and education.
+  # Rendered by layouts/_partials/blox/resume-biography-3.html (local override).
+  # ---------------------------------------------------------------------------
   - block: resume-biography-3
+    id: about
     content:
       # Choose a user profile to display (a folder name within `content/authors/`)
       username: admin
@@ -19,80 +60,77 @@ sections:
         text: Download CV
         url: uploads/resume.pdf
     design:
-      css_class: dark
       # Avatar customization
       avatar:
-        size: xxl  # Options: small (150px), medium (200px, default), large (320px), xl (400px), xxl (500px)
-        shape: circle # Options: circle (default), square, rounded
-      background:
-        # Use a close fallback tone to avoid a black flash before hero image decodes.
-        color: "#101a24"
-        image:
-          # Add your image background to `assets/media/`.
-          filename: "background.jpg"
-          filters:
-            brightness: 0.5  # 暗化背景以提升文字可读性、
-            blur: 2px  # 轻微模糊背景，降低细节干扰
-          size: cover
-          position: center
-          parallax: false
-  # - block: markdown
-  #   content:
-  #     title: "Research Focus 🧐"
-  #     subtitle: ""
-  #     text: |-
-  #       My work combines numerical modelling and data analysis to quantify how subglacial hydrology and ocean forcing control East Antarctic ice mass loss.
-
-  #       I build and use: **Elmer/Ice** (SSA & full-Stokes ice flow), **GlaDS** (distributed/channelised drainage), and **ROMSIceShelf** for targeted experiments in the **Wilkes Subglacial Basin**. The goal is to improve long-term sea‑level projections and test the sensitivity and potential reversibility of grounding‑line retreat.
-  #   design:
-  #     columns: '1'
-
-  - block: markdown
-    id: antarctica-showcase-home
-    content:
-      title: "Hold Antarctica in your hands with [3D ICE](/tools/3d-ice/) ❄️"
-      text: |
-        <div class="showcase-wrap">
-          <div class="showcase-embed">
-            <iframe
-              title="Hold Antarctica in your hands with 3D ICE ❄️"
-              src="/tools/3D-interactive-cryosphere-explorer.html?mode=showcase&preset=home-hero&desktopInteractive=1"
-              loading="eager"
-              fetchpriority="high"
-              referrerpolicy="no-referrer"
-            ></iframe>
-          </div>
-        </div>
-    design:
-      columns: "1"
+        size: xl  # Options: small (150px), medium (200px, default), large (320px), xl (400px), xxl (500px)
+        shape: rounded # Options: circle (default), square, rounded
       spacing:
-        padding: ["5rem", 0, "2.5rem", 0]
+        padding: ["7rem", 0, "6rem", 0]
 
-  - block: markdown
-    id: loop-video
+  # ---------------------------------------------------------------------------
+  # Research threads
+  # ---------------------------------------------------------------------------
+  - block: research-threads
+    id: research
     content:
-      title: ""   # 可留空；如果要标题就写在这里
-      text: |
-        <div class="home-loop-video">
-          <video class="home-loop-video__media"
-                 autoplay
-                 muted
-                 loop
-                 playsinline
-                 preload="metadata">
-            <source src="/media/3DWSB.mp4" type="video/mp4">
-            您的浏览器不支持 HTML5 视频。
-          </video>
-        </div>
+      eyebrow: "Research"
+      title: "Three threads, one question: how fast can Antarctica lose its ice?"
+      lede: |
+        East Antarctica was long treated as the stable half of the continent. The
+        Wilkes Subglacial Basin is the exception — enough ice to raise global sea
+        level by several metres, resting on a bed that deepens inland. My work asks
+        what actually sets the pace of its retreat, and whether anything can be done
+        about it.
+      threads:
+        - title: "Ice-sheet and ice-shelf dynamics"
+          body: |
+            A retrograde bed means that once the grounding line retreats inland,
+            thinning can keep feeding itself. I use
+            [Elmer/Ice](http://elmerice.elmerfem.org/) to resolve that migration
+            directly, and to show how much the answer depends on how melt is applied
+            at the grounding line — [enough to change the projected
+            contribution several-fold](/publication/cryosphere-2024-wsb-melt-param/).
+          tools: "Elmer/Ice · SSA & full-Stokes · WilkesMIP"
+        - title: "Subglacial hydrology"
+          body: |
+            Water at the bed sets basal traction, and the drainage system that carries
+            it reorganises as the ice above it changes. Coupling
+            [GlaDS](https://doi.org/10.3189/2013JoG13J045) to Elmer/Ice lets
+            distributed and channelised drainage evolve with the ice sheet instead of
+            being prescribed — a two-way link that [amplifies Antarctica's projected
+            sea-level contribution](/publication/natcomm-2025-subglacial-water/).
+          tools: "GlaDS · Coupled Elmer/Ice–GlaDS"
+        - title: "Glacial climate intervention"
+          body: |
+            At the [Climate Systems Engineering
+            initiative](https://climate.uchicago.edu/entities/csei/) I test whether
+            targeted interventions — drying the bed, buttressing an ice shelf — could
+            slow polar ice loss enough to matter for sea level, and what they would
+            cost in risk, side effects and sheer engineering scale.
+          tools: "CSEi · Work in progress"
+      figure:
+        video: "/media/3DWSB.mp4"
+        # Intrinsic size, so the frame reserves its aspect ratio before the
+        # lazily-started video reports its own dimensions.
+        width: 2800
+        height: 1612
+        label: "Animation of a coupled ice-sheet and subglacial hydrology experiment in the Wilkes Subglacial Basin"
+        caption: |
+          **Evolving ice sheet and subglacial hydrology in the Wilkes Subglacial
+          Basin.** A coupled ice–hydrology experiment: channel discharge and ice
+          velocity evolve together as the drainage system reorganises beneath the
+          retreating ice.
     design:
-      columns: "1"
       spacing:
-        padding: [0, 0, 0, 0]
+        padding: ["2rem", 0, "6rem", 0]
 
+  # ---------------------------------------------------------------------------
+  # Publications
+  # ---------------------------------------------------------------------------
   - block: collection
     id: papers
     content:
-      title:  Featured Publications 📑
+      title: "Featured Publications"
       filters:
         folders:
           - publication
@@ -101,30 +139,28 @@ sections:
       view: article-grid
       columns: 2
       spacing:
-        padding: ["4rem", 0, 0, 0]
+        padding: ["4rem", 0, "2rem", 0]
 
   - block: collection
     id: coauthored-publications
     content:
-      title:  Co-authored Publications 📝
-      text: |
-        <style>
-          #coauthored-publications .max-w-3xl {
-            max-width: 64rem;
-          }
-        </style>
+      title: "Co-authored Publications"
       filters:
         folders:
           - publication
         exclude_featured: true
     design:
       view: citation
-  
+      spacing:
+        padding: ["2rem", 0, "4rem", 0]
 
+  # ---------------------------------------------------------------------------
+  # Photography
+  # ---------------------------------------------------------------------------
   - block: collection
     id: gallery
     content:
-      title: Photography Gallery 📷
+      title: "Photography Gallery"
       subtitle: "A selection of my photography beyond academia"
       text: ""
       filters:
@@ -135,51 +171,13 @@ sections:
     design:
       view: article-grid
       columns: 3
-  # - block: collection
-  #   id: talks
-  #   content:
-  #     title: Recent & Upcoming Talks
-  #     filters:
-  #       folders:
-  #         - event
-  #   design:
-  #     view: article-grid
-  #     columns: 1
 
-  # - block: collection
-  #   id: news
-  #   content:
-  #     title: Recent News
-  #     subtitle: ''
-  #     text: ''
-  #     # Page type to display. E.g. post, talk, publication...
-  #     page_type: post
-  #     # Choose how many pages you would like to display (0 = all pages)
-  #     count: 5
-  #     # Filter on criteria
-  #     filters:
-  #       author: ""
-  #       category: ""
-  #       tag: ""
-  #       exclude_featured: false
-  #       exclude_future: false
-  #       exclude_past: false
-  #       publication_type: ""
-  #     # Choose how many pages you would like to offset by
-  #     offset: 0
-  #     # Page order: descending (desc) or ascending (asc) date.
-  #     order: desc
-  #   design:
-  #     # Choose a layout view
-  #     view: date-title-summary
-  #     # Reduce spacing
-  #     spacing:
-  #       padding: [0, 0, 0, 0]
-
+  # ---------------------------------------------------------------------------
+  # Contact
+  # ---------------------------------------------------------------------------
   - block: cta-card
-    demo: true  # only display this section in the hugo blox builder demo site
     content:
-      title: 👉 Explore my work & get in touch
+      title: "Explore my work & get in touch"
       text: |-
         I’m always keen to discuss Antarctic ice dynamics, subglacial hydrology, and modelling workflows. If you’d like to collaborate or invite a talk, feel free to reach out.
       button:

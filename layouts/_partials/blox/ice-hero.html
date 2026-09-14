@@ -1,0 +1,136 @@
+{{/*
+  ice-hero — the landing page's first screen.
+
+  Renders the 3D ICE explorer in showcase mode (auto-rotating Antarctica,
+  panels and HUD hidden) as a full-bleed stage, with the title block set over
+  it. The explorer's WebGL canvas is opaque, so this section is always dark;
+  the paper palette starts in the section below.
+
+  The iframe carries its URL in `data-src` rather than `src`:
+  hooks/body-end/editorial-home.html promotes it to a real src only on
+  pointer-capable wide viewports. Phones keep the still poster instead of
+  downloading the explorer's gridded datasets over a mobile connection.
+*/}}
+
+{{- $page := .wcPage -}}
+{{- $block := .wcBlock -}}
+{{- $c := $block.content -}}
+
+{{- $name := $c.name | default site.Params.header.navbar.logo.text | default "" -}}
+{{- $native := $c.native_name | default "" -}}
+{{- $titleLines := $c.title_lines | default slice -}}
+{{- $affilLines := $c.affiliation_lines | default slice -}}
+{{- $actions := $c.actions | default slice -}}
+{{- $cue := $c.cue | default "" -}}
+
+{{- $explorer := $c.explorer | default dict -}}
+{{- $src := $explorer.src | default "" -}}
+{{- $frameTitle := $explorer.title | default "Interactive 3D model of the Antarctic Ice Sheet" -}}
+{{- $posterAlt := $explorer.poster_alt | default "The Antarctic Ice Sheet and its bed, rendered in 3D ICE" -}}
+
+{{/* Delay index for the staggered reveal, shared across title and supporting copy. */}}
+{{- $i := 0 -}}
+
+<div class="ed-hero" data-ed-hero>
+  <div class="ed-hero__stage">
+    {{/* A phone-shaped crop of the landscape frame is a featureless wash of ice,
+         so the portrait poster is a separate capture taken at a tall viewport —
+         the explorer re-frames its camera to the viewport, so the ice edge and
+         bathymetry actually read. Both are resolved through the shared
+         functions/hero_posters partial, which the head-end preload hint also
+         uses so the two cannot disagree about the derived URLs. */}}
+    {{- $posters := partial "functions/hero_posters" $explorer -}}
+    {{- with $posters.wide }}
+      <picture>
+        {{- with $posters.tall }}
+          <source media="(max-width: 820px)" srcset="{{ .RelPermalink }}"
+                  width="{{ .Width }}" height="{{ .Height }}" />
+        {{- end }}
+        <img
+          class="ed-hero__poster"
+          src="{{ .RelPermalink }}"
+          width="{{ .Width }}"
+          height="{{ .Height }}"
+          alt="{{ $posterAlt }}"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </picture>
+    {{- end }}
+    {{ with $src }}
+      <iframe
+        class="ed-hero__frame"
+        data-ed-hero-frame
+        data-src="{{ . }}"
+        title="{{ $frameTitle }}"
+        referrerpolicy="no-referrer"
+        aria-hidden="true"
+        tabindex="-1"
+      ></iframe>
+    {{ end }}
+  </div>
+
+  <div class="ed-hero__grid" aria-hidden="true"></div>
+  <div class="ed-hero__scrim" aria-hidden="true"></div>
+
+  <div class="ed-hero__copy">
+    {{ with $name }}
+      <p class="ed-hero__eyebrow ed-fade" style="--ed-i: {{ $i }}">
+        {{ . }}{{ with $native }} <span class="ed-hero__native">{{ . }}</span>{{ end }}
+      </p>
+      {{- $i = add $i 1 -}}
+    {{ end }}
+
+    {{ with $titleLines }}
+      <h1 class="ed-hero__title">
+        {{- range . }}
+          <span class="ed-reveal" style="--ed-i: {{ $i }}"><span>{{ . }}</span></span>
+          {{- $i = add $i 1 -}}
+        {{- end }}
+      </h1>
+    {{ end }}
+
+    {{ with $affilLines }}
+      <p class="ed-hero__affil ed-fade" style="--ed-i: {{ $i }}">
+        {{- range $index, $line := . }}{{ if $index }}<br />{{ end }}{{ $line }}{{ end -}}
+      </p>
+      {{- $i = add $i 1 -}}
+    {{ end }}
+
+    {{ with $actions }}
+      <div class="ed-hero__actions ed-fade" style="--ed-i: {{ $i }}">
+        {{ range . }}
+          <a class="ed-hero__action" href="{{ .url }}"{{ if strings.HasPrefix .url "http" }} target="_blank" rel="noopener"{{ end }}>
+            {{ .text }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </a>
+        {{ end }}
+      </div>
+      {{- $i = add $i 1 -}}
+    {{ end }}
+  </div>
+
+  {{ with $c.info }}
+    <div class="ed-hero__info">
+      <button class="ed-hero__info-btn" type="button"
+              aria-label="About this visualisation" aria-describedby="ed-hero-info-tip">
+        <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor"
+             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9.5" />
+          <line x1="12" y1="7.8" x2="12" y2="12.2" />
+          <line x1="12" y1="15.8" x2="12.01" y2="15.8" />
+        </svg>
+      </button>
+      <div class="ed-hero__info-tip" id="ed-hero-info-tip" role="tooltip">
+        {{ . | $page.RenderString }}
+      </div>
+    </div>
+  {{ end }}
+
+  {{ with $cue }}
+    <a class="ed-hero__cue" href="#about">{{ . }}</a>
+  {{ end }}
+</div>

@@ -1,0 +1,76 @@
+/* --------------------------------------------------------------------------
+   Editorial design system — tokens and global type
+   Part 1 of 4. Concatenated in order by
+   layouts/partials/hooks/head-end/editorial-assets.html, which loads the
+   bundle after the theme's assets/css/custom.css so ordinary properties here
+   win without !important.
+   The four layers, in cascade order:
+     01 tokens    — palette, type scale, rhythm; applies site-wide
+     02 chrome    — navbar and footer; applies site-wide
+     03 hero      — the landing page's 3D ICE first screen
+     04 sections  — the landing page's sections below the hero
+   -------------------------------------------------------------------------- */
+
+/* ==========================================================================
+   1. Tokens
+   ========================================================================== */
+
+:root {
+  /* --- Surfaces and ink ------------------------------------------------- */
+  --ed-paper: oklch(0.975 0.004 80);
+  --ed-paper-sunk: oklch(0.955 0.005 80);
+  --ed-ink: oklch(0.13 0.01 275);
+  --ed-ink-dim: oklch(0.45 0.008 275);
+  --ed-ink-faint: oklch(0.63 0.007 275);
+  --ed-rule: oklch(0.85 0.005 275);
+  --ed-rule-soft: oklch(0.91 0.004 275);
+  --ed-accent: oklch(0.44 0.13 258);
+  --ed-accent-soft: oklch(0.88 0.02 258);
+
+  /* --- The 3D ICE stage -------------------------------------------------
+     --ed-ice-stage MUST stay identical to the explorer's WebGL clear colour
+     (`scene.background = new THREE.Color(0x0a2b43)` in the 3D ICE bundle).
+     The canvas is opaque (`alpha: false`), so any mismatch shows up as a
+     visible seam where the hero background meets the iframe edge. */
+  --ed-ice-stage: #0a2b43;
+  --ed-ice-deep: #04121c;
+  --ed-ice-paper: #eef7fc;
+
+  /* --- Type ------------------------------------------------------------- */
+  --ed-font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --ed-font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --ed-font-eyebrow: "Cormorant SC", "Playfair Display", Georgia, serif;
+
+  --ed-display: clamp(38px, calc(2.3vw + 27px), 76px);
+  --ed-h2: clamp(27px, calc(1.15vw + 20px), 42px);
+  --ed-h3: clamp(19px, calc(0.4vw + 16px), 23px);
+  --ed-body: clamp(15.5px, calc(0.25vw + 14.5px), 17.5px);
+  --ed-meta: clamp(12.5px, calc(0.2vw + 11.5px), 14px);
+  --ed-eyebrow: clamp(10.5px, calc(0.2vw + 9.5px), 12.5px);
+
+  /* --- Rhythm ----------------------------------------------------------- */
+  --ed-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ed-gutter: clamp(20px, 6vw, 108px);
+  --ed-measure: 1180px;
+  --ed-nav-h: 64px;
+}
+
+html.dark {
+  --ed-paper: oklch(0.17 0.014 258);
+  --ed-paper-sunk: oklch(0.21 0.016 258);
+  --ed-ink: oklch(0.96 0.004 80);
+  --ed-ink-dim: oklch(0.74 0.012 258);
+  --ed-ink-faint: oklch(0.6 0.012 258);
+  --ed-rule: oklch(0.33 0.014 258);
+  --ed-rule-soft: oklch(0.26 0.014 258);
+  --ed-accent: oklch(0.8 0.1 225);
+  --ed-accent-soft: oklch(0.32 0.04 240);
+}
+
+/* Pin text to the author-specified size. Android/HarmonyOS WebViews inflate
+   page text to follow the system font size, which overflows the hero title. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}

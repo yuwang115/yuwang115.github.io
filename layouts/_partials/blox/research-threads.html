@@ -1,0 +1,77 @@
+{{/*
+  research-threads — the editorial research overview below the hero.
+
+  Lives in a template rather than in a markdown blox because Goldmark treats
+  indented HTML after a blank line as an indented code block, which silently
+  turned the thread cards into a <pre> dump. Front matter stays readable, and
+  each body is rendered through RenderString so links are plain markdown.
+*/}}
+
+{{- $page := .wcPage -}}
+{{- $block := .wcBlock -}}
+{{- $c := $block.content -}}
+
+{{- $threads := $c.threads | default slice -}}
+{{- $figure := $c.figure | default dict -}}
+
+<div class="ed-section">
+  <div class="ed-section-head">
+    {{ with $c.eyebrow }}<p class="ed-eyebrow">{{ . }}</p>{{ end }}
+    {{ with $c.title }}<h2 class="ed-section-title">{{ . | emojify | $page.RenderString }}</h2>{{ end }}
+    {{ with $c.lede }}<div class="ed-lede">{{ . | emojify | $page.RenderString }}</div>{{ end }}
+  </div>
+
+  {{ with $threads }}
+    <div class="ed-research__grid">
+      {{ range $index, $thread := . }}
+        <article class="ed-research__box">
+          <p class="ed-research__num">{{ printf "%02d" (add $index 1) }}</p>
+          {{ with $thread.title }}<h3 class="ed-research__title">{{ . | emojify }}</h3>{{ end }}
+          {{ with $thread.body }}<div class="ed-research__body">{{ . | emojify | $page.RenderString }}</div>{{ end }}
+          {{ with $thread.tools }}<p class="ed-research__tools">{{ . | emojify }}</p>{{ end }}
+        </article>
+      {{ end }}
+    </div>
+  {{ end }}
+
+  {{ if or $figure.video $figure.image }}
+    <figure class="ed-figure">
+      <div class="ed-figure__frame">
+        {{ with $figure.video }}
+          {{/* Deliberately NOT autoplay. `autoplay` overrides `preload`, so this
+               12.96 MB loop began streaming at ~55 ms from navigationStart
+               however conservative the preload hint — measured pulling 2.0-5.3 MB
+               (8.8 MB against production) before anyone had scrolled to it,
+               starving both the hero poster and the hero iframe of bandwidth for
+               a figure below the fold.
+
+               preload="metadata" rather than "none" so the first frame still
+               paints as a still and the figure is not an empty box for visitors
+               without JS. hooks/body-end/editorial-home.html upgrades it to
+               preload="auto" and starts playback just before it scrolls in.
+
+               width/height are declared so the frame reserves its aspect ratio
+               before metadata arrives — without them a lazily-started <video>
+               reports 300x150 and the section reflows. */}}
+          <video class="ed-figure__media" muted loop playsinline preload="metadata"
+                 data-ed-lazy-video
+                 {{ with $figure.width }}width="{{ . }}"{{ end }}
+                 {{ with $figure.height }}height="{{ . }}"{{ end }}
+                 {{ with $figure.label }}aria-label="{{ . }}"{{ end }}>
+            <source src="{{ . | relURL }}" type="video/mp4" />
+          </video>
+        {{ else }}
+          {{ with resources.Get $figure.image }}
+            {{ $img := .Fit "1600x1600 webp q80" }}
+            <img class="ed-figure__media" src="{{ $img.RelPermalink }}"
+                 width="{{ $img.Width }}" height="{{ $img.Height }}"
+                 alt="{{ $figure.label | default "" }}" loading="lazy" decoding="async" />
+          {{ end }}
+        {{ end }}
+      </div>
+      {{ with $figure.caption }}
+        <figcaption class="ed-figure__caption">{{ . | emojify | $page.RenderString }}</figcaption>
+      {{ end }}
+    </figure>
+  {{ end }}
+</div>
