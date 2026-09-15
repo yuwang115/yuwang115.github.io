@@ -56,7 +56,17 @@ locale:
 # Site features
 features:
   math:
-    enable: true
+    # Off site-wide: no content file uses the `math` shortcode or any LaTeX
+    # delimiter, yet this flag was loading KaTeX (277 KB of JS plus its CSS and
+    # font CSS) on 41 of 77 pages. On the landing page it sat ahead of the hero
+    # poster in the request queue and was the largest remaining reason the
+    # poster took 2.8 s to paint on Slow 4G.
+    #
+    # KaTeX is opt-in per page and needs no change here: the theme loads it when
+    # a page uses the `math` shortcode OR sets `math: true` in its front matter
+    # (see blox-tailwind/layouts/_partials/libraries.html). Add that to any
+    # publication or post that actually needs equations.
+    enable: false
   privacy_pack:
     enable: false
 
