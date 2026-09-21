@@ -23,6 +23,8 @@ The 3D ICE runtime, large data assets, preview media, and preparation scripts no
 - This repo keeps the site-facing shells and links, including `/tools/3d-ice/`, the homepage showcase, and the Tools page embed.
 - `node scripts/sync_3d_ice_bundle.mjs` pulls a versioned compatibility bundle into `generated/3d-ice-compat/` before Hugo builds.
 - Local builds prefer the sibling repo bundle in `../3d-ice/dist/`; once `https://github.com/yuwang115/3d-ice` is created and releases are published, the same script can fall back to GitHub release assets.
+- The bundle is the whole of `../3d-ice/static/tools`, so it also carries that site's own compat redirect stubs. Any bundle file published at the same path as a page of this site would overwrite the rendered page, because Hugo copies static files concurrently with rendering. List such paths under `excludePaths` in `config/3d-ice-bundle.json`; the sync script prunes them and fails loudly if it finds a new one.
+- `node scripts/check_build_output.mjs [publishDir]` (also run by `npm run build` and by CI after Hugo) asserts the pages listed in `config/build-checks.json` were really rendered, so a stub silently replacing one cannot reach production.
 
 - 👉 [**Get Started**](https://hugoblox.com/templates/)
 - 📚 [View the **documentation**](https://docs.hugoblox.com/)

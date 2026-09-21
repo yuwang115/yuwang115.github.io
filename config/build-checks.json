@@ -1,0 +1,17 @@
+{
+  "publishDir": "public",
+  "pages": [
+    {
+      "path": "tools/3d-ice/index.html",
+      "minBytes": 20000,
+      "mustContain": ["explorer-page-shell"],
+      "note": "Guards against generated/3d-ice-compat/tools/3d-ice/index.html (a 449-byte redirect stub belonging to 3d-ice.com) overwriting this site's own landing page."
+    },
+    {
+      "path": "zh/tools/3d-ice/index.html",
+      "minBytes": 20000,
+      "mustContain": ["explorer-page-shell"],
+      "note": "Chinese counterpart of the 3D ICE landing page."
+    }
+  ]
+}

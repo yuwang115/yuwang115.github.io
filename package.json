@@ -8,7 +8,9 @@
     "sync:3d-ice": "node scripts/sync_3d_ice_bundle.mjs",
     "export:3d-ice-landing": "node scripts/export_3d_ice_standalone_page.mjs",
     "dev": "node scripts/sync_3d_ice_bundle.mjs && hugo server --disableFastRender",
-    "build": "node scripts/sync_3d_ice_bundle.mjs && hugo --minify"
+    "check:build": "node scripts/check_build_output.mjs",
+    "test": "node --test scripts/lib/*.test.mjs",
+    "build": "node scripts/sync_3d_ice_bundle.mjs && hugo --minify && node scripts/check_build_output.mjs"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.12",

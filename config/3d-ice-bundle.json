@@ -6,5 +6,8 @@
   "checksumName": "3d-ice-compat.tar.gz.sha256",
   "localRepoCandidates": [
     "../3d-ice"
+  ],
+  "excludePaths": [
+    "tools/3d-ice/index.html"
   ]
 }
