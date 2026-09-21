@@ -5,6 +5,13 @@
 }
 
 .explorer-page-shell--ice {
+  /* The Hugo Blox theme's own UI stack, copied verbatim from the `html` rule
+     in dist/wc.min.css. This is what 3d-ice.com renders in; see the
+     typography-parity block below. */
+  --ice-font-ui: "Inter var", ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
   --ice-ink: #082335;
   --ice-text: #24475a;
   --ice-muted: #4f6d7c;
@@ -366,6 +373,49 @@ html.dark .explorer-page-shell--ice {
   --ice-feedback-secondary-text: #d4eeff;
   --ice-feedback-secondary-shadow: inset 0 1px 0 rgba(223, 248, 255, 0.06);
   color-scheme: dark;
+}
+
+/* Typography parity with 3d-ice.com.
+
+   The 3D ICE landing page is published twice: here, and as a hand-maintained
+   mirror at 3d-ice.com. The standalone site runs the bare Hugo Blox theme, so
+   its text resolves to the theme's Inter stack. yuwang.blog additionally loads
+   the editorial layer, whose `body.page-wrapper` / `body.page-wrapper h1-h4`
+   rules (assets/css/editorial/02-chrome.css) swap the whole site to Space
+   Grotesk + Playfair Display -- which is why the two copies of the same page
+   used to render in different faces.
+
+   Re-assert the theme stack inside the 3D ICE shell so both copies match. The
+   surrounding site chrome (navbar, footer) deliberately keeps the editorial
+   faces: 3d-ice.com has no equivalent chrome to diverge from. The mirrored
+   3d-ice-home.css needs no counterpart to this block -- it is a correction for
+   this site only.
+
+   Specificity has to clear `body.page-wrapper h1` (0,1,2), because the
+   editorial bundle is linked after custom.css. Font smoothing is reset for the
+   same reason: the editorial layer antialiases the whole site, the theme does
+   not, and that alone makes identical faces look different in weight. */
+body.page-wrapper .explorer-page-shell--3d-ice,
+body.page-wrapper .explorer-page-shell--3d-ice h1,
+body.page-wrapper .explorer-page-shell--3d-ice h2,
+body.page-wrapper .explorer-page-shell--3d-ice h3,
+body.page-wrapper .explorer-page-shell--3d-ice h4 {
+  font-family: var(--ice-font-ui);
+}
+
+body.page-wrapper .explorer-page-shell--3d-ice {
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+}
+
+/* The editorial layer also tracks out every heading by 0.005em; the theme does
+   not, so drop it here too. `:where()` pins this at (0,1,3): high enough to
+   beat `body.page-wrapper h1` (0,1,2) from the editorial layer, low enough
+   that the explorer's own per-element tracking -- e.g.
+   `.explorer-page-shell--ice .explorer-page-title` at (0,2,0) -- still wins,
+   exactly as it does on the standalone site. */
+body.page-wrapper :where(.explorer-page-shell--3d-ice) article :is(h1, h2, h3, h4) {
+  letter-spacing: normal;
 }
 
 .explorer-page-shell--ice .explorer-page-breadcrumb {
@@ -1085,6 +1135,141 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
   content: "Tap to open full 3D ICE. ";
 }
 
+/* Latest Updates section on the 3D ICE landing page. Kept byte-identical to
+   3d-ice/static/css/3d-ice-updates.css so yuwang.blog/tools/3d-ice/ and
+   3d-ice.com render the release log the same way. */
+.explorer-page-shell--ice .explorer-update-section {
+  background: var(--ice-feature-section-bg);
+}
+
+.explorer-page-shell--ice .explorer-update-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.explorer-page-shell--ice .explorer-update-list > li {
+  margin: 0;
+}
+
+.explorer-page-shell--ice .explorer-update-card {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(11rem, 0.32fr) minmax(0, 1fr);
+  gap: clamp(1.1rem, 2.5vw, 2rem);
+  overflow: hidden;
+  padding: clamp(1.1rem, 2.4vw, 1.65rem);
+  border: 1px solid var(--ice-card-border-strong);
+  border-radius: 24px;
+  background: var(--ice-panel-card-sky);
+  box-shadow: var(--ice-card-shadow-soft);
+}
+
+.explorer-page-shell--ice .explorer-update-card::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--ice-card-sheen-feature);
+  content: "";
+  pointer-events: none;
+}
+
+.explorer-page-shell--ice .explorer-update-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding-right: clamp(1rem, 2vw, 1.6rem);
+  border-right: 1px solid var(--ice-border);
+}
+
+.explorer-page-shell--ice .explorer-update-date,
+.explorer-page-shell--ice .explorer-update-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.explorer-page-shell--ice .explorer-update-date {
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--ice-border-strong);
+  background: var(--ice-button-ghost-bg);
+  color: var(--ice-accent);
+  font-size: 0.88rem;
+  line-height: 1.25;
+}
+
+.explorer-page-shell--ice .explorer-update-badge {
+  color: var(--ice-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.explorer-page-shell--ice .explorer-update-body h3 {
+  margin: 0 0 0.65rem;
+  color: var(--ice-feature-heading);
+  font-size: clamp(1.25rem, 1.8vw, 1.55rem);
+  line-height: 1.2;
+}
+
+.explorer-page-shell--ice .explorer-update-body > p {
+  margin: 0;
+}
+
+.explorer-page-shell--ice .explorer-update-highlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.explorer-page-shell--ice .explorer-update-highlights li {
+  margin: 0;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--ice-card-border);
+  border-radius: 18px;
+  background: var(--ice-highlight-card-bg);
+  box-shadow: var(--ice-highlight-card-shadow);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+.explorer-page-shell--ice .explorer-update-highlights strong {
+  color: var(--ice-feature-heading);
+}
+
+.explorer-page-shell--ice .explorer-update-body .explorer-actions {
+  margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+  .explorer-page-shell--ice .explorer-update-highlights {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .explorer-page-shell--ice .explorer-update-card {
+    grid-template-columns: 1fr;
+  }
+
+  .explorer-page-shell--ice .explorer-update-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0 0 1rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--ice-border);
+  }
+}
+
 .explorer-page-shell--ice .explorer-source-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1398,6 +1583,15 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-root--untitled .tool-feedback-heading::before,
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-root--untitled .tool-feedback-heading::after {
   content: none;
+}
+
+/* The shared feedback partial later grew a real eyebrow chip of its own
+   (`<span class="tool-feedback-eyebrow">Feedback</span>`), which slipped past
+   the ::before suppression above and put a second, unintended label on this
+   panel. Untitled panels are meant to open straight into the body copy, which
+   is also how the zh translation and the 3d-ice.com mirror render it. */
+.explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-root--untitled .tool-feedback-eyebrow {
+  display: none;
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-root--untitled .tool-feedback-body {

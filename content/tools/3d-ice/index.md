@@ -5,7 +5,7 @@ seo:
   title: "3D ICE: Interactive Cryosphere Explorer"
 summary: "3D ICE is an Interactive Cryosphere Explorer for Antarctica and Greenland, designed to transform complex, state-of-the-art cryosphere datasets into an intuitive 3D experience, seamlessly bridging the gap between rigorous glaciological research and public curiosity."
 date: 2026-03-09
-lastmod: 2026-03-26
+lastmod: 2026-09-16
 layout: explorer-landing
 type: page
 slug: 3d-ice
@@ -159,6 +159,35 @@ image:
 </article>
 </div>
 </section>
+<section id="latest-updates" class="explorer-section explorer-update-section" aria-labelledby="latest-updates-title">
+<div class="explorer-region-intro">
+<p class="explorer-region-label">Latest Updates</p>
+<h2 id="latest-updates-title">What&rsquo;s new in 3D ICE</h2>
+<p>Follow the newest ways to explore polar data, with each release dated so you can quickly see what changed.</p>
+</div>
+<ol class="explorer-update-list">
+<li>
+<article class="explorer-update-card" aria-labelledby="polar-place-search-update-title">
+<div class="explorer-update-meta">
+<time class="explorer-update-date" datetime="2026-08-13">August 13, 2026</time>
+<span class="explorer-update-badge">Interactive explorer</span>
+</div>
+<div class="explorer-update-body">
+<h3 id="polar-place-search-update-title">Find polar places and geographic features</h3>
+<p>The Antarctica and Greenland explorer now brings research stations, curated geographic names, and refined basins into one searchable experience.</p>
+<ul class="explorer-update-highlights">
+<li><strong>Layers:</strong> Choose the <strong>Places &amp; Geographic Features</strong> layers you want to see.</li>
+<li><strong>Search:</strong> Find places and features by name, including refined basins.</li>
+<li><strong>Focus:</strong> Jump between Antarctica and Greenland and move directly to a result.</li>
+</ul>
+<div class="explorer-actions">
+<a class="explorer-button explorer-button--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Try the latest update</a>
+</div>
+</div>
+</article>
+</li>
+</ol>
+</section>
 <section id="key-features" class="explorer-section explorer-feature-section">
 <div class="explorer-region-intro">
 <p class="explorer-region-label">Key Features</p>
@@ -194,6 +223,7 @@ image:
 <h3>Antarctica</h3>
 <ul class="explorer-source-list">
 <li><a href="https://nsidc.org/data/NSIDC-0756/versions/4" target="_blank" rel="noopener">MEaSUREs BedMachine Antarctica, Version 4</a></li>
+<li><a href="https://doi.org/10.5285/2d0e4791-8e20-46a3-80e4-f5f6716025d2" target="_blank" rel="noopener">Bedmap3 Antarctica, Version 1.0</a></li>
 <li><a href="https://nsidc.org/data/NSIDC-0709/versions/2" target="_blank" rel="noopener">MEaSUREs Antarctic Boundaries for IPY 2007-2009 from Satellite Radar, Version 2</a></li>
 <li><a href="https://nsidc.org/data/NSIDC-0754/versions/1" target="_blank" rel="noopener">MEaSUREs Phase-Based Antarctica Ice Velocity Map, Version 1</a></li>
 <li><a href="https://essopenarchive.org/doi/full/10.22541/essoar.177099457.70593031" target="_blank" rel="noopener">Antarctic Ice-Sheet Basal Friction from Elmer/Ice Inversions</a></li>
@@ -206,6 +236,7 @@ image:
 <h3>Greenland</h3>
 <ul class="explorer-source-list">
 <li><a href="https://nsidc.org/data/idbmg4/versions/6" target="_blank" rel="noopener">IceBridge BedMachine Greenland, Version 6</a></li>
+<li><a href="https://doi.org/10.1017/jog.2025.10071" target="_blank" rel="noopener">QRF Greenland Subglacial Topography (2025)</a></li>
 <li><a href="https://nsidc.org/data/NSIDC-0776/versions/2" target="_blank" rel="noopener">MEaSUREs ITS_LIVE Regional Glacier and Ice Sheet Surface Velocities, Version 2</a></li>
 <li><a href="https://essopenarchive.org/doi/full/10.22541/essoar.177099472.28419248" target="_blank" rel="noopener">Greenland Basal Friction Ensemble Inversion Reference</a></li>
 <li><a href="https://data.marine.copernicus.eu/product/ARCTIC_ANALYSISFORECAST_PHY_002_001/description" target="_blank" rel="noopener">Copernicus Marine Arctic Ocean Physics Analysis and Forecast</a></li>
@@ -240,7 +271,7 @@ image:
 <div class="explorer-community-cta-standalone">
 <div class="explorer-community-cta-row">
 <a class="explorer-button explorer-button--community-utility" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
-<a class="explorer-button explorer-button--browse-spotlight" href="/tools/#tools-demo">Browse all research tools</a>
+<a class="explorer-button explorer-button--browse-spotlight" href="/tools/#tools-demo">Browse other research tools</a>
 </div>
 </div>
 </div>
