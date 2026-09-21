@@ -67,6 +67,8 @@ jobs:
       run: |
         echo "Hugo Cache Dir: $(hugo config | grep cachedir)"
         hugo --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+    - name: Check no static file shadows a rendered page
+      run: node scripts/check_static_page_shadowing.mjs public
     - name: Generate Pagefind search index
       run: npx pagefind --site "public"
     - name: Upload artifact

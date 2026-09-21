@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { createReadStream, existsSync } from "node:fs";
-import { access, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { access, mkdir, readdir, readFile, realpath, rm, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -185,6 +185,68 @@ async function extractBundle(bundlePath) {
   }
 }
 
+function resolveInsideGeneratedRoot(relPath) {
+  if (typeof relPath !== "string" || relPath.trim() === "") {
+    throw new Error(`Invalid prunePaths entry ${JSON.stringify(relPath)} in ${bundleConfigPath}`);
+  }
+  const resolved = path.resolve(generatedRoot, relPath);
+  if (resolved === generatedRoot) {
+    throw new Error(`prunePaths entry ${relPath} resolves to the mount root ${generatedRoot}`);
+  }
+  if (!resolved.startsWith(generatedRoot + path.sep)) {
+    throw new Error(`prunePaths entry ${relPath} escapes ${generatedRoot}`);
+  }
+  return resolved;
+}
+
+/**
+ * The lexical check above rejects `..` and absolute paths, but a symlink planted
+ * mid-path by a tampered tarball would still resolve inside the mount root as a
+ * string while pointing elsewhere on disk. Compare real paths before deleting.
+ */
+async function assertRealPathInsideGeneratedRoot(target) {
+  const realRoot = await realpath(generatedRoot);
+  const realParent = await realpath(path.dirname(target));
+  if (realParent !== realRoot && !realParent.startsWith(realRoot + path.sep)) {
+    throw new Error(`${target} resolves outside ${realRoot} (symlinked to ${realParent})`);
+  }
+}
+
+async function removeEmptyParentDirs(startDir) {
+  let dir = startDir;
+  while (dir.startsWith(generatedRoot + path.sep)) {
+    if (!(await pathExists(dir))) return;
+    const entries = await readdir(dir);
+    if (entries.length > 0) return;
+    await rm(dir, { recursive: true, force: true });
+    dir = path.dirname(dir);
+  }
+}
+
+/**
+ * Drop bundle paths that collide with a page Hugo renders itself.
+ *
+ * The bundle packs everything under the 3D ICE repo's `static/tools/`, which
+ * includes `tools/3d-ice/index.html` — a redirect stub that 3d-ice.com needs at
+ * its own `/tools/3d-ice/`, but that here lands on top of the page rendered from
+ * `content/tools/3d-ice/index.md`. Hugo copies static mounts and renders pages
+ * concurrently, so leaving the stub in place makes the winner a coin flip.
+ * `scripts/export_3d_ice_standalone_page.mjs` keeps rewriting the stub upstream,
+ * so it has to be pruned here on every sync rather than deleted over there.
+ */
+async function prunePageShadowingPaths(config) {
+  const removed = [];
+  for (const relPath of config.prunePaths || []) {
+    const target = resolveInsideGeneratedRoot(relPath);
+    if (!(await pathExists(target))) continue;
+    await assertRealPathInsideGeneratedRoot(target);
+    await rm(target, { recursive: true, force: true });
+    await removeEmptyParentDirs(path.dirname(target));
+    removed.push(relPath);
+  }
+  return removed;
+}
+
 async function main() {
   const config = JSON.parse(await readFile(bundleConfigPath, "utf8"));
   const ref = process.env.THREED_ICE_BUNDLE_REF || config.ref;
@@ -207,20 +269,28 @@ async function main() {
 
   const currentState = await readSyncState();
   const currentToolsDir = path.join(generatedRoot, "tools");
-  if (!forceSync && currentState?.sha256 === bundleSource.sha256 && existsSync(currentToolsDir)) {
+  const alreadySynced =
+    !forceSync && currentState?.sha256 === bundleSource.sha256 && existsSync(currentToolsDir);
+
+  if (alreadySynced) {
     log(`bundle ${ref} already synced from ${bundleSource.sourceLabel}`);
-    return;
+  } else {
+    log(`syncing bundle ${ref} from ${bundleSource.sourceLabel}`);
+    await extractBundle(bundleSource.bundlePath);
+    await writeSyncState({
+      ref,
+      sha256: bundleSource.sha256,
+      sourceType: bundleSource.sourceType,
+      sourceLabel: bundleSource.sourceLabel,
+      syncedAt: new Date().toISOString(),
+    });
   }
 
-  log(`syncing bundle ${ref} from ${bundleSource.sourceLabel}`);
-  await extractBundle(bundleSource.bundlePath);
-  await writeSyncState({
-    ref,
-    sha256: bundleSource.sha256,
-    sourceType: bundleSource.sourceType,
-    sourceLabel: bundleSource.sourceLabel,
-    syncedAt: new Date().toISOString(),
-  });
+  // Runs on every invocation, so a tree extracted before this guard existed heals itself.
+  for (const relPath of await prunePageShadowingPaths(config)) {
+    log(`pruned ${relPath} — Hugo renders a page at that path`);
+  }
+
   log(`ready at ${generatedRoot}`);
 }
 
