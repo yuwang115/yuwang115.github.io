@@ -58,7 +58,7 @@ profiles:
     url: https://www.instagram.com/eddiewang115/
 interests:
   - Antarctic ice dynamics
-  - Ice sheet / ice shelf modelling
+  - Ice sheet / ice shelf modeling
   - Subglacial hydrology
   - Glacial climate intervention
   - Climate and sea-level change
@@ -72,14 +72,14 @@ work:
     date_start: 2026-08-03
     date_end: ''
     summary: |
-      Modelling Antarctic ice-sheet and ice-shelf dynamics to assess proposed interventions aimed at slowing glacial ice loss, and to quantify their effectiveness, risks and consequences for long-term sea-level rise.
+      Modeling Antarctic ice-sheet and ice-shelf dynamics to assess proposed interventions aimed at slowing glacial ice loss, and to quantify their effectiveness, risks and consequences for long-term sea-level rise.
   - position: Graduate Researcher
     company_name: Institute for Marine and Antarctic Studies, University of Tasmania / Australian Antarctic Program Partnership
     company_url: 'https://www.utas.edu.au/imas'
     date_start: 2022-08-15
     date_end: 2026-06-30
     summary: |
-      Coupled ice-sheet, subglacial hydrology and ice–ocean modelling of the Wilkes Subglacial Basin, East Antarctica, using Elmer/Ice. Co-convenor of the WilkesMIP model intercomparison project.
+      Coupled ice-sheet, subglacial hydrology and ice–ocean modeling of the Wilkes Subglacial Basin, East Antarctica, using Elmer/Ice. Co-convenor of the WilkesMIP model intercomparison project.
 
 education:
   - area: PhD (Marine and Antarctic Studies)
@@ -110,7 +110,7 @@ education:
 # Skills
 # Add your own SVG icons to `assets/media/icons/`
 skills:
-  - name: Modelling
+  - name: Modeling
     items:
       - name: Elmer/Ice
         description: 'Ice flow'
@@ -260,7 +260,7 @@ publications:
     year: 2022
     doi: "10.5194/tc-16-1221-2022"
     url: "https://doi.org/10.5194/tc-16-1221-2022"
-  - title: "Coupled ice–ocean modelling of subglacial hydrology in the Wilkes Subglacial Basin"
+  - title: "Coupled ice–ocean modeling of subglacial hydrology in the Wilkes Subglacial Basin"
     authors: "Yu Wang, Chen Zhao, Rupert Gladstone, Ben Galton-Fenzi, Poul Christoffersen"
     journal: "Earth’s Future"
     year: 2023
@@ -272,7 +272,7 @@ publications:
     year: 2023
     doi: "10.1038/s41467-023-XXXXXX"
     url: "https://doi.org/10.1038/s41467-023-XXXXXX"
-  - title: "Ensemble modelling workflows for ice sheet projections"
+  - title: "Ensemble modeling workflows for ice sheet projections"
     authors: "Yu Wang, Rupert Gladstone"
     journal: "The Cryosphere"
     year: 2024

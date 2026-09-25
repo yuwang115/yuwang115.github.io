@@ -183,6 +183,14 @@ body.page-wrapper:has(.ed-hero) .page-header {
   color: var(--ed-ice-paper);
   text-wrap: balance;
 }
+/* The 38px floor of --ed-display is too wide for "we may yet hold back" on a
+   phone, which then breaks onto a third line. Scale with the viewport so each
+   title line stays on one line. */
+@media (max-width: 600px) {
+  .ed-hero__title {
+    font-size: min(var(--ed-display), calc((100vw - 48px) / 10));
+  }
+}
 
 .ed-hero__affil {
   margin: clamp(20px, 3vh, 30px) 0 0;

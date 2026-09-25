@@ -199,15 +199,15 @@ image:
 <p>Freely rotate, zoom, and change your viewpoint. Explore the ice sheets as if you were examining a physical model right in your hands.</p>
 </article>
 <article class="explorer-feature-card">
-<h3>Comprehensive &amp; Customisable Data</h3>
-<p>Available for both Antarctica and Greenland. Seamlessly visualise continental-scale land data alongside simulated ocean circulations. Layer and combine them in any way you desire to uncover new insights.</p>
+<h3>Comprehensive &amp; Customizable Data</h3>
+<p>Available for both Antarctica and Greenland. Seamlessly visualize continental-scale land data alongside simulated ocean circulations. Layer and combine them in any way you desire to uncover new insights.</p>
 </article>
 <article class="explorer-feature-card">
 <h3>Direct Gateway to Source Data</h3>
-<p>Built as a systematic data platform for professional researchers. First, visualise the latest state-of-the-art datasets in 3D, then simply click to jump directly to the source data you need.</p>
+<p>Built as a systematic data platform for professional researchers. First, visualize the latest state-of-the-art datasets in 3D, then simply click to jump directly to the source data you need.</p>
 </article>
 <article class="explorer-feature-card">
-<h3>Optimised Cross-Platform Performance</h3>
+<h3>Optimized Cross-Platform Performance</h3>
 <p>Features a balanced resolution preset for smooth exploration on mobile touchscreens. For the ultimate experience, switch to the stunning HD Option (4km resolution for Antarctica, 1km for Greenland), highly recommended for large desktop screens.</p>
 </article>
 </div>
@@ -216,7 +216,7 @@ image:
 <div class="explorer-region-intro">
 <p class="explorer-region-label">Source Data</p>
 <h2>A direct gateway to the datasets behind 3D ICE</h2>
-<p>Built as a systematic data platform for professional researchers. First, visualise the latest state-of-the-art datasets in 3D, then simply click to jump directly to the source data you need.</p>
+<p>Built as a systematic data platform for professional researchers. First, visualize the latest state-of-the-art datasets in 3D, then simply click to jump directly to the source data you need.</p>
 </div>
 <div class="explorer-source-columns">
 <article class="explorer-source-column">

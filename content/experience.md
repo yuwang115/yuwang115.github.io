@@ -106,7 +106,7 @@ sections:
       text: |
         - **Teaching Assistant - Ice Sheets, Climate & Sea Level Rise**, UTAS,
           Sep 2025 - Oct 2025  
-          Designed and led practicals; assisted students in analysing model results.
+          Designed and led practicals; assisted students in analyzing model results.
         - **Lecturer - Kioloa Winter School: Antarctic Tipping Points**, ANU,
           Jun 2025  
           Delivered lectures on tipping points and irreversibility within ice sheets.
@@ -118,13 +118,13 @@ sections:
         - **Asian Forum for Polar Sciences (AFoPS) Summer School**, Jul 2026  
           Polar Research Institute of China, China.
         - **Creator & Developer - [3D ICE](/tools/3d-ice/)**, Feb 2026  
-          Interactive 3D visualisation for Antarctica and Greenland.
+          Interactive 3D visualization for Antarctica and Greenland.
         - **Peer Reviewer**, Apr 2025 - present  
           *Nature Communications*, *Journal of Glaciology*, *Communications Earth & Environment*.
         - **Co-convenor - WilkesMIP Project**, Jan 2025 - present  
           Coordinating an international model intercomparison project.
-        - **Organiser and Host - UTAS Ice Sheets Group Meeting**, Jun 2023 - Aug 2024  
-          Organised weekly group seminars and facilitated discussions.
+        - **Organizer and Host - UTAS Ice Sheets Group Meeting**, Jun 2023 - Aug 2024  
+          Organized weekly group seminars and facilitated discussions.
         - **Karthaus Summer School on Ice Sheets and Glaciers**, May 2024  
           Karthaus, Italy.
         - **Monash Hackathon - Disentangling Uncertainties in ISMIP6-2300**, Mar 2024  

@@ -19,8 +19,8 @@ sections:
       name: "Yu Wang"
       native_name: "王禹"
       title_lines:
-        - "Modelling the ice"
-        - "that sets sea level"
+        - "Modeling the ice"
+        - "we may yet hold back"
       affiliation_lines:
         - "Climate Systems Engineering initiative"
         - "The University of Chicago"
@@ -78,7 +78,7 @@ sections:
       lede: |
         East Antarctica was long treated as the stable half of the continent. The
         Wilkes Subglacial Basin is the exception — enough ice to raise global sea
-        level by several metres, resting on a bed that deepens inland. My work asks
+        level by several meters, resting on a bed that deepens inland. My work asks
         what actually sets the pace of its retreat, and whether anything can be done
         about it.
       threads:
@@ -94,9 +94,9 @@ sections:
         - title: "Subglacial hydrology"
           body: |
             Water at the bed sets basal traction, and the drainage system that carries
-            it reorganises as the ice above it changes. Coupling
+            it reorganizes as the ice above it changes. Coupling
             [GlaDS](https://doi.org/10.3189/2013JoG13J045) to Elmer/Ice lets
-            distributed and channelised drainage evolve with the ice sheet instead of
+            distributed and channelized drainage evolve with the ice sheet instead of
             being prescribed — a two-way link that [amplifies Antarctica's projected
             sea-level contribution](/publication/natcomm-2025-subglacial-water/).
           tools: "GlaDS · Coupled Elmer/Ice–GlaDS"
@@ -118,7 +118,7 @@ sections:
         caption: |
           **Evolving ice sheet and subglacial hydrology in the Wilkes Subglacial
           Basin.** A coupled ice–hydrology experiment: channel discharge and ice
-          velocity evolve together as the drainage system reorganises beneath the
+          velocity evolve together as the drainage system reorganizes beneath the
           retreating ice.
     design:
       spacing:
@@ -179,7 +179,7 @@ sections:
     content:
       title: "Explore my work & get in touch"
       text: |-
-        I’m always keen to discuss Antarctic ice dynamics, subglacial hydrology, and modelling workflows. If you’d like to collaborate or invite a talk, feel free to reach out.
+        I’m always keen to discuss Antarctica, modeling and glaciology. If you’d like to collaborate or invite a talk, feel free to reach out.
       button:
         text: Email Me
         url: mailto:wangyu@uchicago.edu

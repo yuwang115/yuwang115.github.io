@@ -23,7 +23,7 @@ abstract: "The Ice Sheet Model Intercomparison Project for CMIP6 (ISMIP6) is the
 
 summary: "A 16‑model ISMIP6 ensemble projects <30 cm SLE by 2100 but up to 4.4 m by 2300 (6.9 m with ice‑shelf collapse); retreat timing varies while propagation rates are consistent, and model choice remains the leading uncertainty."
 
-tags: ["ISMIP6",  "Antarctic Ice Sheet", "Global sea-level rise","Ensemble Modelling"]
+tags: ["ISMIP6",  "Antarctic Ice Sheet", "Global sea-level rise","Ensemble Modeling"]
 featured: false
 open_access: true
 reading_time: false

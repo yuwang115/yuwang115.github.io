@@ -3,7 +3,7 @@ title: "SLIDE: Understand How Ice Slides Over Bedrock"
 breadcrumb_title: "SLIDE Guide"
 seo:
   title: "SLIDE Guide: Sliding Regime Explorer"
-summary: "SLIDE visualises the unified glacial sliding law. Learn what controls how fast glaciers slide, why it matters for ice sheet predictions, and explore the physics interactively."
+summary: "SLIDE visualizes the unified glacial sliding law. Learn what controls how fast glaciers slide, why it matters for ice sheet predictions, and explore the physics interactively."
 date: 2026-04-07
 lastmod: 2026-04-07
 layout: explorer-landing
@@ -51,7 +51,7 @@ image:
 <div class="explorer-region-intro">
 <p class="explorer-region-label">Background</p>
 <h2>Why Basal Sliding Matters</h2>
-<p>What happens at the base of a glacier &mdash; hidden under kilometres of ice &mdash; is one of the most important controls on how fast ice sheets lose mass.</p>
+<p>What happens at the base of a glacier &mdash; hidden under kilometers of ice &mdash; is one of the most important controls on how fast ice sheets lose mass.</p>
 </div>
 <div class="explorer-feature-grid">
 <article class="explorer-feature-card">
@@ -64,11 +64,11 @@ image:
 </article>
 <article class="explorer-feature-card">
 <h3>Two Regimes, One Law</h3>
-<p>On hard bedrock, sliding follows the classical <strong>Weertman</strong> regime &mdash; friction increases with speed. On soft, waterlogged sediment, friction hits a ceiling set by the sediment&rsquo;s strength (the <strong>Coulomb</strong> regime). SLIDE visualises the unified law that smoothly connects both.</p>
+<p>On hard bedrock, sliding follows the classical <strong>Weertman</strong> regime &mdash; friction increases with speed. On soft, waterlogged sediment, friction hits a ceiling set by the sediment&rsquo;s strength (the <strong>Coulomb</strong> regime). SLIDE visualizes the unified law that smoothly connects both.</p>
 </article>
 <article class="explorer-feature-card">
 <h3>Why Models Get It Wrong</h3>
-<p>Ice sheet models are only as good as their sliding laws. Using the wrong regime can drastically overestimate or underestimate future ice loss. Understanding the transition between Weertman and Coulomb behaviour is essential for trustworthy sea-level projections.</p>
+<p>Ice sheet models are only as good as their sliding laws. Using the wrong regime can drastically overestimate or underestimate future ice loss. Understanding the transition between Weertman and Coulomb behavior is essential for trustworthy sea-level projections.</p>
 </article>
 </div>
 </section>
@@ -85,7 +85,7 @@ image:
 </article>
 <article class="explorer-feature-card">
 <h3>3D Regime Surface</h3>
-<p>The full parameter space rendered as an interactive 3D surface you can rotate and zoom. One axis is velocity, another is effective pressure, and the surface height shows the resulting stress. Colour encodes the regime: teal for Weertman, gold for transition, magenta for Coulomb.</p>
+<p>The full parameter space rendered as an interactive 3D surface you can rotate and zoom. One axis is velocity, another is effective pressure, and the surface height shows the resulting stress. Color encodes the regime: teal for Weertman, gold for transition, magenta for Coulomb.</p>
 </article>
 <article class="explorer-feature-card">
 <h3>Regime Classification</h3>
@@ -102,7 +102,7 @@ image:
 <div class="explorer-region-intro">
 <p class="explorer-region-label">Story Presets</p>
 <h2>Four Real-World Glacier Scenarios</h2>
-<p>Each preset configures SLIDE to match a different type of glacier. Click any preset to see how the same unified sliding law produces very different behaviour depending on the environment.</p>
+<p>Each preset configures SLIDE to match a different type of glacier. Click any preset to see how the same unified sliding law produces very different behavior depending on the environment.</p>
 </div>
 <div class="explorer-feature-grid">
 <article class="explorer-feature-card">
@@ -112,7 +112,7 @@ image:
 </article>
 <article class="explorer-feature-card">
 <h3>Outlet Glacier</h3>
-<p>A moderate marine-terminating outlet with balanced conditions near the transition threshold. Effective pressure is lower (N&nbsp;=&nbsp;1.0&nbsp;MPa), placing it right at the boundary where Weertman behaviour gives way to Coulomb &mdash; the <strong>transition zone</strong>.</p>
+<p>A moderate marine-terminating outlet with balanced conditions near the transition threshold. Effective pressure is lower (N&nbsp;=&nbsp;1.0&nbsp;MPa), placing it right at the boundary where Weertman behavior gives way to Coulomb &mdash; the <strong>transition zone</strong>.</p>
 <p style="margin-top:0.8rem;"><a class="explorer-button explorer-button--ghost" href="/tools/SLIDE.html?preset=outlet" style="font-size:0.84rem;padding:0.5rem 1rem;">Try this preset</a></p>
 </article>
 <article class="explorer-feature-card">
@@ -190,11 +190,11 @@ image:
 </details>
 <details>
 <summary>What is the Weertman regime?</summary>
-<p>The classical hard-bed sliding behaviour, where basal shear stress increases with sliding velocity. Named after Johannes Weertman, who first described it in the 1950s. This applies when ice slides over clean, hard bedrock with relatively little water &mdash; like an alpine glacier on granite. The faster the ice slides, the more resistance it encounters.</p>
+<p>The classical hard-bed sliding behavior, where basal shear stress increases with sliding velocity. Named after Johannes Weertman, who first described it in the 1950s. This applies when ice slides over clean, hard bedrock with relatively little water &mdash; like an alpine glacier on granite. The faster the ice slides, the more resistance it encounters.</p>
 </details>
 <details>
 <summary>What is the Coulomb regime?</summary>
-<p>When ice sits on soft, waterlogged sediment (till), the maximum friction is limited by the sediment&rsquo;s shear strength &mdash; which depends on effective pressure, not velocity. No matter how fast the ice moves, friction cannot exceed this ceiling. This explains why ice streams can flow hundreds of metres per year on nearly flat beds.</p>
+<p>When ice sits on soft, waterlogged sediment (till), the maximum friction is limited by the sediment&rsquo;s shear strength &mdash; which depends on effective pressure, not velocity. No matter how fast the ice moves, friction cannot exceed this ceiling. This explains why ice streams can flow hundreds of meters per year on nearly flat beds.</p>
 </details>
 <details>
 <summary>What is the unified sliding law?</summary>
@@ -202,7 +202,7 @@ image:
 </details>
 <details>
 <summary>What is the transition ridge?</summary>
-<p>On the 3D surface in SLIDE, a golden ridge line marks where the sliding transitions from Weertman to Coulomb behaviour. At velocities below the ridge, stress grows with speed. Above the ridge, stress flattens out. The ridge&rsquo;s position depends on the sliding coefficient <em>C</em>, bed roughness <em>A<sub>s</sub></em>, and effective pressure <em>N</em>.</p>
+<p>On the 3D surface in SLIDE, a golden ridge line marks where the sliding transitions from Weertman to Coulomb behavior. At velocities below the ridge, stress grows with speed. Above the ridge, stress flattens out. The ridge&rsquo;s position depends on the sliding coefficient <em>C</em>, bed roughness <em>A<sub>s</sub></em>, and effective pressure <em>N</em>.</p>
 </details>
 <details>
 <summary>How does this connect to SL-ICE?</summary>
