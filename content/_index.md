@@ -74,40 +74,40 @@ sections:
     id: research
     content:
       eyebrow: "Research"
-      title: "Three threads, one question: how fast can Antarctica lose its ice?"
+      title: "Understand the ice first. Then ask whether we can slow it."
       lede: |
-        East Antarctica was long treated as the stable half of the continent. The
-        Wilkes Subglacial Basin is the exception — enough ice to raise global sea
-        level by several meters, resting on a bed that deepens inland. My work asks
-        what actually sets the pace of its retreat, and whether anything can be done
-        about it.
+        Ice sheets are hard to predict. Much of what controls them happens out of
+        sight, at a bed buried under kilometers of ice, and the processes our models
+        simplify can amplify ice loss or hold it back. I want to understand that
+        system well enough to say how fast it could change — and then to ask,
+        honestly, whether anything we do could slow it.
       threads:
-        - title: "Ice-sheet and ice-shelf dynamics"
+        - title: "What are our models still missing?"
           body: |
-            A retrograde bed means that once the grounding line retreats inland,
-            thinning can keep feeding itself. I use
-            [Elmer/Ice](http://elmerice.elmerfem.org/) to resolve that migration
-            directly, and to show how much the answer depends on how melt is applied
-            at the grounding line — [enough to change the projected
-            contribution several-fold](/publication/cryosphere-2024-wsb-melt-param/).
-          tools: "Elmer/Ice · SSA & full-Stokes · WilkesMIP"
-        - title: "Subglacial hydrology"
+            Grounding lines retreating over deepening beds, water reorganizing beneath
+            the ice, ice shelves holding back the flow — leave one out and projected
+            ice loss can [change several-fold](/publication/cryosphere-2024-wsb-melt-param/)
+            or [grow substantially](/publication/natcomm-2025-subglacial-water/). I
+            want to know which feedbacks matter most, where retreat becomes
+            irreversible, and how much of the uncertainty we can actually reduce.
+          tools: "Elmer/Ice · GlaDS · WilkesMIP · ISMIP6"
+        - title: "Can we change what happens at the bed?"
           body: |
-            Water at the bed sets basal traction, and the drainage system that carries
-            it reorganizes as the ice above it changes. Coupling
-            [GlaDS](https://doi.org/10.3189/2013JoG13J045) to Elmer/Ice lets
-            distributed and channelized drainage evolve with the ice sheet instead of
-            being prescribed — a two-way link that [amplifies Antarctica's projected
-            sea-level contribution](/publication/natcomm-2025-subglacial-water/).
-          tools: "GlaDS · Coupled Elmer/Ice–GlaDS"
-        - title: "Glacial climate intervention"
+            If water at the bed lets ice slide faster, removing it looks like an
+            obvious lever. But the drainage system is not passive: it reorganizes,
+            and in coupled simulations it can partly undo the intervention. I want to
+            find out when drying the bed could work, when it cannot, and why.
+          tools: "Coupled Elmer/Ice–GlaDS · Bed-drying experiments"
+        - title: "Could we keep the ice shelves holding?"
           body: |
-            At the [Climate Systems Engineering
-            initiative](https://climate.uchicago.edu/entities/csei/) I test whether
-            targeted interventions — drying the bed, buttressing an ice shelf — could
-            slow polar ice loss enough to matter for sea level, and what they would
-            cost in risk, side effects and sheer engineering scale.
-          tools: "CSEi · Work in progress"
+            Much of Antarctica's ice loss begins where warm ocean water reaches its
+            ice shelves. Proposals to block that water or to
+            reinforce the shelves are now being taken seriously. At
+            [CSEi](https://climate.uchicago.edu/entities/csei/), I want to test them
+            with the same models we use for projections: how much ice they could
+            save, how long they would take to work, and what they would cost in risk
+            and scale.
+          tools: "CSEi · Ice–ocean modeling"
       figure:
         video: "/media/3DWSB.mp4"
         # Intrinsic size, so the frame reserves its aspect ratio before the
@@ -116,10 +116,9 @@ sections:
         height: 1612
         label: "Animation of a coupled ice-sheet and subglacial hydrology experiment in the Wilkes Subglacial Basin"
         caption: |
-          **Evolving ice sheet and subglacial hydrology in the Wilkes Subglacial
-          Basin.** A coupled ice–hydrology experiment: channel discharge and ice
-          velocity evolve together as the drainage system reorganizes beneath the
-          retreating ice.
+          **Ice and water, evolving together.** A coupled ice-sheet and subglacial
+          hydrology simulation: channel discharge and ice velocity change in step
+          as the drainage system reorganizes beneath the retreating ice.
     design:
       spacing:
         padding: ["2rem", 0, "6rem", 0]
