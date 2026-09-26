@@ -1,0 +1,6 @@
+# Local `hugo server` only (the production build ignores this): the dev server sends no
+# Cache-Control, so browsers kept serving stale CSS/JS after edits.
+headers:
+  - for: /**
+    values:
+      Cache-Control: no-store
