@@ -9,6 +9,10 @@ on:
     branches: ["main"]
   # Allows you to run this workflow manually from the Actions tab on GitHub.
   workflow_dispatch:
+  # Sent by yuwang115/3d-ice (.github/workflows/notify-site.yml) when a push
+  # to its main branch changes the explorer, so the 3D ICE bundle stays current.
+  repository_dispatch:
+    types: [3d-ice-updated]
 
 # Provide permission to clone the repo and deploy it to GitHub Pages
 permissions:
@@ -44,6 +48,9 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: yuwang115/3d-ice
+        # A 3d-ice dispatch pins the commit that triggered it; any other
+        # trigger builds from the 3d-ice default branch.
+        ref: ${{ github.event.client_payload.sha || '' }}
         path: 3d-ice-source
     - uses: actions/cache@v3
       with:
