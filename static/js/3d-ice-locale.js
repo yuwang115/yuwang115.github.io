@@ -59,12 +59,20 @@
         datasets: {
           antarctica: {
             balanced: {
-              label: "Balanced",
+              label: "BedMachine v4 — Balanced",
               summary: "10 km grid; ~3.0 MB",
             },
             hd: {
-              label: "HD",
+              label: "BedMachine v4 — HD",
               summary: "4 km grid; ~18.6 MB",
+            },
+            bedmap3: {
+              label: "Bedmap3 — Balanced",
+              summary: "10 km grid; ~3.0 MB",
+            },
+            "bedmap3-hd": {
+              label: "Bedmap3 — HD",
+              summary: "4 km grid; ~18.6 MB, desktop recommended",
             },
           },
           greenland: {
@@ -75,6 +83,14 @@
             "1km": {
               label: "HD",
               summary: "1 km grid; ~28.2 MB",
+            },
+            qrf: {
+              label: "QRF 2025 — Balanced",
+              summary: "3 km grid; ~3.1 MB",
+            },
+            "qrf-hd": {
+              label: "QRF 2025 — HD",
+              summary: "1 km grid; ~28.2 MB, desktop recommended",
             },
           },
         },
@@ -104,6 +120,9 @@
           blocked: "Fullscreen request was blocked",
         },
         status: {
+          loadingIsostaticRebound: "Solving isostatic rebound...",
+          loadingIsostaticResponse: "Loading the published isostatic response...",
+          isostaticReboundUnavailable: "Isostatic rebound unavailable",
           ready: "Ready",
           readyWithContext: "Ready ({region} {dataset})",
           previewReady: "Preview ready",
@@ -126,6 +145,10 @@
           flowlineProfileHint: "Click any flowline to inspect the ice-and-bedrock profile",
         },
         loading: {
+          solvingIsostaticRebound: "Solving isostatic rebound...",
+          loadingIsostaticResponse: "Loading the published isostatic response...",
+          downloadingIsostaticResponse: "Downloading isostatic response",
+          isostaticReboundReady: "Isostatic rebound ready",
           initializingRuntime: "Initializing 3D runtime...",
           initializingRenderer: "Initializing renderer...",
           progressiveLoadingEnabled: "Progressive loading enabled",
@@ -168,6 +191,37 @@
           finalizingHydrologyLayer: "Finalizing hydrology layer...",
           hydrologyLayerReady: "Hydrology layer ready",
         },
+        rebound: {
+          years: "about {value} yr",
+          kiloyears: "about {value} kyr",
+          progressNote:
+            "{percent}% of the equilibrium rebound, reached {elapsed} after an instantaneous deglaciation (relaxation time {tau} yr). Ice thickness and bed relaxation advance together here; that coupling is illustrative, not a transient simulation.",
+          progressNoteComplete:
+            "Full equilibrium rebound. With this model's single relaxation time ({tau} yr) that is effectively reached 15-20 kyr after an instantaneous deglaciation; the real mantle relaxes over several timescales, and full re-equilibration takes of order 100 kyr. Beneath the Amundsen Sea Embayment the mantle is far weaker and responds within decades to centuries.",
+          progressNotePublished:
+            "{percent}% of the published equilibrium response. The bed and the ice advance together as a straight interpolation between today and full re-equilibration; the response has no single timescale, so no elapsed time is implied.",
+          progressNotePublishedComplete:
+            "Full re-equilibration, of order 100 kyr after the ice is gone (Paxman et al., 2022). Beneath the Amundsen Sea Embayment the mantle is far weaker and responds within decades to centuries.",
+          modelNotePublished:
+            "Published response of Paxman, Austermann & Hollyday (2022), grids v3: elastic-plate flexure with laterally variable elastic thickness ({teModel}), plus the post-LGM rebound still to come and the load of the seawater that floods the rebounded bed.",
+          modelNotePublishedQrf:
+            "The published grid was computed for the BedMachine Greenland v6 ice load; the QRF bed changes the flexural response by about 10 m RMS, well inside the model spread.",
+          modelNoteFlexural:
+            "Idealised: a thin elastic plate on a fluid asthenosphere, D = 1e25 N m, flexural length scale {lengthScale} km. Lithospheric strength spreads the load, lowering peak uplift and raising a slight forebulge beyond the former margin.",
+          modelNoteLocal:
+            "Idealised: Airy isostasy applied column by column, with no lithospheric strength. This is the upper bound on peak uplift and shows more short-wavelength detail than the solid Earth can actually support.",
+          seaLevelNoteZero:
+            "Ocean held at today's datum. Melting this ice would itself raise global mean sea level by about {sle} m, which this setting deliberately leaves out so the bed motion can be read on its own.",
+          seaLevelNoteRaised:
+            "Ocean raised by {datum} m, applied as a uniform global datum. Near the former ice sheet the sea surface also sits lower because the ice's gravitational pull is gone; once the mantle has fully relaxed the removed ice mass is largely compensated by inflow beneath, so that geoid drop is of order tens of metres rather than hundreds. The much larger near-field sea-level fall usually quoted is mostly the bedrock uplift, which this view already shows.",
+          seaLevelNotePublished:
+            "The sea surface is part of the published model: meltwater from both ice sheets (+{eustatic} m) plus the residual post-LGM geoid change, {gmin}-{gmax} m above today's over this ice sheet. Heights and emergence are shown relative to that ice-free sea surface; the datum slider applies to the idealised responses only.",
+          seaLevelNotePublishedGeneric:
+            "The sea surface is part of the published model: meltwater from both ice sheets plus the residual post-LGM geoid change. Heights and emergence are shown relative to that ice-free sea surface; the datum slider applies to the idealised responses only.",
+          seaLevelValuePublished: "set by the model",
+          legendNote:
+            "Colours follow the active sea-level datum, so the land/ocean break tracks the waterline. Newly emergent land is tinted orange. Ice shelves contribute no uplift: floating ice already displaces its own weight of seawater.",
+        },
         legends: {
           warm: "Warm",
           cold: "Cold",
@@ -175,6 +229,63 @@
           salty: "Salty",
         },
         meta: {
+          reboundMillionKm2: "{value} million km\u00b2",
+          reboundVolumeOf: "{above} of {total} million km\u00b3",
+          reboundSolveGridValue: "{cell} km grid, {sizeX} x {sizeY} transform",
+          reboundSolveGridPointwise: "{cell} km grid, solved pointwise",
+          reboundConvergenceValue: "{iterations} iterations, {residual} m residual",
+          isostaticReboundSection: "Isostatic Rebound (modelled)",
+          reboundModelLabel: "Earth response",
+          reboundModelPublished: "Published: Paxman et al. (2022), grids v3",
+          reboundModelFlexural: "Idealised regional flexure (elastic plate on a fluid asthenosphere)",
+          reboundModelLocal: "Idealised local (Airy) isostasy",
+          reboundElasticThickness: "Elastic thickness",
+          reboundPublishedEarthModelValue: "{teModel}, laterally variable; densities ice 917, seawater 1028, mantle 3330 kg/m3",
+          reboundSeaSurface: "Ice-free sea surface",
+          reboundSeaSurfaceValue: "+{eustatic} m eustatic (both ice sheets) plus the residual post-LGM geoid: {gmin}-{gmax} m above today's under the grounded ice",
+          reboundMaxTopographyChange: "Largest rise above the ice-free sea surface",
+          reboundMeanTopographyChange: "Mean rise above the ice-free sea surface under grounded ice",
+          reboundComponents: "Components under grounded ice",
+          reboundComponentsValue: "ice unloading {iu} m (max {iuMax} m); post-LGM {lgm} m (max {lgmMax} m); water loading {wl} m (min {wlMin} m)",
+          reboundSigma: "Earth-model spread (1 sigma) under grounded ice",
+          reboundSigmaValue: "{mean} m mean, {max} m max",
+          reboundLandAfterPublished: "Bed above the ice-free sea surface after rebound",
+          reboundMarineUnderIcePublished: "Still below the ice-free sea surface under the present ice",
+          reboundQrfLoadNote: "Load",
+          reboundQrfLoadNoteValue: "computed for the BedMachine Greenland v6 ice load; the QRF bed changes the flexural response by about 10 m RMS",
+          reboundRigidity: "Flexural rigidity",
+          reboundLengthScale: "Flexural length scale",
+          reboundRelaxation: "Relaxation time",
+          reboundProgressLabel: "Scenario progress",
+          reboundSeaLevelLabel: "Sea-level datum",
+          reboundMaxUplift: "Maximum equilibrium uplift",
+          reboundMeanGroundedUplift: "Mean uplift under grounded ice",
+          reboundLandBefore: "Bed above sea level today",
+          reboundLandAfter: "Bed above the datum after rebound",
+          reboundEmergent: "Newly emergent land",
+          reboundDrowned: "Present bedrock drowned by the datum",
+          reboundMarineUnderIce: "Still below the datum under the present ice",
+          reboundClosedBasins: "Closed basins below the datum",
+          reboundDeepest: "Deepest grounded bed after rebound",
+          reboundIceVolume: "Ice volume on the active grid",
+          reboundVolumeAboveFlotation: "Volume above flotation",
+          reboundSle: "Sea-level equivalent",
+          reboundSlePublishedAntarctica:
+            "above flotation; cf. the 57.9 m published for BedMachine Antarctica v4. The residual is a dataset-version and ocean-area convention difference, not a grid-resolution effect: the 10 km and 4 km packages agree to 0.01%, while Bedmap3 gives 57.1 m on the same grids.",
+          reboundSlePublishedGreenland:
+            "above flotation; the commonly quoted 7.4 m is a total-ice-volume figure, which this grid reproduces to within 0.3%.",
+          reboundSolveGrid: "Flexure solve grid",
+          reboundConvergence: "Picard convergence",
+          reboundAssumptions: "Assumptions",
+          reboundAssumptionsText:
+            "Idealised equilibrium response to removing the present ice load, not a transient simulation. The present bed is taken as being in balance with the present load, which it is not: part of the rebound from the Last Glacial Maximum is still to come (up to +68 m of bed elevation under the Ross and Weddell embayments, while the collapsing Laurentide forebulge lowers Greenland by up to 25 m; Paxman et al., 2022), and the Amundsen Sea Embayment is rising at up to 41 mm/yr in response to recent ice loss over a weak mantle. Sea-level fingerprinting, geoid change and rotational feedback are omitted, and a single global rigidity and mantle density replace real lateral structure.",
+          reboundAssumptionsTextPublished:
+            "Fully re-equilibrated response to removing both ice sheets. The post-LGM correction uses a one-dimensional mantle viscosity profile, which is least reliable where the upper mantle is weak, as beneath West Antarctica and East Greenland. The sea surface rises by the eustatic amount plus the residual post-LGM geoid change; thermosteric and dynamic sea level, erosion and sedimentation are not included, and every point below the ice-free sea surface is loaded with seawater.",
+          reboundMethod: "Method",
+          reboundMethodText:
+            "Thin-plate flexure D grad^4 u + rho_m g u = sigma_now - sigma_after, solved spectrally, with the post-deglaciation water load resolved by Picard iteration over the ocean-connected footprint. Densities: ice 917, seawater 1027, mantle 3300 kg/m3.",
+          reboundMethodTextPublished:
+            "Published total isostatic response T = R - G, point-sampled at this grid's nodes, where R is the solid-surface displacement and G the sea-surface change. The bed is drawn at bed + T, so heights read directly against the ice-free sea surface. Grid files: NSF Arctic Data Center, doi:10.18739/A22Z12R8C (CC BY 4.0).",
           errorLabel: "Error",
           geometrySection: "Geometry & Grid",
           velocitySection: "Ice Surface Velocity (observed)",
@@ -236,6 +347,7 @@
           sourceSubglacialHydrology: "Subglacial Hydrology",
           sourceOceanCirculation: "Ocean Circulation",
           sourceMeltDrivers: "Melt Drivers",
+          sourceIsostaticResponse: "Isostatic Response",
           currentScope: "Current {region} scope",
           currentScopeSummary: "Bed topography, ice surface, and ice base are enabled in this version.",
           fieldStatsBed: "Bed",
@@ -253,10 +365,14 @@
             "Cold-fresh cyan, cold-salty indigo, warm-fresh green, warm-salty orange-red ({thetaMin} to {thetaMax} °C; {salinityMin} to {salinityMax} PSU)",
         },
         errors: {
+          reboundGridTooSmall: "Isostatic-rebound solver needs a grid of at least 2x2 cells.",
+          reboundTransformTooLarge: "Isostatic-rebound solver grid exceeds the supported transform size.",
           workerTaskFailed: "Worker task failed",
           workerCrashed: "Geometry worker crashed",
           workerTerminated: "Geometry worker terminated",
           fullscreenUnavailable: "Fullscreen API unavailable.",
+          regionSwitchUnavailable: "Region switching is unavailable in this explorer mode.",
+          regionLoadTimedOut: "Timed out loading {region}.",
           failedToLoadMetadata: "Failed to load metadata ({status})",
           failedToLoadTerrainPackage: "Failed to load terrain package ({status})",
           failedToLoadVelocityMetadata: "Failed to load velocity metadata ({status})",
@@ -267,6 +383,8 @@
           failedToLoadVelocityField: "Failed to load velocity field ({status})",
           failedToLoadBasalFrictionField: "Failed to load basal-friction field ({status})",
           failedToLoadHydrologyField: "Failed to load hydrology field ({status})",
+          failedToLoadReboundMetadata: "Failed to load isostatic-response metadata ({status})",
+          failedToLoadReboundField: "Failed to load isostatic-response field ({status})",
           failedToLoadRiseOverlayPackage: "Failed to load RISE overlay package ({status})",
           failedToLoadOceanCurrentVectors: "Failed to load ocean-current vectors ({status})",
           failedToLoadBasinBoundaries: "Failed to load basin boundaries ({status})",
@@ -289,6 +407,7 @@
       },
       worker: {
         progress: {
+          reboundSolvingFlexure: "Solving isostatic rebound...",
           oceanDecodingPackage: "Decoding ocean-current package...",
           oceanScanningSegments: "Scanning ocean-current segments...",
           oceanBuildingGeometry: "Building ocean streamline geometry...",
@@ -340,11 +459,19 @@
         datasets: {
           antarctica: {
             balanced: {
-              label: "标准",
+              label: "BedMachine v4 — 标准",
               summary: "10 km 网格；约 3.0 MB",
             },
             hd: {
-              label: "高清",
+              label: "BedMachine v4 — 高清",
+              summary: "4 km 网格；约 18.6 MB，推荐桌面端",
+            },
+            bedmap3: {
+              label: "Bedmap3 — 标准",
+              summary: "10 km 网格；约 3.0 MB",
+            },
+            "bedmap3-hd": {
+              label: "Bedmap3 — 高清",
               summary: "4 km 网格；约 18.6 MB，推荐桌面端",
             },
           },
@@ -356,6 +483,14 @@
             "1km": {
               label: "高清",
               summary: "1 km 网格；约 28.2 MB",
+            },
+            qrf: {
+              label: "QRF 2025 — 标准",
+              summary: "3 km 网格；约 3.1 MB",
+            },
+            "qrf-hd": {
+              label: "QRF 2025 — 高清",
+              summary: "1 km 网格；约 28.2 MB，推荐桌面端",
             },
           },
         },
@@ -385,6 +520,9 @@
           blocked: "全屏请求被浏览器拦截",
         },
         status: {
+          loadingIsostaticRebound: "正在求解地壳回弹...",
+          loadingIsostaticResponse: "正在加载已发表的地壳均衡响应...",
+          isostaticReboundUnavailable: "地壳回弹图层不可用",
           ready: "就绪",
           readyWithContext: "就绪（{region} {dataset}）",
           previewReady: "预览已就绪",
@@ -407,6 +545,10 @@
           flowlineProfileHint: "点击任意流线查看冰体与基岩剖面",
         },
         loading: {
+          solvingIsostaticRebound: "正在求解地壳回弹...",
+          loadingIsostaticResponse: "正在加载已发表的地壳均衡响应...",
+          downloadingIsostaticResponse: "正在下载地壳均衡响应",
+          isostaticReboundReady: "地壳回弹已就绪",
           initializingRuntime: "正在初始化 3D 运行时...",
           initializingRenderer: "正在初始化渲染器...",
           progressiveLoadingEnabled: "已启用渐进式加载",
@@ -449,6 +591,37 @@
           finalizingHydrologyLayer: "正在完成水文图层...",
           hydrologyLayerReady: "水文图层已就绪",
         },
+        rebound: {
+          years: "约 {value} 年",
+          kiloyears: "约 {value} 千年",
+          progressNote:
+            "达到平衡态回弹的 {percent}%，相当于瞬时冰消后 {elapsed}（松弛时间 {tau} 年）。此处冰厚减薄与基岩回弹同步推进；这一耦合仅为示意，并非瞬态模拟。",
+          progressNoteComplete:
+            "完全平衡态回弹。按本模型单一的松弛时间（{tau} 年），瞬时冰消后约 15-20 千年即可达到；但真实地幔有多个松弛时间尺度，完全重新平衡需要约 10 万年量级。阿蒙森海湾之下的地幔要软弱得多，其响应时间仅为数十年至数百年。",
+          progressNotePublished:
+            "已发表平衡态响应的 {percent}%。基岩与冰体在当前状态与完全重新平衡之间按线性插值同步推进；该响应没有单一的时间尺度，因此不对应具体的经过时间。",
+          progressNotePublishedComplete:
+            "完全重新平衡，约在冰体消失后 10 万年量级达到（Paxman 等，2022）。阿蒙森海湾之下的地幔要软弱得多，其响应时间仅为数十年至数百年。",
+          modelNotePublished:
+            "Paxman、Austermann 与 Hollyday（2022）发表的响应，网格第 3 版：弹性厚度横向变化（{teModel}）的弹性板挠曲，加上尚未完成的末次盛冰期后回弹，以及淹没回弹后基岩的海水载荷。",
+          modelNotePublishedQrf:
+            "已发表网格按 BedMachine Greenland v6 的冰载荷计算；QRF 基岩使挠曲响应改变约 10 m（均方根），远小于模型离散度。",
+          modelNoteFlexural:
+            "理想化：流变软流圈之上的薄弹性板，D = 1e25 N m，挠曲特征长度 {lengthScale} km。岩石圈强度将载荷向外分摊，因而峰值抬升更低，并在原冰缘之外形成轻微的前缘隆起。",
+          modelNoteLocal:
+            "理想化：逐列应用 Airy 地壳平衡，不考虑岩石圈强度。这给出峰值抬升的上界，且其短波细节超出固体地球实际能够支撑的程度。",
+          seaLevelNoteZero:
+            "海面保持在当前基准。融化这些冰本身会使全球平均海平面上升约 {sle} m，此设置有意将其排除，以便单独解读基岩的运动。",
+          seaLevelNoteRaised:
+            "海面抬升 {datum} m，按均匀的全球基准施加。在原冰盖附近，由于冰体的引力吸引消失，海面也会相对偏低；但在地幔完全松弛之后，被移除的冰质量已在其下方由物质流入大致补偿，因此该大地水准面降幅仅为数十米量级，而非数百米。通常引用的近场海平面大幅下降，主要来自基岩抬升——而这一部分本视图已经呈现。",
+          seaLevelNotePublished:
+            "海面是已发表模型的一部分：两个冰盖的融水（+{eustatic} m）加上末次盛冰期后残余的大地水准面变化，在该冰盖上方比现今高 {gmin}-{gmax} m。高程与出露均相对这一无冰海面显示；海平面基准滑块仅适用于理想化响应。",
+          seaLevelNotePublishedGeneric:
+            "海面是已发表模型的一部分：两个冰盖的融水加上末次盛冰期后残余的大地水准面变化。高程与出露均相对这一无冰海面显示；海平面基准滑块仅适用于理想化响应。",
+          seaLevelValuePublished: "由模型给定",
+          legendNote:
+            "配色跟随当前的海平面基准，因此陆海分界线始终与水线一致。新出露的陆地以橙色标示。冰架不产生抬升：漂浮的冰早已排开与自身等重的海水。",
+        },
         legends: {
           warm: "暖",
           cold: "冷",
@@ -456,6 +629,63 @@
           salty: "咸",
         },
         meta: {
+          reboundMillionKm2: "{value} \u767e\u4e07 km\u00b2",
+          reboundVolumeOf: "{above} / {total} \u767e\u4e07 km\u00b3",
+          reboundSolveGridValue: "{cell} km \u7f51\u683c\uff0c{sizeX} x {sizeY} \u53d8\u6362",
+          reboundSolveGridPointwise: "{cell} km \u7f51\u683c\uff0c\u9010\u70b9\u6c42\u89e3",
+          reboundConvergenceValue: "{iterations} \u6b21\u8fed\u4ee3\uff0c\u6b8b\u5dee {residual} m",
+          isostaticReboundSection: "地壳回弹（模拟）",
+          reboundModelLabel: "固体地球响应",
+          reboundModelPublished: "已发表：Paxman 等（2022），网格第 3 版",
+          reboundModelFlexural: "理想化区域挠曲（弹性板 + 流变软流圈）",
+          reboundModelLocal: "理想化局地（Airy）地壳平衡",
+          reboundElasticThickness: "弹性厚度",
+          reboundPublishedEarthModelValue: "{teModel}，横向变化；密度取值：冰 917、海水 1028、地幔 3330 kg/m3",
+          reboundSeaSurface: "无冰海面",
+          reboundSeaSurfaceValue: "+{eustatic} m 全球平均上升（两个冰盖）加上末次盛冰期后残余的大地水准面变化：在接地冰上方比现今高 {gmin}-{gmax} m",
+          reboundMaxTopographyChange: "相对无冰海面的最大抬升",
+          reboundMeanTopographyChange: "接地冰之下相对无冰海面的平均抬升",
+          reboundComponents: "接地冰之下的各分量",
+          reboundComponentsValue: "冰卸载 {iu} m（最大 {iuMax} m）；末次盛冰期后残余 {lgm} m（最大 {lgmMax} m）；水载荷 {wl} m（最小 {wlMin} m）",
+          reboundSigma: "接地冰之下的地球模型离散度（1 sigma）",
+          reboundSigmaValue: "平均 {mean} m，最大 {max} m",
+          reboundLandAfterPublished: "回弹后高于无冰海面的基岩面积",
+          reboundMarineUnderIcePublished: "现有冰盖之下仍低于无冰海面的区域",
+          reboundQrfLoadNote: "载荷",
+          reboundQrfLoadNoteValue: "按 BedMachine Greenland v6 的冰载荷计算；QRF 基岩使挠曲响应改变约 10 m（均方根）",
+          reboundRigidity: "挠曲刚度",
+          reboundLengthScale: "挠曲特征长度",
+          reboundRelaxation: "松弛时间",
+          reboundProgressLabel: "情景进度",
+          reboundSeaLevelLabel: "海平面基准",
+          reboundMaxUplift: "平衡态最大抬升",
+          reboundMeanGroundedUplift: "接地冰之下的平均抬升",
+          reboundLandBefore: "当前高于海平面的基岩面积",
+          reboundLandAfter: "回弹后高于基准面的基岩面积",
+          reboundEmergent: "新出露陆地",
+          reboundDrowned: "被抬升基准面淹没的现有基岩",
+          reboundMarineUnderIce: "现有冰盖之下仍低于基准面的区域",
+          reboundClosedBasins: "低于基准面的封闭盆地",
+          reboundDeepest: "回弹后最深的接地基岩",
+          reboundIceVolume: "当前网格上的冰体积",
+          reboundVolumeAboveFlotation: "漂浮阈值以上体积",
+          reboundSle: "等效海平面",
+          reboundSlePublishedAntarctica:
+            "为漂浮阈值以上的部分；可对比 BedMachine Antarctica v4 发表的 57.9 m。二者的差异来自数据集版本与海洋面积约定，而非网格分辨率：10 km 与 4 km 数据包的结果相差不到 0.01%，而 Bedmap3 在相同网格上给出 57.1 m。",
+          reboundSlePublishedGreenland:
+            "为漂浮阈值以上的部分；常被引用的 7.4 m 是冰体总体积对应的数值，本网格可将其复现至 0.3% 以内。",
+          reboundSolveGrid: "挠曲求解网格",
+          reboundConvergence: "Picard 收敛情况",
+          reboundAssumptions: "假设",
+          reboundAssumptionsText:
+            "这是移除现有冰载荷后的理想化平衡态响应，而非瞬态模拟。计算假设当前基岩与当前载荷处于平衡，但实际并非如此：末次盛冰期以来的回弹尚未完成（罗斯海与威德尔海湾之下基岩高程仍有最多 +68 m 的变化，而劳伦泰德冰盖前缘隆起的塌陷使格陵兰最多降低 25 m；Paxman 等，2022），阿蒙森海湾则因近期冰量损失叠加软弱地幔，正以最高约 41 mm/yr 的速率抬升。计算未包含海平面指纹、大地水准面变化与自转反馈，并以单一的全球刚度和地幔密度替代真实的横向结构。",
+          reboundAssumptionsTextPublished:
+            "移除两个冰盖后完全重新平衡的响应。末次盛冰期后残余项采用一维地幔黏度剖面，在上地幔软弱的地区（如西南极和东格陵兰之下）最不可靠。海面按全球平均上升量加末次盛冰期后残余大地水准面变化抬升；未包含热比容与动力海面、侵蚀与沉积，且无冰海面以下的所有位置都加载了海水。",
+          reboundMethod: "方法",
+          reboundMethodText:
+            "薄板挠曲方程 D grad^4 u + rho_m g u = sigma_now - sigma_after，在谱域求解；冰消后的水载荷通过 Picard 迭代在与海洋连通的区域上求解。密度取值：冰 917、海水 1027、地幔 3300 kg/m3。",
+          reboundMethodTextPublished:
+            "已发表的总地壳均衡响应 T = R - G，在本网格节点上点采样，其中 R 为固体地表位移，G 为海面变化。基岩按 bed + T 绘制，因此高程可直接与无冰海面对照。网格文件：NSF Arctic Data Center，doi:10.18739/A22Z12R8C（CC BY 4.0）。",
           errorLabel: "错误",
           geometrySection: "几何与网格",
           velocitySection: "冰表流速（观测）",
@@ -514,6 +744,7 @@
           sourceSubglacialHydrology: "冰下水文",
           sourceOceanCirculation: "海洋环流",
           sourceMeltDrivers: "融化驱动",
+          sourceIsostaticResponse: "地壳均衡响应",
           currentScope: "当前 {region} 范围",
           currentScopeSummary: "本版本已启用基岩地形、冰表面和冰底界面。",
           fieldStatsBed: "基岩",
@@ -531,10 +762,14 @@
             "冷淡青色、冷咸靛色、暖淡绿色、暖咸橙红色（{thetaMin} 到 {thetaMax} °C；{salinityMin} 到 {salinityMax} PSU）",
         },
         errors: {
+          reboundGridTooSmall: "地壳回弹求解器至少需要 2x2 的网格。",
+          reboundTransformTooLarge: "地壳回弹求解网格超出了支持的变换尺寸。",
           workerTaskFailed: "后台任务失败",
           workerCrashed: "几何 worker 已崩溃",
           workerTerminated: "几何 worker 已终止",
           fullscreenUnavailable: "当前浏览器不支持全屏 API。",
+          regionSwitchUnavailable: "当前探索模式不支持切换区域。",
+          regionLoadTimedOut: "加载 {region} 超时。",
           failedToLoadMetadata: "加载元数据失败（{status}）",
           failedToLoadTerrainPackage: "加载地形数据包失败（{status}）",
           failedToLoadVelocityMetadata: "加载流速元数据失败（{status}）",
@@ -545,6 +780,8 @@
           failedToLoadVelocityField: "加载流速场失败（{status}）",
           failedToLoadBasalFrictionField: "加载基底摩擦场失败（{status}）",
           failedToLoadHydrologyField: "加载水文字段失败（{status}）",
+          failedToLoadReboundMetadata: "加载地壳均衡响应元数据失败（{status}）",
+          failedToLoadReboundField: "加载地壳均衡响应字段失败（{status}）",
           failedToLoadRiseOverlayPackage: "加载 RISE 叠加层数据包失败（{status}）",
           failedToLoadOceanCurrentVectors: "加载海洋流场矢量失败（{status}）",
           failedToLoadBasinBoundaries: "加载流域边界失败（{status}）",
@@ -567,6 +804,7 @@
       },
       worker: {
         progress: {
+          reboundSolvingFlexure: "正在求解地壳回弹...",
           oceanDecodingPackage: "正在解码海洋流场数据包...",
           oceanScanningSegments: "正在扫描海洋流场线段...",
           oceanBuildingGeometry: "正在构建海洋流线几何...",
@@ -599,6 +837,8 @@
     { prefix: "Failed to load velocity field", key: "explorer.errors.failedToLoadVelocityField" },
     { prefix: "Failed to load basal-friction field", key: "explorer.errors.failedToLoadBasalFrictionField" },
     { prefix: "Failed to load hydrology field", key: "explorer.errors.failedToLoadHydrologyField" },
+    { prefix: "Failed to load isostatic-response metadata", key: "explorer.errors.failedToLoadReboundMetadata" },
+    { prefix: "Failed to load isostatic-response field", key: "explorer.errors.failedToLoadReboundField" },
     { prefix: "Failed to load RISE overlay package", key: "explorer.errors.failedToLoadRiseOverlayPackage" },
     { prefix: "Failed to load ocean-current vectors", key: "explorer.errors.failedToLoadOceanCurrentVectors" },
     { prefix: "Failed to load basin boundaries", key: "explorer.errors.failedToLoadBasinBoundaries" },

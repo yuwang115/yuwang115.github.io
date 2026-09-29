@@ -25,5 +25,8 @@ mounts:
     target: assets
   - source: static
     target: static
+  # The bundle's tools/3d-ice/index.html is 3d-ice.com's redirect stub; here
+  # that URL belongs to the Hugo landing page in content/tools/3d-ice/.
   - source: generated/3d-ice-compat
     target: static
+    excludeFiles: tools/3d-ice/index.html
