@@ -1,0 +1,5 @@
+# Overrides for the Hugo Blox theme's i18n strings.
+
+# Heading of the resume-experience block's work-history list.
+- id: experience
+  translation: Work

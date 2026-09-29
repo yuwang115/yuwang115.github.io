@@ -73,21 +73,14 @@ work:
     date_end: ''
     summary: |
       Modeling Antarctic ice-sheet and ice-shelf dynamics to assess proposed interventions aimed at slowing glacial ice loss, and to quantify their effectiveness, risks and consequences for long-term sea-level rise.
-  - position: Graduate Researcher
-    company_name: Institute for Marine and Antarctic Studies, University of Tasmania / Australian Antarctic Program Partnership
-    company_url: 'https://www.utas.edu.au/imas'
-    date_start: 2022-08-15
-    date_end: 2026-06-30
-    summary: |
-      Coupled ice-sheet, subglacial hydrology and ice–ocean modeling of the Wilkes Subglacial Basin, East Antarctica, using Elmer/Ice. Co-convenor of the WilkesMIP model intercomparison project.
 
 education:
   - area: PhD (Marine and Antarctic Studies)
     institution: Institute for Marine and Antarctic Studies, University of Tasmania, AU
     date_start: 2022-08-15
-    date_end: ''
+    date_end: 2026-04-30
     summary: |
-      Thesis: Understanding the Future of the Wilkes Subglacial Basin, East Antarctica — submitted and currently under examination. Supervised by Dr. Chen Zhao, Dr. Rupert Gladstone, Dr. Ben Galton-Fenzi and Prof. Poul Christoffersen.
+      Thesis: Understanding the Future of the Wilkes Subglacial Basin, East Antarctica. Supervised by Dr. Chen Zhao, Dr. Rupert Gladstone, Dr. Ben Galton-Fenzi and Prof. Poul Christoffersen.
     # button:
     #   text: 'Read Thesis'
     #   url: 'https://example.com'
