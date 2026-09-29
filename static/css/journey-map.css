@@ -41,6 +41,58 @@
   background: radial-gradient(circle at 50% 45%, #1c2b47 0%, #0b1322 58%, #05080f 100%);
 }
 
+/* ---- Atmosphere (static/js/journey-atmosphere.js) ---------------------- */
+
+/* Both rings are circles on the globe's on-screen disk; the script keeps --globe-x/y/r in
+   step with the camera. The halo sits behind the transparent canvas, the limb above it. */
+.journey-halo,
+.journey-limb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(2 * var(--globe-r, 0px));
+  height: calc(2 * var(--globe-r, 0px));
+  transform: translate(calc(var(--globe-x, 0px) - var(--globe-r, 0px)),
+                       calc(var(--globe-y, 0px) - var(--globe-r, 0px)));
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: var(--globe-atmosphere, 0);
+}
+
+.journey-map--no-atmosphere .journey-halo,
+.journey-map--no-atmosphere .journey-limb {
+  display: none;
+}
+
+/* A thin, bright band of air hugging the limb that fades into a wide, faint glow. */
+.journey-halo {
+  --halo-rgb: 96 156 232;
+  box-shadow:
+    0 0 calc(var(--globe-r, 0px) * 0.025) calc(var(--globe-r, 0px) * 0.008) rgb(var(--halo-rgb) / 0.55),
+    0 0 calc(var(--globe-r, 0px) * 0.10) calc(var(--globe-r, 0px) * 0.01) rgb(var(--halo-rgb) / 0.28),
+    0 0 calc(var(--globe-r, 0px) * 0.30) rgb(var(--halo-rgb) / 0.14);
+}
+
+/* Blue haze thickening toward the edge (the long path through the air at the limb), and a
+   soft falloff away from light arriving from the upper left. */
+.journey-limb {
+  background:
+    radial-gradient(circle at 50% 50%,
+      transparent 62%,
+      rgb(110 170 240 / 0.10) 82%,
+      rgb(135 190 250 / 0.32) 96%,
+      rgb(170 210 255 / 0.50) 100%),
+    radial-gradient(circle at 34% 30%,
+      transparent 35%,
+      rgb(2 10 28 / 0.18) 75%,
+      rgb(2 10 28 / 0.38) 100%);
+}
+
+html.dark .journey-halo,
+#experience-map:fullscreen .journey-halo {
+  --halo-rgb: 110 170 255;
+}
+
 .journey-map--fallback {
   display: flex;
   align-items: center;

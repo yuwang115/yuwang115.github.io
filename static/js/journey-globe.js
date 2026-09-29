@@ -1,13 +1,17 @@
 // Interactive "Research Journey" globe on the Experience page (MapLibre GL JS, self-hosted).
 import * as maplibregl from '../vendor/maplibre-gl/6.11.2/maplibre-gl.mjs';
+import { CAMERA_DISTANCE, addAtmosphere } from './journey-atmosphere.js';
 import { CATEGORIES, STOPS } from './journey-stops.js';
 
 const MAP_ID = 'experience-map';
 const LIST_ID = 'journey-stops';
 const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services';
-const HOME_CENTER = [135, -10];
+const BLUE_MARBLE =
+  'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg';
+const IMAGERY_FADE = [4, 5.5]; // zoom range over which Esri imagery replaces Blue Marble
+const LABELS_FADE = [3, 4]; // zoom range over which place labels fade in
+const HOME_CENTER = [135, -20];
 const GLOBE_FILL = 0.8; // on-screen globe diameter as a fraction of the map's shorter side
-const CAMERA_DISTANCE = 1.5; // camera-to-center distance in viewport heights
 const SPIN_DEG_PER_SEC = 3;
 const SPIN_MAX_ZOOM = 3;
 const CATEGORY_ORDER = ['base', 'field', 'event'];
@@ -15,14 +19,28 @@ const NARROW_MAP_WIDTH = 640; // px; MapLibre's own compact-attribution breakpoi
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-// Esri World Imagery plus a transparent boundaries-and-places overlay; both are keyless.
+const fadeIn = ([from, to], opacity = 1) => ['interpolate', ['linear'], ['zoom'], from, 0, to, opacity];
+
+// NASA Blue Marble (shaded relief and bathymetry) for the globe-scale view, cross-fading to
+// Esri World Imagery and a place-label overlay as the camera closes in; all are keyless.
+// MapLibre picks raster tiles by CSS pixels, so on high-DPI screens the Blue Marble tiles are
+// declared at half size to fetch one zoom level deeper and keep the globe sharp.
 function buildStyle() {
   const tiles = (service) => [`${ESRI}/${service}/MapServer/tile/{z}/{y}/{x}`];
   return {
     version: 8,
     projection: { type: 'globe' },
-    sky: { 'atmosphere-blend': ['interpolate', ['linear'], ['zoom'], 0, 1, 5, 1, 7, 0] },
+    // Switch off MapLibre's scattering atmosphere; journey-atmosphere.js draws it instead.
+    sky: { 'atmosphere-blend': 0 },
     sources: {
+      bluemarble: {
+        type: 'raster',
+        tiles: [BLUE_MARBLE],
+        tileSize: window.devicePixelRatio > 1 ? 128 : 256,
+        maxzoom: 8,
+        attribution:
+          'Globe: <a href="https://earthobservatory.nasa.gov/features/BlueMarble">NASA Blue Marble</a> via GIBS',
+      },
       imagery: {
         type: 'raster',
         tiles: tiles('World_Imagery'),
@@ -38,9 +56,23 @@ function buildStyle() {
         maxzoom: 19,
       },
     },
+    // Layer zoom ranges keep each source's tiles from loading where the layer is invisible.
     layers: [
-      { id: 'imagery', type: 'raster', source: 'imagery' },
-      { id: 'labels', type: 'raster', source: 'labels', paint: { 'raster-opacity': 0.85 } },
+      { id: 'bluemarble', type: 'raster', source: 'bluemarble', maxzoom: IMAGERY_FADE[1] + 0.5 },
+      {
+        id: 'imagery',
+        type: 'raster',
+        source: 'imagery',
+        minzoom: IMAGERY_FADE[0],
+        paint: { 'raster-opacity': fadeIn(IMAGERY_FADE) },
+      },
+      {
+        id: 'labels',
+        type: 'raster',
+        source: 'labels',
+        minzoom: LABELS_FADE[0],
+        paint: { 'raster-opacity': fadeIn(LABELS_FADE, 0.85) },
+      },
     ],
   };
 }
@@ -275,6 +307,7 @@ function createMap(container) {
     zoom: homeZoom(container),
     maxZoom: 18,
     cooperativeGestures: true,
+    canvasContextAttributes: { antialias: true }, // smooth the globe's silhouette
   });
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
   map.addControl(new maplibregl.GlobeControl(), 'top-right');
@@ -334,6 +367,7 @@ async function initJourneyMap() {
     return;
   }
 
+  addAtmosphere(map, container);
   const spinner = createSpinner(map, container);
   const onSelect = (stop) => selector.select(stop);
   const selector = createStopSelector(map, spinner, {
