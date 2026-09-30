@@ -1,12 +1,16 @@
-{{/* The 3D ICE landing page's stylesheet and structured data, both from 3d-ice.com's home
-     page (see layouts/_default/explorer-landing.html). */}}
-{{ $is3dIceLanding := or (eq .RelPermalink "/tools/3d-ice/") (eq .RelPermalink "/zh/tools/3d-ice/") }}
-{{ if $is3dIceLanding }}
+{{- /* The 3D ICE landing page's stylesheets and structured data, all from 3d-ice.com's home
+     page (see layouts/_default/explorer-landing.html). 3d-ice-type.css declares the same
+     variable fonts as fonts.css, by weight range: fonts.css declares them at single weights,
+     which draws this page's headings bold and its bold text medium. Faces declared later win,
+     so the whole of this page draws the weights 3d-ice.com draws. */ -}}
+{{- $is3dIceLanding := or (eq .RelPermalink "/tools/3d-ice/") (eq .RelPermalink "/zh/tools/3d-ice/") }}
+{{- if $is3dIceLanding }}
   {{ $locale := cond (eq .RelPermalink "/zh/tools/3d-ice/") "zh-CN" "en-US" }}
   {{ $structuredData := printf "generated/3d-ice-landing/%s.head.html" $locale }}
   {{ if not (fileExists $structuredData) }}
     {{ errorf "%s is missing: run `npm run sync:3d-ice` before Hugo." $structuredData }}
   {{ end }}
+<link rel="stylesheet" href="/css/3d-ice-type.css">
 <link rel="stylesheet" href="/css/3d-ice-home.css">
 {{ readFile $structuredData | safeHTML }}
-{{ end }}
+{{- end }}

@@ -1,4 +1,5 @@
-{{ if or (eq .RelPermalink "/") (eq .RelPermalink "/tools/") (eq .RelPermalink "/tools/3d-ice/") }}
+{{/* The /tools/3d-ice/ landing page has its own copy of this in 3d-ice.com's /js/3d-ice-home.js. */}}
+{{ if or (eq .RelPermalink "/") (eq .RelPermalink "/tools/") }}
 <script>
   (() => {
     const MESSAGE_TYPE = "3d-ice:showcase-scroll";

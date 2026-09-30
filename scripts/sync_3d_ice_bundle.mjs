@@ -11,6 +11,7 @@ const repoRoot = path.resolve(__dirname, "..");
 const bundleConfigPath = path.join(repoRoot, "config", "3d-ice-bundle.json");
 const generatedRoot = path.join(repoRoot, "generated", "3d-ice-compat");
 const syncStatePath = path.join(repoRoot, "generated", ".3d-ice-compat-sync.json");
+const landingRoot = path.join(repoRoot, "generated", "3d-ice-landing");
 const remoteCacheRoot = path.join(repoRoot, ".cache", "3d-ice-bundles");
 
 function log(message) {
@@ -185,6 +186,110 @@ async function extractBundle(bundlePath) {
   }
 }
 
+// ------------------------------------------------------------------ landing page
+
+/**
+ * 3d-ice.com's home pages, which the bundle carries under home/: the address each is
+ * published at there, against which its relative links resolve, and the address of this
+ * site's copy.
+ */
+const LANDING_SOURCES = [
+  {
+    locale: "en-US",
+    source: "home/en-US.html",
+    pageUrl: "https://3d-ice.com/",
+    siteUrl: "https://yuwang.blog/tools/3d-ice/",
+  },
+  {
+    locale: "zh-CN",
+    source: "home/zh-CN.html",
+    pageUrl: "https://3d-ice.com/zh/",
+    siteUrl: "https://yuwang.blog/zh/tools/3d-ice/",
+  },
+];
+const SITE_ORIGIN = "https://yuwang.blog/";
+const URL_ATTRIBUTE = /\b(href|src|poster|data-light-src|data-dark-src)="([^"]*)"/g;
+
+function matchOnce(html, pattern, label, source) {
+  const matches = [...html.matchAll(pattern)];
+  if (matches.length !== 1) {
+    throw new Error(`Expected exactly one ${label} in ${source}, found ${matches.length}.`);
+  }
+  return matches[0][0];
+}
+
+/**
+ * Relative links resolve as they do on 3d-ice.com, which serves the same paths as this site,
+ * and links to this site become site-relative. rel="nofollow" is for 3d-ice.com's links to
+ * this site, not for links within it.
+ */
+function resolveLinks(html, pageUrl) {
+  const withPaths = html.replace(URL_ATTRIBUTE, (whole, attribute, value) => {
+    const isRelative = value && !/^(#|\/|[a-z][a-z0-9+.-]*:)/i.test(value);
+    if (!isRelative && !value.startsWith(SITE_ORIGIN)) return whole;
+    const url = new URL(value, pageUrl);
+    return `${attribute}="${url.pathname}${url.search}${url.hash}"`;
+  });
+  return withPaths.replace(/<a ([^>]*)>/g, (tag, attributes) =>
+    /\bhref="\//.test(attributes) ? `<a ${attributes.replace(/\s*\brel="nofollow"/, "")}>` : tag
+  );
+}
+
+/**
+ * The part of a 3d-ice.com home page this site shows at /tools/3d-ice/: its header and main
+ * content, plus the external scripts at the end of its body. The site's own navbar has a
+ * theme switch, so the page's is left out. 3d-ice/tests/test_site_embed.py pins the
+ * structure this relies on.
+ */
+function buildLandingFragment(html, { source, pageUrl }) {
+  const header = matchOnce(html, /<header class="explorer-page-header">[\s\S]*?<\/header>/g, "page header", source);
+  const main = matchOnce(html, /<main id="main"[\s\S]*<\/main>/g, "<main>", source);
+  const bodyEnd = html.slice(html.lastIndexOf("</footer>"));
+  const scripts = [...bodyEnd.matchAll(/<script src="https:\/\/[^"]+"[^>]*><\/script>/g)].map((match) => match[0]);
+  const themeToggle = /\s*<button class="explorer-theme-toggle" id="themeToggle"[\s\S]*?<\/button>/;
+  if (!themeToggle.test(header)) {
+    throw new Error(`Expected the theme toggle in the page header of ${source}.`);
+  }
+  const fragment = [header.replace(themeToggle, ""), main, ...scripts].join("\n");
+  return `<!-- Built from 3d-ice ${source} by scripts/sync_3d_ice_bundle.mjs; do not edit. -->\n${resolveLinks(fragment, pageUrl)}\n`;
+}
+
+/**
+ * The page's structured data (the app, the site and the FAQ), describing this site's copy:
+ * the app and site entries take its address.
+ */
+function buildStructuredData(html, { source, siteUrl }) {
+  const head = html.slice(0, html.indexOf("</head>"));
+  const blocks = [...head.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+  if (!blocks.length) throw new Error(`Expected structured data in the head of ${source}.`);
+  return blocks
+    .map(([, json]) => {
+      const data = JSON.parse(json);
+      const described = ["WebApplication", "WebSite"].includes(data["@type"]) ? { ...data, url: siteUrl } : data;
+      return `<script type="application/ld+json">${JSON.stringify(described).replace(/</g, "\\u003c")}</script>`;
+    })
+    .join("\n");
+}
+
+async function writeLandingFragments() {
+  await rm(landingRoot, { recursive: true, force: true });
+  await mkdir(landingRoot, { recursive: true });
+  for (const landing of LANDING_SOURCES) {
+    const sourcePath = path.join(generatedRoot, landing.source);
+    if (!(await pathExists(sourcePath))) {
+      throw new Error(
+        `The 3D ICE bundle has no ${landing.source}. Bundles older than the 2026-09-30 home-page rebuild do not carry the home pages.`
+      );
+    }
+    const html = await readFile(sourcePath, "utf8");
+    await writeFile(path.join(landingRoot, `${landing.locale}.html`), buildLandingFragment(html, landing));
+    await writeFile(path.join(landingRoot, `${landing.locale}.head.html`), `${buildStructuredData(html, landing)}\n`);
+  }
+  log(`landing page fragments ready at ${landingRoot}`);
+}
+
+// ------------------------------------------------------------------ start
+
 async function main() {
   const config = JSON.parse(await readFile(bundleConfigPath, "utf8"));
   const ref = process.env.THREED_ICE_BUNDLE_REF || config.ref;
@@ -209,6 +314,7 @@ async function main() {
   const currentToolsDir = path.join(generatedRoot, "tools");
   if (!forceSync && currentState?.sha256 === bundleSource.sha256 && existsSync(currentToolsDir)) {
     log(`bundle ${ref} already synced from ${bundleSource.sourceLabel}`);
+    await writeLandingFragments();
     return;
   }
 
@@ -222,6 +328,7 @@ async function main() {
     syncedAt: new Date().toISOString(),
   });
   log(`ready at ${generatedRoot}`);
+  await writeLandingFragments();
 }
 
 await main();

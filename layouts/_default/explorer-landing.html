@@ -1,27 +1,28 @@
 {{ define "main" }}
 {{ $is3dIceLanding := or (eq .RelPermalink "/tools/3d-ice/") (eq .RelPermalink "/zh/tools/3d-ice/") }}
-{{ $landingLocale := "en-US" }}
-{{ if eq .RelPermalink "/zh/tools/3d-ice/" }}
-  {{ $landingLocale = "zh-CN" }}
+{{ if $is3dIceLanding }}
+{{/* The 3D ICE landing page is 3d-ice.com's home page: scripts/sync_3d_ice_bundle.mjs
+     builds its header and main content from the 3d-ice bundle, and the page loads the
+     same stylesheet (hooks/head-end/3d-ice-landing.html) and script as 3d-ice.com. */}}
+{{ $locale := cond (eq .RelPermalink "/zh/tools/3d-ice/") "zh-CN" "en-US" }}
+{{ $fragment := printf "generated/3d-ice-landing/%s.html" $locale }}
+{{ if not (fileExists $fragment) }}
+  {{ errorf "%s is missing: run `npm run sync:3d-ice` (npm run dev and npm run build do) before Hugo." $fragment }}
 {{ end }}
+<div class="explorer-page-shell explorer-page-shell--ice">
+  {{ readFile $fragment | safeHTML }}
+</div>
+<script>document.documentElement.dataset.locale = "{{ $locale }}";</script>
+<script src="/js/3d-ice-locale.js" defer></script>
+<script src="/js/3d-ice-home.js" defer></script>
+{{ else }}
 <div class="explorer-page-shell{{ with .Params.explorer_theme }} explorer-page-shell--{{ . }}{{ end }}"{{ with .Params.explorer_style }} data-style="{{ . }}"{{ end }}>
   <article>
-    {{ if $is3dIceLanding }}
-    <div class="explorer-page-topbar">
-      <nav class="explorer-page-breadcrumb" aria-label="Breadcrumb">
-        <a href="{{ "/tools/" | relLangURL }}">Tools</a>
-        <span>/</span>
-        <span>{{ .Params.breadcrumb_title | default .Title }}</span>
-      </nav>
-      <div id="homeLocaleSwitcher" class="explorer-home-locale-switcher"></div>
-    </div>
-    {{ else }}
     <nav class="explorer-page-breadcrumb" aria-label="Breadcrumb">
       <a href="{{ "/tools/" | relLangURL }}">Tools</a>
       <span>/</span>
       <span>{{ .Params.breadcrumb_title | default .Title }}</span>
     </nav>
-    {{ end }}
     <header>
       <p class="explorer-page-kicker">{{ .Params.explorer_kicker | default "Interactive polar data visualization" }}</p>
       <h1 class="explorer-page-title">{{ .Title }}</h1>
@@ -29,222 +30,7 @@
     <div class="explorer-page-content">
       {{ .Content }}
     </div>
-    {{ if $is3dIceLanding }}
-    <script src="/js/3d-ice-locale.js"></script>
-    <script>
-      (() => {
-        const initLocaleSwitcher = () => {
-          const localeApi = window.__3dIceLocale;
-          if (!localeApi) return;
-          localeApi.initPage({ locale: "{{ $landingLocale }}", switchers: ["#homeLocaleSwitcher"] });
-        };
-
-        if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", initLocaleSwitcher, { once: true });
-          return;
-        }
-
-        initLocaleSwitcher();
-      })();
-    </script>
-    <script>
-      (() => {
-        const logoEl = document.querySelector(".explorer-ice-logo");
-        const lightLogoSrc = "/tools/3d-ice-logo-light.jpg";
-        const darkLogoSrc = "/tools/3d-ice-logo.jpg";
-        const syncThemeLogo = () => {
-          if (!logoEl) return;
-          const nextSrc = document.documentElement.classList.contains("dark") ? darkLogoSrc : lightLogoSrc;
-          if (logoEl.getAttribute("src") !== nextSrc) {
-            logoEl.setAttribute("src", nextSrc);
-          }
-        };
-
-        const syncFooterLogos = () => {
-          const imgs = document.querySelectorAll("img[data-light-src][data-dark-src]");
-          const isDark = document.documentElement.classList.contains("dark");
-          imgs.forEach((img) => {
-            const nextSrc = isDark ? img.dataset.darkSrc : img.dataset.lightSrc;
-            if (img.getAttribute("src") !== nextSrc) img.setAttribute("src", nextSrc);
-          });
-        };
-
-        syncThemeLogo();
-        if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", syncFooterLogos, { once: true });
-        } else {
-          syncFooterLogos();
-        }
-        document.addEventListener("hbThemeChange", () => { syncThemeLogo(); syncFooterLogos(); });
-
-        const themeObserver = new MutationObserver(() => {
-          syncThemeLogo();
-          syncFooterLogos();
-        });
-        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-
-        const canUseHoverPreview = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-        const previewLinks = Array.from(document.querySelectorAll(".explorer-preview-link[data-preview-src]"));
-        const videoPreviewLinks = Array.from(document.querySelectorAll(".explorer-preview-link--video[data-video-preview]"));
-        let activeLink = null;
-
-        const clearTimers = (link) => {
-          if (!link) return;
-          if (link._previewEnterTimer) {
-            window.clearTimeout(link._previewEnterTimer);
-            link._previewEnterTimer = null;
-          }
-          if (link._previewLeaveTimer) {
-            window.clearTimeout(link._previewLeaveTimer);
-            link._previewLeaveTimer = null;
-          }
-        };
-
-        const teardownPreview = (link) => {
-          if (!link) return;
-          clearTimers(link);
-          const frame = link.querySelector("iframe");
-          if (frame) frame.remove();
-          link.classList.remove("is-preview-active", "is-preview-loading");
-          if (activeLink === link) {
-            activeLink = null;
-          }
-        };
-
-        const mountPreview = (link) => {
-          if (!canUseHoverPreview || !link) return;
-          clearTimers(link);
-          if (activeLink && activeLink !== link) {
-            teardownPreview(activeLink);
-          }
-          if (link.querySelector("iframe")) {
-            link.classList.add("is-preview-active");
-            activeLink = link;
-            return;
-          }
-
-          const iframe = document.createElement("iframe");
-          iframe.src = link.dataset.previewSrc || "";
-          iframe.title = link.dataset.previewTitle || "3D ICE feature preview";
-          iframe.loading = "eager";
-          iframe.referrerPolicy = "no-referrer";
-          iframe.tabIndex = -1;
-          iframe.setAttribute("aria-hidden", "true");
-          iframe.addEventListener(
-            "load",
-            () => {
-              link.classList.remove("is-preview-loading");
-            },
-            { once: true }
-          );
-
-          link.insertBefore(iframe, link.firstChild);
-          link.classList.add("is-preview-active", "is-preview-loading");
-          activeLink = link;
-        };
-
-        const resetVideoPreview = (video) => {
-          if (!video) return;
-          try {
-            video.currentTime = 0;
-          } catch (error) {
-            // Ignore metadata timing issues and keep the poster in place until the browser can seek.
-          }
-        };
-
-        const stopVideoPreview = (link, { reset = true } = {}) => {
-          if (!link) return;
-          const video = link.querySelector("video");
-          if (!video) return;
-          link.classList.remove("is-video-active", "is-video-playing");
-          video.pause();
-          if (reset) resetVideoPreview(video);
-        };
-
-        const startVideoPreview = (link) => {
-          if (!link) return;
-          const video = link.querySelector("video");
-          if (!video) return;
-          link.classList.add("is-video-active");
-          const playPromise = video.play();
-          if (playPromise && typeof playPromise.then === "function") {
-            playPromise
-              .then(() => {
-                link.classList.add("is-video-playing");
-              })
-              .catch(() => {});
-            return;
-          }
-          link.classList.add("is-video-playing");
-        };
-
-        const primeVideoPreview = (video) => {
-          if (!video) return;
-          video.defaultMuted = true;
-          video.muted = true;
-          video.playsInline = true;
-          video.autoplay = true;
-          video.setAttribute("muted", "");
-          video.setAttribute("playsinline", "");
-          video.setAttribute("webkit-playsinline", "");
-          video.setAttribute("autoplay", "");
-        };
-
-        if (previewLinks.length) {
-          for (const link of previewLinks) {
-            link.addEventListener("mouseenter", () => {
-              clearTimers(link);
-              link._previewEnterTimer = window.setTimeout(() => mountPreview(link), 160);
-            });
-
-            link.addEventListener("mouseleave", () => {
-              clearTimers(link);
-              link._previewLeaveTimer = window.setTimeout(() => teardownPreview(link), 140);
-            });
-
-            link.addEventListener("focusin", () => {
-              mountPreview(link);
-            });
-
-            link.addEventListener("focusout", (event) => {
-              if (link.contains(event.relatedTarget)) return;
-              teardownPreview(link);
-            });
-          }
-        }
-
-        if (videoPreviewLinks.length) {
-          for (const link of videoPreviewLinks) {
-            const video = link.querySelector("video");
-            if (!video) continue;
-            primeVideoPreview(video);
-            const startAutoplay = () => {
-              startVideoPreview(link);
-            };
-            if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) {
-              video.load();
-            }
-            if (video.readyState >= 1) {
-              startAutoplay();
-            } else {
-              video.addEventListener("loadedmetadata", startAutoplay, { once: true });
-              video.addEventListener("canplay", startAutoplay, { once: true });
-            }
-          }
-        }
-
-        window.addEventListener("pagehide", () => {
-          previewLinks.forEach((link) => teardownPreview(link));
-          videoPreviewLinks.forEach((link) => stopVideoPreview(link, { reset: false }));
-          themeObserver.disconnect();
-        }, { once: true });
-
-        if (!canUseHoverPreview) {
-          document.documentElement.classList.add("explorer-preview-static");
-        }
-      })();
-    </script>
-    {{ end }}
   </article>
 </div>
+{{ end }}
 {{ end }}
