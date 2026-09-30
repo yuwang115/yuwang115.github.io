@@ -144,18 +144,9 @@
     radial-gradient(circle at 0% 100%, rgba(23, 144, 107, 0.1), transparent 26%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 251, 253, 0.98) 100%);
   --ice-feedback-card-shadow: var(--ice-shadow);
-  --ice-feedback-heading-border: rgba(175, 205, 221, 0.9);
-  --ice-feedback-heading-bg: linear-gradient(155deg, rgba(250, 253, 255, 0.96) 0%, rgba(237, 247, 251, 0.92) 100%);
-  --ice-feedback-heading-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.78),
-    0 16px 30px rgba(9, 34, 49, 0.05);
   --ice-feedback-heading-sheen:
     linear-gradient(140deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 32%),
     radial-gradient(circle at 88% 12%, rgba(15, 126, 168, 0.08), transparent 22%);
-  --ice-feedback-heading-badge-border: rgba(15, 126, 168, 0.18);
-  --ice-feedback-heading-badge-bg: rgba(255, 255, 255, 0.82);
-  --ice-feedback-heading-badge-text: var(--ice-accent);
-  --ice-feedback-heading-glow: radial-gradient(circle, rgba(116, 220, 255, 0.22) 0%, rgba(116, 220, 255, 0) 72%);
   --ice-feedback-untitled-body: #33586c;
   --ice-feedback-note-border: #dfc98d;
   --ice-feedback-note-bg: linear-gradient(180deg, #fffaf0 0%, #fff3d6 100%);
@@ -328,18 +319,9 @@ html.dark .explorer-page-shell--ice {
     radial-gradient(circle at 0% 100%, rgba(23, 144, 107, 0.12), transparent 28%),
     linear-gradient(180deg, rgba(7, 18, 27, 0.98) 0%, rgba(8, 20, 29, 0.98) 100%);
   --ice-feedback-card-shadow: 0 24px 48px rgba(2, 8, 13, 0.4);
-  --ice-feedback-heading-border: rgba(119, 179, 207, 0.24);
-  --ice-feedback-heading-bg: linear-gradient(155deg, rgba(9, 24, 35, 0.96) 0%, rgba(8, 21, 31, 0.92) 100%);
-  --ice-feedback-heading-shadow:
-    inset 0 1px 0 rgba(223, 248, 255, 0.06),
-    0 18px 32px rgba(2, 8, 13, 0.34);
   --ice-feedback-heading-sheen:
     linear-gradient(140deg, rgba(225, 248, 255, 0.08) 0%, rgba(225, 248, 255, 0) 32%),
     radial-gradient(circle at 88% 12%, rgba(58, 169, 212, 0.16), transparent 22%);
-  --ice-feedback-heading-badge-border: rgba(126, 193, 221, 0.22);
-  --ice-feedback-heading-badge-bg: rgba(8, 24, 34, 0.78);
-  --ice-feedback-heading-badge-text: #82d6ff;
-  --ice-feedback-heading-glow: radial-gradient(circle, rgba(74, 184, 225, 0.18) 0%, rgba(74, 184, 225, 0) 74%);
   --ice-feedback-untitled-body: #a8cbdd;
   --ice-feedback-note-border: rgba(144, 118, 44, 0.42);
   --ice-feedback-note-bg: linear-gradient(180deg, rgba(74, 59, 18, 0.28) 0%, rgba(59, 46, 14, 0.36) 100%);
@@ -1478,43 +1460,6 @@ html.explorer-preview-static .explorer-page-shell--ice .explorer-preview-cta::be
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-card-inner > * {
   position: relative;
   z-index: 1;
-}
-
-.explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-heading {
-  position: relative;
-  gap: 0.65rem;
-  padding: clamp(1rem, 2vw, 1.25rem);
-  border: 1px solid var(--ice-feedback-heading-border);
-  border-radius: 22px;
-  background: var(--ice-feedback-heading-bg);
-  box-shadow: var(--ice-feedback-heading-shadow);
-  overflow: hidden;
-}
-
-.explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-heading::before {
-  content: "Field notes";
-  display: inline-flex;
-  width: fit-content;
-  padding: 0.3rem 0.72rem;
-  border: 1px solid var(--ice-feedback-heading-badge-border);
-  border-radius: 999px;
-  background: var(--ice-feedback-heading-badge-bg);
-  color: var(--ice-feedback-heading-badge-text);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-heading::after {
-  content: "";
-  position: absolute;
-  inset: auto -5% -40% auto;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  background: var(--ice-feedback-heading-glow);
-  pointer-events: none;
 }
 
 .explorer-page-shell--ice .explorer-feedback-panel--faq-style .tool-feedback-root--untitled .tool-feedback-card-inner {
