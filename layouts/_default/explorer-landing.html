@@ -9,7 +9,7 @@
 {{ if not (fileExists $fragment) }}
   {{ errorf "%s is missing: run `npm run sync:3d-ice` (npm run dev and npm run build do) before Hugo." $fragment }}
 {{ end }}
-<div class="explorer-page-shell explorer-page-shell--ice">
+<div class="explorer-page-shell explorer-page-shell--ice" lang="{{ $locale }}">
   {{ readFile $fragment | safeHTML }}
 </div>
 <script>document.documentElement.dataset.locale = "{{ $locale }}";</script>

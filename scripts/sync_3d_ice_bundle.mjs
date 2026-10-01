@@ -208,7 +208,10 @@ const LANDING_SOURCES = [
   },
 ];
 const SITE_ORIGIN = "https://yuwang.blog/";
-const URL_ATTRIBUTE = /\b(href|src|poster|data-light-src|data-dark-src)="([^"]*)"/g;
+const URL_ATTRIBUTE = /\b(href|src|poster|data-light-src|data-dark-src)=(["'])(.*?)\2/g;
+const SRCSET_ATTRIBUTE = /\bsrcset=(["'])(.*?)\1/g;
+// Any page link or asset still relative after resolving would point under /tools/3d-ice/.
+const LEFTOVER_RELATIVE = /\b(?:href|src|poster|srcset|action|formaction|data-[a-z-]*src)=(["'])\.\.?\//i;
 
 function matchOnce(html, pattern, label, source) {
   const matches = [...html.matchAll(pattern)];
@@ -223,16 +226,36 @@ function matchOnce(html, pattern, label, source) {
  * and links to this site become site-relative. rel="nofollow" is for 3d-ice.com's links to
  * this site, not for links within it.
  */
-function resolveLinks(html, pageUrl) {
-  const withPaths = html.replace(URL_ATTRIBUTE, (whole, attribute, value) => {
-    const isRelative = value && !/^(#|\/|[a-z][a-z0-9+.-]*:)/i.test(value);
-    if (!isRelative && !value.startsWith(SITE_ORIGIN)) return whole;
-    const url = new URL(value, pageUrl);
-    return `${attribute}="${url.pathname}${url.search}${url.hash}"`;
-  });
-  return withPaths.replace(/<a ([^>]*)>/g, (tag, attributes) =>
-    /\bhref="\//.test(attributes) ? `<a ${attributes.replace(/\s*\brel="nofollow"/, "")}>` : tag
-  );
+function resolveUrl(value, pageUrl) {
+  const isRelative = value && !/^(#|\/|[a-z][a-z0-9+.-]*:)/i.test(value);
+  if (!isRelative && !value.startsWith(SITE_ORIGIN)) return value;
+  const url = new URL(value, pageUrl);
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function resolveLinks(html, pageUrl, source) {
+  const resolved = html
+    .replace(URL_ATTRIBUTE, (whole, attribute, quote, value) => `${attribute}=${quote}${resolveUrl(value, pageUrl)}${quote}`)
+    .replace(SRCSET_ATTRIBUTE, (whole, quote, value) => {
+      const candidates = value.split(",").map((candidate) => {
+        const [url, ...descriptors] = candidate.trim().split(/\s+/);
+        return [resolveUrl(url, pageUrl), ...descriptors].join(" ");
+      });
+      return `srcset=${quote}${candidates.join(", ")}${quote}`;
+    })
+    .replace(/<a ([^>]*)>/g, (tag, attributes) => {
+      if (!/\bhref=(["'])\//.test(attributes)) return tag;
+      // Drop the nofollow token, and the attribute if nothing else is left in it.
+      return `<a ${attributes.replace(/\s*\brel=(["'])(.*?)\1/, (whole, quote, value) => {
+        const kept = value.split(/\s+/).filter((token) => token && token !== "nofollow");
+        return kept.length ? ` rel=${quote}${kept.join(" ")}${quote}` : "";
+      })}>`;
+    });
+  const leftover = resolved.match(LEFTOVER_RELATIVE);
+  if (leftover) {
+    throw new Error(`An attribute in ${source} is still relative after resolving links: ${leftover[0]}`);
+  }
+  return resolved;
 }
 
 /**
@@ -242,16 +265,33 @@ function resolveLinks(html, pageUrl) {
  * structure this relies on.
  */
 function buildLandingFragment(html, { source, pageUrl }) {
-  const header = matchOnce(html, /<header class="explorer-page-header">[\s\S]*?<\/header>/g, "page header", source);
-  const main = matchOnce(html, /<main id="main"[\s\S]*<\/main>/g, "<main>", source);
-  const bodyEnd = html.slice(html.lastIndexOf("</footer>"));
-  const scripts = [...bodyEnd.matchAll(/<script src="https:\/\/[^"]+"[^>]*><\/script>/g)].map((match) => match[0]);
-  const themeToggle = /\s*<button class="explorer-theme-toggle" id="themeToggle"[\s\S]*?<\/button>/;
+  const header = matchOnce(
+    html,
+    /<header\b[^>]*\bclass=(["'])[^"']*\bexplorer-page-header\b[^"']*\1[^>]*>[\s\S]*?<\/header>/g,
+    "page header",
+    source
+  );
+  const main = matchOnce(html, /<main\b[^>]*\bid=(["'])main\1[^>]*>[\s\S]*<\/main>/g, "<main id=\"main\">", source);
+  const bodyStart = html.search(/<body\b/);
+  const bodyEnd = html.lastIndexOf("</body>");
+  if (bodyStart < 0 || bodyEnd < bodyStart) throw new Error(`Expected a <body> in ${source}.`);
+  // The rest of the body (skip link, footer) is replaced by the site's own, but its scripts
+  // are the page's: the feedback form needs its library. Inline ones could not be carried.
+  const rest = html.slice(bodyStart, bodyEnd).replace(header, "").replace(main, "");
+  const scriptTags = [...rest.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/g)].map((match) => match[0]);
+  const external = scriptTags.filter((tag) => /^<script\b[^>]*\bsrc=(["'])https:\/\/[^"']+\1[^>]*>\s*<\/script>$/.test(tag));
+  if (external.length !== scriptTags.length) {
+    throw new Error(`${source} has a script outside its header and main that is not external; it would be lost.`);
+  }
+  if (/action=(["'])https:\/\/usebasin\.com\//.test(main) && !external.some((tag) => tag.includes("js.usebasin.com"))) {
+    throw new Error(`${source} has a feedback form but no Basin script after its main content.`);
+  }
+  const themeToggle = /\s*<button\b[^>]*\bid=(["'])themeToggle\1[^>]*>[\s\S]*?<\/button>/;
   if (!themeToggle.test(header)) {
     throw new Error(`Expected the theme toggle in the page header of ${source}.`);
   }
-  const fragment = [header.replace(themeToggle, ""), main, ...scripts].join("\n");
-  return `<!-- Built from 3d-ice ${source} by scripts/sync_3d_ice_bundle.mjs; do not edit. -->\n${resolveLinks(fragment, pageUrl)}\n`;
+  const fragment = [header.replace(themeToggle, ""), main, ...external].join("\n");
+  return `<!-- Built from 3d-ice ${source} by scripts/sync_3d_ice_bundle.mjs; do not edit. -->\n${resolveLinks(fragment, pageUrl, source)}\n`;
 }
 
 /**
@@ -260,15 +300,24 @@ function buildLandingFragment(html, { source, pageUrl }) {
  */
 function buildStructuredData(html, { source, siteUrl }) {
   const head = html.slice(0, html.indexOf("</head>"));
-  const blocks = [...head.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
-  if (!blocks.length) throw new Error(`Expected structured data in the head of ${source}.`);
-  return blocks
-    .map(([, json]) => {
-      const data = JSON.parse(json);
-      const described = ["WebApplication", "WebSite"].includes(data["@type"]) ? { ...data, url: siteUrl } : data;
-      return `<script type="application/ld+json">${JSON.stringify(described).replace(/</g, "\\u003c")}</script>`;
-    })
-    .join("\n");
+  const blocks = [...head.matchAll(/<script\b[^>]*\btype=(["'])application\/ld\+json\1[^>]*>([\s\S]*?)<\/script>/g)];
+  const declared = (head.match(/application\/ld\+json/g) || []).length;
+  if (!blocks.length || blocks.length !== declared) {
+    throw new Error(`Expected to read all ${declared} structured-data blocks in the head of ${source}, read ${blocks.length}.`);
+  }
+  const retargeted = new Set();
+  const scripts = blocks.map(([, , json]) => {
+    const data = JSON.parse(json);
+    const types = [data["@type"]].flat();
+    const type = types.find((candidate) => candidate === "WebApplication" || candidate === "WebSite");
+    if (type) retargeted.add(type);
+    const described = type ? { ...data, url: siteUrl } : data;
+    return `<script type="application/ld+json">${JSON.stringify(described).replace(/</g, "\\u003c")}</script>`;
+  });
+  if (retargeted.size !== 2) {
+    throw new Error(`Expected a top-level WebApplication and WebSite in the structured data of ${source}.`);
+  }
+  return scripts.join("\n");
 }
 
 async function writeLandingFragments() {
