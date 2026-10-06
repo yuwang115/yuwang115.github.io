@@ -11,7 +11,8 @@
      re-diff when the module updates:
        - honour `design.avatar.size` (small|medium|large|xl|xxl) and
          `design.avatar.shape` (circle|rounded|square)
-       - render at 2x with a srcset
+       - render at 2x with a srcset, resized by width so the photo keeps its
+         own aspect ratio (upstream crops it to a square)
        - drop the right column's `md:mt-12` so both columns share a baseline
   */}}
 {{/* Documentation: https://hugoblox.com/blocks/ */}}
@@ -67,10 +68,13 @@
          and `.avatar` is capped at max-width/max-height 225px. Both have to be
          restated for any other size, or the image overflows its wrapper and
          lands on top of the name below. The cap is lifted in editorial.css. */}}
+    {{/* Resize by width only so the portrait keeps the source photo's aspect
+         ratio — no square crop. The 2x copy is capped at the source width, and
+         output is JPEG so a lossless PNG master does not ship as a heavy PNG. */}}
+    {{ $avatar_1x := $avatar.Resize (printf "%dx jpg" (math.Min $avatar_px $avatar.Width | int)) }}
+    {{ $avatar_2x := $avatar.Resize (printf "%dx jpg" (math.Min (mul $avatar_px 2) $avatar.Width | int)) }}
     <div class="avatar-wrapper {{ if $img }}-mt-[105px]{{else}}mt-10{{end}}"
-         style="width: min({{ $avatar_px }}px, 100%); height: auto; aspect-ratio: 1">
-      {{ $avatar_1x := $avatar.Fill (printf "%dx%d Center" $avatar_px $avatar_px) }}
-      {{ $avatar_2x := $avatar.Fill (printf "%dx%d Center" (mul $avatar_px 2) (mul $avatar_px 2)) }}
+         style="width: min({{ $avatar_px }}px, 100%); height: auto; aspect-ratio: {{ $avatar.Width }} / {{ $avatar.Height }}">
       <img class="avatar {{ $avatar_radius }} bg-white dark:bg-gray-800"
            src="{{ $avatar_1x.RelPermalink }}"
            srcset="{{ $avatar_1x.RelPermalink }} 1x, {{ $avatar_2x.RelPermalink }} 2x"
