@@ -41,223 +41,242 @@ sections:
           #antarctica-3d-demo > div { max-width: none; }
           #antarctica-3d-demo .flex { max-width: min(1180px, calc(100% - 2rem)); }
           #antarctica-3d-demo .prose { font-size: 16px; line-height: 1.5; }
-          .ice-hero .ice-hero-logo { margin: 0; }
 
+          /* 3D ICE, in the look of its home page (3d-ice.com, and /tools/3d-ice/ here): the
+             pale sea-ice panel under a hairline, a Playfair title and letter-spaced pills. */
           .ice-hero {
+            --ice-ink: #082335;
+            --ice-text: #24475a;
+            --ice-muted: #4f6d7c;
+            --ice-rule: rgba(36, 71, 90, 0.2);
+            --ice-rule-strong: rgba(36, 71, 90, 0.34);
+            --ice-link: #0b6f93;
+            --ice-public: #0e6b50;
+            --ice-public-bg: rgba(23, 144, 107, 0.1);
+            --ice-public-border: rgba(23, 144, 107, 0.34);
+            --ice-research: #0b5874;
+            --ice-research-bg: rgba(15, 126, 168, 0.1);
+            --ice-research-border: rgba(15, 126, 168, 0.34);
+            --ice-cta: linear-gradient(135deg, #0b6f93 0%, #0e7a5c 100%);
+            --ice-cta-hover: linear-gradient(135deg, #095f7e 0%, #0b684e 100%);
             display: grid;
-            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-            gap: clamp(1.4rem, 2.6vw, 2rem);
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            gap: clamp(1.5rem, 3.4vw, 3.25rem);
             align-items: stretch;
-            padding: clamp(1.35rem, 3vw, 2.5rem);
-            border-radius: 30px;
-            overflow: hidden;
+            padding: clamp(1.25rem, 3vw, 2.75rem);
             border: 1px solid #cfe1eb;
-            box-shadow: 0 18px 40px rgba(11, 36, 50, 0.08);
+            border-radius: 4px;
+            overflow: hidden;
             background:
-              radial-gradient(circle at 12% 18%, rgba(124, 216, 255, 0.22), transparent 28%),
-              radial-gradient(circle at 92% 86%, rgba(77, 178, 156, 0.16), transparent 26%),
-              linear-gradient(160deg, #f7fbfe 0%, #edf6fb 54%, #f8fbfd 100%);
+              radial-gradient(circle at 12% 18%, rgba(124, 216, 255, 0.22), transparent 30%),
+              radial-gradient(circle at 92% 86%, rgba(77, 178, 156, 0.14), transparent 28%),
+              linear-gradient(160deg, #f7fbfe 0%, #eaf4fa 54%, #f5fafd 100%);
+            color: var(--ice-text);
+            font-family: var(--ed-font-sans, "Space Grotesk", ui-sans-serif, system-ui, sans-serif);
           }
 
           html.dark .ice-hero {
+            --ice-ink: #ebf8ff;
+            --ice-text: #b7d6e6;
+            --ice-muted: #88aabf;
+            --ice-rule: rgba(150, 200, 225, 0.2);
+            --ice-rule-strong: rgba(150, 200, 225, 0.36);
+            --ice-link: #6cc8ea;
+            --ice-public: #7fe0bd;
+            --ice-public-bg: rgba(95, 211, 168, 0.12);
+            --ice-public-border: rgba(95, 211, 168, 0.36);
+            --ice-research: #9fdcff;
+            --ice-research-bg: rgba(130, 214, 255, 0.12);
+            --ice-research-border: rgba(130, 214, 255, 0.36);
             border-color: rgba(111, 166, 196, 0.28);
-            box-shadow: 0 22px 46px rgba(2, 8, 13, 0.42);
             background:
-              radial-gradient(circle at 12% 18%, rgba(53, 169, 219, 0.34), transparent 30%),
-              radial-gradient(circle at 92% 86%, rgba(28, 138, 122, 0.24), transparent 28%),
-              linear-gradient(160deg, rgba(6, 18, 27, 0.98) 0%, rgba(8, 23, 33, 0.96) 54%, rgba(8, 19, 28, 0.98) 100%);
+              radial-gradient(circle at 12% 18%, rgba(53, 169, 219, 0.3), transparent 32%),
+              radial-gradient(circle at 92% 86%, rgba(28, 138, 122, 0.2), transparent 30%),
+              linear-gradient(160deg, #071824 0%, #0a1f2d 54%, #08171f 100%);
           }
 
           .ice-hero-copy {
-            display: grid;
-            gap: 1.1rem;
-            align-content: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: clamp(1rem, 2vw, 1.4rem);
+            min-width: 0;
           }
 
-          .ice-hero-brand { margin-bottom: 0; }
+          .ice-hero-brand { display: block; width: min(100%, 440px); }
+          .ice-hero-brand:hover { opacity: 0.9; }
 
+          /* The logo's own sky is drawn into the image, so its edges fade into the panel. */
           .ice-hero-logo {
-            width: min(100%, 780px);
-            height: auto;
             display: block;
-            filter: drop-shadow(0 18px 40px rgba(10, 33, 50, 0.16));
-          }
-          .ice-hero-logo--dark  { display: none; }
-          html.dark .ice-hero-logo--light { display: none; }
-          html.dark .ice-hero-logo--dark  { display: block; }
-
-          .ice-hero-lead {
-            margin: 0.8rem 0;
             width: 100%;
-            color: #082335;
-            font-size: clamp(1.25rem, 1.9vw, 1.72rem);
-            line-height: 1.22;
-            font-weight: 750;
+            height: auto;
+            margin: 0;
+            -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%),
+              linear-gradient(180deg, transparent 0, #000 9%, #000 93%, transparent 100%);
+            -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%),
+              linear-gradient(180deg, transparent 0, #000 9%, #000 93%, transparent 100%);
+            mask-composite: intersect;
           }
-          html.dark .ice-hero-lead { color: #ebf8ff; }
+          .ice-hero-logo--dark { display: none; }
+          html.dark .ice-hero-logo--light { display: none; }
+          html.dark .ice-hero-logo--dark { display: block; }
 
-          a.ice-hero-brand,
-          a.ice-hero-lead {
-            text-decoration: none;
-            color: inherit;
+          #antarctica-3d-demo .ice-hero-title {
+            margin: 0;
+            max-width: 15ch;
+            color: var(--ice-ink);
+            font-family: var(--ed-font-display, "Playfair Display", Georgia, serif);
+            font-size: clamp(1.9rem, calc(1.5vw + 1.3rem), 2.9rem);
+            font-weight: 700;
+            line-height: 1.06;
+            letter-spacing: 0.003em;
+            text-wrap: balance;
           }
-          a.ice-hero-brand:hover,
-          a.ice-hero-lead:hover { opacity: 0.85; }
+          .ice-hero-title a { color: inherit; text-decoration: none; }
+          .ice-hero-title a:hover { color: var(--ice-link); }
 
           .ice-hero-summary {
-            max-width: 74ch;
+            max-width: 36rem;
             margin: 0;
-            color: #24475a;
-            font-size: 1.08rem;
-            line-height: 1.78;
+            color: var(--ice-text);
+            font-size: var(--ed-body, 1.05rem);
+            line-height: 1.65;
           }
-          html.dark .ice-hero-summary { color: #b7d6e6; }
 
-          .ice-hero-actions {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 0.85rem;
-            margin-top: 1.45rem;
+          .ice-hero-editions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem 1.25rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            color: var(--ice-muted);
+            font-size: var(--ed-meta, 0.85rem);
           }
+          .ice-hero-editions li { display: inline-flex; align-items: center; gap: 0.45rem; }
+
+          .ice-hero-tag {
+            display: inline-block;
+            padding: 0.12rem 0.45rem;
+            border: 1px solid var(--ice-research-border);
+            border-radius: 999px;
+            background: var(--ice-research-bg);
+            color: var(--ice-research);
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            line-height: 1.3;
+            text-transform: uppercase;
+          }
+          .ice-hero-tag--public {
+            border-color: var(--ice-public-border);
+            background: var(--ice-public-bg);
+            color: var(--ice-public);
+          }
+
+          .ice-hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 
           .ice-hero-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-height: 48px;
-            padding: 0.82rem 1.3rem;
-            border-radius: 999px;
+            gap: 0.6em;
+            min-height: 46px;
+            padding: 0.7em 1.35em;
             border: 1px solid transparent;
-            font-weight: 700;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            line-height: 1.2;
             text-decoration: none;
-            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+            text-transform: uppercase;
+            white-space: nowrap;
+            transition: transform 220ms ease, background 220ms ease, border-color 220ms ease;
           }
           .ice-hero-btn:hover,
           .ice-hero-btn:focus-visible { transform: translateY(-1px); }
+          .ice-hero-btn--primary { background: var(--ice-cta); color: #f7fdff; }
+          .ice-hero-btn--primary:hover { background: var(--ice-cta-hover); }
+          .ice-hero-btn--primary::after { content: "→"; letter-spacing: 0; }
+          .ice-hero-btn--ghost { border-color: var(--ice-rule-strong); color: var(--ice-ink); }
+          .ice-hero-btn--ghost:hover { border-color: var(--ice-ink); }
 
-          .ice-hero-btn--primary {
-            background: linear-gradient(135deg, #0f7ea8 0%, #17906b 100%);
-            color: #f7fdff;
-            box-shadow: 0 16px 28px rgba(16, 104, 139, 0.24);
+          .ice-hero-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5em;
+            align-self: flex-start;
+            padding-top: 1rem;
+            border-top: 1px solid var(--ice-rule);
+            color: var(--ice-link);
+            font-size: var(--ed-eyebrow, 0.72rem);
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-decoration: none;
+            text-transform: uppercase;
           }
+          .ice-hero-more::after { content: "→"; letter-spacing: 0; transition: transform 220ms ease; }
+          .ice-hero-more:hover::after { transform: translateX(3px); }
 
-          .ice-hero-btn--ghost {
-            background: #f3f9fc;
-            border-color: #c6dce7;
-            color: #204c61;
-          }
-          html.dark .ice-hero-btn--ghost {
-            background: rgba(8, 20, 29, 0.92);
-            border-color: rgba(121, 186, 214, 0.24);
-            color: #c6e7f8;
-          }
-
-          .ice-hero-showcase {
-            display: grid;
-            align-content: stretch;
-            align-self: stretch;
-            justify-self: end;
-            width: min(100%, 760px);
-            height: 100%;
-          }
+          .ice-hero-showcase { display: grid; min-width: 0; }
 
           .ice-hero-frame {
+            position: relative;
             width: 100%;
             height: 100%;
-            min-height: 520px;
-            border: 1px solid #c3dce8;
-            border-radius: 24px;
+            min-height: clamp(400px, 42vw, 540px);
             overflow: hidden;
-            box-shadow: 0 22px 50px rgba(9, 34, 49, 0.16);
-            position: relative;
+            border: 1px solid #c3dce8;
+            border-radius: 4px;
             background: linear-gradient(160deg, #061f31 0%, #0c3a53 58%, #15536b 100%);
           }
           html.dark .ice-hero-frame {
             border-color: rgba(116, 175, 205, 0.28);
-            box-shadow: 0 28px 60px rgba(2, 8, 13, 0.56);
             background: linear-gradient(160deg, #03111c 0%, #092437 58%, #0d3550 100%);
           }
+          .ice-hero-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
 
-          .ice-hero-frame iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            display: block;
-          }
-
-          @media (max-width: 900px) {
-            .ice-hero {
-              grid-template-columns: 1fr;
-            }
-            .ice-hero-showcase {
-              width: 100%;
-              justify-self: auto;
-            }
-            .ice-hero-frame {
-              min-height: 400px;
-              aspect-ratio: 1.6 / 1;
-            }
+          @media (max-width: 1100px) {
+            .ice-hero { grid-template-columns: 1fr; }
+            .ice-hero-brand { width: min(100%, 380px); }
+            #antarctica-3d-demo .ice-hero-title { max-width: 20ch; }
+            .ice-hero-frame { min-height: 0; aspect-ratio: 1.6 / 1; }
           }
 
           @media (max-width: 640px) {
-            .ice-hero {
-              padding: clamp(1rem, 2.5vw, 1.35rem);
-              border-radius: 20px;
-            }
-            .ice-hero-lead {
-              font-size: clamp(1.1rem, 4.5vw, 1.35rem);
-            }
-            .ice-hero-summary {
-              font-size: 0.95rem;
-              line-height: 1.65;
-            }
-            .ice-hero-actions {
-              grid-template-columns: 1fr;
-              gap: 0.6rem;
-            }
-            .ice-hero-frame {
-              min-height: 300px;
-              border-radius: 16px;
-            }
+            .ice-hero { padding: 1rem; }
+            .ice-hero-actions { flex-direction: column; }
+            .ice-hero-btn { width: 100%; white-space: normal; }
+            .ice-hero-frame { aspect-ratio: 1.25 / 1; }
           }
 
-          @media (max-width: 480px) {
-            .ice-hero {
-              padding: 0.9rem;
-              border-radius: 16px;
-              gap: 1rem;
-            }
-            .ice-hero-lead {
-              font-size: 1.05rem;
-              margin: 0.4rem 0;
-            }
-            .ice-hero-summary {
-              font-size: 0.88rem;
-              line-height: 1.6;
-            }
-            .ice-hero-frame {
-              min-height: 240px;
-              border-radius: 12px;
-            }
-            .ice-hero-logo {
-              max-width: 260px;
-            }
+          @media (prefers-reduced-motion: reduce) {
+            .ice-hero-btn,
+            .ice-hero-more::after { transition: none; }
+            .ice-hero-btn:hover,
+            .ice-hero-btn:focus-visible { transform: none; }
           }
         </style>
         <div class="ice-hero not-prose">
           <div class="ice-hero-copy">
-            <a class="ice-hero-brand" href="/tools/3d-ice/">
-              <img class="ice-hero-logo ice-hero-logo--light" src="/tools/3d-ice-logo-light.jpg" alt="3D ICE logo" loading="eager" />
-              <img class="ice-hero-logo ice-hero-logo--dark"  src="/tools/3d-ice-logo.jpg"       alt="3D ICE logo" loading="eager" />
+            <a class="ice-hero-brand" href="/tools/3d-ice/" aria-label="3D ICE: about the explorer">
+              <img class="ice-hero-logo ice-hero-logo--light" src="/tools/3d-ice-logo-light.jpg" alt="3D ICE" width="2631" height="1166" loading="eager" />
+              <img class="ice-hero-logo ice-hero-logo--dark" src="/tools/3d-ice-logo.jpg" alt="3D ICE" width="2607" height="1169" loading="eager" />
             </a>
-            <a class="ice-hero-lead" href="/tools/3d-ice/">Explore Antarctica and Greenland like never before.</a>
-            <p class="ice-hero-summary">3D ICE is an Interactive Cryosphere Explorer designed to turn state-of-the-art Antarctica and Greenland datasets into an intuitive browser-based experience for glaciology research, teaching, and public engagement.</p>
+            <h2 class="ice-hero-title"><a href="/tools/3d-ice/">The polar world at your fingertips</a></h2>
+            <p class="ice-hero-summary">Antarctica and Greenland in 3D, from the bedrock under kilometres of ice to the ocean currents around it, layer by layer and in your browser.</p>
+            <ul class="ice-hero-editions" aria-label="Editions">
+              <li><span class="ice-hero-tag ice-hero-tag--public">Public</span> A guided tour for everyone</li>
+              <li><span class="ice-hero-tag">Research</span> Every dataset and layer</li>
+            </ul>
             <div class="ice-hero-actions">
-              <a class="ice-hero-btn ice-hero-btn--primary" href="/tools/3D-interactive-cryosphere-explorer.html">Launch Explorer</a>
-              <a class="ice-hero-btn ice-hero-btn--ghost" href="/tools/3d-ice/#antarctica-features">Antarctica Features</a>
-              <a class="ice-hero-btn ice-hero-btn--ghost" href="/tools/3d-ice/#source-data">Source Data</a>
-              <a class="ice-hero-btn ice-hero-btn--ghost" href="/tools/3d-ice/#greenland-features">Greenland Features</a>
+              <a class="ice-hero-btn ice-hero-btn--primary" href="/explore/?tour=1">Start the guided tour</a>
+              <a class="ice-hero-btn ice-hero-btn--ghost" href="/tools/3D-interactive-cryosphere-explorer.html">Research edition</a>
             </div>
+            <a class="ice-hero-more" href="/tools/3d-ice/">The datasets, editions and what’s new</a>
           </div>
           <div class="ice-hero-showcase">
             <div class="ice-hero-frame">

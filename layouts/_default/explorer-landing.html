@@ -9,7 +9,9 @@
 {{ if not (fileExists $fragment) }}
   {{ errorf "%s is missing: run `npm run sync:3d-ice` (npm run dev and npm run build do) before Hugo." $fragment }}
 {{ end }}
-<div class="explorer-page-shell explorer-page-shell--ice" lang="{{ $locale }}">
+{{/* --home keeps this site's older .explorer-page-shell--ice rules in custom.css, which the
+     slide guide still uses, off the page. */}}
+<div class="explorer-page-shell explorer-page-shell--ice explorer-page-shell--home" lang="{{ $locale }}">
   {{ readFile $fragment | safeHTML }}
 </div>
 <script>document.documentElement.dataset.locale = "{{ $locale }}";</script>
